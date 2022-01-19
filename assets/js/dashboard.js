@@ -1,0 +1,1 @@
+document.getElementById('nav-item-dashboard').setAttribute('class',document.getElementById('nav-item-dashboard').getAttribute('class').replace(' active','') + ' active');
