@@ -17,7 +17,7 @@ $moduleName = 'Proposal';
                     &nbsp;
                 </div>
                 <div class="input-group col-sm-1 " style="margin-bottom:1rem;">
-                    <button type="button" title="Add New" class="material-icons btn btn-outline-primary my-2 my-sm-0" style="width:100%; text-align: center; vertical-align:middle;" onClick="location.href='?pr=Li9wYWdlcy9wcm9wb3NhbHMvZm9ybS5waHA='">add_box</button>
+                    <a type="button" title="Add New" class="btn btn-outline-primary my-2 my-sm-0" type="button" style="width:100%; text-align: center; vertical-align:middle;" onClick="location.href='?pr=Li9wYWdlcy9wcm9wb3NhbHMvZm9ybS5waHA='"><span class="material-icons">add_box</span><div class="text-button">New</div></a>
                 </div>
             </div>
             <form name='filter' method="post" enctype="multipart/form-data">

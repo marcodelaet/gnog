@@ -1,0 +1,4 @@
+public/advertiser/csv/*
+public/provider/csv/*
+public/proposal/csv/*
+database/.config

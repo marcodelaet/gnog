@@ -1,5 +1,6 @@
 document.getElementById('nav-item-providers').setAttribute('class',document.getElementById('nav-item-providers').getAttribute('class').replace(' active','') + ' active');
 var csrf_token = $('meta[name="csrf-token"]').attr('content');
+module  = 'provider';
 //alert(csrf_token);
 
 function handleSubmit(form) {
@@ -56,6 +57,56 @@ function handleSubmit(form) {
             request.open('GET', requestURL);
             //request.responseType = 'json';
             request.send();
+        }
+    } else
+        alert('Please, fill all required fields (*)');
+}
+
+function handleSubmitCSV(form){
+    if (form.provider_file.value !== '') {
+        //form.submit();
+        errors      = 0;
+        authApi     = 'dasdasdkasdeewef';
+
+        file        = form.provider_file;
+        var formData = new FormData(form);
+        //formData.append("provider_file", fileInputElement.provider_file);
+        
+        locat       = window.location.hostname;
+        if(locat.slice(-1) != '/')
+            locat += '/';
+
+        if(file == '')
+        {
+            errors++;
+            alert('Please, type a corporate name');
+        }
+
+        if(errors > 0){
+
+        } else{
+            const requestURL = window.location.protocol+'//'+locat+'api/providers/auth_provider_csv_upload.php';
+            const request = new XMLHttpRequest();
+            request.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    // Typical action to be performed when the document is ready:
+                    //console.log(request.responseText);
+                    obj = JSON.parse(request.responseText);
+
+                    form.btnSave.innerHTML = "Upload list of Providers";
+                    //alert('Status: '+obj.status);
+                    if(obj.status === "OK")
+                        window.location.href = '?pr=Li9wYWdlcy9wcm92aWRlcnMvdGtwZWRpdC9pbmRleC5waHA=';
+                    else
+                        alert(obj.message);
+                }
+                else{
+                    form.btnSave.innerHTML = "Uploading...";
+                }
+            };
+            request.open('POST', requestURL);
+            //request.responseType = 'json';
+            request.send(formData);
         }
     } else
         alert('Please, fill all required fields (*)');
@@ -186,13 +237,16 @@ function handleViewOnLoad(tid) {
                 });
                 if(obj[0].main_contact_position!='')
                     position = obj[0].main_contact_position;
+                phone_number = obj[0].phone_number.replace(" ","");
+                if(obj[0].phone_prefix!='')
+                    phone_number = obj[0].phone_prefix+obj[0].phone_number.replace(" ","");
                 document.getElementById('provider_name').innerHTML          = obj[0].name;
                 document.getElementById('group').innerHTML                  = obj[0].webpage_url;
                 document.getElementById('card-contact-fullname').innerHTML  = obj[0].main_contact_name + ' ' + obj[0].main_contact_surname
                 document.getElementById('card-contact-position').innerHTML  = ' ('+position+')';
                 document.getElementById('card-address').innerHTML           = obj[0].address;
                 document.getElementById('card-email').innerHTML             = obj[0].main_contact_email;
-                document.getElementById('card-phone').innerHTML             = '+'+obj[0].phone_international_code.replace(" ","") + obj[0].phone_number.replace(" ","");
+                document.getElementById('card-phone').innerHTML             = '+'+obj[0].phone_international_code.replace(" ","") + phone_number;
                 document.getElementById('card-product').innerHTML           = obj[0].product_name;
                 document.getElementById('card-product-price').innerHTML     = formatter.format(obj[0].product_price);
                 document.getElementById('card-salemodel').innerHTML         = obj[0].salemodel_name;
@@ -292,9 +346,9 @@ function handleListOnLoad(search) {
                 html        = '';
                 country     = '';
                 for(var i=0;i < obj.length; i++){
-                    color_user_status = '#d60b0e';
+                    color_status = '#d60b0e';
                     if(obj[i].is_active == 'Y')
-                        color_user_status = '#298c3d';
+                        color_status = '#298c3d';
 
                         switch (obj[i].phone_international_code) {
                             case '52':
@@ -309,16 +363,18 @@ function handleListOnLoad(search) {
                             default:
                                 country = 'XXX';
                         }
-                        
-                    html += '<tr><td>'+obj[i].name+'</td><td>'+obj[i].webpage_url+'</td><td nowrap>'+obj[i].phone+'</td><td nowrap>'+obj[i].contact+'</td><td style="text-align:center;"><span id="locked_status_'+obj[i].uuid_full+'" class="material-icons" style="color:'+color_user_status+'">attribution</span></td><td nowrap style="text-align:center;">';
+                    phone_number = obj[i].phone;
+                    if(obj[0].phone_prefix!='')
+                        phone_number = obj[0].phone_international_code+obj[0].phone_prefix+obj[0].phone_number.replace(" ","");
+                    html += '<tr><td>'+obj[i].name+'</td><td>'+obj[i].webpage_url+'</td><td nowrap>+'+phone_number+'</td><td nowrap>'+obj[i].contact+'</td><td style="text-align:center;"><span id="locked_status_'+obj[i].uuid_full+'" class="material-icons" style="color:'+color_status+'">attribution</span></td><td nowrap style="text-align:center;">';
                     // information card
-                    html += '<a href="?pr=Li9wYWdlcy9wcm92aWRlcnMvaW5mby5waHA=&tid='+obj[i].uuid_full+'"><span class="material-icons" style="font-size:1.5rem; color:black;" title="User Information Card '+obj[i].corporate_name+'">info</span></a>';
+                    html += '<a href="?pr=Li9wYWdlcy9wcm92aWRlcnMvaW5mby5waHA=&tid='+obj[i].uuid_full+'"><span class="material-icons" style="font-size:1.5rem; color:black;" title="Information Card '+obj[i].corporate_name+'">info</span></a>';
 
                     // Edit form
-                    html += '<a href="?pr=Li9wYWdlcy9wcm92aWRlcnMvZm9ybWVkaXQucGhw&tid='+obj[i].uuid_full+'"><span class="material-icons" style="font-size:1.5rem; color:black;" title="Edit user '+obj[i].corporate_name+'">edit</span></a>';
+                    html += '<a href="?pr=Li9wYWdlcy9wcm92aWRlcnMvZm9ybWVkaXQucGhw&tid='+obj[i].uuid_full+'"><span class="material-icons" style="font-size:1.5rem; color:black;" title="Edit '+module + ' '+obj[i].corporate_name+'">edit</span></a>';
 
                     // Remove 
-                    html += '<a href="javascript:void(0)" onclick="handleRemove(\''+obj[i].uuid_full+'\',\''+obj[i].is_active+'\')"><span class="material-icons" style="font-size:1.5rem; color:black;" title="Remove user '+obj[i].corporate_name+'">delete</span></a>';
+                    html += '<a href="javascript:void(0)" onclick="handleRemove(\''+obj[i].uuid_full+'\',\''+obj[i].is_active+'\')"><span class="material-icons" style="font-size:1.5rem; color:black;" title="Remove '+module + ' '+obj[i].corporate_name+'">delete</span></a>';
 
                     html += '</td></tr>';
                 }
@@ -347,9 +403,9 @@ function handleRemove(tid,locked_status){
     if(locat.slice(-1) != '/')
         locat += '/';
 
-    color_user_status = '#298c3d';
+    color_status = '#298c3d';
     if(locked_status == 'Y')
-        color_user_status = '#d60b0e';
+        color_status = '#d60b0e';
     const requestURL = window.location.protocol+'//'+locat+'api/providers/auth_provider_remove.php?auth_api='+authApi+filters;
     //alert(requestURL);
     const request = new XMLHttpRequest();
@@ -357,7 +413,7 @@ function handleRemove(tid,locked_status){
         if (this.readyState == 4 && this.status == 200) {
             // Typical action to be performed when the document is ready:
             obj = JSON.parse(request.responseText);
-            document.getElementById('locked_status_'+tid).style = 'color:'+color_user_status;
+            document.getElementById('locked_status_'+tid).style = 'color:'+color_status;
         }
     };
     request.open('GET', requestURL);

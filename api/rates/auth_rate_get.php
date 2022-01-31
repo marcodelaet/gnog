@@ -14,6 +14,7 @@ $sql = ""; // initializing SQL variable
 
 $base   = $_REQUEST['base'];
 $to     = $_REQUEST['to'];
+$index  = $_REQUEST['index'];
 $value  = '';
 if(array_key_exists('value',$_REQUEST)){
     $value = $_REQUEST['value'];
@@ -43,10 +44,10 @@ if(array_key_exists('auth_api',$_REQUEST)){
         if($value != ''){
             $newValueBase = (float)$value * (1 / (float)$resultBase[0]['rate']);
             $newValueFinal = $newValueBase * (float)$resultTo[0]['rate'];
-            echo json_encode(['base' => $base,'rateBase' => $resultBase[0]['rate'],'to' => $to,'rateTo' => $resultTo[0]['rate'],'newValue' => "$newValueFinal",'updated_at' => $resultTo[0]['updated_at_string']]);
+            echo json_encode(['index'=>$index,'base' => $base,'rateBase' => $resultBase[0]['rate'],'to' => $to,'rateTo' => $resultTo[0]['rate'],'newValue' => "$newValueFinal",'updated_at' => $resultTo[0]['updated_at_string']]);
         }
         else
-            echo json_encode(['base' => $base,'rateBase' => $resultBase[0]['rate'],'to' => $to,'rateTo' => $resultTo[0]['rate'],'updated_at' => $resultTo[0]['updated_at_string']]);
+            echo json_encode(['index'=>$index,'base' => $base,'rateBase' => $resultBase[0]['rate'],'to' => $to,'rateTo' => $resultTo[0]['rate'],'updated_at' => $resultTo[0]['updated_at_string']]);
     }
 } else {
     header('Content-type: application/json');

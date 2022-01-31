@@ -16,10 +16,12 @@ CREATE DATABASE IF NOT EXISTS gnogcrm_db;
 USE gnogcrm_db;
 
 
-# CURRENCIES
+SELECT * FROM currencies ORDER BY orderby DESC, id ASC;
+
 CREATE TABLE IF NOT EXISTS currencies (
 id VARCHAR(3) PRIMARY KEY NOT NULL UNIQUE,
 rate FLOAT NOT NULL,
+orderby TINYINT,
 is_active ENUM('N','Y') NOT NULL,
 created_at DATETIME NOT NULL,
 updated_at DATETIME NOT NULL
@@ -60,6 +62,18 @@ CREATE VIEW view_users AS (
 
 # INSERTING USER
 INSERT INTO users (id, username, email,mobile_international_code, mobile_prefix,mobile_number,authentication_string,password_last_changed,account_locked,created_at,updated_at) VALUES (UUID(),'marcodelaet','it@gnog.com.br','55','11','11989348999','e10adc3949ba59abbe56e057f20f883e',NOW(),'N',NOW(),NOW());
+
+# GOAL
+CREATE TABLE IF NOT EXISTS `goals` (
+id VARCHAR(40) PRIMARY KEY NOT NULL UNIQUE,
+user_id VARCHAR(40) NOT NULL,
+goal_month VARCHAR(2) NOT NULL,
+goal_year VARCHAR(4) NOT NULL,
+currency_id VARCHAR(3) NOT NULL,
+goal_amount INT NOT NULL,
+created_at DATETIME NOT NULL,
+updated_at DATETIME NOT NULL
+);
 
 # PROFILES
 CREATE TABLE IF NOT EXISTS `profiles` (
@@ -145,58 +159,6 @@ CREATE VIEW view_advertisers AS (
 	FROM 
 	advertisers adv
 );
-
-# PROVIDERS
-CREATE TABLE IF NOT EXISTS providers (
-id VARCHAR(40) PRIMARY KEY NOT NULL UNIQUE,
-product_id VARCHAR(40) NOT NULL,
-salemodel_id VARCHAR(40) NOT NULL,
-product_price INTEGER NOT NULL,
-currency VARCHAR(3) NOT NULL,
-NAME VARCHAR(40) NOT NULL UNIQUE,
-address	TEXT NOT NULL,
-webpage_url VARCHAR(200) NOT NULL,
-main_contact_name VARCHAR(20),
-main_contact_surname VARCHAR(20),
-main_contact_email VARCHAR(60) NOT NULL,
-main_contact_position VARCHAR(20) NOT NULL,
-phone_international_code VARCHAR(3),
-phone_prefix VARCHAR(3),
-phone_number VARCHAR(12),
-is_active ENUM('N','Y') NOT NULL,
-created_at DATETIME NOT NULL,
-updated_at DATETIME NOT NULL
-);
-
-# VIEW PROVIDERS
-CREATE VIEW view_providers AS (
-	SELECT
-	(pv.id) AS UUID,
-	(pv.product_id) AS product_id,
-	pd.name AS product_name,
-	(pv.salemodel_id) AS salemodel_id,
-	sm.name AS salemodel_name,
-	pv.product_price / 100 AS product_price,
-	pv.currency,
-	pv.name,
-	pv.webpage_url,
-	pv.address,
-	pv.main_contact_name,
-	pv.main_contact_surname,
-	pv.main_contact_email,
-	pv.main_contact_position,
-	pv.phone_international_code,
-	pv.phone_prefix,
-	pv.phone_number,
-	CONCAT('+',pv.phone_international_code,pv.phone_prefix,pv.phone_number) AS phone,
-	pv.is_active,
-	CONCAT((pv.id),pd.name,sm.name,pv.name,pv.webpage_url,pv.main_contact_name,pv.main_contact_surname,pv.main_contact_email,'+',pv.phone_international_code,pv.phone_number) AS search
-	FROM 
-	providers pv
-	LEFT JOIN products pd ON pd.id = pv.product_id
-	LEFT JOIN salemodels sm ON sm.id = pv.salemodel_id
-);
-
 
 # PRODUCTS
 CREATE TABLE IF NOT EXISTS products (
@@ -297,6 +259,58 @@ VALUES
 ((UUID()),'Mupie','Mupie','Y',NOW(),NOW()),
 ((UUID()),'Digital Screen','Digital Screen','Y',NOW(),NOW());
 
+# PROVIDERS
+CREATE TABLE IF NOT EXISTS providers (
+id VARCHAR(40) PRIMARY KEY NOT NULL UNIQUE,
+product_id VARCHAR(40) NOT NULL,
+salemodel_id VARCHAR(40) NOT NULL,
+product_price INTEGER NOT NULL,
+currency VARCHAR(3) NOT NULL,
+NAME VARCHAR(40) NOT NULL UNIQUE,
+address	TEXT NOT NULL,
+webpage_url VARCHAR(200) NOT NULL,
+main_contact_name VARCHAR(20),
+main_contact_surname VARCHAR(20),
+main_contact_email VARCHAR(60) NOT NULL,
+main_contact_position VARCHAR(20) NOT NULL,
+phone_international_code VARCHAR(3),
+phone_prefix VARCHAR(3),
+phone_number VARCHAR(12),
+is_active ENUM('N','Y') NOT NULL,
+created_at DATETIME NOT NULL,
+updated_at DATETIME NOT NULL
+);
+
+# VIEW PROVIDERS
+CREATE VIEW view_providers AS (
+	SELECT
+	(pv.id) AS UUID,
+	(pv.product_id) AS product_id,
+	pd.name AS product_name,
+	(pv.salemodel_id) AS salemodel_id,
+	sm.name AS salemodel_name,
+	pv.product_price / 100 AS product_price,
+	pv.product_price AS product_price_int,
+	pv.currency,
+	pv.name,
+	pv.webpage_url,
+	pv.address,
+	pv.main_contact_name,
+	pv.main_contact_surname,
+	pv.main_contact_email,
+	pv.main_contact_position,
+	pv.phone_international_code,
+	pv.phone_prefix,
+	pv.phone_number,
+	CONCAT('+',pv.phone_international_code,pv.phone_prefix,pv.phone_number) AS phone,
+	pv.is_active,
+	CONCAT((pv.id),pd.name,sm.name,pv.name,pv.webpage_url,pv.main_contact_name,pv.main_contact_surname,pv.main_contact_email,'+',pv.phone_international_code,pv.phone_number) AS search
+	FROM 
+	providers pv
+	LEFT JOIN products pd ON pd.id = pv.product_id
+	LEFT JOIN salemodels sm ON sm.id = pv.salemodel_id
+);
+
 #PROPOSALS
 CREATE TABLE IF NOT EXISTS proposals (
 id VARCHAR(40) PRIMARY KEY NOT NULL UNIQUE,
@@ -356,9 +370,11 @@ CREATE VIEW view_proposals AS (
 	pps.start_date,
 	pps.stop_date,
 	ppp.price / 100 AS price,
+	ppp.price AS price_int,
 	ppp.currency,
 	ppp.quantity,
 	(ppp.price * ppp.quantity) / 100 AS amount,
+	(ppp.price * ppp.quantity) AS amount_int,
 	pps.is_pixel,
 	pps.is_active,
 	CONCAT((pps.id),pd.name,sm.name,pv.name,u.username,adv.corporate_name,pps.offer_name,ppp.currency) AS search

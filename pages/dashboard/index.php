@@ -39,7 +39,7 @@ if(1==2)
                         </select>
                     </div>
                     <div class="input-group col-sm-2">
-                        <select class="custom-select" name="month" title="Month" autocomplete="month">
+                        <select class="custom-select" name="year" title="Year" autocomplete="year">
                             <option value="2022">2022</option>
                             <option value="2023">2023</option>
                             <option value="2024">2024</option>
@@ -81,8 +81,8 @@ if(1==2)
                         </select>
                     </div>-->
                     <div class="input-group col-sm-1">
-                        <select class="custom-select" name="rate_id" title="Rates" autocomplete="rate_id" onChange="getCurrencyValue(document.getElementById('goal-currency').innerText,this.value,document.getElementById('goal-month').innerText+'---'+document.getElementById('goal-total').innerText,'dashboard')">
-                            <?=inputFilterSelect('rate','Rates','','id','')?>
+                        <select class="custom-select" name="rate_id" title="Rates" autocomplete="rate_id" onChange="updateCurrencyListValue(document.getElementsByClassName('currency-line'),this.value,document.getElementsByClassName('amount-line'),'dashboard'); getCurrencyValue(document.getElementById('goal-currency').innerText,this.value,document.getElementById('goal-0').innerText+'---'+document.getElementById('goal-1').innerText,'dashboard');">
+                            <?=inputFilterSelect('rate','Rates','','orderby','')?>
                         </select>
                     </div>
                 </div>
@@ -105,7 +105,7 @@ if(1==2)
                             <th scope="col" style="text-align:center;">Settings</th>
                         </tr>
                     </thead>
-                    <tbody id="listProposals">
+                    <tbody id="listDashboard">
                         <tr>
                             <td class="table-column-offerName">Nestle</td>
                             <td class="table-column-AdvertiserName">...</td>
@@ -124,13 +124,16 @@ if(1==2)
             </div>
             <div class="col-sm-4 goal-section" >
                 <div class="hidden" ><spam class="goal-currency" id="goal-currency">MXN</spam></div>
-                <div ><spam class="goal-title">Goal of the month:</spam><spam class="goal-result" id="goal-month">10,000.99</spam><div>
-                <div ><spam class="goal-title">Total Reached:</spam><spam class="goal-result" id="goal-total">0.99</spam><div>
+                <div ><spam class="goal-title">Goal of the month:</spam><spam class="goal-result" id="goal-0">10,000.99</spam><div>
+                <div ><spam class="goal-title">Total Reached:</spam><spam class="goal-result" id="goal-1">0.99</spam><div>
                 <div ><spam class="goal-title">% Reached:</spam><spam class="goal-result" id="goal-percent">0.01%</spam><div>
             </div>
         </div>
     </div>    
 </div>
+<script>
+    handleListOnLoad();
+</script>
 <?php 
 }
 ?>

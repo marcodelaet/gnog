@@ -16,16 +16,31 @@ function inputSelect($table,$title,$where,$order,$selected){
     $obj = json_decode($homepage);
     $html        = '<option value="0" >Please, select '.$title.'</option>';
     for($i=0;$i < count($obj); $i++){
+        $className      = "";
         $markingSelect = ''; 
-        if($table == 'advertiser')
-            $name = $obj[$i]->corporate_name;
-        elseif($table == 'user')
-            $name = $obj[$i]->username;
-        else
-            $name = $obj[$i]->name;
-        if($obj[$i]->uuid_full == $selected)
+        switch($table){
+            case  'advertiser':
+                $id = $obj[$i]->uuid_full;
+                $name = $obj[$i]->corporate_name;
+                break;
+            case 'user':
+                $id = $obj[$i]->uuid_full;
+                $name = $obj[$i]->username;
+                break;
+            case 'rate':
+                if(!is_null($obj[$i]->orderby))
+                    $className = " class='bold' ";
+                $id = $obj[$i]->id;
+                $name = $obj[$i]->id;
+                break;
+            default:
+                $id = $obj[$i]->uuid_full;
+                $name = $obj[$i]->name;
+                break;
+        }
+        if($id == $selected)
             $markingSelect = 'selected';    
-        $html .= '<option value="'.$obj[$i]->uuid_full.'" '.$markingSelect.' >'.$name.'</option>';
+        $html .= '<option '.$className.' value="'.$id.'" '.$markingSelect.' >'.$name.'</option>';
     }
     return $html;
 }
@@ -48,26 +63,31 @@ function inputFilterSelect($table,$title,$where,$order,$selected){
     $obj = json_decode($homepage);
     $html        = '<option value="0" >'.$title.'</option>';
     for($i=0;$i < count($obj); $i++){
-        $id = $obj[$i]->uuid_full;
-        $markingSelect = ''; 
+        $className      = "";
+        $markingSelect  = ''; 
         switch($table){
             case  'advertiser':
+                $id = $obj[$i]->uuid_full;
                 $name = $obj[$i]->corporate_name;
                 break;
             case 'user':
+                $id = $obj[$i]->uuid_full;
                 $name = $obj[$i]->username;
                 break;
             case 'rate':
+                if(!is_null($obj[$i]->orderby))
+                    $className = " class='bold' ";
                 $id = $obj[$i]->id;
                 $name = $obj[$i]->id;
                 break;
             default:
+                $id = $obj[$i]->uuid_full;
                 $name = $obj[$i]->name;
                 break;
         }             
         if($id == $selected)
             $markingSelect = 'selected';    
-        $html .= '<option value="'.$id.'" '.$markingSelect.' >'.$name.'</option>';
+        $html .= '<option '.$className.' value="'.$id.'" '.$markingSelect.' >'.$name.'</option>';
     }
     return $html;
 }
@@ -90,16 +110,31 @@ function inputFilterNoZeroSelect($table,$title,$where,$order,$selected){
     $obj = json_decode($homepage);
     $html        = '';
     for($i=0;$i < count($obj); $i++){
+        $className      = "";
         $markingSelect = ''; 
-        if($table == 'advertiser')
-            $name = $obj[$i]->corporate_name;
-        elseif($table == 'user')
-            $name = $obj[$i]->username;
-        else
-            $name = $obj[$i]->name;
-        if($obj[$i]->uuid_full == $selected)
-            $markingSelect = 'selected';    
-        $html .= '<option value="'.$obj[$i]->uuid_full.'" '.$markingSelect.' >'.$name.'</option>';
+        switch($table){
+            case  'advertiser':
+                $id = $obj[$i]->uuid_full;
+                $name = $obj[$i]->corporate_name;
+                break;
+            case 'user':
+                $id = $obj[$i]->uuid_full;
+                $name = $obj[$i]->username;
+                break;
+            case 'rate':
+                if(!is_null($obj[$i]->orderby))
+                    $className = " class='bold' ";
+                $id = $obj[$i]->id;
+                $name = $obj[$i]->id;
+                break;
+            default:
+                $id = $obj[$i]->uuid_full;
+                $name = $obj[$i]->name;
+                break;
+        }             
+        if($id == $selected)
+            $markingSelect = 'selected';      
+        $html .= '<option '.$className.' value="'.$id.'" '.$markingSelect.' >'.$name.'</option>';
     }
     return $html;
 }

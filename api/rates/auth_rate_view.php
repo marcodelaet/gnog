@@ -23,15 +23,19 @@ if(array_key_exists('order',$_REQUEST)){
         $order  = " ORDER BY " . $_REQUEST['order'];
 }
 
+if($_REQUEST['order'] == 'orderby'){
+    $order  .= " DESC, id ASC";
+}
+
 $tableOrView    = "currencies";
-$columnsSelect  = "id,rate";
+$columnsSelect  = "id,rate,orderby";
 
 // check authentication / local Storage
 if(array_key_exists('auth_api',$_REQUEST)){
     // check auth_api === local storage
     //if($localStorage == $_REQUEST['auth_api']){}
 
-    $sql    = "SELECT $columnsSelect FROM $tableOrView WHERE is_active='Y' $whereQuerystring";
+    $sql    = "SELECT $columnsSelect FROM $tableOrView WHERE is_active='Y' $whereQuerystring $order";
     // echo $sql;
     // update_at date (yyyymmdd)
     $rs = $DB->getData($sql);

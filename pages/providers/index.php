@@ -17,11 +17,14 @@ $mobile     = null;
         
         <div class="inputs-filter-container">
             <div class="form-row">
-                <div class="input-group col-sm-11">
+                <div class="input-group col-sm-10">
                     &nbsp;
                 </div>
-                <div class="input-group col-sm-1 " style="margin-bottom:1rem;">
-                    <button type="button" title="Add New" class="material-icons btn btn-outline-primary my-2 my-sm-0" style="width:100%; text-align: center; vertical-align:middle;" onClick="location.href='?pr=Li9wYWdlcy9wcm92aWRlcnMvZm9ybS5waHA='">add_box</button>
+                <div class="input-group col-sm-1 button-with-title" style="margin-bottom:1rem;">
+                    <a type="button" title="Add New" class="btn btn-outline-primary my-2 my-sm-0" type="button" style="width:100%; text-align: center; vertical-align:middle;" onClick="location.href='?pr=<?=base64_encode('./pages/'.strtolower($moduleName).'s/form.php')?>'"><span class="material-icons">add_box</span><div class="text-button">New</div></a>
+                </div>
+                <div class="input-group col-sm-1 button-with-title" style="margin-bottom:1rem;">
+                    <a type="button" title="Import <?=strtolower($moduleName)?>s from CSV file" class="btn btn-outline-primary my-2 my-sm-0" type="button" style="width:100%; text-align: center; vertical-align:middle;" onClick="location.href='?pr=<?=base64_encode('./pages/'.strtolower($moduleName).'s/formcsv.php')?>'"><span class="material-icons-outlined">file_upload</span><div class="text-button">CSV</div></a>
                 </div>
             </div>
             <form name='filter' method="post" enctype="multipart/form-data">

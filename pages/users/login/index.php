@@ -26,6 +26,7 @@ if(array_key_exists('username',$_POST))
                 value='<?=$username?>'
                 class="inputs-input" 
                 type="text" 
+                autocomplete="username"
                 />
                 <input 
                 name ='password'
@@ -34,6 +35,7 @@ if(array_key_exists('username',$_POST))
                 value='<?=$password?>'
                 class="inputs-input" 
                 type="password" 
+                autocomplete="current-password"
                 />
             </div>
             <div class="inputs-button-container">
