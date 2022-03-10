@@ -15,9 +15,7 @@ CREATE DATABASE IF NOT EXISTS gnogcrm_db;
 
 USE gnogcrm_db;
 
-
-SELECT * FROM currencies ORDER BY orderby DESC, id ASC;
-
+# CURRENCIES
 CREATE TABLE IF NOT EXISTS currencies (
 id VARCHAR(3) PRIMARY KEY NOT NULL UNIQUE,
 rate FLOAT NOT NULL,
@@ -75,6 +73,21 @@ created_at DATETIME NOT NULL,
 updated_at DATETIME NOT NULL
 );
 
+# VIEW GOALS
+CREATE VIEW view_goals AS (
+	SELECT
+	(g.user_id) AS UUID,
+	g.goal_amount,
+	g.goal_month,
+	g.goal_year,
+	g.currency_id
+	
+	FROM 
+	goals g
+);
+
+SELECT *, SUM(goal_amount) AS total_amount FROM view_goals WHERE goal_month = 4 GROUP BY goal_year;
+
 # PROFILES
 CREATE TABLE IF NOT EXISTS `profiles` (
 id VARCHAR(40) PRIMARY KEY NOT NULL UNIQUE,
@@ -104,14 +117,6 @@ CREATE TABLE IF NOT EXISTS advertisers (
 id VARCHAR(40) PRIMARY KEY NOT NULL UNIQUE,
 corporate_name VARCHAR(40) NOT NULL UNIQUE,
 address	TEXT NOT NULL,
-main_contact_name VARCHAR(20) NOT NULL,
-main_contact_surname VARCHAR(20),
-main_contact_email VARCHAR(60) NOT NULL,
-main_contact_position VARCHAR(20) NOT NULL,
-main_contact_client_id VARCHAR(40),
-phone_international_code VARCHAR(3),
-phone_prefix VARCHAR(3),
-phone_number VARCHAR(12),
 is_agency ENUM('N','Y') NOT NULL,
 is_active ENUM('N','Y') NOT NULL,
 created_at DATETIME NOT NULL,
@@ -121,13 +126,12 @@ updated_at DATETIME NOT NULL
 # CONTACTS
 CREATE TABLE IF NOT EXISTS contacts (
 id VARCHAR(40) PRIMARY KEY NOT NULL UNIQUE,
-advertiser_id VARCHAR(40),
-provider_id VARCHAR(40),
-main_contact_name VARCHAR(20) NOT NULL,
-main_contact_surname VARCHAR(20),
-main_contact_email VARCHAR(60) NOT NULL,
-main_contact_position VARCHAR(20) NOT NULL,
-main_contact_client_id VARCHAR(40),
+module_name VARCHAR(40), # advertiser / provider
+contact_name VARCHAR(20) NOT NULL,
+contact_surname VARCHAR(20),
+contact_email VARCHAR(60) NOT NULL,
+contact_position VARCHAR(20) NOT NULL,
+contact_client_id VARCHAR(40),
 phone_international_code VARCHAR(3),
 phone_prefix VARCHAR(3),
 phone_number VARCHAR(12),
@@ -138,27 +142,63 @@ updated_at DATETIME NOT NULL
 
 # drop view view_advertisers;
 
+# VIEW CONTACTS - ADVERTISER
+CREATE VIEW view_advertisercontacts AS (
+SELECT 
+	id AS contact_id,
+	contact_name,
+	contact_surname,
+	contact_email,
+	contact_position,
+	contact_client_id,
+	phone_international_code,
+	phone_prefix,
+	phone_number
+	FROM contacts
+	WHERE module_name = 'advertiser' AND is_active='Y'
+);
+
+# VIEW CONTACTS - PROVIDER
+CREATE VIEW view_providercontacts AS (
+SELECT 
+	id AS contact_id,
+	contact_name,
+	contact_surname,
+	contact_email,
+	contact_position,
+	contact_client_id,
+	phone_international_code,
+	phone_prefix,
+	phone_number
+	FROM contacts
+	WHERE module_name = 'provider' AND is_active='Y'
+);
+
 # VIEW ADVERTISERS
 CREATE VIEW view_advertisers AS (
 	SELECT
 	(adv.id) AS UUID,
+	ct.contact_id,
 	adv.corporate_name,
 	adv.address,
-	adv.main_contact_name,
-	adv.main_contact_surname,
-	adv.main_contact_email,
-	adv.main_contact_position,
-	adv.main_contact_client_id,
-	adv.phone_international_code,
-	adv.phone_prefix,
-	adv.phone_number,
-	CONCAT('+',adv.phone_international_code,adv.phone_prefix,adv.phone_number) AS phone,
+	ct.contact_name,
+	ct.contact_surname,
+	ct.contact_email,
+	ct.contact_position,
+	ct.contact_client_id,
+	ct.phone_international_code,
+	ct.phone_prefix,
+	ct.phone_number,
+	CONCAT('+',ct.phone_international_code,ct.phone_prefix,ct.phone_number) AS phone,
 	adv.is_agency,
 	adv.is_active,
-	CONCAT((adv.id),adv.corporate_name,adv.main_contact_name,adv.main_contact_surname,adv.main_contact_email,'+',adv.phone_international_code,adv.phone_number) AS search
+	CONCAT((adv.id),adv.corporate_name,ct.contact_name,ct.contact_surname,ct.contact_email,'+',ct.phone_international_code,ct.phone_number) AS search
 	FROM 
 	advertisers adv
+	LEFT JOIN view_advertisercontacts ct ON ct.contact_client_id = adv.id
 );
+
+SELECT * FROM view_providers;
 
 # PRODUCTS
 CREATE TABLE IF NOT EXISTS products (
@@ -295,20 +335,35 @@ CREATE VIEW view_providers AS (
 	pv.name,
 	pv.webpage_url,
 	pv.address,
-	pv.main_contact_name,
-	pv.main_contact_surname,
-	pv.main_contact_email,
-	pv.main_contact_position,
-	pv.phone_international_code,
-	pv.phone_prefix,
-	pv.phone_number,
-	CONCAT('+',pv.phone_international_code,pv.phone_prefix,pv.phone_number) AS phone,
+	ct.contact_name,
+	ct.contact_surname,
+	ct.contact_email,
+	ct.contact_position,
+	ct.phone_international_code,
+	ct.phone_prefix,
+	ct.phone_number,
+	CONCAT('+',ct.phone_international_code,ct.phone_prefix,ct.phone_number) AS phone,
 	pv.is_active,
-	CONCAT((pv.id),pd.name,sm.name,pv.name,pv.webpage_url,pv.main_contact_name,pv.main_contact_surname,pv.main_contact_email,'+',pv.phone_international_code,pv.phone_number) AS search
+	CONCAT((pv.id),pd.name,sm.name,pv.name,pv.webpage_url,ct.contact_name,ct.contact_surname,ct.contact_email,'+',ct.phone_international_code,ct.phone_number) AS search
 	FROM 
 	providers pv
 	LEFT JOIN products pd ON pd.id = pv.product_id
 	LEFT JOIN salemodels sm ON sm.id = pv.salemodel_id
+	LEFT JOIN ( 
+	SELECT 
+	id AS contact_id,
+	contact_name,
+	contact_surname,
+	contact_email,
+	contact_position,
+	contact_client_id,
+	phone_international_code,
+	phone_prefix,
+	phone_number
+	FROM contacts
+	WHERE module_name = 'provider' AND is_active='Y'
+	) AS ct 
+	ON ct.contact_client_id = pv.id
 );
 
 #PROPOSALS
@@ -369,12 +424,15 @@ CREATE VIEW view_proposals AS (
 	pps.description,
 	pps.start_date,
 	pps.stop_date,
+	ROUND(DATEDIFF(pps.stop_date,pps.start_date) / 30) + 1 as month_diff_data, 
 	ppp.price / 100 AS price,
 	ppp.price AS price_int,
 	ppp.currency,
 	ppp.quantity,
 	(ppp.price * ppp.quantity) / 100 AS amount,
 	(ppp.price * ppp.quantity) AS amount_int,
+	((ppp.price * ppp.quantity) / (ROUND(DATEDIFF(pps.stop_date,pps.start_date) / 30) + 1)) / 100 AS amount_per_month,
+	((ppp.price * ppp.quantity) / (ROUND(DATEDIFF(pps.stop_date,pps.start_date) / 30) + 1)) AS amount_per_month_int,
 	pps.is_pixel,
 	pps.is_active,
 	CONCAT((pps.id),pd.name,sm.name,pv.name,u.username,adv.corporate_name,pps.offer_name,ppp.currency) AS search
@@ -412,4 +470,5 @@ created_at DATETIME NOT NULL,
 updated_at DATETIME NOT NULL
 );
 
-SELECT (id) AS UUID, username, email FROM users WHERE account_locked='N' AND ( (username = 'marcodelaet' OR email = 'marcodelaet')  AND  authentication_string = '81dc9bdb52d04dc20036dbd8313ed055')
+
+SELECT UUID,product_id,product_name,salemodel_id,salemodel_name,provider_id,provider_name,user_id,username,client_id,client_name,agency_id,agency_name,status_id,status_name,status_percent,offer_name,description,start_date,stop_date,month_diff_data,sum(amount) as amount,sum(amount_int) as amount_int, sum(amount_per_month) as amount_per_month, sum(amount_per_month_int) as amount_per_month_int, currency,quantity,is_active FROM view_proposals WHERE user_id = '49381e2d-787b-11ec-81fa-6c0b8496fec0' AND (stop_date >= '2022-2-24' and start_date <= '2022-2-24')  group by UUID;

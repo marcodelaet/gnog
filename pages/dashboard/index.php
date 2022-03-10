@@ -17,8 +17,27 @@ if(1==2)
 <link rel="stylesheet" href="<?=$dir?>./assets/css/Button.css">
 <script src="<?=$dir?>./assets/js/<?=strtolower($moduleName)?>.js" type="text/javascript"></script>
 <script src="<?=$dir?>./assets/js/rate.js" type="text/javascript"></script>
+<script src="<?=$dir?>./assets/js/goal.js" type="text/javascript"></script>
+
+<div class="lateral-filter-container">
+    <div class="input-group col-sm-12">
+        <select class="custom-select" name="status_id" title="Status" autocomplete="status_id" multiple>
+            <?=inputFilterNoZeroSelect('status','Status','','percent','')?>
+        </select>
+    </div>
+    <div class="form-row">
+        <div class="input-group col">
+            &nbsp;
+        </div>
+    </div>
+    <div class="input-group col-sm-12   ">
+        <select class="custom-select" name="executive_id" title="Assigned Executive" autocomplete="executive_id">
+            <?=inputFilterSelect('user','Executive','','username','')?>
+        </select>
+    </div>
+</div>
 <div class='<?=strtolower($moduleName)?>-container'>
-    <div class="filter-container" style="margin-bottom:1rem;">
+    <div class="filter-container col-sm-8" style="margin-bottom:1rem;">
         <div class="inputs-filter-container">
             <form name='filter' method="post" enctype="multipart/form-data">
                 <div class="form-row">
@@ -54,35 +73,8 @@ if(1==2)
                     <div class="input-group col-sm-4">
                     </div>
                     <div class="input-group col-sm-3">
-                        <select class="custom-select" name="status_id" title="Status" autocomplete="status_id" multiple>
-                            <?=inputFilterNoZeroSelect('status','Status','','percent','')?>
-                        </select>
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="input-group col">
-                        &nbsp;
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="input-group col-sm-3">
-                        <select class="custom-select" name="executive_id" title="Assigned Executive" autocomplete="executive_id">
-                            <?=inputFilterSelect('user','Executive','','username','')?>
-                        </select>
-                    </div>
-                    <!--<div class="input-group col-sm-3">
-                        <select class="custom-select" name="advertiser_id" title="Client or Agency" autocomplete="advertiser_id">
-                            <? // inputFilterSelect('advertiser','Client / Agency','','corporate_name','')?>
-                        </select>
-                    </div>
-                    <div class="input-group col-sm-2">
-                        <select class="custom-select" name="provider_id" title="Provider" autocomplete="provider_id">
-                            <? //inputFilterSelect('provider','Provider','','name','')?>
-                        </select>
-                    </div>-->
-                    <div class="input-group col-sm-1">
-                        <select class="custom-select" name="rate_id" title="Rates" autocomplete="rate_id" onChange="updateCurrencyListValue(document.getElementsByClassName('currency-line'),this.value,document.getElementsByClassName('amount-line'),'dashboard'); getCurrencyValue(document.getElementById('goal-currency').innerText,this.value,document.getElementById('goal-0').innerText+'---'+document.getElementById('goal-1').innerText,'dashboard');">
-                            <?=inputFilterSelect('rate','Rates','','orderby','')?>
+                        <select class="custom-select" name="rate_id" title="Rates" autocomplete="rate_id" onChange="updateCurrencyListValue(document.getElementsByClassName('currency-line'),this.value,document.getElementsByClassName('amount-line'),'amount','dashboard'); updateCurrencyListMonthlyValue(document.getElementsByClassName('currency-line'),this.value,document.getElementsByClassName('amount-month-line'),'amount-month','dashboard'); getCurrencyValue(document.getElementById('goal-currency').innerText,this.value,document.getElementById('goal-0').innerText+'---'+document.getElementById('goal-1').innerText+'---'+document.getElementById('goal-2').innerText,'dashboard');">
+                            <?=inputFilterNoZeroSelect('rate','Rates','','orderby','')?>
                         </select>
                     </div>
                 </div>
@@ -101,6 +93,7 @@ if(1==2)
                             <th scope="col">Advertiser</th>
                             <th scope="col">Assign Executive</th>
                             <th scope="col">Amount</th>
+                            <th scope="col">Monthly</th>
                             <th scope="col">Status</th>
                             <th scope="col" style="text-align:center;">Settings</th>
                         </tr>
@@ -119,12 +112,12 @@ if(1==2)
             </div>
         </div>
         <div class="row">
-            <div class="col-sm-8">
+            <div class="col-sm-6">
                 &nbsp;
             </div>
-            <div class="col-sm-4 goal-section" >
+            <div class="col-sm-6 goal-section" >
                 <div class="hidden" ><spam class="goal-currency" id="goal-currency">MXN</spam></div>
-                <div ><spam class="goal-title">Goal of the month:</spam><spam class="goal-result" id="goal-0">10,000.99</spam><div>
+                <div ><spam class="goal-title">Goal of the month:</spam><spam class="goal-result" id="goal-0">10,000.99</spam><spam class="hidden" id="goal-2">1000099</spam><div>
                 <div ><spam class="goal-title">Total Reached:</spam><spam class="goal-result" id="goal-1">0.99</spam><div>
                 <div ><spam class="goal-title">% Reached:</spam><spam class="goal-result" id="goal-percent">0.01%</spam><div>
             </div>
@@ -132,6 +125,7 @@ if(1==2)
     </div>    
 </div>
 <script>
+    handleListGoalOnLoad();
     handleListOnLoad();
 </script>
 <?php 

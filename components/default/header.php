@@ -14,6 +14,10 @@
       content="GNog Media y Tecnología - CRM"
     />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="csrf-token"
+      content=""
+    />
    
     <?php
    require_once('./assets/styles.main.php');

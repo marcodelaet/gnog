@@ -85,7 +85,7 @@ function handleSubmitCSV(form){
             request.onreadystatechange = function() {
                 if (this.readyState == 4 && this.status == 200) {
                     // Typical action to be performed when the document is ready:
-                    //console.log(request.responseText);
+                    console.log(request.responseText);
                     obj = JSON.parse(request.responseText);
                     form.btnSave.innerHTML = "Upload list of Advertisers";
                     if(obj.status === "OK")
@@ -331,6 +331,9 @@ function handleListOnLoad(search) {
 
                     // Remove 
                     html += '<a href="javascript:void(0)" onclick="handleRemove(\''+obj[i].uuid_full+'\',\''+obj[i].is_active+'\')"><span class="material-icons" style="font-size:1.5rem; color:black;" title="Remove '+module + ' '+obj[i].corporate_name+'">delete</span></a>';
+
+                    // Add Contact
+                    html += '<a href="?pr=Li9wYWdlcy9hZHZlcnRpc2Vycy9jb250YWN0cy9mb3JtLnBocA==&tid='+obj[i].uuid_full+'"><span class="material-icons" style="font-size:1.5rem; color:black;" title="Add a contact to '+module + ' '+obj[i].corporate_name+'">contact_mail</span></a>';
 
                     html += '</td></tr>';
                 }

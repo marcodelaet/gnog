@@ -2,8 +2,8 @@
 
 $moduleName = 'Goal';
 $user_id       = 0;
-if(array_key_exists('uid',$_GET))
-    $user_id       = $_GET['uid'];
+if(array_key_exists('tid',$_GET))
+    $user_id       = $_GET['tid'];
 
 ?>
 <link rel="stylesheet" href="<?=$dir?>./assets/css/<?=$moduleName?>.css">
@@ -21,7 +21,7 @@ if(array_key_exists('uid',$_GET))
                     <div class="col-sm-8">
                     <label for="user_id">Executive</label>
                     <select class="custom-select" name="user_id" title="Users" autocomplete="user_id" >
-                        <?=inputFilterSelect('user','--- Everyone ---','','username',"$user_id")?>
+                        <?=inputFilterSelect('user','Choose an Executive','','username',"$user_id")?>
                     </select>
                     </div>
                     <div class="col-sm-2">
@@ -39,7 +39,7 @@ if(array_key_exists('uid',$_GET))
                         </select>
                     </div>
                     <div class="col-sm-2">
-                        <label for="start_year">Currency</label>
+                        <label for="rate_id">Currency</label>
                         <select class="custom-select" name="rate_id" title="Rates" autocomplete="rate_id" >
                             <?=inputFilterNoZeroSelect('rate','Rates','','orderby','')?>
                         </select>
@@ -49,22 +49,22 @@ if(array_key_exists('uid',$_GET))
                 <div class="form-row" style="margin-top:1rem">
                     <div class="col-sm-3">
                         <label for="start_month">Month</label>
-                        <select class="custom-select" name="start_month" title="Month" autocomplete="month">
+                        <select class="custom-select" name="start_month[]" title="Month" autocomplete="month">
                             <option value="1">January</option>
                             </select>
-                            <select class="custom-select" name="start_month" title="Month" autocomplete="month">
+                            <select class="custom-select" name="start_month[]" title="Month" autocomplete="month">
                             <option value="2">February</option>
                             </select>
-                            <select class="custom-select" name="start_month" title="Month" autocomplete="month">
+                            <select class="custom-select" name="start_month[]" title="Month" autocomplete="month">
                             <option value="3">March</option>
                             </select>
-                            <select class="custom-select" name="start_month" title="Month" autocomplete="month">
+                            <select class="custom-select" name="start_month[]" title="Month" autocomplete="month">
                             <option value="4">April</option>
                             </select>
-                            <select class="custom-select" name="start_month" title="Month" autocomplete="month">
+                            <select class="custom-select" name="start_month[]" title="Month" autocomplete="month">
                             <option value="5">May</option>
                             </select>
-                            <select class="custom-select" name="start_month" title="Month" autocomplete="month">
+                            <select class="custom-select" name="start_month[]" title="Month" autocomplete="month">
                             <option value="6">June</option>
                             </select>
                     </div>
@@ -73,8 +73,8 @@ if(array_key_exists('uid',$_GET))
                         <input
                             required
                             onkeypress="$(this).mask('#.###.##0,00', {reverse: true});"
-                            id='amount_goal'
-                            name ='amount_goal' 
+                            onchange="calcAmountTotal(<?=strtolower($moduleName)?>)"
+                            name ='amount_goal[]' 
                             placeholder="999,99"
                             title = 'Goal / Amount'
                             value=''
@@ -86,8 +86,21 @@ if(array_key_exists('uid',$_GET))
                         <input
                             required
                             onkeypress="$(this).mask('#.###.##0,00', {reverse: true});"
-                            id='amount_goal'
-                            name ='amount_goal' 
+                            onchange="calcAmountTotal(<?=strtolower($moduleName)?>)"
+                            name ='amount_goal[]' 
+                            placeholder="999,99"
+                            title = 'Goal / Amount'
+                            value=''
+                            class="form-control" 
+                            type="currency" 
+                            maxlength="20"
+                            autocomplete="amount"
+                        />
+                        <input 
+                            required
+                            onkeypress="$(this).mask('#.###.##0,00', {reverse: true});"
+                            onchange="calcAmountTotal(<?=strtolower($moduleName)?>)"
+                            name ='amount_goal[]' 
                             placeholder="999,99"
                             title = 'Goal / Amount'
                             value=''
@@ -99,8 +112,8 @@ if(array_key_exists('uid',$_GET))
                         <input
                             required
                             onkeypress="$(this).mask('#.###.##0,00', {reverse: true});"
-                            id='amount_goal'
-                            name ='amount_goal' 
+                            onchange="calcAmountTotal(<?=strtolower($moduleName)?>)"
+                            name ='amount_goal[]' 
                             placeholder="999,99"
                             title = 'Goal / Amount'
                             value=''
@@ -112,8 +125,8 @@ if(array_key_exists('uid',$_GET))
                         <input
                             required
                             onkeypress="$(this).mask('#.###.##0,00', {reverse: true});"
-                            id='amount_goal'
-                            name ='amount_goal' 
+                            onchange="calcAmountTotal(<?=strtolower($moduleName)?>)"
+                            name ='amount_goal[]' 
                             placeholder="999,99"
                             title = 'Goal / Amount'
                             value=''
@@ -125,21 +138,8 @@ if(array_key_exists('uid',$_GET))
                         <input
                             required
                             onkeypress="$(this).mask('#.###.##0,00', {reverse: true});"
-                            id='amount_goal'
-                            name ='amount_goal' 
-                            placeholder="999,99"
-                            title = 'Goal / Amount'
-                            value=''
-                            class="form-control" 
-                            type="currency" 
-                            maxlength="20"
-                            autocomplete="amount"
-                        />
-                        <input
-                            required
-                            onkeypress="$(this).mask('#.###.##0,00', {reverse: true});"
-                            id='amount_goal'
-                            name ='amount_goal' 
+                            onchange="calcAmountTotal(<?=strtolower($moduleName)?>)"
+                            name ='amount_goal[]' 
                             placeholder="999,99"
                             title = 'Goal / Amount'
                             value=''
@@ -154,22 +154,22 @@ if(array_key_exists('uid',$_GET))
                     </div>
                     <div class="col">
                         <label for="start_month">Month</label>
-                            <select class="custom-select" name="start_month" title="Month" autocomplete="month">
+                            <select class="custom-select" name="start_month[]" title="Month" autocomplete="month">
                             <option value="7">July</option>
                             </select>
-                            <select class="custom-select" name="start_month" title="Month" autocomplete="month">
+                            <select class="custom-select" name="start_month[]" title="Month" autocomplete="month">
                             <option value="8">August</option>
                             </select>
-                            <select class="custom-select" name="start_month" title="Month" autocomplete="month">
+                            <select class="custom-select" name="start_month[]" title="Month" autocomplete="month">
                             <option value="9">September</option>
                             </select>
-                            <select class="custom-select" name="start_month" title="Month" autocomplete="month">
+                            <select class="custom-select" name="start_month[]" title="Month" autocomplete="month">
                             <option value="10">Octuber</option>
                             </select>
-                            <select class="custom-select" name="start_month" title="Month" autocomplete="month">
+                            <select class="custom-select" name="start_month[]" title="Month" autocomplete="month">
                             <option value="11">November</option>
                             </select>
-                            <select class="custom-select" name="start_month" title="Month" autocomplete="month">
+                            <select class="custom-select" name="start_month[]" title="Month" autocomplete="month">
                             <option value="12">December</option> 
                             </select>
                     </div>
@@ -178,8 +178,8 @@ if(array_key_exists('uid',$_GET))
                         <input
                             required
                             onkeypress="$(this).mask('#.###.##0,00', {reverse: true});"
-                            id='amount_goal'
-                            name ='amount_goal' 
+                            onchange="calcAmountTotal(<?=strtolower($moduleName)?>)"
+                            name ='amount_goal[]' 
                             placeholder="999,99"
                             title = 'Goal / Amount'
                             value=''
@@ -191,8 +191,8 @@ if(array_key_exists('uid',$_GET))
                         <input
                             required
                             onkeypress="$(this).mask('#.###.##0,00', {reverse: true});"
-                            id='amount_goal'
-                            name ='amount_goal' 
+                            onchange="calcAmountTotal(<?=strtolower($moduleName)?>)"
+                            name ='amount_goal[]' 
                             placeholder="999,99"
                             title = 'Goal / Amount'
                             value=''
@@ -204,8 +204,8 @@ if(array_key_exists('uid',$_GET))
                         <input
                             required
                             onkeypress="$(this).mask('#.###.##0,00', {reverse: true});"
-                            id='amount_goal'
-                            name ='amount_goal' 
+                            onchange="calcAmountTotal(<?=strtolower($moduleName)?>)"
+                            name ='amount_goal[]' 
                             placeholder="999,99"
                             title = 'Goal / Amount'
                             value=''
@@ -217,8 +217,8 @@ if(array_key_exists('uid',$_GET))
                         <input
                             required
                             onkeypress="$(this).mask('#.###.##0,00', {reverse: true});"
-                            id='amount_goal'
-                            name ='amount_goal' 
+                            onchange="calcAmountTotal(<?=strtolower($moduleName)?>)"
+                            name ='amount_goal[]' 
                             placeholder="999,99"
                             title = 'Goal / Amount'
                             value=''
@@ -230,8 +230,8 @@ if(array_key_exists('uid',$_GET))
                         <input
                             required
                             onkeypress="$(this).mask('#.###.##0,00', {reverse: true});"
-                            id='amount_goal'
-                            name ='amount_goal' 
+                            onchange="calcAmountTotal(<?=strtolower($moduleName)?>)"
+                            name ='amount_goal[]' 
                             placeholder="999,99"
                             title = 'Goal / Amount'
                             value=''
@@ -243,8 +243,8 @@ if(array_key_exists('uid',$_GET))
                         <input
                             required
                             onkeypress="$(this).mask('#.###.##0,00', {reverse: true});"
-                            id='amount_goal'
-                            name ='amount_goal' 
+                            onchange="calcAmountTotal(<?=strtolower($moduleName)?>)"
+                            name ='amount_goal[]' 
                             placeholder="999,99"
                             title = 'Goal / Amount'
                             value=''
@@ -264,8 +264,9 @@ if(array_key_exists('uid',$_GET))
                         <input
                             required
                             onkeypress="$(this).mask('#.###.##0,00', {reverse: true});"
-                            id='amount_goal'
-                            name ='amount_goal' 
+                            id='amount_total'
+                            name ='amount_total'
+                            readonly=true 
                             placeholder="999,99"
                             title = 'Goal / Amount'
                             value=''
@@ -281,6 +282,7 @@ if(array_key_exists('uid',$_GET))
                 </div>
             </div>
             <div class="inputs-button-container">
+                <input type="hidden" name="auth_api" value="sj83fnfn8dsndvudsnudvnus">
                 <button class="button" name="btnSave" type="button" onClick="handleSubmit(<?=strtolower($moduleName)?>)" >Save</button>
             </div>
         </form>
@@ -297,35 +299,6 @@ if(array_key_exists('uid',$_GET))
      // echo "IP: ".$myIP."<BR/>Region: ".$region;
       ?>
 
-<script>
-    var input = document.querySelector("#mobile");
-    window.intlTelInput(input, {
-      // allowDropdown: false,
-      // autoHideDialCode: false,
-      // autoPlaceholder: "off",
-      // dropdownContainer: document.body,
-      // excludeCountries: ["us"],
-      // formatOnDisplay: false,
-      // geoIpLookup: function(callback) {
-      //   $.get("http://ipinfo.io", function() {}, "jsonp").always(function(resp) {
-      //     var countryCode = (resp && resp.country) ? resp.country : "";
-      //     callback(countryCode);
-      //   });
-      // },
-      // hiddenInput: "full_number",
-      initialCountry: "mx",
-      // localizedCountries: { 'de': 'Deutschland' },
-      // nationalMode: false,
-      // onlyCountries: ['us', 'gb', 'ch', 'ca', 'do'],
-      // placeholderNumberType: "MOBILE",
-       preferredCountries: ['mx', 'br', 'us'],
-      // separateDialCode: true,
-      utilsScript: "/assets/js/build/utils.js",
-    });/*
-$("input").intlTelInput({
-    utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/8.4.6/js/utils.js"
-  });*/
-</script>
     </div>    
 </div>
 

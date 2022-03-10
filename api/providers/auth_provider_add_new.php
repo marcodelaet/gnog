@@ -38,8 +38,8 @@ if(array_key_exists('auth_api',$_REQUEST)){
             $phone         = $_GET['phone'];
     }
 
-    $columns    = "id, product_id, salemodel_id, product_price, currency, name, webpage_url, address, main_contact_name, main_contact_surname, main_contact_email, main_contact_position, phone_international_code, phone_number, is_active, created_at, updated_at";
-    $values     = "(UUID()),('$product_id'),('$salemodel_id'),$product_price,'$currency','$name','$webpage_url','$address','$main_contact_name','$main_contact_surname','$main_contact_email','$main_contact_position','$phone_ddi','$phone','Y',now(),now()";
+    $columns    = "id, product_id, salemodel_id, product_price, currency, name, webpage_url, address, is_active, created_at, updated_at";
+    $values     = "(UUID()),('$product_id'),('$salemodel_id'),$product_price,'$currency','$name','$webpage_url','$address','Y',now(),now()";
     $table      = "providers";
 
     // Query creation

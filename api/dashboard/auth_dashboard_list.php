@@ -20,10 +20,9 @@ if(array_key_exists('auth_api',$_REQUEST)){
     $group          = 'user';
 
     // setting query
-    $columns        = "UUID,product_id,product_name,salemodel_id,salemodel_name,provider_id,provider_name,user_id,username,client_id,client_name,agency_id,agency_name,status_id,status_name,status_percent,offer_name,description,start_date,stop_date,sum(amount) as amount,sum(amount_int) as amount_int,currency,quantity,is_active";
+    $columns        = "UUID,product_id,product_name,salemodel_id,salemodel_name,provider_id,provider_name,user_id,username,client_id,client_name,agency_id,agency_name,status_id,status_name,status_percent,offer_name,description,start_date,stop_date,month_diff_data,sum(amount) as amount,sum(amount_int) as amount_int, sum(amount_per_month) as amount_per_month, sum(amount_per_month_int) as amount_per_month_int, currency,quantity,is_active";
     $tableOrView    = "view_proposals";
     $orderBy        = " group by UUID";
-    
 
     // filters
     $filters                = '';
@@ -37,6 +36,15 @@ if(array_key_exists('auth_api',$_REQUEST)){
                 $filters .= " AND ";
             $jocker         = $_REQUEST['search'];
             $filters        .= " search like '%$jocker%'";
+        }
+    }
+
+    if(array_key_exists('date',$_REQUEST)){
+        if($_REQUEST['date']!==''){
+            if($filters != '')
+                $filters .= " AND ";
+            $fullDate         = $_REQUEST['date'];
+            $filters        .= " (stop_date >= '$fullDate' and start_date <= '$fullDate')";
         }
     }
 

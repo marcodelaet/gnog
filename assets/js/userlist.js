@@ -1,6 +1,8 @@
 document.getElementById('nav-item-users').setAttribute('class',document.getElementById('nav-item-users').getAttribute('class').replace(' active','') + ' active');
+var csrf_token = $('meta[name="csrf-token"]').attr('content');
+module = 'user';
 function handleRemove(tid,locked_status){
-    authApi     = 'dasdasdkasdeewef';
+    authApi     = csrf_token;
     filters     = '&tid='+tid+'&lk='+locked_status;
     
     locat       = window.location.hostname;
@@ -10,7 +12,7 @@ function handleRemove(tid,locked_status){
     color_user_status = '#d60b0e';
     if(locked_status == 'Y')
         color_user_status = '#298c3d';
-    const requestURL = window.location.protocol+'//'+locat+'api/users/auth_user_remove.php?auth_api='+authApi+filters;
+    const requestURL = window.location.protocol+'//'+locat+'api/'+module+'s/auth_'+module+'_remove.php?auth_api='+authApi+filters;
     //alert(requestURL);
     const request = new XMLHttpRequest();
     request.onreadystatechange = function() {
@@ -29,7 +31,7 @@ function handleOnLoad(search) {
     //if (form.username.value !== '' || form.email.value !== '' || form.mobile.value !== '' || form.search.value !== '') {
     //form.submit();
     errors      = 0;
-    authApi     = 'dasdasdkasdeewef';
+    authApi     = csrf_token;
     locat       = window.location.hostname;
 
     filters     = '';
@@ -46,7 +48,7 @@ function handleOnLoad(search) {
 
     } else{
         tableList   = document.getElementById('listUsers');
-        const requestURL = window.location.protocol+'//'+locat+'api/users/auth_user_view.php?auth_api='+authApi+filters;
+        const requestURL = window.location.protocol+'//'+locat+'api/'+module+'s/auth_'+module+'_view.php?auth_api='+authApi+filters;
         //alert(requestURL);
         const request = new XMLHttpRequest();
         request.onreadystatechange = function() {
@@ -65,6 +67,10 @@ function handleOnLoad(search) {
 
                     // Edit form
                     html += '<a href="?pr=Li9wYWdlcy91c2Vycy9mb3JtZWRpdC5waHA=&tid='+obj[i].uuid_full+'"><span class="material-icons" style="font-size:1.5rem; color:black;" title="Edit user '+obj[i].username+'">edit</span></a>';
+
+                    // Goal
+                    html += '<a href="?pr=Li9wYWdlcy91c2Vycy9nb2FsL2Zvcm0ucGhw&tid='+obj[i].uuid_full+'"><span class="material-icons" style="font-size:1.5rem; color:black;" title="Set Goal to '+obj[i].username+'">flag</span></a>';
+
 
                     // Remove 
                     html += '<a href="javascript:void(0)" onclick="handleRemove(\''+obj[i].uuid_full+'\',\''+obj[i].account_locked+'\')"><span class="material-icons" style="font-size:1.5rem; color:black;" title="Remove user '+obj[i].username+'">delete</span></a>';

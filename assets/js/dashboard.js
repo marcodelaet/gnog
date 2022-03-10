@@ -1,10 +1,17 @@
 document.getElementById('nav-item-dashboard').setAttribute('class',document.getElementById('nav-item-dashboard').getAttribute('class').replace(' active','') + ' active');
-
-module  = 'dashboard';
+var csrf_token = $('meta[name="csrf-token"]').attr('content');
+module_dash  = 'dashboard';
 function handleListOnLoad(search) {
     errors      = 0;
-    authApi     = 'dasdasdkasdeewef';
+    authApi     = csrf_token;
     locat       = window.location.hostname;
+
+    // getting today's date
+    var today   = new Date();
+    var day    = today.getDate();
+    var month   = today.getMonth()+1; // getMonth starts at 0
+    var year    = today.getFullYear();
+    var mySQLFullDate = year+'-'+month+'-'+day;
 
     filters     = '';
     if(typeof search == 'undefined')
@@ -13,6 +20,8 @@ function handleListOnLoad(search) {
         filters     += '&search='+search;
     }
 
+    filters += '&date='+mySQLFullDate;
+
     if(locat.slice(-1) != '/')
         locat += '/';
 
@@ -20,7 +29,7 @@ function handleListOnLoad(search) {
 
     } else{
         tableList   = document.getElementById('listDashboard');
-        const requestURL = window.location.protocol+'//'+locat+'api/dashboard/auth_dashboard_list.php?auth_api='+authApi+filters;
+        const requestURL = window.location.protocol+'//'+locat+'api/'+module_dash+'/auth_'+module_dash+'_list.php?auth_api='+authApi+filters;
         //alert(requestURL);
         const request = new XMLHttpRequest();
         request.onreadystatechange = function() {
@@ -56,11 +65,13 @@ function handleListOnLoad(search) {
                     if(typeof(obj[i].agency_name) === 'string')
                         agency = ' / '+obj[i].agency_name;
                     amount = obj[i].amount_int / 100;
-                    amount_total+= parseInt(obj[i].amount_int);
+                    amount_month = obj[i].amount_per_month_int / 100;
+                    amount_total+= parseInt(obj[i].amount_per_month_int);
                     amount_total_show   = amount_total / 100;
+                    percentGoalShow     = (100 * amount_total)/parseInt(document.getElementById('goal-2').innerText);
                     start_date  = new Date(obj[i].start_date);
                     stop_date   = new Date(obj[i].stop_date);
-                    html += '<tr><td>'+obj[i].offer_name+'</td><td nowrap>'+obj[i].client_name+agency+'</td><td nowrap>'+obj[i].username+'</td><td nowrap><spam style="display:none;" class="currency-line" id="currency-'+(i)+'">'+obj[i].currency+'</spam><spam class="amount-line" id="amount-'+(i)+'">'+formatter.format(amount)+'</spam></td><td style="text-align:center;"><span id="locked_status_'+obj[i].UUID+'" class="material-icons" title="'+obj[i].status_percent+'% '+obj[i].status_name+'" style="color:'+color_status+'">thermostat</span></td><td nowrap style="text-align:center;">';
+                    html += '<tr><td>'+obj[i].offer_name+'</td><td nowrap>'+obj[i].client_name+agency+'</td><td nowrap>'+obj[i].username+'</td><td nowrap><spam style="display:none;" class="currency-line" id="currency-'+(i)+'">'+obj[i].currency+'</spam><spam class="amount-line" id="amount-'+(i)+'">'+formatter.format(amount)+'</spam></td><td nowrap><spam class="amount-month-line" id="amount-month-'+(i)+'">'+formatter.format(amount_month)+'</spam></td><td style="text-align:center;"><span id="locked_status_'+obj[i].UUID+'" class="material-icons" title="'+obj[i].status_percent+'% '+obj[i].status_name+'" style="color:'+color_status+'">thermostat</span></td><td nowrap style="text-align:center;">';
                     // information card
                     html += '<a href="?pr=Li9wYWdlcy9wcm9wb3NhbHMvaW5mby5waHA=&tid='+obj[i].UUID+'"><span class="material-icons" style="font-size:1.5rem; color:black;" title="Information Card '+obj[i].offer_name+'">info</span></a>';
 
@@ -74,6 +85,7 @@ function handleListOnLoad(search) {
                 }
                 tableList.innerHTML = html;
                 document.getElementById('goal-1').innerHTML = formatter.format(amount_total_show);
+                document.getElementById('goal-percent').innerHTML = percentGoalShow.toFixed(2) + "%";
             }
             else{
                 html = '<tr><td colspan="8"><div style="margin-left:45%; margin-right:45%;" class="spinner-border" style="text-align:center;" role="status">';
