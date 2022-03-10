@@ -1,11 +1,10 @@
 var csrf_token = $('meta[name="csrf-token"]').attr('content');
-//alert(csrf_token);
 
-function handleEditSubmit(tid,form) {
+function handleEditProfileSubmit(tid,form) {
     if (form.username.value !== '' && form.email.value !== '' && form.mobile.value !== '') {
         //form.submit();
         errors      = 0;
-        authApi     = 'dasdasdkasdeewef';
+        authApi     = csrf_token;
         filters     = '&tid='+tid;
         email       = form.email.value;
         if(email !== ''){
@@ -61,9 +60,9 @@ function handleEditSubmit(tid,form) {
         alert('Please, fill all required fields (*)');
 }
 
-function handleOnLoad(tid) {
+function handleProfileOnLoad(tid) {
     errors      = 0;
-    authApi     = 'dasdasdkasdeewef';
+    authApi     = csrf_token;
     locat       = window.location.hostname;
 
     filters     = '&tid='+tid;

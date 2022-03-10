@@ -17,6 +17,7 @@ $target_file    = $target_dir . basename($_FILES["advertiser_file"]["name"]);
 $uploadOk       = 1;
 $message        = '';
 $imageFileType  = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
+$commaSymbol    = ";"; // ",";
 
 $module = 'advertisers';
 
@@ -49,9 +50,10 @@ if ($uploadOk > 0) {
                 $columns = str_replace('main_contact_internationalcode','phone_international_code',$columns);
                 $columns = str_replace('main_contact_areacode','phone_prefix',$columns);
                 $columns = str_replace('main_contact_phonenumber','phone_number',$columns);
+                $columns = str_replace('corporate_name','corporate_name',$columns);
                 $columns = str_replace(';',',',$columns);
                 $columns = "id,$columns,is_active,created_at,updated_at";
-                $arrayColumns = explode(",",$columns); 
+                $arrayColumns = explode($commaSymbol,$columns); 
             } else {
                 $posStart[0]   = 0;
                 $posFinal[0]   = strpos($line,'"');
@@ -59,7 +61,7 @@ if ($uploadOk > 0) {
                 while($posFinal[$index-1] > 0) { 
                     $addictive   = 0;
                     $posFinal[$index]   = $posStart[$index-1] + $posFinal[$index-1];
-                    $numberOfCommas = count(explode(",",substr($line,$posStart[$index-1],$posFinal[$index-1]))) - 1;
+                    $numberOfCommas = count(explode($commaSymbol,substr($line,$posStart[$index-1],$posFinal[$index-1]))) - 1;
                     $numberOfQuotes = count(explode('"',substr($line,$posStart[$index-1],$posFinal[$index-1]))) - 1;
                     if($index >= 1){
                         $commas         = 2;
@@ -67,7 +69,7 @@ if ($uploadOk > 0) {
                         
                     }
                     if($index%2 != 0){
-                        $line1  = str_replace(",","|||",substr($line,$posStart[$index-1],$posFinal[$index-1]));
+                        $line1  = str_replace($commaSymbol,"|||",substr($line,$posStart[$index-1],$posFinal[$index-1]));
                         $line   = str_replace(substr($line,$posStart[$index-1],$posFinal[$index-1]),$line1,$line);
                         $addictive       = ($commas * $numberOfCommas) + ($quotes * $numberOfQuotes)+1;
                     } else { $addictive++; }
@@ -76,21 +78,28 @@ if ($uploadOk > 0) {
                     $index++;
                 }
                 $posFinal[$index]   = strlen($line);
-                $line1  = str_replace(",","|||",substr($line,$posStart[$index-1],$posFinal[$index]));
+                $line1  = str_replace($commaSymbol,"|||",substr($line,$posStart[$index-1],$posFinal[$index]));
                 $line   = str_replace(substr($line,$posStart[$index-1],$posFinal[$index]),$line1,$line);
                 $line = str_replace('"','',$line);
                 $arrayLine  = explode("|||",$line);
-                $line   = implode("','",$arrayLine);
-                $line   = "'".$line."'";
+                for($al=0;$al < count($arrayLine);$al++){
+                    $arrayLine[$al]     = "'".$arrayLine[$al]."'";
+                    if($arrayLine[$al]  == "''"){
+                        $arrayLine[$al] = "null";
+                    }
+                }
+                $line   = implode($commaSymbol,$arrayLine);
+                //$line   = "'".$line."'";
+                $line = str_replace(';',',',$line);
                 $line   = "UUID(),$line,'Y',now(),now()";
                 
                 // creating INSERT sql
                 $sql_insert_line = "INSERT INTO $module ($columns) VALUES ($line)";
-
+                //echo $sql_insert_line." ---- ";
                 // saving lines on database
                 $rs = $DB->executeInstruction($sql_insert_line);
 
-                //echo "<BR/><BR/>" . $sql_insert_line;
+               // echo "<BR/><BR/>" . $sql_insert_line;
                 $return = json_encode(["status" => "OK"]);
             }
         }

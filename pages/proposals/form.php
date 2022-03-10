@@ -12,7 +12,7 @@ $moduleName = 'Proposal';
         <div class="form-header">New <?=$moduleName?></div>
         <form name='<?=strtolower($moduleName)?>' method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
             <div class="inputs-form-container">
-            <div class="form-row">
+                <div class="form-row">
                     <div class="col custom-control custom-switch" style="text-align:right;">
                         <input type="checkbox" class="custom-control-input" id="customSwitch1" name="pixel">
                         <label class="custom-control-label" for="customSwitch1">Pixel required</label>

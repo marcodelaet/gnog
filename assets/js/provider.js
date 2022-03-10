@@ -7,7 +7,7 @@ function handleSubmit(form) {
     if (form.name.value !== '' && form.address.value !== '' && form.main_contact_email.value !== '' || product_id != '0' || salemodel_id != '0') {
         //form.submit();
         errors      = 0;
-        authApi     = 'dasdasdkasdeewef';
+        authApi     = csrf_token;
         message     = '';
 
         xname                   = form.name.value;
@@ -66,7 +66,7 @@ function handleSubmitCSV(form){
     if (form.provider_file.value !== '') {
         //form.submit();
         errors      = 0;
-        authApi     = 'dasdasdkasdeewef';
+        authApi     = csrf_token;
 
         file        = form.provider_file;
         var formData = new FormData(form);
@@ -117,7 +117,7 @@ function handleEditSubmit(tid,form) {
         //form.submit();
    
         errors      = 0;
-        authApi     = 'dasdasdkasdeewef';
+        authApi     = csrf_token;
         
         sett     = '&tid='+tid;
         xname          = form.name.value;
@@ -207,7 +207,7 @@ function handleEditSubmit(tid,form) {
 
 function handleViewOnLoad(tid) {
     errors      = 0;
-    authApi     = 'dasdasdkasdeewef';
+    authApi     = csrf_token;
     locat       = window.location.hostname;
 
     filters     = '&tid='+tid;
@@ -263,7 +263,7 @@ function handleViewOnLoad(tid) {
 
 function handleOnLoad(tid,form) {
     errors      = 0;
-    authApi     = 'dasdasdkasdeewef';
+    authApi     = csrf_token;
     locat       = window.location.hostname;
 
     filters     = '&tid='+tid;
@@ -319,7 +319,7 @@ function handleOnLoad(tid,form) {
 
 function handleListOnLoad(search) {
     errors      = 0;
-    authApi     = 'dasdasdkasdeewef';
+    authApi     = csrf_token;
     locat       = window.location.hostname;
 
     filters     = '';
@@ -345,28 +345,35 @@ function handleListOnLoad(search) {
                 obj         = JSON.parse(request.responseText);
                 html        = '';
                 country     = '';
+                
                 for(var i=0;i < obj.length; i++){
                     color_status = '#d60b0e';
                     if(obj[i].is_active == 'Y')
                         color_status = '#298c3d';
 
-                        switch (obj[i].phone_international_code) {
-                            case '52':
-                                country = 'MEX';
-                                break;
-                            case '55':
-                                country = 'BRA';
-                                break;
-                            case '1':
-                                country = 'USA';
-                                break;
-                            default:
-                                country = 'XXX';
-                        }
-                    phone_number = obj[i].phone;
-                    if(obj[0].phone_prefix!='')
-                        phone_number = obj[0].phone_international_code+obj[0].phone_prefix+obj[0].phone_number.replace(" ","");
-                    html += '<tr><td>'+obj[i].name+'</td><td>'+obj[i].webpage_url+'</td><td nowrap>+'+phone_number+'</td><td nowrap>'+obj[i].contact+'</td><td style="text-align:center;"><span id="locked_status_'+obj[i].uuid_full+'" class="material-icons" style="color:'+color_status+'">attribution</span></td><td nowrap style="text-align:center;">';
+                    switch (obj[i].phone_international_code) {
+                        case '52':
+                            country = 'MEX';
+                            break;
+                        case '55':
+                            country = 'BRA';
+                            break;
+                        case '1':
+                            country = 'USA';
+                            break;
+                        default:
+                            country = 'XXX';
+                    }
+                    phone_number    = "";
+                    contact         = "";
+                    alert(typeof(obj[i].contact));
+                    if((obj[i].contact !== 'null') || (obj[i].contact !== null)){
+                        phone_number    = obj[i].phone;
+                        contact         = obj[i].contact;
+                        if(obj[0].phone_prefix!='')
+                            phone_number = obj[0].phone_international_code+obj[0].phone_prefix+obj[0].phone_number.replace(" ","");
+                    }
+                    html += '<tr><td>'+obj[i].name+'</td><td>'+obj[i].webpage_url+'</td><td nowrap>+'+phone_number+'</td><td nowrap>'+contact+'</td><td style="text-align:center;"><span id="locked_status_'+obj[i].uuid_full+'" class="material-icons" style="color:'+color_status+'">attribution</span></td><td nowrap style="text-align:center;">';
                     // information card
                     html += '<a href="?pr=Li9wYWdlcy9wcm92aWRlcnMvaW5mby5waHA=&tid='+obj[i].uuid_full+'"><span class="material-icons" style="font-size:1.5rem; color:black;" title="Information Card '+obj[i].corporate_name+'">info</span></a>';
 
@@ -396,7 +403,7 @@ function handleListOnLoad(search) {
 }
 
 function handleRemove(tid,locked_status){
-    authApi     = 'dasdasdkasdeewef';
+    authApi     = csrf_token;
     filters     = '&tid='+tid+'&lk='+locked_status;
     
     locat       = window.location.hostname;

@@ -34,7 +34,7 @@ if(array_key_exists('auth_api',$_REQUEST)){
 
 
     // Query creation
-    $sql = "SELECT left(uuid,13) as uuid, uuid as uuid_full, corporate_name, address, concat(main_contact_name,' ', main_contact_surname,' (', main_contact_email,')') as contact, main_contact_name, main_contact_surname, main_contact_email, main_contact_position, phone_international_code, phone_prefix, phone_number, is_agency, is_active, concat('+',phone_international_code,phone_number) as phone, is_active FROM view_advertisers $filters";
+    $sql = "SELECT left(uuid,13) as uuid, uuid as uuid_full, corporate_name, address, concat(main_contact_name,' ', main_contact_surname,' (', main_contact_email,')') as contact, contact_name, contact_surname, contact_email, contact_position, phone_international_code, phone_prefix, phone_number, is_agency, is_active, concat('+',phone_international_code,phone_number) as phone, is_active FROM view_advertisers $filters";
     // LIST data
    // echo $sql;
     $rs = $DB->getData($sql);

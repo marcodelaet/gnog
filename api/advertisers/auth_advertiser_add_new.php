@@ -38,8 +38,12 @@ if(array_key_exists('auth_api',$_REQUEST)){
             $phone         = $_REQUEST['phone'];
     }
 
+    $module     = "advertisers";
+    $columns    = "id,is_agency,corporate_name,address,is_active,created_at,updated_at";
+    $values     = "(UUID()),'$agency','$corporate_name','$address','Y',now(),now()";
+
     // Query creation
-    $sql = "INSERT INTO advertisers (id,is_agency,corporate_name,address,main_contact_name,main_contact_surname,main_contact_email,main_contact_position,phone_international_code,phone_number,is_active,created_at,updated_at) VALUES ((UUID()),'$agency','$corporate_name','$address','$main_contact_name','$main_contact_surname','$main_contact_email','$main_contact_position','$phone_ddi','$phone','Y',now(),now())";
+    $sql = "INSERT INTO $module ($columns) VALUES ($values)";
     // INSERT data
     $rs = $DB->executeInstruction($sql);
 

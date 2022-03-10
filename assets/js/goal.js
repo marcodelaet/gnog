@@ -1,107 +1,84 @@
 lang        = 'es-MX';
-module      = 'proposal';
+module      = 'goal';
 start_index = 0;
-document.getElementById('nav-item-proposals').setAttribute('class',document.getElementById('nav-item-proposals').getAttribute('class').replace(' active','') + ' active');
 var csrf_token = $('meta[name="csrf-token"]').attr('content');
 //alert(csrf_token);
 
 proposal_id = '';
 
-function handleSubmit(form) {
-    if (form.name.value !== '' && form.client_id.value !== '' && form.start_date.value !== '' || form.client_id.value !== '0' || form.agency_id.value !== '0' || form.total.value !== '0,00' || form.status_id.value !== '0') {
-        //form.submit();
-        errors      = 0;
-        authApi     = 'dasdasdkasdeewef';
-        message     = '';
+function handleGoalSubmit(form) {
+    user_id = document.getElementsByName('user_id').value;
+    rate    = document.getElementsByName('rate_id').value;
+    year    = document.getElementsByName('start_year').value;
+    amount  = document.getElementsByName('amount_goal[]');
+    month   = document.getElementsByName('start_month[]');
+    
+    var formData = new FormData(form);
+    //form.submit();
+    errors      = 0;
+    authApi     = csrf_token;
+    message     = '';
 
-        pixel      = 'N';
-        if(form.pixel.checked)
-            pixel               = 'Y';
-        xname                   = form.name.value;
-        client_id               = form.client_id.value;
-        agency_id               = form.agency_id.value;
-        description             = form.description.value;
-        start_date              = form.start_date.value;
-        stop_date               = form.stop_date.value;
-        total                   = form.total.value;
-        status_id               = form.status_id.value;
-        currency                = form.currency.value;
+    locat       = window.location.hostname;
+    if(locat.slice(-1) != '/')
+        locat += '/';
+    
+    if(form.user_id.value == '0'){
+        message += "\n- Choose an executive";
+        errors++;
+    }
 
-        objProduct      = document.getElementsByName('product_id[]');
-        objSaleModel    = document.getElementsByName('salemodel_id[]');
-        objPrice        = document.getElementsByName('price[]');
-        
-        objQuantity     = document.getElementsByName('quantity[]');
-        objProviderId   = document.getElementsByName('provider_id[]');
-
-        locat       = window.location.hostname;
-        if(locat.slice(-1) != '/')
-            locat += '/';
-
-        if(errors > 0){
-            alert(message);
-        } else{
-            const requestURL = window.location.protocol+'//'+locat+'api/proposals/auth_proposal_add_new.php?auth_api='+authApi+'&name='+xname+'&pixel='+pixel+'&client_id='+client_id+'&agency_id='+agency_id+'&description='+description+'&start_date='+start_date+'&stop_date='+stop_date+'&status_id='+status_id;
-            //alert(requestURL);
-            const request = new XMLHttpRequest();
-            request.onreadystatechange = function() {
-                if (this.readyState == 4 && this.status == 200) {
-                    // Typical action to be performed when the document is ready:
-                    obj = JSON.parse(request.responseText);
-                    proposal_id = obj[0].UUID;
-                   
-                    //alert('len: ' + objProduct.length);
-                    virg            = '';
-                    product_id      = '';
-                    salemodel_id    = '';
-                    price           = '';
-                    quantity        = '';
-                    provider_id     = '';
-
-                    for(i=0; i < objProduct.length;i++)
-                    {
-                        if(i>0)
-                            virg = ',';
-
-                        xprice  = '';
-                        axPrice = objPrice[i].value.split(",");
-                        for(j=0;j < axPrice.length;j++){
-                            apPrice     = axPrice[j].split(".");
-                            for(k=0;k < apPrice.length;k++){
-                                xprice      += apPrice[k];
-                            }
-                        }
-                        product_id      += virg + objProduct[i].value;
-                        salemodel_id    += virg + objSaleModel[i].value;
-                        price           += virg + xprice;
-                        quantity        += virg + objQuantity[i].value;
-                        provider_id     += virg + objProviderId[i].value;
-                        
-                    }
-                    addProduct('['+product_id+']','['+salemodel_id+']','['+price+']',currency,'['+quantity+']','['+provider_id+']',proposal_id);
-
-                    form.btnSave.innerHTML = "Save";
-                    //alert('Status: '+obj.status);
-                    window.location.href = '?pr=Li9wYWdlcy9wcm9wb3NhbHMvdGtwL2luZGV4LnBocA==';
-                }
-                else{
-                    form.btnSave.innerHTML = "Saving...";
-                }
-            };
-            request.open('GET', requestURL, true);
-            //request.responseType = 'json';
-            request.send();
+    
+    for(i=0;i<amount.length;i++){
+        if(amount[i].value == ''){
+            message += "\n- Please, fill amount value, month "+(i+1)+"!";
+            errors++;
         }
-    } else
-        alert('Please, fill all required fields (*)');
+    }
+
+    if(errors > 0){
+        alert(message);
+    } else{
+        const requestURL = window.location.protocol+'//'+locat+'api/'+module+'s/auth_'+module+'_add_new.php';
+        //alert(requestURL);
+        const request = new XMLHttpRequest();
+        request.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                //console.log(request.responseText);
+                // Typical action to be performed when the document is ready:
+                obj = JSON.parse(request.responseText);
+                
+                //alert('len: ' + objProduct.length);
+
+                form.btnSave.innerHTML = "Save";
+                //alert('Status: '+obj.status);
+                if(obj.status == 'OK'){
+                    if(!confirm("Goal recorded successfully! Create goals to another executive?"))
+                        window.location.href = '?pr=Li9wYWdlcy91c2Vycy9pbmRleC5waHA=';
+                    else { 
+                        // do nothing
+                    }
+                }
+                else {
+                    alert('Please, fill all the amount values!');
+                }
+            }
+            else{
+                form.btnSave.innerHTML = "Saving...";
+            }
+        };
+        request.open('POST', requestURL, true);
+        //request.responseType = 'json';
+        request.send(formData);
+    }
 }
 
-function handleEditSubmit(tid,form) {
+function handleEditGoalSubmit(tid,form) {
     if (form.name.value !== '' && form.address.value !== '' && form.main_contact_email.value !== '' || product_id != '0' || salemodel_id != '0') {
         //form.submit();
    
         errors      = 0;
-        authApi     = 'dasdasdkasdeewef';
+        authApi     = csrf_token;
         
         sett     = '&tid='+tid;
         xname          = form.name.value;
@@ -189,12 +166,17 @@ function handleEditSubmit(tid,form) {
         alert('Please, fill all required fields (*)');
 }
 
-function handleViewOnLoad(tid) {
+function handleListGoalOnLoad() {
     errors      = 0;
-    authApi     = 'dasdasdkasdeewef';
-    locat       = window.location.hostname;
+    authApi     = csrf_token;
+    var locat       = window.location.hostname;
 
-    filters     = '&tid='+tid;
+    // getting today's date
+    var today   = new Date();
+    var month   = today.getMonth()+1; // getMonth starts at 0
+    var year    = today.getFullYear(); 
+
+    var filters     = '&year='+year+'&month='+month;
 
     if(locat.slice(-1) != '/')
         locat += '/';
@@ -202,10 +184,9 @@ function handleViewOnLoad(tid) {
     if(errors > 0){
 
     } else{
-        const requestURL = window.location.protocol+'//'+locat+'api/proposals/auth_proposal_get.php?auth_api='+authApi+filters;
+        const requestURL = window.location.protocol+'//'+locat+'api/'+module+'s/auth_'+module+'_list.php?auth_api='+authApi+filters;
         //alert(requestURL);
         const request   = new XMLHttpRequest();
-        position        = '*****';
         request.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {
                 obj = JSON.parse(request.responseText);
@@ -219,18 +200,9 @@ function handleViewOnLoad(tid) {
                     //minimumFractionDigits: 2, // (this suffices for whole numbers, but will print 2500.10 as $2,500.1)
                     //maximumFractionDigits: 0, // (causes 2500.99 to be printed as $2,501)
                 });
-                if(obj[0].main_contact_position!='')
-                    position = obj[0].main_contact_position;
-                document.getElementById('provider_name').innerHTML          = obj[0].name;
-                document.getElementById('group').innerHTML                  = obj[0].webpage_url;
-                document.getElementById('card-contact-fullname').innerHTML  = obj[0].main_contact_name + ' ' + obj[0].main_contact_surname
-                document.getElementById('card-contact-position').innerHTML  = ' ('+position+')';
-                document.getElementById('card-address').innerHTML           = obj[0].address;
-                document.getElementById('card-email').innerHTML             = obj[0].main_contact_email;
-                document.getElementById('card-phone').innerHTML             = '+'+obj[0].phone_international_code.replace(" ","") + obj[0].phone_number.replace(" ","");
-                document.getElementById('card-product').innerHTML           = obj[0].product_name;
-                document.getElementById('card-product-price').innerHTML     = formatter.format(obj[0].product_price);
-                document.getElementById('card-salemodel').innerHTML         = obj[0].salemodel_name;
+                document.getElementById('goal-0').innerHTML            = formatter.format(obj[0].total_amount / 100);
+                document.getElementById('goal-2').innerHTML            = obj[0].total_amount;
+                //document.getElementById('year-selected').innerHTML          = year; //month +'/'+year;
             }
             else{
                 //form.btnSave.innerHTML = "Searching...";
@@ -242,9 +214,56 @@ function handleViewOnLoad(tid) {
     }
 }
 
-function handleOnLoad(tid,form) {
+function handleUserGoalOnLoad(tid) {
     errors      = 0;
-    authApi     = 'dasdasdkasdeewef';
+    authApi     = csrf_token;
+    var locat       = window.location.hostname;
+
+    // getting today's date
+    var today   = new Date();
+    var month   = today.getMonth()+1; // getMonth starts at 0
+    var year    = today.getFullYear(); 
+
+    var filters     = '&tid='+tid+'&groupby=UUID&year='+year;//+'&month='+month;
+
+    if(locat.slice(-1) != '/')
+        locat += '/';
+
+    if(errors > 0){
+
+    } else{
+        const requestURL = window.location.protocol+'//'+locat+'api/'+module+'s/auth_'+module+'_list.php?auth_api='+authApi+filters;
+        //alert(requestURL);
+        const request   = new XMLHttpRequest();
+        request.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                obj = JSON.parse(request.responseText);
+                // Create our number formatter.
+                var formatter = new Intl.NumberFormat(lang, {
+                    style: 'currency',
+                    currency: obj[0].currency,
+                    //maximumSignificantDigits: 2,
+
+                    // These options are needed to round to whole numbers if that's what you want.
+                    //minimumFractionDigits: 2, // (this suffices for whole numbers, but will print 2500.10 as $2,500.1)
+                    //maximumFractionDigits: 0, // (causes 2500.99 to be printed as $2,501)
+                });
+                document.getElementById('goal-amount').innerHTML            = formatter.format(obj[0].total_amount / 100);
+                document.getElementById('year-selected').innerHTML          = year; //month +'/'+year;
+            }
+            else{
+                //form.btnSave.innerHTML = "Searching...";
+            }
+        };
+        request.open('GET', requestURL);
+        //request.responseType = 'json';
+        request.send();
+    }
+}
+
+function handleGoalOnLoad(tid,form) {
+    errors      = 0;
+    authApi     = csrf_token;
     locat       = window.location.hostname;
 
     filters     = '&tid='+tid;
@@ -298,17 +317,17 @@ function handleOnLoad(tid,form) {
     }
 }
 
-function handleListOnLoad(search) {
+function handleListGoalSearch(form) {
     errors      = 0;
-    authApi     = 'dasdasdkasdeewef';
-    locat       = window.location.hostname;
+    authApi     = csrf_token;
+    var locat       = window.location.hostname;
 
-    filters     = '';
-    if(typeof search == 'undefined')
-        search  = '';
-    if(search !== ''){
-        filters     += '&search='+search;
-    }
+    // getting today's date
+    var today   = new Date();
+    var month   = today.getMonth()+1; // getMonth starts at 0
+    var year    = today.getFullYear(); 
+
+    var filters     = '&tid='+tid+'&groupby=UUID&year='+year;//+'&month='+month;
 
     if(locat.slice(-1) != '/')
         locat += '/';
@@ -316,53 +335,26 @@ function handleListOnLoad(search) {
     if(errors > 0){
 
     } else{
-        tableList   = document.getElementById('listProposals');
-        const requestURL = window.location.protocol+'//'+locat+'api/proposals/auth_proposal_list.php?auth_api='+authApi+filters;
+        const requestURL = window.location.protocol+'//'+locat+'api/'+module+'s/auth_'+module+'_list.php?auth_api='+authApi+filters;
         //alert(requestURL);
-        const request = new XMLHttpRequest();
+        const request   = new XMLHttpRequest();
         request.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {
-                // Typical action to be performed when the document is ready:
-                obj         = JSON.parse(request.responseText);
-                html        = '';
-                for(var i=0;i < obj.length; i++){
-                    var formatter = new Intl.NumberFormat(lang, {
-                        style: 'currency',
-                        currency: obj[i].currency,
-                        //maximumSignificantDigits: 2,
-                
-                        // These options are needed to round to whole numbers if that's what you want.
-                        //minimumFractionDigits: 2, // (this suffices for whole numbers, but will print 2500.10 as $2,500.1)
-                        //maximumFractionDigits: 0, // (causes 2500.99 to be printed as $2,501)
-                    });
-                    color_status = '#d60b0e';
-                    if(obj[i].is_active == 'Y')
-                        color_status = '#298c3d';
-                    agency = '';
-                    if(typeof(obj[i].agency_name) === 'string')
-                        agency = ' / '+obj[i].agency_name;
-                    amount = obj[i].amount;
-                    start_date  = new Date(obj[i].start_date);
-                    stop_date   = new Date(obj[i].stop_date);
-                    html += '<tr><td>'+obj[i].offer_name+'</td><td nowrap>'+obj[i].client_name+agency+'</td><td nowrap>'+obj[i].username+'</td><td nowrap>'+formatter.format(amount)+'</td><td>'+start_date.toLocaleString(lang).split(" ")[0].replace(",","")+'</td><td>'+stop_date.toLocaleString(lang).split(" ")[0].replace(",","")+'</td><td style="text-align:center;"><span id="locked_status_'+obj[i].UUID+'" class="material-icons" style="color:'+color_status+'">attribution</span></td><td nowrap style="text-align:center;">';
-                    // information card
-                    html += '<a href="?pr=Li9wYWdlcy9wcm9wb3NhbHMvaW5mby5waHA=&tid='+obj[i].UUID+'"><span class="material-icons" style="font-size:1.5rem; color:black;" title="Information Card '+obj[i].offer_name+'">info</span></a>';
+                obj = JSON.parse(request.responseText);
+                // Create our number formatter.
+                var formatter = new Intl.NumberFormat(lang, {
+                    style: 'currency',
+                    currency: obj[0].currency,
+                    //maximumSignificantDigits: 2,
 
-                    // Edit form
-                    html += '<a href="?pr=Li9wYWdlcy9wcm9wb3NhbHMvZm9ybWVkaXQucGhw&tid='+obj[i].UUID+'"><span class="material-icons" style="font-size:1.5rem; color:black;" title="Edit '+module + ' '+obj[i].offer_name+'">edit</span></a>';
-
-                    // Remove 
-                    html += '<a href="javascript:void(0)" onclick="handleRemove(\''+obj[i].UUID+'\',\''+obj[i].is_active+'\')"><span class="material-icons" style="font-size:1.5rem; color:black;" title="Remove '+module + ' '+obj[i].offer_name+'">delete</span></a>';
-
-                    html += '</td></tr>';
-                }
-                tableList.innerHTML = html;
+                    // These options are needed to round to whole numbers if that's what you want.
+                    //minimumFractionDigits: 2, // (this suffices for whole numbers, but will print 2500.10 as $2,500.1)
+                    //maximumFractionDigits: 0, // (causes 2500.99 to be printed as $2,501)
+                });
+                document.getElementById('goal-amount').innerHTML            = formatter.format(obj[0].total_amount / 100);
+                document.getElementById('year-selected').innerHTML          = year; //month +'/'+year;
             }
             else{
-                html = '<tr><td colspan="8"><div style="margin-left:45%; margin-right:45%;" class="spinner-border" style="text-align:center;" role="status">';
-                html += '<span class="sr-only">Loading...</span>';
-                html += '</div></td></tr>';
-                tableList.innerHTML = html;
                 //form.btnSave.innerHTML = "Searching...";
             }
         };
@@ -370,11 +362,10 @@ function handleListOnLoad(search) {
         //request.responseType = 'json';
         request.send();
     }
-    // window.location.href = '?pr=Li9wYWdlcy91c2Vycy9saXN0LnBocA==';
 }
 
-function handleRemove(tid,locked_status){
-    authApi     = 'dasdasdkasdeewef';
+function handleRemoveGoal(tid,locked_status){
+    authApi     = csrf_token;
     filters     = '&tid='+tid+'&lk='+locked_status;
     
     locat       = window.location.hostname;
@@ -399,9 +390,9 @@ function handleRemove(tid,locked_status){
     request.send();
 }
 
-function calcAmountTotal(form,index){
-    currency    = document.getElementsByName('currency');
-    xcurrency   = currency[0].value;
+function calcAmountGoalTotal(form){
+    xcurrency    = form.rate_id.value;
+    
     var formatter = new Intl.NumberFormat(lang, {
         style: 'currency',
         currency: xcurrency,
@@ -411,38 +402,47 @@ function calcAmountTotal(form,index){
         //minimumFractionDigits: 2, // (this suffices for whole numbers, but will print 2500.10 as $2,500.1)
         //maximumFractionDigits: 0, // (causes 2500.99 to be printed as $2,501)
     });
-    price       = document.getElementsByName('price[]');
-    xprice      = price[index].value;
-    quantity    = document.getElementsByName('quantity[]');
-    xquantity   = quantity[index].value;
-    if(xprice > '0' && xquantity > '0'){
-        amount = document.getElementsByName('amount[]');
-        amount[index].value   = formatter.format(parseFloat(xprice.replace(",",".")) * parseInt(xquantity));
+    
+    amount = document.getElementsByName('amount_goal[]');
 
-        total = 0;
-        for(i=0;i < amount.length; i++){
+    total = 0;
+    for(i=0;i < amount.length; i++){
+        
+        if(amount[i].value != ''){
+            //amount[i].value = formatter.format(parseFloat(amount[i].value.replace(",",".")));
+            //alert( amount[i].value+ ' - ' + typeof(amount[i].value));
+        
             xaAmount        = amount[i].value.split(" ");
             if(xaAmount.length <= 1){
                 xaAmount        = amount[i].value.split("$");
             }
+            if(xaAmount.length <= 1){
+                xaAmount        = amount[i].value.split(xcurrency);
+            }
             aAmountValue1   = xaAmount[1];
-            //alert("value: "+ amount[i].value + "\n\nxaAmount: " + xaAmount + "\n0: " + xaAmount[0] + "\n1: " + xaAmount[1])
+            if(typeof(aAmountValue1)==='undefined')
+                aAmountValue1   = xaAmount[0];
+            //alert("value: "+ amount[i].value + "\n\nxaAmount: " + xaAmount + "\n0: " + xaAmount[0] + "\n1: " + xaAmount[1] + "\ntype:"+ typeof(aAmountValue1));
             axAmountS       = aAmountValue1.split(",");
             xVAmount        = '';
             for(j=0;j < axAmountS.length; j++){
                 xVAmount        += axAmountS[j];
             }
+            //alert(xVAmount);
             axAmountFinal   = xVAmount.split(".");
             xVAmountFinal   = '';
             for(k=0;k < axAmountFinal.length; k++){
                 xVAmountFinal    += axAmountFinal[k];
             }
+            //alert(xVAmountFinal);
             realAmount  = (parseInt(xVAmountFinal) * 1) / 100;
+            //alert(realAmount);
             total = (parseFloat(total) * 1)+ (parseFloat(realAmount) * 1);
             //alert(total);
-        }
-        form.total.value = formatter.format(total);
+        } else { i=amount.length; }
     }
+    form.amount_total.value = formatter.format(total);
+    
 }
 
 function newProductForm(copy,destination){
@@ -461,89 +461,4 @@ function newProductForm(copy,destination){
     htmlRemoveButton += '</div>';
 
     document.getElementById(destination).innerHTML += htmlRemoveButton;
-}
-
-function removeProductForm(index){
-    document.getElementById('product_'+index).remove();
-    document.getElementById('btnRemove_'+index).remove();
-}
-
-function getId(table,where){
-    errors      = 0;
-    authApi     = 'dasdasdkasdeewef';
-    locat       = window.location.hostname;
-
-    // filters     = '&tid='+tid;
-    xfilters    = '';
-    filters     = '';
-
-    xwhere      = where.split(",");
-    for(i=0;i < xwhere.length;i++){
-        ywhere      = xwhere[i].split("|||");
-        filters += "&"+ywhere[0]+"="+ywhere[1];
-    }
-
-    
-
-    if(locat.slice(-1) != '/')
-        locat += '/';
-
-    if(errors > 0){
-
-    } else{
-        const requestURLGet = window.location.protocol+'//'+locat+'api/'+table+'s/auth_'+table+'_get.php?auth_api='+authApi+filters;
-        //alert(requestURLGet);
-        const requestGet = new XMLHttpRequest();
-        requestGet.onreadystatechange = function() {
-            if (this.readyState == 4 && this.status == 200) {
-                
-                objGet = JSON.parse(requestGet.responseText);
-                proposal_id = objGet[0].UUID;
-                return objGet[0].UUID;
-            }
-            else{
-                //form.btnSave.innerHTML = "Searching...";
-            }
-        };
-        requestGet.open('GET', requestURLGet);
-        //request.responseType = 'json';
-        requestGet.send();
-    }
-}
-
-function addProduct(product_id,salemodel_id,price,currency,quantity,provider_id,proposal_id){
-    errors      = 0;
-    authApi     = 'dasdasdkasdeewef';
-    locat       = window.location.hostname;
-
-    // filters     = '&tid='+tid
-    //fields  = "product_id,salemodel_id,price,currency,quantity,provider_id,proposal_id";
-    //values  = "'"+product_id+"','"+salemodel_id+"',"+price+",'"+currency+"',"+quantity+",'"+provider_id+"','"+proposal_id+"'";
-    querystring = 'auth_api='+authApi+"&product_id="+product_id+"&salemodel_id="+salemodel_id+"&price="+price+"&currency="+currency+"&quantity="+quantity+"&provider_id="+provider_id+"&proposal_id="+proposal_id
-
-
-    if(locat.slice(-1) != '/')
-        locat += '/';
-
-    if(errors > 0){
-
-    } else{
-        const requestURLAdd = window.location.protocol+'//'+locat+'api/products/auth_product_add_new.php';
-        //alert(requestURLAdd + "\nqs: "+querystring);
-        const requestAdd = new XMLHttpRequest();
-        requestAdd.onreadystatechange = function() {
-            if (this.readyState == 4 && this.status == 200) {
-                
-                obj = JSON.parse(requestAdd.responseText);
-//                return false;
-            }
-            else{
-                //form.btnSave.innerHTML = "Searching...";
-            }
-        };
-        requestAdd.open('POST', requestURLAdd, true);
-        requestAdd.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-        //request.responseType = 'json';
-        requestAdd.send(querystring);
-    }
 }

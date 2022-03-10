@@ -1,4 +1,4 @@
-<div class="container">
+<div class="general-container">
 <?php
 // security
 

@@ -17,7 +17,7 @@ if(array_key_exists('auth_api',$_REQUEST)){
     //if($localStorage == $_REQUEST['auth_api']){}
 
     // setting query
-    $columns        = "left(uuid,13) as uuid, uuid as uuid_full, product_id, product_name, salemodel_id, salemodel_name, product_price, currency, name, address, webpage_url, concat(main_contact_name,' ', main_contact_surname,' (', main_contact_email,')') as contact, main_contact_name, main_contact_surname, main_contact_email, main_contact_position, phone_international_code, phone_prefix, phone_number, concat('+',phone_international_code,phone_number) as phone, is_active";
+    $columns        = "left(uuid,13) as uuid, uuid as uuid_full, product_id, product_name, salemodel_id, salemodel_name, product_price, currency, name, address, webpage_url, concat(contact_name,' ', contact_surname,' (', contact_email,')') as contact, contact_name, contact_surname, contact_email, contact_position, phone_international_code, phone_prefix, phone_number, concat('+',phone_international_code,phone_number) as phone, is_active";
     $tableOrView    = "view_providers";
     $orderBy        = "order by name";
 

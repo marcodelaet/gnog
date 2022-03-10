@@ -11,7 +11,7 @@ function handleSubmit(form) {
     if (form.name.value !== '' && form.client_id.value !== '' && form.start_date.value !== '' || form.client_id.value !== '0' || form.agency_id.value !== '0' || form.total.value !== '0,00' || form.status_id.value !== '0') {
         //form.submit();
         errors      = 0;
-        authApi     = 'dasdasdkasdeewef';
+        authApi     = csrf_token;
         message     = '';
 
         pixel      = 'N';
@@ -101,7 +101,7 @@ function handleEditSubmit(tid,form) {
         //form.submit();
    
         errors      = 0;
-        authApi     = 'dasdasdkasdeewef';
+        authApi     = csrf_token;
         
         sett     = '&tid='+tid;
         xname          = form.name.value;
@@ -191,7 +191,7 @@ function handleEditSubmit(tid,form) {
 
 function handleViewOnLoad(tid) {
     errors      = 0;
-    authApi     = 'dasdasdkasdeewef';
+    authApi     = csrf_token;
     locat       = window.location.hostname;
 
     filters     = '&tid='+tid;
@@ -244,7 +244,7 @@ function handleViewOnLoad(tid) {
 
 function handleOnLoad(tid,form) {
     errors      = 0;
-    authApi     = 'dasdasdkasdeewef';
+    authApi     = csrf_token;
     locat       = window.location.hostname;
 
     filters     = '&tid='+tid;
@@ -300,7 +300,7 @@ function handleOnLoad(tid,form) {
 
 function handleListOnLoad(search) {
     errors      = 0;
-    authApi     = 'dasdasdkasdeewef';
+    authApi     = csrf_token;
     locat       = window.location.hostname;
 
     filters     = '';
@@ -374,7 +374,7 @@ function handleListOnLoad(search) {
 }
 
 function handleRemove(tid,locked_status){
-    authApi     = 'dasdasdkasdeewef';
+    authApi     = csrf_token;
     filters     = '&tid='+tid+'&lk='+locked_status;
     
     locat       = window.location.hostname;
@@ -470,7 +470,7 @@ function removeProductForm(index){
 
 function getId(table,where){
     errors      = 0;
-    authApi     = 'dasdasdkasdeewef';
+    authApi     = csrf_token;
     locat       = window.location.hostname;
 
     // filters     = '&tid='+tid;
@@ -513,7 +513,7 @@ function getId(table,where){
 
 function addProduct(product_id,salemodel_id,price,currency,quantity,provider_id,proposal_id){
     errors      = 0;
-    authApi     = 'dasdasdkasdeewef';
+    authApi     = csrf_token;
     locat       = window.location.hostname;
 
     // filters     = '&tid='+tid

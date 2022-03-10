@@ -1,11 +1,12 @@
 var csrf_token = $('meta[name="csrf-token"]').attr('content');
+module = 'user';
 //alert(csrf_token);
 
 function handleSubmit(form) {
     if (form.username.value !== '' && form.email.value !== '' && form.mobile.value !== '' && form.password.value !== '' && form.retype_password.value !== '') {
         //form.submit();
         errors      = 0;
-        authApi     = 'dasdasdkasdeewef';
+        authApi     = csrf_token;
         username    = form.username.value;
         email       = form.email.value;
         mobile_ddi  = document.getElementsByClassName('iti__selected-flag')[0].title.split(':')[1].replace(' ','').replace('+','');
@@ -25,7 +26,7 @@ function handleSubmit(form) {
         if(errors > 0){
 
         } else{
-            const requestURL = window.location.protocol+'//'+locat+'api/users/auth_user_add_new.php?auth_api='+authApi+'&username='+username+'&email='+email+'&mobile_international_code='+mobile_ddi+'&mobile_number='+mobile+'&password='+password;
+            const requestURL = window.location.protocol+'//'+locat+'api/'+module+'s/auth_'+module+'_add_new.php?auth_api='+authApi+'&username='+username+'&email='+email+'&mobile_international_code='+mobile_ddi+'&mobile_number='+mobile+'&password='+password;
             
             const request = new XMLHttpRequest();
             request.onreadystatechange = function() {
@@ -53,7 +54,7 @@ function handleEditSubmit(tid,form) {
     if (form.username.value !== '' && form.email.value !== '' && form.mobile.value !== '') {
         //form.submit();
         errors      = 0;
-        authApi     = 'dasdasdkasdeewef';
+        authApi     = csrf_token;
         filters     = '&tid='+tid;
         email       = form.email.value;
         if(email !== ''){
@@ -86,7 +87,7 @@ function handleEditSubmit(tid,form) {
         if(errors > 0){
 
         } else{
-            const requestURL = window.location.protocol+'//'+locat+'api/users/auth_user_edit.php?auth_api='+authApi+filters;
+            const requestURL = window.location.protocol+'//'+locat+'api/'+module+'s/auth_'+module+'_edit.php?auth_api='+authApi+filters;
             
             const request = new XMLHttpRequest();
             request.onreadystatechange = function() {
@@ -111,7 +112,7 @@ function handleEditSubmit(tid,form) {
 
 function handleOnLoad(tid,form) {
     errors      = 0;
-    authApi     = 'dasdasdkasdeewef';
+    authApi     = csrf_token;
     locat       = window.location.hostname;
 
     filters     = '&tid='+tid;
@@ -122,7 +123,7 @@ function handleOnLoad(tid,form) {
     if(errors > 0){
 
     } else{
-        const requestURL = window.location.protocol+'//'+locat+'api/users/auth_user_get.php?auth_api='+authApi+filters;
+        const requestURL = window.location.protocol+'//'+locat+'api/'+module+'s/auth_'+module+'_get.php?auth_api='+authApi+filters;
         const request = new XMLHttpRequest();
         request.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {
