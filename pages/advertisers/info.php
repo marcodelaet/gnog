@@ -21,23 +21,24 @@
         </div>
     </div>
     <div class="card-body <?=strtolower($moduleName)?>-body">
-        <h5 class="card-title main-contact-header">Main Contact</h5>
-        <div class="<?=strtolower($moduleName)?>-data">
-            <spam id="card-contact-fullname">aaaaaa bbbbbb da xxxx </spam><spam id="card-contact-position"> (zzzzz)</spam>
-        </div>
-        <div class="<?=strtolower($moduleName)?>-data">
+        <h5 class="card-title main-contact-header">Contact</h5> 
         <div class="<?=strtolower($moduleName)?>-data">
             <spam class="material-icons icon-data">location_on</spam>
             <spam id="card-address">99, example, street</spam>
         </div>
-        </div>
-        <div class="<?=strtolower($moduleName)?>-data">
-            <spam class="material-icons icon-data">email</spam>
-            <spam id="card-email">email@dma.com</spam>
-        </div>
-        <div class="<?=strtolower($moduleName)?>-data">
-            <spam class="material-icons icon-data">phone</spam>
-            <spam id="card-phone">+5255999999</spam>
+        <div id="list-contacts">
+            <div class="space-blank">&nbsp;</div>
+            <div class="<?=strtolower($moduleName)?>-data">
+                <spam id="card-contact-fullname-and-position">aaaaaa bbbbbb da xxxx (zzzzz)</spam>
+            </div>
+            <div class="<?=strtolower($moduleName)?>-data">
+                <spam class="material-icons icon-data">email</spam>
+                <spam id="card-email">email@dma.com</spam>
+            </div>
+            <div class="<?=strtolower($moduleName)?>-data">
+                <spam class="material-icons icon-data">phone</spam>
+                <spam id="card-phone">+5255999999</spam>
+            </div>
         </div>
         <div class="inputs-button-container">
             <Button class="button" type="button" onClick="window.location='?pr=<?=base64_encode('./pages/'.strtolower($moduleName).'s/index.php')?>'" >Back to <?=$moduleName?>s</Button>

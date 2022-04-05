@@ -286,6 +286,26 @@ if(array_key_exists('tid',$_GET))
                 <button class="button" name="btnSave" type="button" onClick="handleSubmit(<?=strtolower($moduleName)?>)" >Save</button>
             </div>
         </form>
+        <div class="space-margin">&nbsp;</div>
+        <table class="table table-hover table-sm">
+            <caption>List of <?=$moduleName?>s</caption>
+            <thead>
+                <tr>
+                    <th scope="col">Executive</th>
+                    <th scope="col">Year</th>
+                    <th scope="col">Total Amount</th>
+                    <th scope="col" style="text-align:center;">Settings</th>
+                </tr>
+            </thead>
+            <tbody id="<?=strtolower($moduleName)?>-list">
+                <tr>
+                    <td>...</td>
+                    <td>...</td>
+                    <td>...</td>
+                    <td style="text-align:center;">...</td>
+                </tr>
+            </tbody>
+        </table>
       <?php
       if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
         $ip = $_SERVER['HTTP_CLIENT_IP'];
@@ -301,5 +321,9 @@ if(array_key_exists('tid',$_GET))
 
     </div>    
 </div>
+
+<script type="text/javascript">
+    handleListGoalAtFormOnLoad();
+</script>
 
 

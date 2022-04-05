@@ -20,6 +20,7 @@ function handleSubmit(form) {
         xname                   = form.name.value;
         client_id               = form.client_id.value;
         agency_id               = form.agency_id.value;
+        contact_id              = form.contact_id.value;
         description             = form.description.value;
         start_date              = form.start_date.value;
         stop_date               = form.stop_date.value;
@@ -41,7 +42,7 @@ function handleSubmit(form) {
         if(errors > 0){
             alert(message);
         } else{
-            const requestURL = window.location.protocol+'//'+locat+'api/proposals/auth_proposal_add_new.php?auth_api='+authApi+'&name='+xname+'&pixel='+pixel+'&client_id='+client_id+'&agency_id='+agency_id+'&description='+description+'&start_date='+start_date+'&stop_date='+stop_date+'&status_id='+status_id;
+            const requestURL = window.location.protocol+'//'+locat+'api/proposals/auth_proposal_add_new.php?auth_api='+authApi+'&name='+xname+'&pixel='+pixel+'&client_id='+client_id+'&agency_id='+agency_id+'&contact_id='+contact_id+'&description='+description+'&start_date='+start_date+'&stop_date='+stop_date+'&status_id='+status_id;
             //alert(requestURL);
             const request = new XMLHttpRequest();
             request.onreadystatechange = function() {
@@ -546,4 +547,59 @@ function addProduct(product_id,salemodel_id,price,currency,quantity,provider_id,
         //request.responseType = 'json';
         requestAdd.send(querystring);
     }
+}
+
+function listAdvertiserContacts(aid){
+    errors      = 0;
+    authApi     = csrf_token;
+    locat       = window.location.hostname;
+    submodule   = 'contact';
+
+    if(locat.slice(-1) != '/')
+        locat += '/';
+
+    filters     = '&aid='+aid;
+
+    if(errors > 0){
+
+    } else{
+        tableList   = document.getElementById('div-selectContact');
+        const requestURL = window.location.protocol+'//'+locat+'api/'+submodule+'s/auth_'+submodule+'_list.php?auth_api='+authApi+filters;
+        //console.log(requestURL);
+        const request = new XMLHttpRequest();
+        request.onreadystatechange = function() {
+            html    = '<label for="contact_id">Contact</label>';
+            html   += '<spam id="scontact">'
+            html   += '<SELECT name="contact_id" title="contact_id" class="form-control" autocomplete="contact_id">';
+            if (this.readyState == 4 && this.status == 200) {
+                // Typical action to be performed when the document is ready:
+                obj = JSON.parse(request.responseText);
+                if( (obj.response != 'error') && (obj.response != 'ZERO_RETURN')){
+                    for(var i=0;i < obj.length; i++){
+                        contact_fullname = obj[i].contact_name + ' ' + obj[i].contact_surname + ' (' + obj[i].contact_email + ')';
+                        html += '<OPTION value="'+obj[i].contact_id+'"/>'+contact_fullname;
+                    }
+                    html    += '</SELECT>';
+                    html    += '</spam>';
+                }
+                else {
+                    html    = '';
+                }
+                tableList.innerHTML = html;
+            }
+            else{
+                html    += '<OPTION value="0000"/>Loading...';
+                html    += '</SELECT>';
+                tableList.innerHTML = html;
+                //form.btnSave.innerHTML = "Searching...";
+            }
+        };
+        request.open('GET', requestURL);
+        //request.responseType = 'json';
+        request.send();
+    } 
+}
+
+function listProviderContacts(pid){
+
 }

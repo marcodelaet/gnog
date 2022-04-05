@@ -76,6 +76,7 @@ updated_at DATETIME NOT NULL
 # VIEW GOALS
 CREATE VIEW view_goals AS (
 	SELECT
+	u.username,
 	(g.user_id) AS UUID,
 	g.goal_amount,
 	g.goal_month,
@@ -84,6 +85,8 @@ CREATE VIEW view_goals AS (
 	
 	FROM 
 	goals g
+	INNER JOIN users u 
+	ON g.user_id = u.id
 );
 
 SELECT *, SUM(goal_amount) AS total_amount FROM view_goals WHERE goal_month = 4 GROUP BY goal_year;
@@ -198,7 +201,17 @@ CREATE VIEW view_advertisers AS (
 	LEFT JOIN view_advertisercontacts ct ON ct.contact_client_id = adv.id
 );
 
-SELECT * FROM view_providers;
+SELECT * FROM view_advertisercontacts;
+
+SELECT LEFT(UUID,13)AS UUID, UUID AS uuid_full, 
+COUNT(contact_client_id) AS qty_contact, 
+corporate_name, address, CONCAT(contact_name,' ',contact_surname,' (', contact_email,')') AS contact, contact_name, contact_surname, contact_email, contact_position, phone_international_code, phone_prefix, phone_number, is_agency, is_active, CONCAT('+',phone_international_code,phone_number) AS phone 
+FROM view_advertisers 
+#
+GROUP BY UUID
+ORDER BY corporate_name ;
+
+SELECT * FROM view_advertisers;
 
 # PRODUCTS
 CREATE TABLE IF NOT EXISTS products (
@@ -372,6 +385,7 @@ id VARCHAR(40) PRIMARY KEY NOT NULL UNIQUE,
 user_id VARCHAR(40) NOT NULL,
 advertiser_id VARCHAR(40) NOT NULL,
 agency_id VARCHAR(40),
+contact_id VARCHAR(40),
 status_id TINYINT NOT NULL,
 offer_name VARCHAR(40) NOT NULL,
 DESCRIPTION TEXT NOT NULL,
@@ -424,7 +438,7 @@ CREATE VIEW view_proposals AS (
 	pps.description,
 	pps.start_date,
 	pps.stop_date,
-	ROUND(DATEDIFF(pps.stop_date,pps.start_date) / 30) + 1 as month_diff_data, 
+	ROUND(DATEDIFF(pps.stop_date,pps.start_date) / 30) + 1 AS month_diff_data, 
 	ppp.price / 100 AS price,
 	ppp.price AS price_int,
 	ppp.currency,
@@ -471,4 +485,4 @@ updated_at DATETIME NOT NULL
 );
 
 
-SELECT UUID,product_id,product_name,salemodel_id,salemodel_name,provider_id,provider_name,user_id,username,client_id,client_name,agency_id,agency_name,status_id,status_name,status_percent,offer_name,description,start_date,stop_date,month_diff_data,sum(amount) as amount,sum(amount_int) as amount_int, sum(amount_per_month) as amount_per_month, sum(amount_per_month_int) as amount_per_month_int, currency,quantity,is_active FROM view_proposals WHERE user_id = '49381e2d-787b-11ec-81fa-6c0b8496fec0' AND (stop_date >= '2022-2-24' and start_date <= '2022-2-24')  group by UUID;
+SELECT UUID,product_id,product_name,salemodel_id,salemodel_name,provider_id,provider_name,user_id,username,client_id,client_name,agency_id,agency_name,status_id,status_name,status_percent,offer_name,DESCRIPTION,start_date,stop_date,month_diff_data,SUM(amount) AS amount,SUM(amount_int) AS amount_int, SUM(amount_per_month) AS amount_per_month, SUM(amount_per_month_int) AS amount_per_month_int, currency,quantity,is_active FROM view_proposals WHERE user_id = '49381e2d-787b-11ec-81fa-6c0b8496fec0' AND (stop_date >= '2022-2-24' AND start_date <= '2022-2-24')  GROUP BY UUID;

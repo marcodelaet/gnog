@@ -1,5 +1,5 @@
 lang        = 'es-MX';
-module      = 'goal';
+moduleGoal      = 'goal';
 start_index = 0;
 var csrf_token = $('meta[name="csrf-token"]').attr('content');
 //alert(csrf_token);
@@ -39,7 +39,7 @@ function handleGoalSubmit(form) {
     if(errors > 0){
         alert(message);
     } else{
-        const requestURL = window.location.protocol+'//'+locat+'api/'+module+'s/auth_'+module+'_add_new.php';
+        const requestURL = window.location.protocol+'//'+locat+'api/'+moduleGoal+'s/auth_'+moduleGoal+'_add_new.php';
         //alert(requestURL);
         const request = new XMLHttpRequest();
         request.onreadystatechange = function() {
@@ -184,7 +184,7 @@ function handleListGoalOnLoad() {
     if(errors > 0){
 
     } else{
-        const requestURL = window.location.protocol+'//'+locat+'api/'+module+'s/auth_'+module+'_list.php?auth_api='+authApi+filters;
+        const requestURL = window.location.protocol+'//'+locat+'api/'+moduleGoal+'s/auth_'+moduleGoal+'_list.php?auth_api='+authApi+filters;
         //alert(requestURL);
         const request   = new XMLHttpRequest();
         request.onreadystatechange = function() {
@@ -232,7 +232,7 @@ function handleUserGoalOnLoad(tid) {
     if(errors > 0){
 
     } else{
-        const requestURL = window.location.protocol+'//'+locat+'api/'+module+'s/auth_'+module+'_list.php?auth_api='+authApi+filters;
+        const requestURL = window.location.protocol+'//'+locat+'api/'+moduleGoal+'s/auth_'+moduleGoal+'_list.php?auth_api='+authApi+filters;
         //alert(requestURL);
         const request   = new XMLHttpRequest();
         request.onreadystatechange = function() {
@@ -335,7 +335,7 @@ function handleListGoalSearch(form) {
     if(errors > 0){
 
     } else{
-        const requestURL = window.location.protocol+'//'+locat+'api/'+module+'s/auth_'+module+'_list.php?auth_api='+authApi+filters;
+        const requestURL = window.location.protocol+'//'+locat+'api/'+moduleGoal+'s/auth_'+moduleGoal+'_list.php?auth_api='+authApi+filters;
         //alert(requestURL);
         const request   = new XMLHttpRequest();
         request.onreadystatechange = function() {
@@ -461,4 +461,60 @@ function newProductForm(copy,destination){
     htmlRemoveButton += '</div>';
 
     document.getElementById(destination).innerHTML += htmlRemoveButton;
+}
+
+function handleListGoalAtFormOnLoad() {
+    errors      = 0;
+    authApi     = csrf_token;
+    var locat       = window.location.hostname;
+
+    // getting today's date
+    var today   = new Date();
+    var month   = today.getMonth()+1; // getMonth starts at 0
+    var year    = today.getFullYear(); 
+
+    var groupby = 'UUID,goal_month,goal_year';
+    var filters     = '&year='+year+'&groupby='+groupby;
+
+    if(locat.slice(-1) != '/')
+        locat += '/';
+
+    if(errors > 0){
+
+    } else{
+        const requestURL = window.location.protocol+'//'+locat+'api/'+moduleGoal+'s/auth_'+moduleGoal+'_list.php?auth_api='+authApi+filters;
+        console.log(requestURL);
+        const request   = new XMLHttpRequest();
+        request.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                obj = JSON.parse(request.responseText);
+                // Create our number formatter.
+                html = '';
+                for(g=0;g < obj.length;g++){
+                    alert(obj[g].currency);
+                    var formatter = new Intl.NumberFormat(lang, {
+                        style: 'currency',
+                        currency: obj[g].currency,
+                        //maximumSignificantDigits: 2,
+    
+                        // These options are needed to round to whole numbers if that's what you want.
+                        //minimumFractionDigits: 2, // (this suffices for whole numbers, but will print 2500.10 as $2,500.1)
+                        //maximumFractionDigits: 0, // (causes 2500.99 to be printed as $2,501)
+                    });
+                    html += '<tr><td>'+obj[g].username+'</td><td>'+obj[g].goal_year+'</td><td>'+formatter.format(obj[g].total_amount / 100)+'</td>';
+                }
+                document.getElementById('goal-list').innerHTML  = html;
+                /*
+                document.getElementById('goal-0').innerHTML            = formatter.format(obj[0].total_amount / 100);
+                document.getElementById('goal-2').innerHTML            = obj[0].total_amount;*/
+                //document.getElementById('year-selected').innerHTML          = year; //month +'/'+year;
+            }
+            else{
+                //form.btnSave.innerHTML = "Searching...";
+            }
+        };
+        request.open('GET', requestURL);
+        //request.responseType = 'json';
+        request.send();
+    }
 }

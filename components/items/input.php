@@ -10,7 +10,12 @@ function inputSelect($table,$title,$where,$order,$selected){
     if(substr($table,-1,strlen($table) ) == 's')
         $table_plural = $table . 'es';
 
-    $fullUrl .= 'api/'.$table_plural.'/auth_'.$table.'_view.php?auth_api='.$authApi.'&order='.$order.'&where='.$where.'&selected='.$selected;
+    $groupby = "";
+    if($table == 'advertiser') {
+        $groupby = "UUID";
+    }
+
+    $fullUrl .= 'api/'.$table_plural.'/auth_'.$table.'_view.php?auth_api='.$authApi.'&order='.$order.'&where='.$where.'&selected='.$selected.'&groupby='.$groupby;
     //return $fullUrl;
     $homepage = file_get_contents($fullUrl);
     $obj = json_decode($homepage);

@@ -20,8 +20,8 @@ if(array_key_exists('auth_api',$_REQUEST)){
     $group          = 'user';
 
     // setting query
-    $columns        = "username,UUID,goal_amount,sum(goal_amount) as total_amount,currency_id as currency,goal_month,goal_year";
-    $tableOrView    = "view_goals";
+    $columns        = "contact_id,contact_name,contact_surname,contact_email,contact_position,contact_client_id,phone_international_code,phone_prefix,phone_number";
+    $tableOrView    = "view_advertisercontacts";
     $orderBy        = "";
     $groupBy        = "";
 
@@ -53,30 +53,12 @@ if(array_key_exists('auth_api',$_REQUEST)){
         }
     }
     
-    if(array_key_exists('tid',$_REQUEST)){
-        if($_REQUEST['tid']!==''){
+    if(array_key_exists('aid',$_REQUEST)){
+        if($_REQUEST['aid']!==''){
             if($filters != '')
                 $filters .= " AND ";
-            $user_id         = $_REQUEST['tid'];
-            $filters        .= " UUID = '$user_id'";
-        }
-    }
-
-    if(array_key_exists('month',$_REQUEST)){
-        if($_REQUEST['month']!==''){
-            if($filters != '')
-                $filters .= " AND ";
-            $month         = $_REQUEST['month'];
-            $filters        .= " goal_month = '$month'";
-        }
-    }
-
-    if(array_key_exists('year',$_REQUEST)){
-        if($_REQUEST['year']!==''){
-            if($filters != '')
-                $filters .= " AND ";
-            $year         = $_REQUEST['year'];
-            $filters        .= " goal_year = '$year'";
+            $advertiser_id         = $_REQUEST['aid'];
+            $filters        .= " contact_client_id = '$advertiser_id'";
         }
     }
 
@@ -89,11 +71,21 @@ if(array_key_exists('auth_api',$_REQUEST)){
     // LIST data
     //echo $sql;
     $rs = $DB->getData($sql);
+    $rowNumbers = $DB->numRows($sql);
 
     // Response JSON 
+    header('Content-type: application/json');
     if($rs){
-        header('Content-type: application/json');
-        echo json_encode($rs);
+        if($rowNumbers > 0)
+            $return = $rs;
+        else{
+            $return = array('response'=>'ZERO_RETURN');
+        }
+        echo json_encode($return);
+    }
+    else{
+        $return = array('response'=>'error');
+        echo json_encode($return);
     }
 }
 

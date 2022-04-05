@@ -183,12 +183,12 @@ function handleEditSubmit(tid,form) {
         alert('Please, fill all required fields (*)');
 }
 
-function handleViewOnLoad(tid) {
+function handleViewOnLoad(aid) {
     errors      = 0;
     authApi     = 'dasdasdkasdeewef';
     locat       = window.location.hostname;
 
-    filters     = '&tid='+tid;
+    filters     = '&aid='+aid;
 
     if(locat.slice(-1) != '/')
         locat += '/';
@@ -196,7 +196,7 @@ function handleViewOnLoad(tid) {
     if(errors > 0){
 
     } else{
-        const requestURL = window.location.protocol+'//'+locat+'api/advertisers/auth_advertiser_get.php?auth_api='+authApi+filters;
+        const requestURL = window.location.protocol+'//'+locat+'api/'+module+'s/auth_'+module+'_get.php?auth_api='+authApi+filters;
         //alert(requestURL);
         const request   = new XMLHttpRequest();
         agency          = 'Direct';
@@ -205,20 +205,33 @@ function handleViewOnLoad(tid) {
             if (this.readyState == 4 && this.status == 200) {
                 // Typical action to be performed when the document is ready:
                 obj = JSON.parse(request.responseText);
-                if(obj[0].main_contact_position!='')
-                    position = obj[0].main_contact_position;
                 if(obj[0].is_agency == 'Y')
                     agency = 'Agency';
                 phone_number = obj[0].phone_number.replace(" ","");
-                if(obj[0].phone_prefix!='')
+                if((obj[0].phone_prefix!='') && (obj[0].phone_prefix!='0'))
                     phone_number = obj[0].phone_prefix+obj[0].phone_number.replace(" ","");
-                document.getElementById('advertiser_name').innerHTML        = obj[0].corporate_name;
-                document.getElementById('group').innerHTML                  = agency;
-                document.getElementById('card-contact-fullname').innerHTML  = obj[0].main_contact_name + ' ' + obj[0].main_contact_surname
-                document.getElementById('card-contact-position').innerHTML  = ' ('+position+')';
-                document.getElementById('card-address').innerHTML           = obj[0].address;
-                document.getElementById('card-email').innerHTML             = obj[0].main_contact_email;
-                document.getElementById('card-phone').innerHTML             = '+'+obj[0].phone_international_code.replace(" ","") + phone_number;
+                document.getElementById('advertiser_name').innerHTML                    = obj[0].corporate_name;
+                document.getElementById('group').innerHTML                              = agency;
+                document.getElementById('card-address').innerHTML                       = obj[0].address;
+
+                xhtml = '';
+                for(i=0;i < obj.length; i++){
+                    if(obj[i].contact_position!='')
+                        position = obj[i].contact_position;
+                    xhtml += '<div class="space-blank">&nbsp;</div>';
+                    xhtml += '<div class="'+module+'-data">';
+                    xhtml += '    <spam id="card-contact-fullname-and-position">'+obj[i].contact_name + ' ' + obj[i].contact_surname + ' ('+position+')</spam>';
+                    xhtml += '</div>';
+                    xhtml += '<div class="'+module+'-data">';
+                    xhtml += '    <spam class="material-icons icon-data">email</spam>';
+                    xhtml += '    <spam id="card-email">'+obj[i].contact_email+'</spam>';
+                    xhtml += '</div>';
+                    xhtml += '<div class="'+module+'-data">';
+                    xhtml += '    <spam class="material-icons icon-data">phone</spam>';
+                    xhtml += '    <spam id="card-phone">+'+obj[i].phone_international_code.replace(" ","") + phone_number+'</spam>';
+                    xhtml += '</div>';
+                }
+                document.getElementById("list-contacts").innerHTML = xhtml;
             }
             else{
                 //form.btnSave.innerHTML = "Searching...";
@@ -273,8 +286,11 @@ function handleOnLoad(tid,form) {
 
 function handleListOnLoad(search) {
     errors      = 0;
-    authApi     = 'dasdasdkasdeewef';
+    authApi     = csrf_token;
     locat       = window.location.hostname;
+
+    groupby     = '&groupby=UUID';
+    addColumn   = '&addcolumn=count(contact_client_id) as qty_contact';
 
     filters     = '';
     if(typeof search == 'undefined')
@@ -290,8 +306,8 @@ function handleListOnLoad(search) {
 
     } else{
         tableList   = document.getElementById('listAdvertisers');
-        const requestURL = window.location.protocol+'//'+locat+'api/advertisers/auth_advertiser_view.php?auth_api='+authApi+filters;
-        //alert(requestURL);
+        const requestURL = window.location.protocol+'//'+locat+'api/advertisers/auth_advertiser_view.php?auth_api='+authApi+filters+groupby+addColumn;
+        //console.log(requestURL);
         const request = new XMLHttpRequest();
         request.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {
@@ -321,8 +337,13 @@ function handleListOnLoad(search) {
                             default:
                                 country = 'XXX';
                         }
+                    string_qty_contact = "No contact";
+                    if(obj[i].qty_contact > 0)
+                        string_qty_contact = obj[i].qty_contact + ' contact';
+                    if(obj[i].qty_contact > 1)
+                        string_qty_contact += 's';
                         
-                    html += '<tr><td>'+obj[i].corporate_name+'</td><td>'+advertiser_type+'</td><td nowrap>'+obj[i].contact+'</td><td nowrap style="text-align:center;">'+country+'</td><td style="text-align:center;"><span id="locked_status_'+obj[i].uuid_full+'" class="material-icons" style="color:'+color_status+'">attribution</span></td><td nowrap style="text-align:center;">';
+                    html += '<tr><td>'+obj[i].corporate_name+'</td><td>'+advertiser_type+'</td><td nowrap>'+string_qty_contact+'</td><td style="text-align:center;"><span id="locked_status_'+obj[i].uuid_full+'" class="material-icons" style="color:'+color_status+'">attribution</span></td><td nowrap style="text-align:center;">';
                     // information card
                     html += '<a href="?pr=Li9wYWdlcy9hZHZlcnRpc2Vycy9pbmZvLnBocA==&tid='+obj[i].uuid_full+'"><span class="material-icons" style="font-size:1.5rem; color:black;" title="Information Card '+obj[i].corporate_name+'">info</span></a>';
 

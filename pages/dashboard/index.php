@@ -31,7 +31,7 @@ if(1==2)
         </div>
     </div>
     <div class="input-group col-sm-12   ">
-        <select class="custom-select" name="executive_id" title="Assigned Executive" autocomplete="executive_id">
+        <select class="custom-select" name="executive_id" id="executive_id" title="Assigned Executive" onchange="handleListGoalOnLoad(this.value,undefined,document.getElementById('month').value,document.getElementById('year').value,undefined); handleListOnLoad(this.value,undefined,document.getElementById('month').value,document.getElementById('year').value,undefined);" autocomplete="executive_id">
             <?=inputFilterSelect('user','Executive','','username','')?>
         </select>
     </div>
@@ -42,7 +42,7 @@ if(1==2)
             <form name='filter' method="post" enctype="multipart/form-data">
                 <div class="form-row">
                     <div class="input-group col-sm-3">
-                        <select class="custom-select" name="month" title="Month" autocomplete="month">
+                        <select class="custom-select" name="month" id="month" title="Month" autocomplete="month" onchange="handleListGoalOnLoad(document.getElementById('executive_id').value,undefined,this.value,document.getElementById('year').value,undefined); handleListOnLoad(document.getElementById('executive_id').value,undefined,this.value,document.getElementById('year').value,undefined);">
                             <option value="1">January</option>
                             <option value="2">February</option>
                             <option value="3">March</option>
@@ -58,7 +58,7 @@ if(1==2)
                         </select>
                     </div>
                     <div class="input-group col-sm-2">
-                        <select class="custom-select" name="year" title="Year" autocomplete="year">
+                        <select class="custom-select" name="year" id="year" title="Year" autocomplete="year" onchange="handleListGoalOnLoad(document.getElementById('executive_id').value,undefined,document.getElementById('month').value,this.value,undefined); handleListOnLoad(document.getElementById('executive_id').value,undefined,document.getElementById('month').value,this.value,undefined);">
                             <option value="2022">2022</option>
                             <option value="2023">2023</option>
                             <option value="2024">2024</option>

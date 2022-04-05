@@ -24,14 +24,15 @@ if(array_key_exists('auth_api',$_REQUEST)){
     $agency_id      = 'NULL';
     if($_GET['agency_id'] != '0')
         $agency_id  = "('".$_GET['agency_id']."')";
+    $contact_id     = $_GET['contact_id'];
     $description    = $_GET['description'];
     $start_date     = $_GET['start_date'];
     $stop_date      = $_GET['stop_date'];
     $status_id      = $_GET['status_id'];
     $pixel          = $_GET['pixel'];
     
-    $columns    = 'id,user_id,status_id,offer_name,advertiser_id,agency_id,description,start_date,stop_date,is_pixel,is_active,created_at, updated_at';
-    $values     = "(UUID()),('$user_id'),$status_id,'$name',('$client_id'),$agency_id,'$description','$start_date','$stop_date','$pixel','Y',now(),now()";
+    $columns    = 'id,user_id,status_id,offer_name,advertiser_id,agency_id,contact_id,description,start_date,stop_date,is_pixel,is_active,created_at, updated_at';
+    $values     = "(UUID()),('$user_id'),$status_id,'$name',('$client_id'),$agency_id,('$contact_id'),'$description','$start_date','$stop_date','$pixel','Y',now(),now()";
     $table      = "proposals";
 
     // Query creation

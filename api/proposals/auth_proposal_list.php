@@ -24,7 +24,6 @@ if(array_key_exists('auth_api',$_REQUEST)){
     $tableOrView    = "view_proposals";
     $orderBy        = " group by UUID";
     
-
     // filters
     $filters                = '';
     if($group !== 'admin'){
@@ -38,10 +37,7 @@ if(array_key_exists('auth_api',$_REQUEST)){
             $jocker         = $_REQUEST['search'];
             $filters        .= " search like '%$jocker%'";
         }
-    }
-
-    
-    
+    }  
     
     if($filters !== ''){
         $filters = "WHERE ".$filters;

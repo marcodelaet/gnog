@@ -110,7 +110,7 @@ function addContact(form){
 
     } else{
         const requestURLAdd = window.location.protocol+'//'+locat+'api/'+localModule+'s/auth_'+localModule+'_add_new.php';
-        alert(requestURLAdd + "\nqs: "+querystring);
+        console.log(requestURLAdd + "\nqs: "+querystring);
         const requestAdd = new XMLHttpRequest();
         requestAdd.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {

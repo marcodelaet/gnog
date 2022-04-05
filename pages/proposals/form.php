@@ -22,7 +22,7 @@ $moduleName = 'Proposal';
                     <div class="col">
                         <label for="client_id">Client</label>
                         <spam id="sclient">
-                            <select name="client_id" id="selectclient" title="client_id" class="form-control" autocomplete="client_id" required>
+                            <select name="client_id" id="selectclient" title="client_id" class="form-control" autocomplete="client_id" onchange="if(agency_id.value == '0') { listAdvertiserContacts(this.value) }" required>
                                 <?=inputSelect('advertiser','Client','is_agency-N','name','')?>
                             </select>
                         </spam>
@@ -33,12 +33,13 @@ $moduleName = 'Proposal';
                     <div class="col">
                         <label for="agency_id">Agency</label>
                         <spam id="sagency">
-                            <select name="agency_id" id="selectagency" title="agency_id" class="form-control" autocomplete="agency_id">
+                            <select name="agency_id" id="selectagency" title="agency_id" class="form-control" autocomplete="agency_id" onchange="listAdvertiserContacts(this.value)">
                                 <?=inputSelect('advertiser','Agency','is_agency-Y','name','')?>
                             </select>
                         </spam>
                     </div>
                 </div>
+                <div id="div-selectContact"></div>
                 <div class="form-row">
                     <div class="col">
                         <label for="name">Offer Name</label>

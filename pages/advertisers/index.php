@@ -19,7 +19,6 @@ if(array_key_exists('advertiser',$_POST))
 <link rel="stylesheet" href="<?=$dir?>./assets/css/RecoveryLink.css">
 <link rel="stylesheet" href="<?=$dir?>./assets/css/Button.css">
 <script src="<?=$dir?>./assets/js/<?=strtolower($moduleName)?>.js" type="text/javascript"></script>
-
     <div class='list-<?=strtolower($moduleName)?>-container'>
     <div class="filter-container" style="margin-bottom:1rem;">
         
@@ -55,15 +54,13 @@ if(array_key_exists('advertiser',$_POST))
                 <tr>
                     <th scope="col">Corporate name</th>
                     <th scope="col">&nbsp;</th>
-                    <th scope="col">Main contact</th>
-                    <th scope="col" style="text-align:center;">Country</th>
+                    <th scope="col">&nbsp;</th>
                     <th scope="col" style="text-align:center;">Active</th>
                     <th scope="col" style="text-align:center;">Settings</th>
                 </tr>
             </thead>
             <tbody id="list<?=$moduleName?>s">
                 <tr>
-                    <td>...</td>
                     <td>...</td>
                     <td>...</td>
                     <td>...</td>

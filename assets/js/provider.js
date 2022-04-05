@@ -366,7 +366,7 @@ function handleListOnLoad(search) {
                     }
                     phone_number    = "";
                     contact         = "";
-                    alert(typeof(obj[i].contact));
+                   //alert(typeof(obj[i].contact));
                     if((obj[i].contact !== 'null') || (obj[i].contact !== null)){
                         phone_number    = obj[i].phone;
                         contact         = obj[i].contact;

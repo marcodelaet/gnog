@@ -24,7 +24,7 @@ $con = $DB->connect();
     $array_phone_international_code   = "000";
     if(array_key_exists('phone_ddi',$_POST)){
         if($_POST['phone_ddi']!=='')
-            $phone_international_code   = $_POST['phone_ddi'];
+            $array_phone_international_code   = $_POST['phone_ddi'];
     }
     $array_phone_prefix       = "000";
     $array_phone_number       = "000";
