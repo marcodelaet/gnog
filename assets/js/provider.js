@@ -13,12 +13,6 @@ function handleSubmit(form) {
         xname                   = form.name.value;
         address                 = form.address.value;
         webpage_url             = form.webpage_url.value;
-        main_contact_name       = form.main_contact_name.value;
-        main_contact_surname    = form.main_contact_surname.value;
-        main_contact_email      = form.main_contact_email.value;
-        phone_ddi               = document.getElementsByClassName('iti__selected-flag')[0].title.split(':')[1].replace(' ','').replace('+','');
-        phone                   = form.phone.value;
-        main_contact_position   = form.main_contact_position.value;
         product_id              = form.product_id.value;
         if(product_id == '0'){
             message += 'Please, select a product!\n';
@@ -39,8 +33,8 @@ function handleSubmit(form) {
         if(errors > 0){
             alert(message);
         } else{
-            const requestURL = window.location.protocol+'//'+locat+'api/providers/auth_provider_add_new.php?auth_api='+authApi+'&name='+xname+'&webpage_url='+webpage_url+'&address='+address+'&main_contact_name='+main_contact_name+'&main_contact_surname='+main_contact_surname+'&main_contact_email='+main_contact_email+'&main_contact_name='+main_contact_name+'&phone_ddi='+phone_ddi+'&phone='+phone+'&main_contact_position='+main_contact_position+'&product_id='+product_id+'&salemodel_id='+salemodel_id+'&product_price='+product_price+'&currency='+currency;
-            //alert(requestURL);
+            const requestURL = window.location.protocol+'//'+locat+'api/providers/auth_provider_add_new.php?auth_api='+authApi+'&name='+xname+'&webpage_url='+webpage_url+'&address='+address+'&product_id='+product_id+'&salemodel_id='+salemodel_id+'&product_price='+product_price+'&currency='+currency;
+            console.log(requestURL);
             const request = new XMLHttpRequest();
             request.onreadystatechange = function() {
                 if (this.readyState == 4 && this.status == 200) {
@@ -90,7 +84,7 @@ function handleSubmitCSV(form){
             request.onreadystatechange = function() {
                 if (this.readyState == 4 && this.status == 200) {
                     // Typical action to be performed when the document is ready:
-                    //console.log(request.responseText);
+                    console.log(request.responseText);
                     obj = JSON.parse(request.responseText);
 
                     form.btnSave.innerHTML = "Upload list of Providers";
@@ -322,6 +316,9 @@ function handleListOnLoad(search) {
     authApi     = csrf_token;
     locat       = window.location.hostname;
 
+    groupby     = '&groupby=UUID';
+    addColumn   = '&addcolumn=count(contact_provider_id) as qty_contact';
+
     filters     = '';
     if(typeof search == 'undefined')
         search  = '';
@@ -336,8 +333,8 @@ function handleListOnLoad(search) {
 
     } else{
         tableList   = document.getElementById('listProviders');
-        const requestURL = window.location.protocol+'//'+locat+'api/providers/auth_provider_view.php?auth_api='+authApi+filters;
-        //alert(requestURL);
+        const requestURL = window.location.protocol+'//'+locat+'api/providers/auth_provider_view.php?auth_api='+authApi+filters+groupby+addColumn;
+        console.log(requestURL);
         const request = new XMLHttpRequest();
         request.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {
@@ -365,23 +362,38 @@ function handleListOnLoad(search) {
                             country = 'XXX';
                     }
                     phone_number    = "";
-                    contact         = "";
+                    contact         = "-------";
                    //alert(typeof(obj[i].contact));
-                    if((obj[i].contact !== 'null') || (obj[i].contact !== null)){
+                   phone_number = "--------"
+                    if((obj[i].contact !== 'null') && (obj[i].contact !== null)){
                         phone_number    = obj[i].phone;
                         contact         = obj[i].contact;
-                        if(obj[0].phone_prefix!='')
-                            phone_number = obj[0].phone_international_code+obj[0].phone_prefix+obj[0].phone_number.replace(" ","");
+                        if((obj[i].phone_prefix!='') && (obj[i].phone_prefix !== 'null') && (obj[i].phone_prefix !== null))
+                            phone_number = '+'+obj[i].phone_international_code+obj[i].phone_prefix+obj[i].phone_number.replace(" ","");
+
+                        if((obj[i].phone_prefix == 'null') || (obj[i].phone_prefix == null))
+                            phone_number = '+'+obj[i].phone_international_code+obj[i].phone_number.replace(" ","");
                     }
-                    html += '<tr><td>'+obj[i].name+'</td><td>'+obj[i].webpage_url+'</td><td nowrap>+'+phone_number+'</td><td nowrap>'+contact+'</td><td style="text-align:center;"><span id="locked_status_'+obj[i].uuid_full+'" class="material-icons" style="color:'+color_status+'">attribution</span></td><td nowrap style="text-align:center;">';
+                    webpage = '-------';
+                    if( (obj[i].webpage_url !== 'null') && (obj[i].webpage_url !== null))
+                        webpage = obj[i].webpage_url;
+                    string_qty_contact = "No contacts";
+                    if(obj[i].qty_contact > 0)
+                        string_qty_contact = obj[i].qty_contact + ' contact';
+                    if(obj[i].qty_contact > 1)
+                        string_qty_contact += 's';
+                    html += '<tr><td>'+obj[i].name+'</td><td>'+webpage+'</td><td nowrap>'+string_qty_contact+'</td><td style="text-align:center;"><span id="locked_status_'+obj[i].uuid_full+'" class="material-icons" style="color:'+color_status+'">attribution</span></td><td nowrap style="text-align:center;">';
                     // information card
-                    html += '<a href="?pr=Li9wYWdlcy9wcm92aWRlcnMvaW5mby5waHA=&tid='+obj[i].uuid_full+'"><span class="material-icons" style="font-size:1.5rem; color:black;" title="Information Card '+obj[i].corporate_name+'">info</span></a>';
+                    html += '<a href="?pr=Li9wYWdlcy9wcm92aWRlcnMvaW5mby5waHA=&tid='+obj[i].uuid_full+'"><span class="material-icons" style="font-size:1.5rem; color:black;" title="Information Card '+obj[i].name+'">info</span></a>';
 
                     // Edit form
-                    html += '<a href="?pr=Li9wYWdlcy9wcm92aWRlcnMvZm9ybWVkaXQucGhw&tid='+obj[i].uuid_full+'"><span class="material-icons" style="font-size:1.5rem; color:black;" title="Edit '+module + ' '+obj[i].corporate_name+'">edit</span></a>';
+                    html += '<a href="?pr=Li9wYWdlcy9wcm92aWRlcnMvZm9ybWVkaXQucGhw&tid='+obj[i].uuid_full+'"><span class="material-icons" style="font-size:1.5rem; color:black;" title="Edit '+module + ' '+obj[i].name+'">edit</span></a>';
 
                     // Remove 
-                    html += '<a href="javascript:void(0)" onclick="handleRemove(\''+obj[i].uuid_full+'\',\''+obj[i].is_active+'\')"><span class="material-icons" style="font-size:1.5rem; color:black;" title="Remove '+module + ' '+obj[i].corporate_name+'">delete</span></a>';
+                    html += '<a href="javascript:void(0)" onclick="handleRemove(\''+obj[i].uuid_full+'\',\''+obj[i].is_active+'\')"><span class="material-icons" style="font-size:1.5rem; color:black;" title="Remove '+module + ' '+obj[i].name+'">delete</span></a>';
+
+                    // Add Contact
+                    html += '<a href="?pr=Li9wYWdlcy9hZHZlcnRpc2Vycy9jb250YWN0cy9mb3JtLnBocA==&md=Provider&tid='+obj[i].uuid_full+'"><span class="material-icons" style="font-size:1.5rem; color:black;" title="Add a contact to '+module + ' '+obj[i].name+'">contact_mail</span></a>';
 
                     html += '</td></tr>';
                 }

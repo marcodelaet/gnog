@@ -46,14 +46,10 @@ if ($uploadOk > 0) {
         foreach ($fileRead as $num_line => $line) {
             if($num_line == 0){
                 $columns = str_replace('provider_name','name',htmlspecialchars($line));
-                $columns = str_replace('main_contact_lastname','main_contact_surname',$columns);
                 $columns = str_replace('webpage','webpage_url',$columns);
                 $columns = str_replace('product','product_id',$columns);
                 $columns = str_replace('price','product_price',$columns);
                 $columns = str_replace('sale_model','salemodel_id',$columns);
-                $columns = str_replace('main_contact_internationalcode','phone_international_code',$columns);
-                $columns = str_replace('main_contact_areacode','phone_prefix',$columns);
-                $columns = str_replace('main_contact_phonenumber','phone_number',$columns);
                 $columns = str_replace(';',',',$columns); 
                 $columns = str_replace("\r\n", '',$columns); 
                 $columns = str_replace("\r", '',$columns); 
@@ -91,35 +87,42 @@ if ($uploadOk > 0) {
                 $line   = str_replace(substr($line,$posStart[$index-1],$posFinal[$index]),$line1,$line);
                 $line = str_replace('"','',$line);
                 $arrayLine  = explode("|||",$line);
-                $arrayLine[$indexLocateCurrencyValue[0]-1]   = str_replace(",","",$arrayLine[$indexLocateCurrencyValue[0]-1]);
+                if(count($indexLocateCurrencyValue) > 0)
+                    $arrayLine[$indexLocateCurrencyValue[0]-1]   = str_replace(",","",$arrayLine[$indexLocateCurrencyValue[0]-1]);
                 
-                // Getting Product_Id from products table
-                $productName = $arrayLine[$indexLocateProductValue[0]-1];
+                if(count($indexLocateProductValue) > 0){
+                    // Getting Product_Id from products table
+                    $productName = $arrayLine[$indexLocateProductValue[0]-1];
 
-                // Query
-                $sqlGetProduct = "SELECT id FROM products WHERE name='$productName'";
+                    // Query
+                    $sqlGetProduct = "SELECT id FROM products WHERE name='$productName'";
 
-                // Executing Query
-                $rsProduct = $DB->getDataSingle($sqlGetProduct);
+                    // Executing Query
+                    $rsProduct = $DB->getDataSingle($sqlGetProduct);
+                }
 
+                if(count($indexLocateSaleModelValue) > 0){
+                    // Getting SaleModel_Id from salemodes table
+                    $saleModelName = $arrayLine[$indexLocateSaleModelValue[0]-1];
 
-                // Getting SaleModel_Id from salemodes table
-                $saleModelName = $arrayLine[$indexLocateSaleModelValue[0]-1];
+                    // Query
+                    $sqlGetSaleModel = "SELECT id FROM salemodels WHERE name='".str_replace("\r", '',str_replace("\r\n", '',$saleModelName))."'";
 
-                // Query
-                $sqlGetSaleModel = "SELECT id FROM salemodels WHERE name='".str_replace("\r", '',str_replace("\r\n", '',$saleModelName))."'";
-
-                // Executing Query
-                $rsSaleModel = $DB->getDataSingle($sqlGetSaleModel);
+                    // Executing Query
+                    $rsSaleModel = $DB->getDataSingle($sqlGetSaleModel);
+                }
 
                 $line   = implode("','",$arrayLine);
-                $line   = "'".$line."'";
-                $line   = str_replace($productName,$rsProduct["id"],$line);
-                $line   = str_replace($saleModelName,$rsSaleModel["id"],$line);
+                $line   = "'".ucfirst($line)."'";
+                if(count($indexLocateProductValue) > 0)
+                    $line   = str_replace($productName,$rsProduct["id"],$line);
+                if(count($indexLocateSaleModelValue) > 0)
+                    $line   = str_replace($saleModelName,$rsSaleModel["id"],$line);
                 $line   = "UUID(),".$line.",'Y',now(),now()";
                 
                 // creating INSERT sql
                 $sql_insert_line = "INSERT INTO $module ($columns) VALUES ($line)";
+               // echo $sql_insert_line;
                 
                 // saving lines on database
                 $rs = $DB->executeInstruction($sql_insert_line);

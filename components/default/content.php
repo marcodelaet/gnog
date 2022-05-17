@@ -9,8 +9,6 @@ if (array_key_exists('QUERY_STRING',$_SERVER)){
     $pageToGo = base64_decode($_REQUEST['pr']);
     //echo $pageToGo;
     require($pageToGo);
-
-
     //echo base64_encode('./pages/users/list.php');
   }
 

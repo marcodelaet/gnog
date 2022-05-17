@@ -4,7 +4,7 @@ var csrf_token = $('meta[name="csrf-token"]').attr('content');
 module  = 'advertiser';
 
 function handleSubmit(form) {
-    if (form.corporate_name.value !== '' && form.address.value !== '' && form.main_contact_email.value !== '') {
+    if (form.corporate_name.value !== '' && form.address.value !== '') {
         //form.submit();
         errors      = 0;
         authApi     = 'dasdasdkasdeewef';
@@ -14,12 +14,6 @@ function handleSubmit(form) {
             agency              = 'Y';
         corporate_name          = form.corporate_name.value;
         address                 = form.address.value;
-        main_contact_name       = form.main_contact_name.value;
-        main_contact_surname    = form.main_contact_surname.value;
-        main_contact_email      = form.main_contact_email.value;
-        phone_ddi               = document.getElementsByClassName('iti__selected-flag')[0].title.split(':')[1].replace(' ','').replace('+','');
-        phone                   = form.phone.value;
-        main_contact_position   = form.main_contact_position.value;
         
         locat       = window.location.hostname;
         if(locat.slice(-1) != '/')
@@ -34,15 +28,15 @@ function handleSubmit(form) {
         if(errors > 0){
 
         } else{
-            const requestURL = window.location.protocol+'//'+locat+'api/advertisers/auth_advertiser_add_new.php?auth_api='+authApi+'&agency='+agency+'&corporate_name='+corporate_name+'&address='+address+'&main_contact_name='+main_contact_name+'&main_contact_surname='+main_contact_surname+'&main_contact_email='+main_contact_email+'&main_contact_name='+main_contact_name+'&phone_ddi='+phone_ddi+'&phone='+phone+'&main_contact_position='+main_contact_position;
-            
+            const requestURL = window.location.protocol+'//'+locat+'api/advertisers/auth_advertiser_add_new.php?auth_api='+authApi+'&agency='+agency+'&corporate_name='+corporate_name+'&address='+address;
+            console.log(requestURL);
             const request = new XMLHttpRequest();
             request.onreadystatechange = function() {
                 if (this.readyState == 4 && this.status == 200) {
                    // Typical action to be performed when the document is ready:
                    obj = JSON.parse(request.responseText);
                    form.btnSave.innerHTML = "Save";
-                   //alert('Status: '+obj.status);
+                   console.log('Status: '+obj.status);
                    window.location.href = '?pr=Li9wYWdlcy9hZHZlcnRpc2Vycy90a3AvaW5kZXgucGhw';
                 }
                 else{
@@ -337,7 +331,7 @@ function handleListOnLoad(search) {
                             default:
                                 country = 'XXX';
                         }
-                    string_qty_contact = "No contact";
+                    string_qty_contact = "No contacts";
                     if(obj[i].qty_contact > 0)
                         string_qty_contact = obj[i].qty_contact + ' contact';
                     if(obj[i].qty_contact > 1)
@@ -354,7 +348,7 @@ function handleListOnLoad(search) {
                     html += '<a href="javascript:void(0)" onclick="handleRemove(\''+obj[i].uuid_full+'\',\''+obj[i].is_active+'\')"><span class="material-icons" style="font-size:1.5rem; color:black;" title="Remove '+module + ' '+obj[i].corporate_name+'">delete</span></a>';
 
                     // Add Contact
-                    html += '<a href="?pr=Li9wYWdlcy9hZHZlcnRpc2Vycy9jb250YWN0cy9mb3JtLnBocA==&tid='+obj[i].uuid_full+'"><span class="material-icons" style="font-size:1.5rem; color:black;" title="Add a contact to '+module + ' '+obj[i].corporate_name+'">contact_mail</span></a>';
+                    html += '<a href="?pr=Li9wYWdlcy9hZHZlcnRpc2Vycy9jb250YWN0cy9mb3JtLnBocA==&md=Advertiser&tid='+obj[i].uuid_full+'"><span class="material-icons" style="font-size:1.5rem; color:black;" title="Add a contact to '+module + ' '+obj[i].corporate_name+'">contact_mail</span></a>';
 
                     html += '</td></tr>';
                 }

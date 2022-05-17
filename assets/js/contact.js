@@ -69,11 +69,11 @@ function getId(table,where){
     }
 }
 
-function addContact(form){
+function addContact(form,module){
     errors                  = 0;
     locat                   = window.location.hostname;
-    authApi                = csrf_token;
-    advertiserID            = form.advID.value;
+    authApi                 = csrf_token;
+    ElementID                      = form.ElementID.value;
 
     // alert(form.auth_api.value);
     objContactName      = document.getElementsByName('contact_name[]');
@@ -101,7 +101,7 @@ function addContact(form){
         phone_number    += virg + objContactPhone[i].value;
     }
 
-    querystring = 'auth_api='+authApi+"&advertiserID="+advertiserID+"&contact_name=["+contact_name+"]&contact_surname=["+contact_surname+"]&contact_email=["+contact_email+"]&contact_position=["+contact_position+"]&phone_ddi="+phone_ddi+"&phone_number=["+phone_number+"]";
+    querystring = 'auth_api='+authApi+"&module="+module+"&ElementID="+ElementID+"&contact_name=["+contact_name+"]&contact_surname=["+contact_surname+"]&contact_email=["+contact_email+"]&contact_position=["+contact_position+"]&phone_ddi="+phone_ddi+"&phone_number=["+phone_number+"]";
 
     if(locat.slice(-1) != '/')
         locat += '/';
@@ -119,9 +119,11 @@ function addContact(form){
                 //obj = requestAdd.responseText;
                 //console.log(obj);
 //                return false;
-
+                var redirectTo = '?pr=Li9wYWdlcy9hZHZlcnRpc2Vycy9pbmRleC5waHA=';
+                if(module == 'provider')
+                    redirectTo = '?pr=Li9wYWdlcy9wcm92aWRlcnMvaW5kZXgucGhw';
                 if(obj.status === 'OK'){
-                    window.location.href = '?pr=Li9wYWdlcy9hZHZlcnRpc2Vycy9pbmRleC5waHA=';
+                    window.location.href = redirectTo;
                 } else {
                     alert(obj.status);
                 }

@@ -19,7 +19,7 @@ if(array_key_exists('auth_api',$_REQUEST)){
     $columns = "(id) as uuid_full, name, description, is_active";
     $tableOrView    = "products";
     $orderBy        = "order by name";
-
+  
     // filters
     $filters                = '';
     if(array_key_exists('search',$_REQUEST)){
@@ -29,6 +29,13 @@ if(array_key_exists('auth_api',$_REQUEST)){
         }
     }
     
+    if(array_key_exists('where',$_REQUEST)){
+        if($_REQUEST['where']!==''){
+            $jocker         = $_REQUEST['where'];
+            $filters        .= "AND $jocker";
+        }
+    }
+
     $filters = "WHERE is_active='Y' ".$filters;
     
 

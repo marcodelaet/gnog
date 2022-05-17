@@ -16,11 +16,12 @@ $con = $DB->connect();
     //if($localStorage == $_REQUEST['auth_api']){}
 
     // values to insert
+    $typeContact                = $_POST['module'];
     $array_contact_name         = str_replace("[","",str_replace("]","",$_POST['contact_name']));
     $array_contact_surname      = str_replace("[","",str_replace("]","",$_POST['contact_surname']));
     $array_contact_email        = str_replace("[","",str_replace("]","",$_POST['contact_email']));
     $array_contact_position     = str_replace("[","",str_replace("]","",$_POST['contact_position']));
-    $contact_client_id          = $_POST['advertiserID'];
+    $contact_client_id          = $_POST['ElementID'];
     $array_phone_international_code   = "000";
     if(array_key_exists('phone_ddi',$_POST)){
         if($_POST['phone_ddi']!=='')
@@ -54,7 +55,7 @@ $con = $DB->connect();
         $phone_prefix               = $array_phone_prefix[$i];
         $phone_number               = $array_phone_number[$i];
 
-        $values     = "(UUID()),'advertiser','$contact_name','$contact_surname','$contact_email','$contact_position','$contact_client_id','$phone_international_code','$phone_prefix','$phone_number','Y',now(),now()";
+        $values     = "(UUID()),'$typeContact','$contact_name','$contact_surname','$contact_email','$contact_position','$contact_client_id','$phone_international_code','$phone_prefix','$phone_number','Y',now(),now()";
 
         // Query creation
         $sql = "INSERT INTO $module ($columns) VALUES ($values)";

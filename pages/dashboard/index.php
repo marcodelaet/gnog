@@ -125,6 +125,7 @@ if(1==2)
     </div>    
 </div>
 <script>
+    updateRates();
     handleListGoalOnLoad();
     handleListOnLoad();
 </script>

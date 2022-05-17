@@ -43,7 +43,7 @@ function handleSubmit(form) {
             alert(message);
         } else{
             const requestURL = window.location.protocol+'//'+locat+'api/proposals/auth_proposal_add_new.php?auth_api='+authApi+'&name='+xname+'&pixel='+pixel+'&client_id='+client_id+'&agency_id='+agency_id+'&contact_id='+contact_id+'&description='+description+'&start_date='+start_date+'&stop_date='+stop_date+'&status_id='+status_id;
-            //alert(requestURL);
+            console.log(requestURL);
             const request = new XMLHttpRequest();
             request.onreadystatechange = function() {
                 if (this.readyState == 4 && this.status == 200) {
@@ -77,12 +77,10 @@ function handleSubmit(form) {
                         price           += virg + xprice;
                         quantity        += virg + objQuantity[i].value;
                         provider_id     += virg + objProviderId[i].value;
-                        
                     }
                     addProduct('['+product_id+']','['+salemodel_id+']','['+price+']',currency,'['+quantity+']','['+provider_id+']',proposal_id);
 
                     form.btnSave.innerHTML = "Save";
-                    //alert('Status: '+obj.status);
                     window.location.href = '?pr=Li9wYWdlcy9wcm9wb3NhbHMvdGtwL2luZGV4LnBocA==';
                 }
                 else{
@@ -319,49 +317,57 @@ function handleListOnLoad(search) {
     } else{
         tableList   = document.getElementById('listProposals');
         const requestURL = window.location.protocol+'//'+locat+'api/proposals/auth_proposal_list.php?auth_api='+authApi+filters;
-        //alert(requestURL);
+        console.log(requestURL);
         const request = new XMLHttpRequest();
         request.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {
                 // Typical action to be performed when the document is ready:
                 obj         = JSON.parse(request.responseText);
-                html        = '';
-                for(var i=0;i < obj.length; i++){
-                    var formatter = new Intl.NumberFormat(lang, {
-                        style: 'currency',
-                        currency: obj[i].currency,
-                        //maximumSignificantDigits: 2,
-                
-                        // These options are needed to round to whole numbers if that's what you want.
-                        //minimumFractionDigits: 2, // (this suffices for whole numbers, but will print 2500.10 as $2,500.1)
-                        //maximumFractionDigits: 0, // (causes 2500.99 to be printed as $2,501)
-                    });
-                    color_status = '#d60b0e';
-                    if(obj[i].is_active == 'Y')
-                        color_status = '#298c3d';
-                    agency = '';
-                    if(typeof(obj[i].agency_name) === 'string')
-                        agency = ' / '+obj[i].agency_name;
-                    amount = obj[i].amount;
-                    start_date  = new Date(obj[i].start_date);
-                    stop_date   = new Date(obj[i].stop_date);
-                    html += '<tr><td>'+obj[i].offer_name+'</td><td nowrap>'+obj[i].client_name+agency+'</td><td nowrap>'+obj[i].username+'</td><td nowrap>'+formatter.format(amount)+'</td><td>'+start_date.toLocaleString(lang).split(" ")[0].replace(",","")+'</td><td>'+stop_date.toLocaleString(lang).split(" ")[0].replace(",","")+'</td><td style="text-align:center;"><span id="locked_status_'+obj[i].UUID+'" class="material-icons" style="color:'+color_status+'">attribution</span></td><td nowrap style="text-align:center;">';
-                    // information card
-                    html += '<a href="?pr=Li9wYWdlcy9wcm9wb3NhbHMvaW5mby5waHA=&tid='+obj[i].UUID+'"><span class="material-icons" style="font-size:1.5rem; color:black;" title="Information Card '+obj[i].offer_name+'">info</span></a>';
-
-                    // Edit form
-                    html += '<a href="?pr=Li9wYWdlcy9wcm9wb3NhbHMvZm9ybWVkaXQucGhw&tid='+obj[i].UUID+'"><span class="material-icons" style="font-size:1.5rem; color:black;" title="Edit '+module + ' '+obj[i].offer_name+'">edit</span></a>';
-
-                    // Remove 
-                    html += '<a href="javascript:void(0)" onclick="handleRemove(\''+obj[i].UUID+'\',\''+obj[i].is_active+'\')"><span class="material-icons" style="font-size:1.5rem; color:black;" title="Remove '+module + ' '+obj[i].offer_name+'">delete</span></a>';
-
+                if(typeof obj[0].response != 'undefined'){
+                    html = '<tr><td colspan="8"><div style="margin-left:45%; margin-right:45%;text-align:center;" role="status">';
+                    html += '0 Results';
                     html += '</td></tr>';
+                    tableList.innerHTML = html;    
+                }else{
+                    html        = ''; 
+                    for(var i=0;i < obj.length; i++){
+                        var formatter = new Intl.NumberFormat(lang, {
+                            style: 'currency',
+                            currency: obj[i].currency,
+                            //maximumSignificantDigits: 2,
+                    
+                            // These options are needed to round to whole numbers if that's what you want.
+                            //minimumFractionDigits: 2, // (this suffices for whole numbers, but will print 2500.10 as $2,500.1)
+                            //maximumFractionDigits: 0, // (causes 2500.99 to be printed as $2,501)
+                        });
+                        color_status = '#d60b0e';
+                        if(obj[i].is_active == 'Y')
+                            color_status = '#298c3d';
+                        agency = '';
+                        if(typeof(obj[i].agency_name) === 'string')
+                            agency = ' / '+obj[i].agency_name;
+                        amount = obj[i].amount;
+                        start_date  = new Date(obj[i].start_date);
+                        stop_date   = new Date(obj[i].stop_date);
+                        html += '<tr><td>'+obj[i].offer_name+'</td><td nowrap>'+obj[i].client_name+agency+'</td><td nowrap>'+obj[i].username+'</td><td nowrap>'+formatter.format(amount)+'</td><td>'+start_date.toLocaleString(lang).split(" ")[0].replace(",","")+'</td><td>'+stop_date.toLocaleString(lang).split(" ")[0].replace(",","")+'</td><td style="text-align:center;"><span id="locked_status_'+obj[i].UUID+'" class="material-icons" style="color:'+color_status+'">attribution</span></td><td nowrap style="text-align:center;">';
+                        // information card
+                        html += '<a href="?pr=Li9wYWdlcy9wcm9wb3NhbHMvaW5mby5waHA=&tid='+obj[i].UUID+'"><span class="material-icons" style="font-size:1.5rem; color:black;" title="Information Card '+obj[i].offer_name+'">info</span></a>';
+
+                        // Edit form
+                        html += '<a href="?pr=Li9wYWdlcy9wcm9wb3NhbHMvZm9ybWVkaXQucGhw&tid='+obj[i].UUID+'"><span class="material-icons" style="font-size:1.5rem; color:black;" title="Edit '+module + ' '+obj[i].offer_name+'">edit</span></a>';
+
+                        // Remove 
+                        html += '<a href="javascript:void(0)" onclick="handleRemove(\''+obj[i].UUID+'\',\''+obj[i].is_active+'\')"><span class="material-icons" style="font-size:1.5rem; color:black;" title="Remove '+module + ' '+obj[i].offer_name+'">delete</span></a>';
+
+                        html += '</td></tr>';
+                    }
+                    tableList.innerHTML = html;
                 }
-                tableList.innerHTML = html;
             }
             else{
                 html = '<tr><td colspan="8"><div style="margin-left:45%; margin-right:45%;" class="spinner-border" style="text-align:center;" role="status">';
-                html += '<span class="sr-only">Loading...</span>';
+                //html += '<span class="sr-only">Loading...</span>';
+                html += '<span class="sr-only">0 results</span>';
                 html += '</div></td></tr>';
                 tableList.innerHTML = html;
                 //form.btnSave.innerHTML = "Searching...";
@@ -418,7 +424,7 @@ function calcAmountTotal(form,index){
     xquantity   = quantity[index].value;
     if(xprice > '0' && xquantity > '0'){
         amount = document.getElementsByName('amount[]');
-        amount[index].value   = formatter.format(parseFloat(xprice.replace(",",".")) * parseInt(xquantity));
+        amount[index].value   = formatter.format(parseFloat(transformToInt(xprice)) * parseInt(xquantity));
 
         total = 0;
         for(i=0;i < amount.length; i++){
@@ -444,6 +450,24 @@ function calcAmountTotal(form,index){
         }
         form.total.value = formatter.format(total);
     }
+}
+
+function transformToInt(value){
+    arrayValue = value.split('.');
+    lenArrayValue = arrayValue.length;
+    stringValue = '';
+    for(i = 0;i < lenArrayValue; i++){
+        stringValue += arrayValue[i];
+    }
+
+    arrayValue = stringValue.split(',');
+    lenArrayValue = arrayValue.length;
+    stringValue = '';
+    for(j = 0;j < lenArrayValue; j++){
+        stringValue += arrayValue[j];
+    }
+    finalValue = parseInt(stringValue) / 100;
+    return finalValue;
 }
 
 function newProductForm(copy,destination){
@@ -530,12 +554,13 @@ function addProduct(product_id,salemodel_id,price,currency,quantity,provider_id,
 
     } else{
         const requestURLAdd = window.location.protocol+'//'+locat+'api/products/auth_product_add_new.php';
-        //alert(requestURLAdd + "\nqs: "+querystring);
+        console.log(requestURLAdd + "\nqs: "+querystring);
         const requestAdd = new XMLHttpRequest();
         requestAdd.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {
                 
                 obj = JSON.parse(requestAdd.responseText);
+                //console.log(obj);
 //                return false;
             }
             else{
@@ -602,4 +627,116 @@ function listAdvertiserContacts(aid){
 
 function listProviderContacts(pid){
 
+}
+
+function refilterProductsType(typeInt){
+    typeInt++;
+    if(typeInt > 1)
+        typeInt = 0;
+    document.getElementById('customSwitch2').value = typeInt;
+    
+    errors      = 0;
+    authApi     = csrf_token;
+    locat       = window.location.hostname;
+    submodule   = 'product';
+
+    if(locat.slice(-1) != '/')
+        locat += '/';
+
+    filters     = "&digyn=Y";
+    if(typeInt == '0')
+        filters     = "&digyn=N";
+
+    if(errors > 0){
+
+    } else{
+        productList   = document.getElementById('div-selectProduct');
+        const requestURL = window.location.protocol+'//'+locat+'api/'+submodule+'s/auth_'+submodule+'_list.php?auth_api='+authApi+filters;
+        //console.log(requestURL);
+        const request = new XMLHttpRequest();
+        request.onreadystatechange = function() {
+            html    = '<label for="product_id[]">Product</label>';
+            html   += '<spam id="sproduct">'
+            html   += '<SELECT name="product_id[]" title="product_id" class="form-control" autocomplete="product_id"  required>';
+            if (this.readyState == 4 && this.status == 200) {
+                // Typical action to be performed when the document is ready:
+                obj = JSON.parse(request.responseText);
+                if( (obj.response != 'error') && (obj.response != 'ZERO_RETURN')){
+                    html += '<OPTION value="0"/>Please, select Product';
+                    for(var i=0;i < obj.length; i++){
+                        html += '<OPTION value="'+obj[i].uuid_full+'"/>'+obj[i].name;
+                    }
+                    html    += '</SELECT>';
+                    html    += '</spam>';
+                }
+                else {
+                    html    = '';
+                }
+                productList.innerHTML = html;
+            }
+            else{
+                html    += '<OPTION value="0000"/>Loading...';
+                html    += '</SELECT>';
+                productList.innerHTML = html;
+                //form.btnSave.innerHTML = "Searching...";
+            }
+        };
+        request.open('GET', requestURL);
+        //request.responseType = 'json';
+        request.send();
+    }
+    refilterSaleModel(typeInt);
+}
+
+function refilterSaleModel(typeInt){
+    errors      = 0;
+    authApi     = csrf_token;
+    locat       = window.location.hostname;
+    submodule   = 'salemodel';
+
+    if(locat.slice(-1) != '/')
+        locat += '/';
+
+    filters     = "&digyn=Y";
+    if(typeInt == '0')
+        filters     = "&digyn=N";
+
+    if(errors > 0){
+
+    } else{
+        salemodelList   = document.getElementById('div-selectSaleModel');
+        const requestURL = window.location.protocol+'//'+locat+'api/'+submodule+'s/auth_'+submodule+'_list.php?auth_api='+authApi+filters;
+        //console.log(requestURL);
+        const request = new XMLHttpRequest();
+        request.onreadystatechange = function() {
+            html    = '<label for="salemodel_id[]">Sale Model</label>';
+            html   += '<spam id="ssalemodel">'
+            html   += '<SELECT name="salemodel_id[]" title="salemodel_id" class="form-control" autocomplete="salemodel_id" required>';
+            if (this.readyState == 4 && this.status == 200) {
+                // Typical action to be performed when the document is ready:
+                obj = JSON.parse(request.responseText);
+                if( (obj.response != 'error') && (obj.response != 'ZERO_RETURN')){
+                    html += '<OPTION value="0"/>Please, select Sale Model';
+                    for(var i=0;i < obj.length; i++){
+                        html += '<OPTION value="'+obj[i].uuid_full+'"/>'+obj[i].name;
+                    }
+                    html    += '</SELECT>';
+                    html    += '</spam>';
+                }
+                else {
+                    html    = '';
+                }
+                salemodelList.innerHTML = html;
+            }
+            else{
+                html    += '<OPTION value="0000"/>Loading...';
+                html    += '</SELECT>';
+                salemodelList.innerHTML = html;
+                //form.btnSave.innerHTML = "Searching...";
+            }
+        };
+        request.open('GET', requestURL);
+        //request.responseType = 'json';
+        request.send();
+    }
 }

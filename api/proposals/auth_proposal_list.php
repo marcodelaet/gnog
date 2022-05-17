@@ -48,11 +48,18 @@ if(array_key_exists('auth_api',$_REQUEST)){
     // LIST data
     //echo $sql;
     $rs = $DB->getData($sql);
+    $numberOfRows = $DB->numRows($sql); 
 
     // Response JSON 
+    header('Content-type: application/json');
     if($rs){
-        header('Content-type: application/json');
-        echo json_encode($rs);
+        if($numberOfRows > 0)
+            echo json_encode($rs);
+        else
+            echo "[{'response':'0 results'}]";
+    }
+    else{
+        echo '[{"response":"Error"}]';
     }
 }
 

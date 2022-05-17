@@ -47,15 +47,13 @@ $mobile     = null;
                 <tr>
                     <th scope="col">Provider</th>
                     <th scope="col">Webpage</th>
-                    <th scope="col">Phone</th>
-                    <th scope="col">Main contact</th>
+                    <th scope="col">&nbsp;</th>
                     <th scope="col" style="text-align:center;">Active</th>
                     <th scope="col" style="text-align:center;">Settings</th>
                 </tr>
             </thead>
             <tbody id="list<?=$moduleName?>s">
                 <tr>
-                    <td>...</td>
                     <td>...</td>
                     <td>...</td>
                     <td>...</td>

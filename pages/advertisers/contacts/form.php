@@ -1,5 +1,5 @@
 <?php
-$moduleName = 'Advertiser';
+$moduleName = $_REQUEST['md'];
 $subModuleName = 'Contact';
 ?>
 <link rel="stylesheet" href="<?=$dir?>./assets/css/<?=$subModuleName?>.css">
@@ -8,7 +8,7 @@ $subModuleName = 'Contact';
 <link rel="stylesheet" href="<?=$dir?>./assets/css/Button.css">
 <script src="<?=$dir?>./assets/js/<?=strtolower($subModuleName)?>.js" type="text/javascript"></script>
 
-<div class='form-<?=strtolower($moduleName)?>-<?=strtolower($subModuleName)?>-container'>
+<div class='form-<?=strtolower($subModuleName)?>-container'>
     <div class="form-container">
         <div class="form-header">New <?=$subModuleName?> for <?=$moduleName?></div>
         <form name='<?=strtolower($moduleName)?>_<?=strtolower($subModuleName)?>' method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
@@ -118,13 +118,13 @@ $subModuleName = 'Contact';
                     </div>
                     <div class="form-row">
                         <div class="col">
-                            <input type="hidden" name="advID" value="<?=$_GET['tid']?>"/>
+                            <input type="hidden" name="ElementID" value="<?=$_GET['tid']?>"/>
                             <input type="hidden" name="auth_api" value=csrf_token />
                             <input type="hidden" name="phone_ddi" value="000" />
                         </div>
                     </div>
                     <div class="inputs-button-container">
-                        <button class="button" name="btnSave" type="button" onClick="addContact(<?=strtolower($moduleName)?>_<?=strtolower($subModuleName)?>)" >Save</button>
+                        <button class="button" name="btnSave" type="button" onClick="addContact(<?=strtolower($moduleName)?>_<?=strtolower($subModuleName)?>,'<?=strtolower($moduleName)?>')" >Save</button>
                     </div>
                 </div>
             </div>

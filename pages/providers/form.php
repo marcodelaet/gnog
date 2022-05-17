@@ -70,99 +70,6 @@ $moduleName = 'Provider';
                         </div>
                     </div>
                 </div>
-                <div class="form-row main-contact-section">
-                    <div class="col">
-                        <div class="form-row" >
-                            <div class="col main-contact-header">
-                                Main Contact
-                            </div>
-                        </div>
-                        <div class="form-row" >
-                            <div class="col">
-                                <label for="main_contact_name">Contact Name</label>
-                                <input
-                                required
-                                name ='main_contact_name' 
-                                placeholder='Name of main contact'
-                                title = 'Name of main contact'
-                                value=''
-                                class="form-control" 
-                                type="name" 
-                                />
-                                <div class="invalid-feedback">
-                                    Please type the name of main contact.
-                                </div>
-                            </div>
-                            <div class="col">
-                                <label for="main_contact_surname">Last name</label>
-                                <input
-                                required
-                                name ='main_contact_surname' 
-                                placeholder='Last name of main contact'
-                                title = 'Last name of main contact'
-                                value=''
-                                class="form-control" 
-                                type="surname" 
-                                />
-                                <div class="invalid-feedback">
-                                    Please type the last name of main contact.
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-row" >
-                            <div class="col">
-                                <label for="main_contact_email">E-mail</label>
-                                <input
-                                required
-                                name ='main_contact_email' 
-                                placeholder='name@server.com'
-                                title = 'E-mail'
-                                value=''
-                                class="form-control" 
-                                type="email" 
-                                />
-                                <div class="invalid-feedback">
-                                    Please type a valid email.
-                                </div>
-                            </div>
-                            <div class="col">
-                                <label for="phone">Phone N&ordm;</label><br/>
-                                <input
-                                id='phone'
-                                name ='phone' 
-                                placeholder="Area Code + Number"
-                                title = 'Phone N&ordm;'
-                                value=''
-                                class="form-control" 
-                                type="tel" 
-                                maxlength="12"
-                                pattern="[0-9]{3}-[0-9]{2}-[0-9]{3}"
-                                autocomplete="phone"
-                                />
-                                <div class="invalid-feedback">
-                                    Please type a valid phone number.
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-row" >
-                            <div class="col">
-                                <label for="main_contact_position">Position</label>
-                                <input
-                                required
-                                name ='main_contact_position' 
-                                placeholder='Position of the main contact'
-                                title = 'Position'
-                                value=''
-                                class="form-control" 
-                                type="position" 
-                                />
-                                <div class="invalid-feedback">
-                                    Please type the position / role of the main contact.
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
                 <div class="form-row product-section">
                     <div class="col">
                         <div class="form-row" >
@@ -178,8 +85,6 @@ $moduleName = 'Provider';
                                         <?=inputSelect('product','Product','','name','');?>
                                     </select>
                                 </spam>
-
-                                
                                 <div class="invalid-feedback">
                                     Please choose a product for the Provider.
                                 </div>
@@ -246,40 +151,9 @@ $moduleName = 'Provider';
     $myIP     = $ip;
     //$region   = geoip_country_code_by_name($myIP);
     // echo "IP: ".$myIP."<BR/>Region: ".$region;
-
-
-
       ?>
 
-<script>
-    var input = document.querySelector("#phone");
-    window.intlTelInput(input, {
-      // allowDropdown: false,
-      // autoHideDialCode: false,
-      // autoPlaceholder: "off",
-      // dropdownContainer: document.body,
-      // excludeCountries: ["us"],
-      // formatOnDisplay: false,
-      // geoIpLookup: function(callback) {
-      //   $.get("http://ipinfo.io", function() {}, "jsonp").always(function(resp) {
-      //     var countryCode = (resp && resp.country) ? resp.country : "";
-      //     callback(countryCode);
-      //   });
-      // },
-      // hiddenInput: "full_number",
-      initialCountry: "mx",
-      // localizedCountries: { 'de': 'Deutschland' },
-      // nationalMode: false,
-      // onlyCountries: ['us', 'gb', 'ch', 'ca', 'do'],
-      // placeholderNumberType: "MOBILE",
-       preferredCountries: ['mx', 'br', 'us'],
-      // separateDialCode: true,
-      utilsScript: "/assets/js/build/utils.js",
-    });/*
-$("input").intlTelInput({
-    utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/8.4.6/js/utils.js"
-  });*/
-</script>
+
     </div>    
 </div>
 

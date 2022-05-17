@@ -12,6 +12,7 @@ pwd: GN0gR&@d&r
 
 CREATE DATABASE IF NOT EXISTS gnogcrm_db;
 
+SELECT LEFT(UUID,13) AS UUID, UUID AS uuid_full, product_id, product_name, salemodel_id, salemodel_name, product_price, currency, NAME, address, webpage_url, CONCAT(contact_name,' ', contact_surname,' (', contact_email,')') AS contact, contact_name, contact_surname, contact_email, contact_position, phone_international_code, phone_prefix, phone_number, CONCAT('+',phone_international_code,phone_number) AS phone, is_active FROM view_providers ORDER BY NAME;
 
 USE gnogcrm_db;
 
@@ -30,6 +31,7 @@ CREATE TABLE IF NOT EXISTS users (
 id VARCHAR(40) PRIMARY KEY NOT NULL UNIQUE,
 username VARCHAR(20) NOT NULL UNIQUE,
 email VARCHAR(60) NOT NULL,
+level_account INT NOT NULL,
 mobile_international_code VARCHAR(3),
 mobile_prefix VARCHAR(3),
 mobile_number VARCHAR(12),
@@ -40,6 +42,7 @@ account_locked ENUM('N','Y') NOT NULL,
 created_at DATETIME NOT NULL,
 updated_at DATETIME NOT NULL
 );
+
 
 # VIEW USERS
 CREATE VIEW view_users AS (
@@ -61,6 +64,7 @@ CREATE VIEW view_users AS (
 # INSERTING USER
 INSERT INTO users (id, username, email,mobile_international_code, mobile_prefix,mobile_number,authentication_string,password_last_changed,account_locked,created_at,updated_at) VALUES (UUID(),'marcodelaet','it@gnog.com.br','55','11','11989348999','e10adc3949ba59abbe56e057f20f883e',NOW(),'N',NOW(),NOW());
 
+
 # GOAL
 CREATE TABLE IF NOT EXISTS `goals` (
 id VARCHAR(40) PRIMARY KEY NOT NULL UNIQUE,
@@ -68,7 +72,7 @@ user_id VARCHAR(40) NOT NULL,
 goal_month VARCHAR(2) NOT NULL,
 goal_year VARCHAR(4) NOT NULL,
 currency_id VARCHAR(3) NOT NULL,
-goal_amount INT NOT NULL,
+goal_amount BIGINT NOT NULL,
 created_at DATETIME NOT NULL,
 updated_at DATETIME NOT NULL
 );
@@ -81,12 +85,15 @@ CREATE VIEW view_goals AS (
 	g.goal_amount,
 	g.goal_month,
 	g.goal_year,
-	g.currency_id
+	g.currency_id,
+	(g.goal_amount / c.rate) AS goal_dolar
 	
 	FROM 
 	goals g
 	INNER JOIN users u 
 	ON g.user_id = u.id
+	INNER JOIN currencies c 
+	ON c.id = g.currency_id
 );
 
 SELECT *, SUM(goal_amount) AS total_amount FROM view_goals WHERE goal_month = 4 GROUP BY goal_year;
@@ -129,11 +136,11 @@ updated_at DATETIME NOT NULL
 # CONTACTS
 CREATE TABLE IF NOT EXISTS contacts (
 id VARCHAR(40) PRIMARY KEY NOT NULL UNIQUE,
-module_name VARCHAR(40), # advertiser / provider
+module_name VARCHAR(40) NOT NULL, # advertiser / provider
 contact_name VARCHAR(20) NOT NULL,
 contact_surname VARCHAR(20),
 contact_email VARCHAR(60) NOT NULL,
-contact_position VARCHAR(20) NOT NULL,
+contact_position VARCHAR(20),
 contact_client_id VARCHAR(40),
 phone_international_code VARCHAR(3),
 phone_prefix VARCHAR(3),
@@ -218,41 +225,44 @@ CREATE TABLE IF NOT EXISTS products (
 id VARCHAR(40) PRIMARY KEY NOT NULL UNIQUE,
 NAME VARCHAR(40) NOT NULL,
 DESCRIPTION TEXT,
+is_digital ENUM('N','Y') NOT NULL,
 is_active ENUM('N','Y') NOT NULL,
 created_at DATETIME NOT NULL,
 updated_at DATETIME NOT NULL
 );
 
 # INSERTING DATAS IN PRODUCTS TABLE
-INSERT INTO products (id,NAME,DESCRIPTION,is_active,created_at,updated_at) 
+INSERT INTO products (id,NAME,DESCRIPTION,is_digital,is_active,created_at,updated_at) 
 VALUES 
-((UUID()),'Banner IAB','Banner IAB','Y',NOW(),NOW()),
-((UUID()),'Retargeting','Retargeting','Y',NOW(),NOW()),
-((UUID()),'Native Ads','Native Ads','Y',NOW(),NOW()),
-((UUID()),'Push Notification','Push Notification','Y',NOW(),NOW()),
-((UUID()),'Pre Installation App Telcel Android','Pre Installation App Telcel Android','Y',NOW(),NOW()),
-((UUID()),'App Opening Telcel Android','App Opening Telcel Android','Y',NOW(),NOW()),
-((UUID()),'Native Video','Native Video','Y',NOW(),NOW()),
-((UUID()),'Video','Video','Y',NOW(),NOW()),
-((UUID()),'Interactive Video','Interactive Video','Y',NOW(),NOW()),
-((UUID()),'Rich Media','Rich Media','Y',NOW(),NOW()),
-((UUID()),'SMS Telcel and Movistar','SMS Telcel and Movistar','Y',NOW(),NOW()),
-((UUID()),'Whatsapp Notification','Whatsapp Notification','Y',NOW(),NOW()),
-((UUID()),'Sponsored data Telcel','Sponsored data Telcel','Y',NOW(),NOW()),
-((UUID()),'Sponsored data Movistar','Sponsored data Movistar','Y',NOW(),NOW()),
-((UUID()),'Audio Ads','Audio Ads','Y',NOW(),NOW()),
-((UUID()),'Audio+ SMS','Audio+ SMS','Y',NOW(),NOW()),
-((UUID()),'Voice Blaster','Voice Blaster','Y',NOW(),NOW()),
-((UUID()),'HTML5 Mobile','HTML5 Mobile','Y',NOW(),NOW()),
-((UUID()),'Video Rewards','Video Rewards','Y',NOW(),NOW()),
-((UUID()),'E-mail Marketing','E-mail Marketing','Y',NOW(),NOW()),
-((UUID()),'FB Messenger Notification','FB Messenger Notification','Y',NOW(),NOW()),
-((UUID()),'Time Air','Time Air','Y',NOW(),NOW()),
-((UUID()),'Periodical','Periodical','Y',NOW(),NOW()),
-((UUID()),'Magazines','Magazines','Y',NOW(),NOW()),
-((UUID()),'Radio','Radio','Y',NOW(),NOW()),
-((UUID()),'TV','TV','Y',NOW(),NOW()),
-((UUID()),'OOH','OOH','Y',NOW(),NOW());
+((UUID()),'Banner IAB','Banner IAB','Y','Y',NOW(),NOW()),
+((UUID()),'Retargeting','Retargeting','Y','Y',NOW(),NOW()),
+((UUID()),'Native Ads','Native Ads','Y','Y',NOW(),NOW()),
+((UUID()),'Push Notification','Push Notification','Y','Y',NOW(),NOW()),
+((UUID()),'Pre Installation App Telcel Android','Pre Installation App Telcel Android','Y','Y',NOW(),NOW()),
+((UUID()),'App Opening Telcel Android','App Opening Telcel Android','Y','Y',NOW(),NOW()),
+((UUID()),'Native Video','Native Video','Y','Y',NOW(),NOW()),
+((UUID()),'Video','Video','Y','Y',NOW(),NOW()),
+((UUID()),'Interactive Video','Interactive Video','Y','Y',NOW(),NOW()),
+((UUID()),'Rich Media','Rich Media','Y','Y',NOW(),NOW()),
+((UUID()),'SMS Telcel and Movistar','SMS Telcel and Movistar','Y','Y',NOW(),NOW()),
+((UUID()),'Whatsapp Notification','Whatsapp Notification','Y','Y',NOW(),NOW()),
+((UUID()),'Sponsored data Telcel','Sponsored data Telcel','Y','Y',NOW(),NOW()),
+((UUID()),'Sponsored data Movistar','Sponsored data Movistar','Y','Y',NOW(),NOW()),
+((UUID()),'Audio Ads','Audio Ads','Y','Y',NOW(),NOW()),
+((UUID()),'Audio+ SMS','Audio+ SMS','Y','Y',NOW(),NOW()),
+((UUID()),'Voice Blaster','Voice Blaster','Y','Y',NOW(),NOW()),
+((UUID()),'HTML5 Mobile','HTML5 Mobile','Y','Y',NOW(),NOW()),
+((UUID()),'Video Rewards','Video Rewards','Y','Y',NOW(),NOW()),
+((UUID()),'E-mail Marketing','E-mail Marketing','Y','Y',NOW(),NOW()),
+((UUID()),'FB Messenger Notification','FB Messenger Notification','Y','Y',NOW(),NOW()),
+((UUID()),'Time Air','Time Air','Y','Y',NOW(),NOW()),
+((UUID()),'Periodical','Periodical','N','Y',NOW(),NOW()),
+((UUID()),'Magazines','Magazines','N','Y',NOW(),NOW()),
+((UUID()),'Radio','Radio','N','Y',NOW(),NOW()),
+((UUID()),'TV','TV','N','Y',NOW(),NOW()),
+((UUID()),'GYM','GYM','N','Y',NOW(),NOW()),
+((UUID()),'CENTROS COMERCIALES','CENTROS COMERCIALES','N','Y',NOW(),NOW()),
+((UUID()),'OOH','OOH','N','Y',NOW(),NOW());
 
 #STATUSES
 CREATE TABLE IF NOT EXISTS statuses (
@@ -280,74 +290,102 @@ CREATE TABLE IF NOT EXISTS salemodels (
 id VARCHAR(40) PRIMARY KEY NOT NULL UNIQUE,
 NAME VARCHAR(40) NOT NULL,
 DESCRIPTION TEXT,
+is_digital ENUM('N','Y') NOT NULL,
 is_active ENUM('N','Y') NOT NULL,
 created_at DATETIME NOT NULL,
 updated_at DATETIME NOT NULL
 );
 
 # INSERTING DATAS IN SALEMODELS TABLE
-INSERT INTO salemodels (id,NAME,DESCRIPTION,is_active,created_at,updated_at) 
+INSERT INTO salemodels (id,NAME,DESCRIPTION,is_digital,is_active,created_at,updated_at) 
 VALUES 
-((UUID()),'CPM','CPM','Y',NOW(),NOW()),
-((UUID()),'CPC','CPC','Y',NOW(),NOW()),
-((UUID()),'CPA/CPS','CPA/CPS','Y',NOW(),NOW()),
-((UUID()),'CPL','CPL','Y',NOW(),NOW()),
-((UUID()),'Instalation','Instalation','Y',NOW(),NOW()),
-((UUID()),'Opening','Opening','Y',NOW(),NOW()),
-((UUID()),'Message','Message','Y',NOW(),NOW()),
-((UUID()),'CPV','CPV','Y',NOW(),NOW()),
-((UUID()),'SMS','SMS','Y',NOW(),NOW()),
-((UUID()),'MB','MB','Y',NOW(),NOW()),
-((UUID()),'Notification','Notification','Y',NOW(),NOW()),
-((UUID()),'CPE','CPE','Y',NOW(),NOW()),
-((UUID()),'CPE + SMS','CPE + SMS','Y',NOW(),NOW()),
-((UUID()),'Simple page','Simple page','Y',NOW(),NOW()),
-((UUID()),'Double page','Double page','Y',NOW(),NOW()),
-((UUID()),'Front page','Front page','Y',NOW(),NOW()),
-((UUID()),'Back cover','Back cover','Y',NOW(),NOW()),
-((UUID()),'20 seconds Spot','20 seconds Spot','Y',NOW(),NOW()),
-((UUID()),'30 seconds Spot','30 seconds Spot','Y',NOW(),NOW()),
-((UUID()),'Comercial','Comercial','Y',NOW(),NOW()),
-((UUID()),'Billboard','Billboard','Y',NOW(),NOW()),
-((UUID()),'Mupie','Mupie','Y',NOW(),NOW()),
-((UUID()),'Digital Screen','Digital Screen','Y',NOW(),NOW());
+((UUID()),'CPM','CPM','Y','Y',NOW(),NOW()),
+((UUID()),'CPC','CPC','Y','Y',NOW(),NOW()),
+((UUID()),'CPA/CPS','CPA/CPS','Y','Y',NOW(),NOW()),
+((UUID()),'CPL','CPL','Y','Y',NOW(),NOW()),
+((UUID()),'Instalation','Instalation','Y','Y',NOW(),NOW()),
+((UUID()),'Opening','Opening','Y','Y',NOW(),NOW()),
+((UUID()),'Message','Message','Y','Y',NOW(),NOW()),
+((UUID()),'CPV','CPV','Y','Y',NOW(),NOW()),
+((UUID()),'SMS','SMS','Y','Y',NOW(),NOW()),
+((UUID()),'MB','MB','Y','Y',NOW(),NOW()),
+((UUID()),'Notification','Notification','Y','Y',NOW(),NOW()),
+((UUID()),'CPE','CPE','Y','Y',NOW(),NOW()),
+((UUID()),'CPE + SMS','CPE + SMS','Y','Y',NOW(),NOW()),
+((UUID()),'Simple page','Simple page','N','Y',NOW(),NOW()),
+((UUID()),'Double page','Double page','N','Y',NOW(),NOW()),
+((UUID()),'Front page','Front page','N','Y',NOW(),NOW()),
+((UUID()),'Back cover','Back cover','N','Y',NOW(),NOW()),
+((UUID()),'20 seconds Spot','20 seconds Spot','N','Y',NOW(),NOW()),
+((UUID()),'30 seconds Spot','30 seconds Spot','N','Y',NOW(),NOW()),
+((UUID()),'Comercial','Comercial','N','Y',NOW(),NOW()),
+((UUID()),'Billboard','Billboard','N','Y',NOW(),NOW()),
+((UUID()),'Mupie','Mupie','N','Y',NOW(),NOW()),
+((UUID()),'Digital Screen','Digital Screen','N','Y',NOW(),NOW()),
+((UUID()),'Cartelera','Cartelera','N','Y',NOW(),NOW()),
+((UUID()),'Vallas Moviles','Vallas Moviles','N','Y',NOW(),NOW()),
+((UUID()),'Vallas Fijas','Vallas Fijas','N','Y',NOW(),NOW()),
+((UUID()),'Activacion en Calle','Activacion en Calle','N','Y',NOW(),NOW()),
+((UUID()),'Kiosko','Kiosko','N','Y',NOW(),NOW()),
+((UUID()),'Cartelera Digital','Cartelera Digital','N','Y',NOW(),NOW()),
+((UUID()),'Publiandantes','Publiandantes','N','Y',NOW(),NOW()),
+((UUID()),'Publicidad en bar','Publicidad en bar','N','Y',NOW(),NOW()),
+((UUID()),'Bajo Puentes','Bajo Puentes','N','Y',NOW(),NOW()),
+((UUID()),'Muro','Muro','N','Y',NOW(),NOW()),
+((UUID()),'Restaurantes','Restaurantes','N','Y',NOW(),NOW()),
+((UUID()),'Pendones','Pendones','N','Y',NOW(),NOW()),
+((UUID()),'Vitral Escalera','Vitral Escalera','N','Y',NOW(),NOW()),
+((UUID()),'Activacion','Activacion','N','Y',NOW(),NOW()),
+((UUID()),'Pluma Estacionamiento','Pluma Estacionamiento','N','Y',NOW(),NOW()),
+((UUID()),'Mampara','Mampara','N','Y',NOW(),NOW()),
+((UUID()),'Mall Rack','Mall Rack','N','Y',NOW(),NOW()),
+((UUID()),'Banner Caminadora','Banner Caminadora','N','Y',NOW(),NOW()),
+((UUID()),'Espejo','Espejo','N','Y',NOW(),NOW()),
+((UUID()),'Espejo en baños','Espejo en baños','N','Y',NOW(),NOW()),
+((UUID()),'Activacion Gym','Activacion Gym','N','Y',NOW(),NOW()),
+((UUID()),'Pantallas','Pantallas','N','Y',NOW(),NOW());
 
 # PROVIDERS
 CREATE TABLE IF NOT EXISTS providers (
 id VARCHAR(40) PRIMARY KEY NOT NULL UNIQUE,
-product_id VARCHAR(40) NOT NULL,
-salemodel_id VARCHAR(40) NOT NULL,
-product_price INTEGER NOT NULL,
-currency VARCHAR(3) NOT NULL,
 NAME VARCHAR(40) NOT NULL UNIQUE,
-address	TEXT NOT NULL,
-webpage_url VARCHAR(200) NOT NULL,
-main_contact_name VARCHAR(20),
-main_contact_surname VARCHAR(20),
-main_contact_email VARCHAR(60) NOT NULL,
-main_contact_position VARCHAR(20) NOT NULL,
-phone_international_code VARCHAR(3),
-phone_prefix VARCHAR(3),
-phone_number VARCHAR(12),
+address	TEXT,
+webpage_url VARCHAR(200),
 is_active ENUM('N','Y') NOT NULL,
 created_at DATETIME NOT NULL,
 updated_at DATETIME NOT NULL
 );
 
+
+# PROVIDERSXPRODUCT
+CREATE TABLE IF NOT EXISTS providersxproduct (
+id VARCHAR(40) PRIMARY KEY NOT NULL UNIQUE,
+provider_id VARCHAR(40) NOT NULL,
+product_id VARCHAR(40) NOT NULL,
+salemodel_id VARCHAR(40),
+product_price INTEGER,
+currency VARCHAR(3),
+is_active ENUM('N','Y') NOT NULL,
+created_at DATETIME NOT NULL,
+updated_at DATETIME NOT NULL
+);
+
+
 # VIEW PROVIDERS
 CREATE VIEW view_providers AS (
 	SELECT
 	(pv.id) AS UUID,
-	(pv.product_id) AS product_id,
+	(pp.product_id) AS product_id,
 	pd.name AS product_name,
-	(pv.salemodel_id) AS salemodel_id,
+	(pp.salemodel_id) AS salemodel_id,
 	sm.name AS salemodel_name,
-	pv.product_price / 100 AS product_price,
-	pv.product_price AS product_price_int,
-	pv.currency,
+	pp.product_price / 100 AS product_price,
+	pp.product_price AS product_price_int,
+	pp.currency,
 	pv.name,
 	pv.webpage_url,
 	pv.address,
+	ct.contact_id AS contact_provider_id,
 	ct.contact_name,
 	ct.contact_surname,
 	ct.contact_email,
@@ -360,8 +398,9 @@ CREATE VIEW view_providers AS (
 	CONCAT((pv.id),pd.name,sm.name,pv.name,pv.webpage_url,ct.contact_name,ct.contact_surname,ct.contact_email,'+',ct.phone_international_code,ct.phone_number) AS search
 	FROM 
 	providers pv
-	LEFT JOIN products pd ON pd.id = pv.product_id
-	LEFT JOIN salemodels sm ON sm.id = pv.salemodel_id
+	LEFT JOIN providersxproduct pp ON pp.provider_id = pv.id
+	LEFT JOIN products pd ON pd.id = pp.product_id
+	LEFT JOIN salemodels sm ON sm.id = pp.salemodel_id
 	LEFT JOIN ( 
 	SELECT 
 	id AS contact_id,
@@ -406,13 +445,15 @@ proposal_id VARCHAR(40),
 product_id VARCHAR(40),
 salemodel_id VARCHAR(40),
 provider_id VARCHAR(40),
-price INTEGER,
+price BIGINT,
 currency VARCHAR(3) NOT NULL,
 quantity INTEGER,
 is_active ENUM('N','Y') NOT NULL,
 created_at DATETIME NOT NULL,
 updated_at DATETIME NOT NULL
 );
+
+SELECT UUID,offer_name FROM view_proposals WHERE offer_name = 'Nissan - INFINITI, prueba programmatic' AND client_id = 'd15b0b10-d2e8-11ec-ae10-6c0b8496fec0' AND DESCRIPTION = 'El objetivo de la marca es tráfico al sitio, sobre esto hay que cubrir un mínimo de 44,500 visitas al sitio por mes y descargas de KBAs ( Lead Book a Test Drive Visits, Lead, Request a Quote Visti, Download Visits, Dealers Search Visits)Los formatos que normalmente se activan son Display y Native.';
 
 
 # VIEW PROPOSALS
@@ -443,10 +484,16 @@ CREATE VIEW view_proposals AS (
 	ppp.price AS price_int,
 	ppp.currency,
 	ppp.quantity,
-	(ppp.price * ppp.quantity) / 100 AS amount,
+	c.rate AS rate,
+	c.id AS currency_c,
 	(ppp.price * ppp.quantity) AS amount_int,
-	((ppp.price * ppp.quantity) / (ROUND(DATEDIFF(pps.stop_date,pps.start_date) / 30) + 1)) / 100 AS amount_per_month,
+	(ppp.price * ppp.quantity) / 100 AS amount,
+	((ppp.price * ppp.quantity) / c.rate) AS amount_dolar_int,
+	((ppp.price * ppp.quantity) / c.rate) / 100 AS amount_dolar,
 	((ppp.price * ppp.quantity) / (ROUND(DATEDIFF(pps.stop_date,pps.start_date) / 30) + 1)) AS amount_per_month_int,
+	((ppp.price * ppp.quantity) / (ROUND(DATEDIFF(pps.stop_date,pps.start_date) / 30) + 1)) / 100 AS amount_per_month,
+	(((ppp.price * ppp.quantity) / c.rate) / (ROUND(DATEDIFF(pps.stop_date,pps.start_date) / 30) + 1)) AS amount_per_month_dolar_int,
+	(((ppp.price * ppp.quantity) / c.rate) / (ROUND(DATEDIFF(pps.stop_date,pps.start_date) / 30) + 1)) / 100 AS amount_per_month_dolar,
 	pps.is_pixel,
 	pps.is_active,
 	CONCAT((pps.id),pd.name,sm.name,pv.name,u.username,adv.corporate_name,pps.offer_name,ppp.currency) AS search
@@ -456,12 +503,15 @@ CREATE VIEW view_proposals AS (
 	LEFT JOIN products pd ON pd.id = ppp.product_id
 	LEFT JOIN salemodels sm ON sm.id = ppp.salemodel_id
 	LEFT JOIN providers pv ON pv.id = ppp.provider_id
+	LEFT JOIN currencies c ON c.id = ppp.currency
 	INNER JOIN statuses s ON s.id = pps.status_id
 	INNER JOIN users u ON u.id = pps.user_id
 	INNER JOIN advertisers adv ON adv.id = pps.advertiser_id
 	LEFT JOIN advertisers age ON age.id = pps.agency_id
-	
 );
+
+
+SELECT * FROM view_proposals;
 
 # MODULES
 CREATE TABLE modules (

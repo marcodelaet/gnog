@@ -1,15 +1,15 @@
 <?php
-$moduleName = 'Proposal';
+$moduleNameProp = 'Proposal';
 
 
 ?>
-<link rel="stylesheet" href="<?=$dir?>./assets/css/<?=$moduleName;?>.css">
+<link rel="stylesheet" href="<?=$dir?>./assets/css/<?=$moduleNameProp;?>.css">
 <link rel="stylesheet" href="<?=$dir?>./assets/css/Inputs.css">
 <link rel="stylesheet" href="<?=$dir?>./assets/css/RecoveryLink.css">
 <link rel="stylesheet" href="<?=$dir?>./assets/css/Button.css">
-<script src="<?=$dir?>./assets/js/<?=strtolower($moduleName)?>.js" type="text/javascript"></script>
+<script src="<?=$dir?>./assets/js/<?=strtolower($moduleNameProp)?>.js" type="text/javascript"></script>
 
-<div class='list-<?=strtolower($moduleName)?>-container'>
+<div class='list-<?=strtolower($moduleNameProp)?>-container'>
     <div class="filter-container" style="margin-bottom:1rem;">
         <div class="inputs-filter-container">
             <div class="form-row">
@@ -33,9 +33,9 @@ $moduleName = 'Proposal';
             </form>
         </div>
     </div>  
-    <div class="<?=strtolower($moduleName)?>s-list">
+    <div class="<?=strtolower($moduleNameProp)?>s-list">
         <table class="table table-hover table-sm">
-            <caption>List of <?=$moduleName?>s</caption>
+            <caption>List of <?=$moduleNameProp?>s</caption>
             <thead>
                 <tr>
                     <th scope="col">Offer / Campaign</th>
@@ -48,7 +48,7 @@ $moduleName = 'Proposal';
                     <th scope="col" style="text-align:center;">Settings</th>
                 </tr>
             </thead>
-            <tbody id="list<?=$moduleName?>s">
+            <tbody id="list<?=$moduleNameProp?>s">
                 <tr>
                     <td>...</td>
                     <td>...</td>

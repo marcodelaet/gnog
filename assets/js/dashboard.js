@@ -127,3 +127,57 @@ function handleListOnLoad(uid,status,month,year,search) {
     }
     // window.location.href = '?pr=Li9wYWdlcy91c2Vycy9saXN0LnBocA==';
 }
+
+
+
+document.getElementById('nav-item-dashboard').setAttribute('class',document.getElementById('nav-item-dashboard').getAttribute('class').replace(' active','') + ' active');
+var csrf_token = $('meta[name="csrf-token"]').attr('content');
+module_dash = 'dashboard';
+module_item = 'proposal';
+
+
+
+function updateRates() {
+    errors      = 0;
+    authApi     = csrf_token;
+    locat       = window.location.hostname;
+
+    // getting today's date
+    var today   = new Date();
+    var xday    = today.getDate();
+    var xmonth   = today.getMonth()+1; // getMonth starts at 0
+    var xyear    = today.getFullYear();
+
+    //month filter
+    if((typeof month != 'undefined') && ((month !== '') && (month != 'undefined'))){
+        xmonth     = month;
+    }
+    //year filter
+    if((typeof year != 'undefined') && ((year !== '') && (year != 'undefined'))){
+        xyear     = year;
+    }
+    var mySQLFullDate = xyear+'-'+xmonth+'-'+xday;
+
+    filters     = '';
+    
+    //filters += '&date='+mySQLFullDate;
+
+    if(locat.slice(-1) != '/')
+        locat += '/';
+
+    if(errors > 0){
+
+    } else{
+        const requestURL = window.location.protocol+'//'+locat+'api/rates/auth_rate_update.php?auth_api='+authApi+filters;
+        console.log(requestURL);
+        const request = new XMLHttpRequest();
+        request.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                // Maybe important to notify user about rates update
+                
+            }
+        };
+        request.open('GET', requestURL);
+        request.send();
+    }
+}

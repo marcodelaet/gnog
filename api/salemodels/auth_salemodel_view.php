@@ -29,6 +29,13 @@ if(array_key_exists('auth_api',$_REQUEST)){
         }
     }
     
+    if(array_key_exists('where',$_REQUEST)){
+        if($_REQUEST['where']!==''){
+            $jocker         = $_REQUEST['where'];
+            $filters        .= "AND $jocker";
+        }
+    }
+    
     $filters = "WHERE is_active='Y' ".$filters;
     
 

@@ -16,18 +16,13 @@ if(array_key_exists('auth_api',$_REQUEST)){
     // check auth_api === local storage
     //if($localStorage == $_REQUEST['auth_api']){}
 
+    // User Group
+    $group          = 'user';
+
     // setting query
-    $addColumn  = "";
-    if(array_key_exists("addcolumn",$_REQUEST)){
-        if($_REQUEST['addcolumn']!==''){
-            $addColumn      = $_REQUEST["addcolumn"].",";
-        }
-    }
-
-    $columns        = "left(uuid,13) as uuid, uuid as uuid_full, product_id, product_name, $addColumn salemodel_id, salemodel_name, product_price, currency, name, address, webpage_url, concat(contact_name,' ', contact_surname,' (', contact_email,')') as contact, contact_name, contact_surname, contact_email, contact_position, phone_international_code, phone_prefix, phone_number, concat('+',phone_international_code,phone_number) as phone, is_active";
-    $tableOrView    = "view_providers";
+    $columns        = "(id) as uuid_full, name, description, is_active";
+    $tableOrView    = "salemodels";
     $orderBy        = "order by name";
-
     $groupBy        = "";
 
     // order by
@@ -42,12 +37,13 @@ if(array_key_exists('auth_api',$_REQUEST)){
     if(array_key_exists('groupby',$_REQUEST)){
         if($_REQUEST['groupby']!==''){
             $grouped        = $_REQUEST['groupby'];
-            $groupBy        = " GROUP BY $grouped";
+            $groupBy        = " ORDER BY $grouped";
         }
     }
-
+    
     // filters
     $filters                = '';
+
     if(array_key_exists('search',$_REQUEST)){
         if($_REQUEST['search']!==''){
             if($filters != '')
@@ -56,29 +52,40 @@ if(array_key_exists('auth_api',$_REQUEST)){
             $filters        .= " search like '%$jocker%'";
         }
     }
-    
-    if(array_key_exists('where',$_GET)){
-        if($_GET['where']!==''){
+
+    if(array_key_exists('digyn',$_REQUEST)){
+        if($_REQUEST['digyn']!==''){
             if($filters != '')
                 $filters .= " AND ";
-            $jocker         = explode("-",$_GET['where']);
-            $filters        .= " $jocker[0]='$jocker[1]'";
+            $isDigital = $_REQUEST['digyn'];
+            $filters        .= " is_digital = '$isDigital'";
         }
     }
+
     if($filters !== ''){
         $filters = "WHERE ".$filters;
     }
 
     // Query creation
-    $sql = "SELECT $columns FROM $tableOrView $filters $groupBy $orderBy";
+    $sql = "SELECT $columns FROM $tableOrView $filters $orderBy $groupBy";
     // LIST data
     //echo $sql;
     $rs = $DB->getData($sql);
+    $rowNumbers = $DB->numRows($sql);
 
     // Response JSON 
+    header('Content-type: application/json');
     if($rs){
-        header('Content-type: application/json');
-        echo json_encode($rs);
+        if($rowNumbers > 0)
+            $return = $rs;
+        else{
+            $return = array('response'=>'ZERO_RETURN');
+        }
+        echo json_encode($return);
+    }
+    else{
+        $return = array('response'=>'error');
+        echo json_encode($return);
     }
 }
 

@@ -23,20 +23,6 @@ if(array_key_exists('auth_api',$_REQUEST)){
     }
     $corporate_name         = $_REQUEST['corporate_name'];
     $address                = $_REQUEST['address'];
-    $main_contact_name      = $_REQUEST['main_contact_name'];
-    $main_contact_surname   = $_REQUEST['main_contact_surname'];
-    $main_contact_email     = $_REQUEST['main_contact_email'];
-    $main_contact_position  = $_REQUEST['main_contact_position'];
-    $phone_ddi             = "000";
-    if(array_key_exists('phone_ddi',$_REQUEST)){
-        if($_REQUEST['phone_ddi']!=='')
-            $phone_ddi         = $_REQUEST['phone_ddi'];
-    }
-    $phone                 = "000";
-    if(array_key_exists('phone',$_REQUEST)){
-        if($_REQUEST['phone']!=='')
-            $phone         = $_REQUEST['phone'];
-    }
 
     $module     = "advertisers";
     $columns    = "id,is_agency,corporate_name,address,is_active,created_at,updated_at";

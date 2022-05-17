@@ -131,25 +131,33 @@ $moduleName = 'Proposal';
                                 </select>
                             </div>
                         </div>
+                        <div>
+                            <div class="form-row">
+                                <div class="col custom-control custom-switch" style="text-align:right;">
+                                    <input type="checkbox" class="custom-control-input" value="0" onchange="refilterProductsType(this.value);" id="customSwitch2" name="digital_product">
+                                    <label class="custom-control-label" for="customSwitch2">Digital Product</label>
+                                </div>
+                            </div>
+                        </div>
                         <div id="product-section">
                             <div id="product_0">
                                 <div class="form-row">
-                                    <div class="col">
+                                    <div class="col" id="div-selectProduct">
                                         <label for="product_id[]">Product</label>
                                         <spam id="sproduct">
                                             <select name="product_id[]" title="product_id" class="form-control" autocomplete="product_id" required>
-                                                <?=inputSelect('product','Product','','name','')?>
+                                                <?=inputSelect('product','Product','is_digital="N"','name','')?>
                                             </select>
                                         </spam>
                                         <div class="invalid-feedback">
                                             Please choose a Product option.
                                         </div>
                                     </div>
-                                    <div class="col">
+                                    <div class="col" id="div-selectSaleModel">
                                         <label for="salemodel_id[]">Sale model</label>
                                         <spam id="ssalemodel">
                                             <select name="salemodel_id[]" title="salemodel_id" class="form-control" autocomplete="salemodel_id">
-                                                <?=inputSelect('salemodel','Sale model','','name','')?>
+                                                <?=inputSelect('salemodel','Sale model','is_digital="N"','name','')?>
                                             </select>
                                         </spam>
                                         <div class="invalid-feedback">
