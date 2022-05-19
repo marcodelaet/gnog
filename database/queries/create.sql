@@ -479,7 +479,7 @@ CREATE VIEW view_proposals AS (
 	pps.description,
 	pps.start_date,
 	pps.stop_date,
-	ROUND(DATEDIFF(pps.stop_date,pps.start_date) / 30) + 1 AS month_diff_data, 
+	TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1 AS month_diff_data, 
 	ppp.price / 100 AS price,
 	ppp.price AS price_int,
 	ppp.currency,
@@ -490,10 +490,10 @@ CREATE VIEW view_proposals AS (
 	(ppp.price * ppp.quantity) / 100 AS amount,
 	((ppp.price * ppp.quantity) / c.rate) AS amount_dolar_int,
 	((ppp.price * ppp.quantity) / c.rate) / 100 AS amount_dolar,
-	((ppp.price * ppp.quantity) / (ROUND(DATEDIFF(pps.stop_date,pps.start_date) / 30) + 1)) AS amount_per_month_int,
-	((ppp.price * ppp.quantity) / (ROUND(DATEDIFF(pps.stop_date,pps.start_date) / 30) + 1)) / 100 AS amount_per_month,
-	(((ppp.price * ppp.quantity) / c.rate) / (ROUND(DATEDIFF(pps.stop_date,pps.start_date) / 30) + 1)) AS amount_per_month_dolar_int,
-	(((ppp.price * ppp.quantity) / c.rate) / (ROUND(DATEDIFF(pps.stop_date,pps.start_date) / 30) + 1)) / 100 AS amount_per_month_dolar,
+	((ppp.price * ppp.quantity) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1)) AS amount_per_month_int,
+	((ppp.price * ppp.quantity) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1)) / 100 AS amount_per_month,
+	(((ppp.price * ppp.quantity) / c.rate) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1)) AS amount_per_month_dolar_int,
+	(((ppp.price * ppp.quantity) / c.rate) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) / 30) + 1)) / 100 AS amount_per_month_dolar,
 	pps.is_pixel,
 	pps.is_active,
 	CONCAT((pps.id),pd.name,sm.name,pv.name,u.username,adv.corporate_name,pps.offer_name,ppp.currency) AS search
@@ -511,7 +511,7 @@ CREATE VIEW view_proposals AS (
 );
 
 
-SELECT * FROM view_proposals;
+SELECT TIMESTAMPDIFF(MONTH, start_date, stop_date) FROM view_proposals;
 
 # MODULES
 CREATE TABLE modules (

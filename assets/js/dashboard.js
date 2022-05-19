@@ -3,8 +3,6 @@ var csrf_token = $('meta[name="csrf-token"]').attr('content');
 module_dash = 'dashboard';
 module_item = 'proposal';
 
-
-
 function handleListOnLoad(uid,status,month,year,search) {
     errors      = 0;
     authApi     = csrf_token;
@@ -16,6 +14,9 @@ function handleListOnLoad(uid,status,month,year,search) {
     var xmonth   = today.getMonth()+1; // getMonth starts at 0
     var xyear    = today.getFullYear();
 
+
+    document.getElementById('month').value=xmonth;
+    document.getElementById('year').value=xyear;
     //month filter
     if((typeof month != 'undefined') && ((month !== '') && (month != 'undefined'))){
         xmonth     = month;
@@ -127,13 +128,6 @@ function handleListOnLoad(uid,status,month,year,search) {
     }
     // window.location.href = '?pr=Li9wYWdlcy91c2Vycy9saXN0LnBocA==';
 }
-
-
-
-document.getElementById('nav-item-dashboard').setAttribute('class',document.getElementById('nav-item-dashboard').getAttribute('class').replace(' active','') + ' active');
-var csrf_token = $('meta[name="csrf-token"]').attr('content');
-module_dash = 'dashboard';
-module_item = 'proposal';
 
 
 
