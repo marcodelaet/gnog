@@ -168,7 +168,10 @@ function updateRates() {
         request.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {
                 // Maybe important to notify user about rates update
-                
+                var obj = JSON.parse(request.responseText);
+                if( (obj.status === 'OK') || (obj.status = "ALREADY_UPDATED") ){
+                    document.getElementById('last-update-date').innerHTML = obj.updated_at;
+                }
             }
         };
         request.open('GET', requestURL);

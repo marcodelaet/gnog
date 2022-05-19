@@ -1,6 +1,25 @@
 .goal-section{
     text-align:right;
 }
+.currency-select{
+    width: 100%;
+}
+
+.update-date-division{
+    width: 100%;
+    font-size: 00.8rem;
+    font-style: italic;
+    
+}
+.update-date-text{
+    float: right;
+    text-align:right;
+}
+#last-update-date{
+    float: right;
+    text-align:right;
+    color: #707070;
+}
 @media screen and (min-width : 1895px) {
     .dashboard-container {
         float: right;

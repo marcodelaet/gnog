@@ -15,7 +15,7 @@ $urlRates = 'https://openexchangerates.org/api/latest.json?app_id=57406473634f41
 
 $sql = ""; // initializing SQL variable
 
-$columnsSelect  = "id,rate,DATE_FORMAT(updated_at, '%Y%m%d%H%i%s')  AS updated_at, DATE_FORMAT(DATE_ADD(updated_at, INTERVAL 10 HOUR), '%Y%m%d%H%i%s') AS updated_next, DATE_FORMAT(DATE_ADD(updated_at, INTERVAL 10 HOUR), '%d-%m-%Y %H:%i:%s') AS updated_next_string";
+$columnsSelect  = "id,rate,DATE_FORMAT(updated_at, '%Y%m%d%H%i%s')  AS updated_at, DATE_FORMAT(DATE_ADD(updated_at, INTERVAL 10 HOUR), '%Y%m%d%H%i%s') AS updated_next, DATE_FORMAT(updated_at, '%d-%m-%Y %H:%i:%s') AS updated_at_string, DATE_FORMAT(DATE_ADD(updated_at, INTERVAL 10 HOUR), '%d-%m-%Y %H:%i:%s') AS updated_next_string";
 $columnsInsert  = "id,rate,is_active,created_at,updated_at";
 $tableOrView    = "currencies";
 
@@ -57,7 +57,7 @@ if(array_key_exists('auth_api',$_REQUEST)){
             }
         } else {
             header('Content-type: application/json');
-            echo json_encode(['status' => 'ALREADY_UPDATED','next_update' => $resultSelect[0]['updated_next_string']]);
+            echo json_encode(['status' => 'ALREADY_UPDATED','updated_at'=>$resultSelect[0]['updated_at_string'],'next_update' => $resultSelect[0]['updated_next_string']]);
         }
     } else { // new datas
         // reading file / url location (json result)
@@ -84,7 +84,7 @@ if(array_key_exists('auth_api',$_REQUEST)){
         // Response JSON 
         if($rs){
             header('Content-type: application/json');
-            echo json_encode(['status' => 'OK']);
+            echo json_encode(['status' => 'OK','updated_at'=>$resultSelect[0]['updated_at_string']]);
         }
     }
 } else {
