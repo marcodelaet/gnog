@@ -1,5 +1,5 @@
 <?php 
-function jwToken($uuid,$email,$pwdOrModule){
+function jwToken($uuid, $email, $pwdOrModule){
     //Application Key
     $key = $pwdOrModule;
 

@@ -60,7 +60,7 @@ if(array_key_exists('auth_api',$_REQUEST)){
 
 
     // Query creation
-    $sql = "SELECT left(uuid,13)as uuid, uuid as uuid_full, username, email, mobile_number,mobile_international_code, concat('+',mobile_international_code,mobile_number) as mobile, account_locked FROM view_users $filters order by username";
+    $sql = "SELECT left(uuid,13)as uuid, uuid as uuid_full, level_account, username, email, mobile_number,mobile_international_code, concat('+',mobile_international_code,mobile_number) as mobile, account_locked FROM view_users $filters order by username";
     // LIST data
     //echo $sql;
     $rs = $DB->getData($sql);

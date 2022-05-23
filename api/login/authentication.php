@@ -40,7 +40,7 @@ if($filters == '')
     $filters = '1=2';
 
 // Query user
-$sql = "SELECT id as uuid, username, email FROM users WHERE account_locked='N' AND ($filters)";
+$sql = "SELECT id as uuid, level_account, username, email FROM users WHERE account_locked='N' AND ($filters)";
 
 //echo $sql;
 $rs = $DB->getData($sql);

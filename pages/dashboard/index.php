@@ -75,13 +75,13 @@ if(1==2)
                     <div class="input-group col-sm-3">
                         <div class="currency-select">
                             <select class="custom-select" name="rate_id" title="Rates" autocomplete="rate_id" onChange="updateCurrencyListValue(document.getElementsByClassName('currency-line'),this.value,document.getElementsByClassName('amount-line'),'amount','dashboard'); updateCurrencyListMonthlyValue(document.getElementsByClassName('currency-line'),this.value,document.getElementsByClassName('amount-month-line'),'amount-month','dashboard'); getCurrencyValue(document.getElementById('goal-currency').innerText,this.value,document.getElementById('goal-0').innerText+'---'+document.getElementById('goal-1').innerText+'---'+document.getElementById('goal-2').innerText,'dashboard');">
-                                <?=inputFilterNoZeroSelect('rate','Rates','','orderby','')?>
+                                <?=inputFilterNoZeroSelect('rate','Rates','','orderby','USD')?>
                             </select>
                         </div>
                         <div class="update-date-division">
                             <span class="update-date-text">Last Update:</span>
                             <span id="last-update-date">
-                                dd/mm/yyyy hh:mm:ss
+                                dd-mm-yyyy hh:mm:ss
                             </span>
                         </div>
                     </div>
