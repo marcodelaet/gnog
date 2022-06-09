@@ -386,7 +386,7 @@ CREATE VIEW view_providers AS (
 	pv.name,
 	pv.webpage_url,
 	pv.address,
-	ct.contact_id AS contact_provider_id,
+	ct.id AS contact_provider_id,
 	ct.contact_name,
 	ct.contact_surname,
 	ct.contact_email,
@@ -402,21 +402,7 @@ CREATE VIEW view_providers AS (
 	LEFT JOIN providersxproduct pp ON pp.provider_id = pv.id
 	LEFT JOIN products pd ON pd.id = pp.product_id
 	LEFT JOIN salemodels sm ON sm.id = pp.salemodel_id
-	LEFT JOIN ( 
-	SELECT 
-	id AS contact_id,
-	contact_name,
-	contact_surname,
-	contact_email,
-	contact_position,
-	contact_client_id,
-	phone_international_code,
-	phone_prefix,
-	phone_number
-	FROM contacts
-	WHERE module_name = 'provider' AND is_active='Y'
-	) AS ct 
-	ON ct.contact_client_id = pv.id
+	LEFT JOIN contacts ct ON (ct.module_name = 'provider' AND ct.is_active='Y') AND (ct.contact_client_id = pv.id)
 );
 
 #PROPOSALS
@@ -535,5 +521,47 @@ created_at DATETIME NOT NULL,
 updated_at DATETIME NOT NULL
 );
 
+SELECT 
+UUID,
+product_id,
+product_name,
+salemodel_id,
+salemodel_name,
+provider_id,
+provider_name,
+user_id,
+username,
+client_id,
+client_name,
+agency_id,
+agency_name,
+status_id,
+status_name,
+status_percent,
+offer_name,
+DESCRIPTION,
+start_date,
+stop_date,
+month_diff_data,
+SUM(amount_dolar) AS amount,
+SUM(amount_dolar_int) AS amount_int, 
+SUM(amount_per_month_dolar) AS amount_per_month, 
+SUM(amount_per_month_dolar_int) AS amount_per_month_int, 
+'USD' AS currency,
+quantity,
+is_active 
+FROM view_proposals 
+WHERE 
+is_active = 'Y' 
+AND 
+( 
+	(CONCAT(YEAR(stop_date),RIGHT(CONCAT('00',MONTH(stop_date)),2)) >= '202206') 
+AND 	
+	(CONCAT(YEAR(start_date),RIGHT(CONCAT('00',MONTH(start_date)),2)) <= '202206') 
+)
+ 
+GROUP BY UUID;
 
 SELECT UUID,product_id,product_name,salemodel_id,salemodel_name,provider_id,provider_name,user_id,username,client_id,client_name,agency_id,agency_name,status_id,status_name,status_percent,offer_name,DESCRIPTION,start_date,stop_date,month_diff_data,SUM(amount) AS amount,SUM(amount_int) AS amount_int, SUM(amount_per_month) AS amount_per_month, SUM(amount_per_month_int) AS amount_per_month_int, currency,quantity,is_active FROM view_proposals WHERE user_id = '49381e2d-787b-11ec-81fa-6c0b8496fec0' AND (stop_date >= '2022-2-24' AND start_date <= '2022-2-24')  GROUP BY UUID;
+
+SELECT UUID,product_id,product_name,salemodel_id,salemodel_name,provider_id,provider_name,user_id,username,client_id,client_name,agency_id,agency_name,status_id,status_name,status_percent,offer_name,DESCRIPTION,start_date,stop_date,month_diff_data,SUM(amount_dolar) AS amount,SUM(amount_dolar_int) AS amount_int, SUM(amount_per_month_dolar) AS amount_per_month, SUM(amount_per_month_dolar_int) AS amount_per_month_int, 'USD' AS currency,quantity,is_active FROM view_proposals WHERE is_active = 'Y'user_id = '49381e2d-787b-11ec-81fa-6c0b8496fec0' AND ( (CONCAT(YEAR(stop_date),RIGHT(CONCAT('00',MONTH(stop_date)),2)) >= '202206') AND (CONCAT(YEAR(start_date),RIGHT(CONCAT('00',MONTH(start_date)),2)) <= '202206') ) GROUP BY UUID;

@@ -66,7 +66,7 @@ function inputFilterSelect($table,$title,$where,$order,$selected){
     //return ($fullUrl);
     $homepage = file_get_contents($fullUrl);
     $obj = json_decode($homepage);
-    //return $homepage;
+    return $homepage;
     $html        = '<option value="0" >'.$title.'</option>';
     for($i=0;$i < count($obj); $i++){
         $className      = "";
