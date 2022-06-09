@@ -29,6 +29,8 @@ if(array_key_exists('auth_api',$_REQUEST)){
     // filters
     $filters                = " is_active = 'Y'";
     if($group < '99999'){
+        if($filters != '')
+            $filters .= " AND ";
         $filters .= "user_id = '".$_COOKIE['uuid']."' ";
     }else{
         if(array_key_exists('uid',$_REQUEST)){

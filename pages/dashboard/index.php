@@ -32,7 +32,11 @@ if(1==2)
     </div>
     <div class="input-group col-sm-12   ">
         <select class="custom-select" name="executive_id" id="executive_id" title="Assigned Executive" onchange="handleListGoalOnLoad(this.value,undefined,document.getElementById('month').value,document.getElementById('year').value,'status='+returnSelectedStatuses(document.getElementById('status_id'))); handleListOnLoad(this.value,undefined,document.getElementById('month').value,document.getElementById('year').value,'status='+returnSelectedStatuses(document.getElementById('status_id')));" autocomplete="executive_id">
+        <?php if($_COOKIE['lacc'] >= 99999) { ?>
             <?=inputFilterSelect('user','Executive','','username','')?>
+            <?php } else { ?>
+                <option value="0"> Only admin can select executive</option>
+            <?php } ?>
         </select>
     </div>
     <div class="filter-container col-sm-8" style="margin-bottom:1rem;">
