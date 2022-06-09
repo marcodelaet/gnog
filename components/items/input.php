@@ -63,9 +63,10 @@ function inputFilterSelect($table,$title,$where,$order,$selected){
         $table_plural = $table . 'es';
 
     $fullUrl .= 'api/'.$table_plural.'/auth_'.$table.'_view.php?auth_api='.$authApi.'&order='.$order.'&where='.$where.'&selected='.$selected;
-    //return $fullUrl;
+    //return ($fullUrl);
     $homepage = file_get_contents($fullUrl);
     $obj = json_decode($homepage);
+    //return $homepage;
     $html        = '<option value="0" >'.$title.'</option>';
     for($i=0;$i < count($obj); $i++){
         $className      = "";
