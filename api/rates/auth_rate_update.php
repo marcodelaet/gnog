@@ -30,6 +30,7 @@ if(array_key_exists('auth_api',$_REQUEST)){
     if($DB->numRows($sql_select) > 0){
         // setting date(now()) - format(yyyymmdd)
         $dateNow = date('YmdHis');
+        $dateNow_String = date('d-m-Y H:i:s');
 
         // update_at date (yyyymmdd)
         $resultSelect = $DB->getData($sql_select);
@@ -83,8 +84,11 @@ if(array_key_exists('auth_api',$_REQUEST)){
         $rs = $DB->executeInstruction($sql);
         // Response JSON 
         if($rs){
+            $updateDate = $resultSelect[0]['updated_at_string'];
+            if(!isset($updateDate) || ($updateDate===null))
+                $updateDate = $dateNow_String;
             header('Content-type: application/json');
-            echo json_encode(['status' => 'OK','updated_at'=>$resultSelect[0]['updated_at_string']]);
+            echo json_encode(['status' => 'OK','updated_at'=>$updateDate]);
         }
     }
 } else {

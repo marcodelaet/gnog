@@ -21,7 +21,7 @@ if(1==2)
 
 <div class="lateral-filter-container">
     <div class="input-group col-sm-12">
-        <select class="custom-select" name="status_id" title="Status" autocomplete="status_id" multiple>
+        <select class="custom-select" name="status_id" id="status_id" title="Status" autocomplete="status_id" onclick="handleListGoalOnLoad(document.getElementById('executive_id').value,undefined,document.getElementById('month').value,document.getElementById('year').value,'status='+returnSelectedStatuses(this)); handleListOnLoad(document.getElementById('executive_id').value,undefined,document.getElementById('month').value,document.getElementById('year').value,'status='+returnSelectedStatuses(this));" multiple>
             <?=inputFilterNoZeroSelect('status','Status','','percent','')?>
         </select>
     </div>
@@ -31,18 +31,16 @@ if(1==2)
         </div>
     </div>
     <div class="input-group col-sm-12   ">
-        <select class="custom-select" name="executive_id" id="executive_id" title="Assigned Executive" onchange="handleListGoalOnLoad(this.value,undefined,document.getElementById('month').value,document.getElementById('year').value,undefined); handleListOnLoad(this.value,undefined,document.getElementById('month').value,document.getElementById('year').value,undefined);" autocomplete="executive_id">
+        <select class="custom-select" name="executive_id" id="executive_id" title="Assigned Executive" onchange="handleListGoalOnLoad(this.value,undefined,document.getElementById('month').value,document.getElementById('year').value,'status='+returnSelectedStatuses(document.getElementById('status_id'))); handleListOnLoad(this.value,undefined,document.getElementById('month').value,document.getElementById('year').value,'status='+returnSelectedStatuses(document.getElementById('status_id')));" autocomplete="executive_id">
             <?=inputFilterSelect('user','Executive','','username','')?>
         </select>
     </div>
-</div>
-<div class='<?=strtolower($moduleName)?>-container'>
     <div class="filter-container col-sm-8" style="margin-bottom:1rem;">
         <div class="inputs-filter-container">
             <form name='filter' method="post" enctype="multipart/form-data">
                 <div class="form-row">
-                    <div class="input-group col-sm-3">
-                        <select class="custom-select" name="month" id="month" title="Month" autocomplete="month" onchange="handleListGoalOnLoad(document.getElementById('executive_id').value,undefined,this.value,document.getElementById('year').value,undefined); handleListOnLoad(document.getElementById('executive_id').value,undefined,this.value,document.getElementById('year').value,undefined);">
+                    <div class="input-group col-sm-7">
+                        <select class="custom-select" name="month" id="month" title="Month" autocomplete="month" onchange="handleListGoalOnLoad(document.getElementById('executive_id').value,undefined,this.value,document.getElementById('year').value,'status='+returnSelectedStatuses(document.getElementById('status_id'))); handleListOnLoad(document.getElementById('executive_id').value,undefined,this.value,document.getElementById('year').value,'status='+returnSelectedStatuses(document.getElementById('status_id')));">
                             <option value="1">January</option>
                             <option value="2">February</option>
                             <option value="3">March</option>
@@ -57,8 +55,8 @@ if(1==2)
                             <option value="12">December</option> 
                         </select>
                     </div>
-                    <div class="input-group col-sm-2">
-                        <select class="custom-select" name="year" id="year" title="Year" autocomplete="year" onchange="handleListGoalOnLoad(document.getElementById('executive_id').value,undefined,document.getElementById('month').value,this.value,undefined); handleListOnLoad(document.getElementById('executive_id').value,undefined,document.getElementById('month').value,this.value,undefined);">
+                    <div class="input-group col-sm-5">
+                        <select class="custom-select" name="year" id="year" title="Year" autocomplete="year" onchange="handleListGoalOnLoad(document.getElementById('executive_id').value,undefined,document.getElementById('month').value,this.value,'status='+returnSelectedStatuses(document.getElementById('status_id'))); handleListOnLoad(document.getElementById('executive_id').value,undefined,document.getElementById('month').value,this.value,'status='+returnSelectedStatuses(document.getElementById('status_id')));">
                             <option value="2022">2022</option>
                             <option value="2023">2023</option>
                             <option value="2024">2024</option>
@@ -72,9 +70,12 @@ if(1==2)
                             <option value="2030">2032</option>
                         </select>
                     </div>
-                    <div class="input-group col-sm-4">
+                </div>
+                <div  class="form-row">
+                    <div class="input-group col-sm-7">
+                        &nbsp;
                     </div>
-                    <div class="input-group col-sm-3">
+                    <div class="input-group col-sm-5">
                         <div class="currency-select">
                             <select class="custom-select" name="rate_id" title="Rates" autocomplete="rate_id" onChange="updateCurrencyListValue(document.getElementsByClassName('currency-line'),this.value,document.getElementsByClassName('amount-line'),'amount','dashboard'); updateCurrencyListMonthlyValue(document.getElementsByClassName('currency-line'),this.value,document.getElementsByClassName('amount-month-line'),'amount-month','dashboard'); getCurrencyValue(document.getElementById('goal-currency').innerText,this.value,document.getElementById('goal-0').innerText+'---'+document.getElementById('goal-1').innerText+'---'+document.getElementById('goal-2').innerText,'dashboard');">
                                 <?=inputFilterNoZeroSelect('rate','Rates','','orderby','USD')?>
@@ -91,6 +92,8 @@ if(1==2)
             </form>
         </div>
     </div>
+</div>
+<div class='<?=strtolower($moduleName)?>-container'>
     <div class="result-container">
         <div class="row">
             <div class="col">
@@ -122,6 +125,14 @@ if(1==2)
             </div>
         </div>
         <div class="row">
+            <div class="graph" id="graph-proposals"></div>
+        </div>
+<!--        <div class="row">
+            <div class="graph" id="graph-goals"></div>
+        </div>
+    </div>-->    
+    <div>
+        <div class="row">
             <div class="col-sm-6">
                 &nbsp;
             </div>
@@ -134,11 +145,17 @@ if(1==2)
         </div>
     </div>    
 </div>
+
 <script>
     updateRates();
     handleListGoalOnLoad();
     handleListOnLoad();
 </script>
 <?php 
+
+#Matriz utilizada para gerar os graficos
+
+    
+
 }
 ?>

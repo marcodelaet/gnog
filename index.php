@@ -1,4 +1,5 @@
 <?php 
+session_start();
 require_once('./assets/conf.main.php'); 
 require_once('./assets/lib/security_area.php');
 require_once('./components/items/input.php');
@@ -13,7 +14,6 @@ require_once('./components/header.main.php');
     <div id="root">
       <?php
 require('./components/menu.main.php');
-echo $dir;
 require('./components/content.main.php');
 require_once('./components/footer.main.php');
    //phpinfo();

@@ -3,29 +3,43 @@ var csrf_token = $('meta[name="csrf-token"]').attr('content');
 module_dash = 'dashboard';
 module_item = 'proposal';
 
+function returnSelectedStatuses(statuses){
+    var select = statuses; 
+    var selected = [...select.selectedOptions]
+        .map(option => option.value); 
+        return(selected);
+}
+
+
 function handleListOnLoad(uid,status,month,year,search) {
     errors      = 0;
     authApi     = csrf_token;
     locat       = window.location.hostname;
 
     // getting today's date
-    var today   = new Date();
-    var xday    = today.getDate();
-    var xmonth   = today.getMonth()+1; // getMonth starts at 0
-    var xyear    = today.getFullYear();
+    var today       = new Date();
+    var xday        = today.getDate();
+    var xmonth      = today.getMonth()+1; // getMonth starts at 0
+    var xlenDate    = ('00'+ xmonth).length;
+    var xyear       = today.getFullYear();
 
+    var stringJsonDataProposals  = '['; 
 
-    document.getElementById('month').value=xmonth;
-    document.getElementById('year').value=xyear;
     //month filter
     if((typeof month != 'undefined') && ((month !== '') && (month != 'undefined'))){
         xmonth     = month;
+    } else {
+        document.getElementById('month').value=xmonth;
     }
     //year filter
     if((typeof year != 'undefined') && ((year !== '') && (year != 'undefined'))){
         xyear     = year;
+    } else {
+        document.getElementById('year').value=xyear;
     }
     var mySQLFullDate = xyear+'-'+xmonth+'-'+xday;
+    var xmonthfull  = ('00' + xmonth).substring(xlenDate-2,xlenDate);
+    var yearMonth = xyear+xmonthfull;
 
     filters     = '';
     //uid
@@ -34,20 +48,14 @@ function handleListOnLoad(uid,status,month,year,search) {
     if((uid !== '0') && (uid != 'undefined')){
         filters     += '&uid='+uid;
     }
-    //status
-    if(typeof status == 'undefined')
-        status  = '';
-    if((status !== '0') && (status != 'undefined')){
-        filters     += '&status='+status;
-    }
     
     //search
     if(typeof search == 'undefined')
         search  = '';
     if((search !== '') && (search != 'undefined')){
-        filters     += '&search='+search;
+        filters     += '&'+search;
     }
-    filters += '&date='+mySQLFullDate;
+    filters += '&date='+yearMonth;
 
     if(locat.slice(-1) != '/')
         locat += '/';
@@ -104,6 +112,7 @@ function handleListOnLoad(uid,status,month,year,search) {
                         percentGoalShow     = (100 * amount_total)/parseInt(document.getElementById('goal-2').innerText);
                         start_date  = new Date(obj[i].start_date);
                         stop_date   = new Date(obj[i].stop_date);
+                        lastCurrency = obj[i].currency;
                         html += '<tr><td>'+obj[i].offer_name+'</td><td nowrap>'+obj[i].client_name+agency+'</td><td nowrap>'+obj[i].username+'</td><td nowrap><spam style="display:none;" class="currency-line" id="currency-'+(i)+'">'+obj[i].currency+'</spam><spam class="amount-line" id="amount-'+(i)+'">'+formatter.format(amount)+'</spam></td><td nowrap><spam class="amount-month-line" id="amount-month-'+(i)+'">'+formatter.format(amount_month)+'</spam></td><td style="text-align:center;"><span id="locked_status_'+obj[i].UUID+'" class="material-icons" title="'+obj[i].status_percent+'% '+obj[i].status_name+'" style="color:'+color_status+'">thermostat</span></td><td nowrap style="text-align:center;">';
                         // information card
                         html += '<a href="?pr=Li9wYWdlcy9wcm9wb3NhbHMvaW5mby5waHA=&tid='+obj[i].UUID+'"><span class="material-icons" style="font-size:1.5rem; color:black;" title="Information Card '+obj[i].offer_name+'">info</span></a>';
@@ -115,7 +124,14 @@ function handleListOnLoad(uid,status,month,year,search) {
                         html += '<a href="javascript:void(0)" onclick="handleRemove(\''+obj[i].UUID+'\',\''+obj[i].is_active+'\')"><span class="material-icons" style="font-size:1.5rem; color:black;" title="Remove '+module_item + ' '+obj[i].offer_name+'">delete</span></a>';
 
                         html += '</td></tr>';
+                        if(i == 0)
+                            stringJsonDataProposals += '{"y":'+amount_month+',"label":"'+obj[i].offer_name+' ('+obj[i].username+')"}';
+                        else 
+                            stringJsonDataProposals += ', {"y":'+amount_month+',"label":"'+obj[i].offer_name+' ('+obj[i].username+')"}';
                     }
+                    stringJsonDataProposals += "]";
+                    createGraph('horizontalBars','graph-proposals','Proposals values in '+lastCurrency,'Proposals list',stringJsonDataProposals); // campaigns chart 
+                    //createGraph('multi2','graph-goals','Reached Goals','Proposals',data1,'Goals',data2); //goals chart
                     tableList.innerHTML = html;
                     document.getElementById('goal-1').innerHTML = formatter.format(amount_total_show);
                     document.getElementById('goal-percent').innerHTML = percentGoalShow.toFixed(2) + "%";
@@ -136,6 +152,106 @@ function handleListOnLoad(uid,status,month,year,search) {
     // window.location.href = '?pr=Li9wYWdlcy91c2Vycy9saXN0LnBocA==';
 }
 
+function createGraph(chartType,divName,strText,name1,data1,name2,data2,name3,data3) {
+    var chart = '';
+    if(chartType == 'multi2'){
+        chart = new CanvasJS.Chart(divName, {
+            animationEnabled: true,
+            exportEnabled: true,
+            theme: "light2", // "light1", "light2", "dark1", "dark2"
+            title:{
+                text: strText
+            },
+            axisX:{
+                reversed: true
+            },
+            axisY:{
+                includeZero: true
+            },
+            toolTip:{
+                shared: true
+            },
+            data: [
+                {
+                type: "stackedBar",
+                name: name1,
+                dataPoints: JSON.parse(data1)
+            },{
+                type: "stackedBar",
+                name: name2,
+                indexLabel: "#total",
+                indexLabelPlacement: "outside",
+                indexLabelFontSize: 15,
+                indexLabelFontWeight: "bold",
+                dataPoints:JSON.parse(data2)
+            }]
+        });
+    }
+
+    if(chartType == 'multi3'){
+        chart = new CanvasJS.Chart(divName, {
+            animationEnabled: true,
+            exportEnabled: true,
+            theme: "light2", // "light1", "light2", "dark1", "dark2"
+            title:{
+                text: strText
+            },
+            axisX:{
+                reversed: true
+            },
+            axisY:{
+                includeZero: true
+            },
+            toolTip:{
+                shared: true
+            },
+            data: [
+                {
+                type: "stackedBar",
+                name: name1,
+                dataPoints: JSON.parse(data1)
+            },{
+                type: "stackedBar",
+                name: name2,
+                dataPoints:JSON.parse(data2)
+            },{
+                type: "stackedBar",
+                name: name3,
+                indexLabel: "#total",
+                indexLabelPlacement: "outside",
+                indexLabelFontSize: 15,
+                indexLabelFontWeight: "bold",
+                dataPoints: JSON.parse(data3)
+            }]
+        });
+    }
+
+    if(chartType == 'horizontalBars'){
+        chart = new CanvasJS.Chart(divName, {
+            animationEnabled: true,
+            title:{
+                text: strText
+            },
+            axisY: {
+                title: name1,
+                includeZero: true,
+                prefix: "$",
+                suffix:  "k"
+            },
+            data: [{
+                type: "bar",
+                yValueFormatString: "$#,##0K",
+                indexLabel: "{y}",
+                indexLabelPlacement: "inside",
+                indexLabelFontWeight: "bolder",
+                indexLabelFontColor: "white",
+                dataPoints: JSON.parse(data1)
+            }]
+        });
+    }
+
+    chart.render();
+}
 
 
 function updateRates() {

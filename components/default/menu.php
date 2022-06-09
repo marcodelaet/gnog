@@ -9,7 +9,7 @@
   </button>
 
   <div class="collapse navbar-collapse" id="navbarNav">
-  <?php
+<?php
 // show icons only when logged
 if(array_key_exists('tk',$_COOKIE) && (array_key_exists('uuid',$_COOKIE)))
 {
@@ -98,7 +98,7 @@ if(array_key_exists('tk',$_COOKIE) && (array_key_exists('uuid',$_COOKIE)))
         </div>
       </li>
     </ul>
-    <?php } ?>
+<?php } ?>
   </div>
 
   <a class="navbar-brand" target="_blank" href="https://gnogmedia.com/">

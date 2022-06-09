@@ -5,6 +5,10 @@
     width: 100%;
 }
 
+.graph {
+    height: 23.125rem; width: 100%;
+}
+
 .update-date-division{
     width: 100%;
     font-size: 00.8rem;

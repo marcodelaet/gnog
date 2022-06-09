@@ -27,7 +27,7 @@ if(array_key_exists('auth_api',$_REQUEST)){
 
     //echo $group;
     // filters
-    $filters                = '';
+    $filters                = " is_active = 'Y'";
     if($group < '99999'){
         $filters .= "user_id = '".$_COOKIE['uuid']."' ";
     }else{
@@ -41,12 +41,28 @@ if(array_key_exists('auth_api',$_REQUEST)){
         }
     }
 
+    if(array_key_exists('status',$_REQUEST)){
+        if($_REQUEST['status']!==''){
+            if($filters != '')
+                $filters .= " AND ";
+            $statuses       = $_REQUEST['status'];
+            $arrayStatus    = explode(",",$statuses);
+            $filters        .= "(";
+            for($i_status=0; $i_status < count($arrayStatus); $i_status++){
+                if($i_status > 0)
+                    $filters    .= " OR ";
+                $filters        .= " status_id = ".$arrayStatus[$i_status];
+            }
+            $filters        .= ")";
+        }
+    }
+
     if(array_key_exists('date',$_REQUEST)){
         if($_REQUEST['date']!==''){
             if($filters != '')
                 $filters .= " AND ";
             $fullDate         = $_REQUEST['date'];
-            $filters        .= " (stop_date >= '$fullDate' and start_date <= '$fullDate')";
+            $filters        .= " ( (concat(year(stop_date),right(concat('00',month(stop_date)),2)) >= '$fullDate') AND (concat(year(start_date),right(concat('00',month(start_date)),2)) <= '$fullDate') )";
         }
     }
     
