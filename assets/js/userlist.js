@@ -34,7 +34,13 @@ function handleOnLoad(search) {
     authApi     = csrf_token;
     locat       = window.location.hostname;
 
+    var lacc    = localStorage.getItem('lacc');
+    var uuid    = localStorage.getItem('uuid');
+
     filters     = '';
+    if(lacc < 99999){
+        filters += "&uid="+uuid;
+    }
     if(typeof search == 'undefined')
         search  = '';
     if(search !== ''){
@@ -70,7 +76,6 @@ function handleOnLoad(search) {
 
                     // Goal
                     html += '<a href="?pr=Li9wYWdlcy91c2Vycy9nb2FsL2Zvcm0ucGhw&tid='+obj[i].uuid_full+'"><span class="material-icons" style="font-size:1.5rem; color:black;" title="Set Goal to '+obj[i].username+'">flag</span></a>';
-
 
                     // Remove 
                     html += '<a href="javascript:void(0)" onclick="handleRemove(\''+obj[i].uuid_full+'\',\''+obj[i].account_locked+'\')"><span class="material-icons" style="font-size:1.5rem; color:black;" title="Remove user '+obj[i].username+'">delete</span></a>';

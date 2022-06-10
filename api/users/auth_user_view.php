@@ -54,6 +54,14 @@ if(array_key_exists('auth_api',$_REQUEST)){
             $filters        .= " username like '%$username%'";
         }
     }
+    if(array_key_exists('uid',$_REQUEST)){
+        if($_REQUEST['uid']!==''){
+            if($filters != '')
+                $filters .= " AND ";
+            $uuid         = $_REQUEST['uid'];
+            $filters        .= " uuid = '$uuid'";
+        }
+    }
     if($filters !== ''){
         $filters = "WHERE ".$filters;
     }
