@@ -19,7 +19,7 @@ function inputSelect($table,$title,$where,$order,$selected){
     //return $fullUrl;
     $homepage = file_get_contents($fullUrl);
     $obj = json_decode($homepage);
-    $html        = '<option value="0" >Please, select '.$title.'</option>';
+    $html        = '<option value="0" >'.translateText('please_select').' '.$title.'</option>';
     for($i=0;$i < count($obj); $i++){
         $className      = "";
         $markingSelect = ''; 

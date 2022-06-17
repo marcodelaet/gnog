@@ -595,13 +595,20 @@ VALUES
 (UUID(), 'total', 'Total', 'Total', 'Total', 'Y', NOW(), NOW()),
 (UUID(), 'save', 'Save', 'Ahorrar', 'Salvar', 'Y', NOW(), NOW()),
 (UUID(), 'pixel_required', 'Pixel required', 'Píxel requerido', 'Pixel requerido', 'Y', NOW(), NOW()),
+(UUID(), 'proposal', 'Proposal', 'Propuesta', 'Proposta', 'Y', NOW(), NOW()),
 (UUID(), 'new', 'New', 'Generando', 'Gerando', 'Y', NOW(), NOW());
 
 
 INSERT INTO translates 
 (id, code_str, text_eng, text_esp, text_ptbr, is_active, created_at, updated_at)
 VALUES
-(UUID(), 'proposal', 'Proposal', 'Propuesta', 'Proposta', 'Y', NOW(), NOW());
+(UUID(), 'please_select', 'Please, select ', 'Por favor, seleccione ', 'Por favor, escolha ', 'Y', NOW(), NOW()),
+(UUID(), 'offer_campaign', 'Offer / Campaign', 'Oferta / Campaña', 'Campanha', 'Y', NOW(), NOW());
+
+INSERT INTO translates 
+(id, code_str, text_eng, text_esp, text_ptbr, is_active, created_at, updated_at)
+VALUES
+;
 
 
 

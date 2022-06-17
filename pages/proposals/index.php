@@ -38,14 +38,14 @@ $moduleNameProp = 'Proposal';
             <caption>List of <?=$moduleNameProp?>s</caption>
             <thead>
                 <tr>
-                    <th scope="col">Offer / Campaign</th>
-                    <th scope="col">Advertiser</th>
-                    <th scope="col">Assign Executive</th>
-                    <th scope="col">Amount</th>
-                    <th scope="col">Start date</th>
-                    <th scope="col">Stop date</th>
-                    <th scope="col">Status</th>
-                    <th scope="col" style="text-align:center;">Settings</th>
+                    <th scope="col"><?=translateText('offer_campaign')?></th>
+                    <th scope="col"><?=translateText('advertiser')?></th>
+                    <th scope="col"><?=translateText('assign_executive')?></th>
+                    <th scope="col"><?=translateText('amount')?></th>
+                    <th scope="col"><?=translateText('start_date')?></th>
+                    <th scope="col"><?=translateText('stop_date')?></th>
+                    <th scope="col"><?=translateText('status')?></th>
+                    <th scope="col" style="text-align:center;"><?=translateText('settings')?></th>
                 </tr>
             </thead>
             <tbody id="list<?=$moduleNameProp?>s">
