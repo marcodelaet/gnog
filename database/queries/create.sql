@@ -523,7 +523,7 @@ created_at DATETIME NOT NULL,
 updated_at DATETIME NOT NULL
 );
 
-# MODULES
+# TRANSLATES
 CREATE TABLE translates (
 id VARCHAR(40) PRIMARY KEY NOT NULL UNIQUE,
 code_str VARCHAR(20) NOT NULL,
@@ -543,12 +543,7 @@ VALUES
 (UUID(), 'advertiser', 'Advertiser', 'Cliente', 'Anunciante', 'Y', NOW(), NOW()),
 (UUID(), 'assign_executive', 'Assign Executive', 'Ejetivo', 'Executivo', 'Y', NOW(), NOW()),
 (UUID(), 'amount', 'Amount', 'Monto', 'Valor total', 'Y', NOW(), NOW()),
-(UUID(), 'monthly', 'Monthly', 'Mensual', 'Mensal', 'Y', NOW(), NOW());
-
-
-INSERT INTO translates 
-(id, code_str, text_eng, text_esp, text_ptbr, is_active, created_at, updated_at)
-VALUES
+(UUID(), 'monthly', 'Monthly', 'Mensual', 'Mensal', 'Y', NOW(), NOW()),
 (UUID(), 'status', 'Status', 'Status', 'Status', 'Y', NOW(), NOW()),
 (UUID(), 'settings', 'Settings', 'Configuraciones', 'configurações', 'Y', NOW(), NOW()),
 (UUID(), 'list_of_proposals', 'List of Proposals / Goals', 'Lista de propuestas / Metas', 'Lista de propostas / Metas', 'Y', NOW(), NOW()),
@@ -560,7 +555,7 @@ VALUES
 (UUID(), 'providers', 'Provider', 'Proveedor', 'Provedor', 'Y', NOW(), NOW()),
 (UUID(), 'provider', 'Providers', 'Proveedores', 'Provedores', 'Y', NOW(), NOW()),
 (UUID(), 'advertisers', 'Advertisers', 'Clientes', 'Anunciantes', 'Y', NOW(), NOW()),
-(UUID(), 'user_settings', 'User Settings', 'Configuración del usuário', 'Configuração de usuário', 'Y', NOW(), NOW()),
+(UUID(), 'user_settings', 'User Settings', 'Configuraciones', 'Configurações', 'Y', NOW(), NOW()),
 (UUID(), 'profile', 'Profile', 'Perfil', 'Perfil', 'Y', NOW(), NOW()),
 (UUID(), 'change_password', 'Change Password', 'Cambiar contraseña', 'Mudar Senha', 'Y', NOW(), NOW()),
 (UUID(), 'users', 'Users', 'Usuários', 'Usuários', 'Y', NOW(), NOW()),
@@ -606,7 +601,7 @@ VALUES
 INSERT INTO translates 
 (id, code_str, text_eng, text_esp, text_ptbr, is_active, created_at, updated_at)
 VALUES
-(UUID(), 'proposal', 'Proposal', 'Propuesta', 'Proposta', 'Y', NOW(), NOW()),
+(UUID(), 'proposal', 'Proposal', 'Propuesta', 'Proposta', 'Y', NOW(), NOW());
 
 
 

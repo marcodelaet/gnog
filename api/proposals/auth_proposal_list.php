@@ -25,9 +25,9 @@ if(array_key_exists('auth_api',$_REQUEST)){
     $orderBy        = " group by UUID";
     
     // filters
-    $filters                = '';
+    $filters                = "is_active = 'Y' ";
     if($group !== 'admin'){
-        $filters .= "user_id = '".$_COOKIE['uuid']."' ";
+        $filters .= "AND user_id = '".$_COOKIE['uuid']."' ";
     }
 
     if(array_key_exists('search',$_REQUEST)){
