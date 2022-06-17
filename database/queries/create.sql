@@ -30,6 +30,7 @@ updated_at DATETIME NOT NULL
 CREATE TABLE IF NOT EXISTS users (
 id VARCHAR(40) PRIMARY KEY NOT NULL UNIQUE,
 username VARCHAR(20) NOT NULL UNIQUE,
+user_language VARCHAR(5) NOT NULL,
 email VARCHAR(60) NOT NULL,
 level_account INT NOT NULL,
 mobile_international_code VARCHAR(3),
@@ -49,6 +50,7 @@ CREATE VIEW view_users AS (
 	SELECT
 	(id) AS UUID,
 	username,
+	user_language,
 	email,
 	level_account,
 	mobile_international_code,
@@ -520,6 +522,97 @@ form_token VARCHAR(250),
 created_at DATETIME NOT NULL,
 updated_at DATETIME NOT NULL
 );
+
+# MODULES
+CREATE TABLE translates (
+id VARCHAR(40) PRIMARY KEY NOT NULL UNIQUE,
+code_str VARCHAR(20) NOT NULL,
+text_eng TEXT NOT NULL,
+text_esp TEXT,
+text_ptbr TEXT,
+is_active ENUM('N','Y') NOT NULL,
+created_at DATETIME NOT NULL,
+updated_at DATETIME NOT NULL
+);
+
+INSERT INTO translates 
+(id, code_str, text_eng, text_esp, text_ptbr, is_active, created_at, updated_at)
+VALUES
+(UUID(), 'only_admin', 'Only admin can select executive', 'Solamente gerentes pueden seleccionar ejecutivos', 'Apenas Administradores podem selecionar Executivos', 'Y', NOW(), NOW()),
+(UUID(), 'offer_campaign', 'Offer / Campaign', 'Oferta / Campaña', 'Oferta / Campanha', 'Y', NOW(), NOW()),
+(UUID(), 'advertiser', 'Advertiser', 'Cliente', 'Anunciante', 'Y', NOW(), NOW()),
+(UUID(), 'assign_executive', 'Assign Executive', 'Ejetivo', 'Executivo', 'Y', NOW(), NOW()),
+(UUID(), 'amount', 'Amount', 'Monto', 'Valor total', 'Y', NOW(), NOW()),
+(UUID(), 'monthly', 'Monthly', 'Mensual', 'Mensal', 'Y', NOW(), NOW());
+
+
+INSERT INTO translates 
+(id, code_str, text_eng, text_esp, text_ptbr, is_active, created_at, updated_at)
+VALUES
+(UUID(), 'status', 'Status', 'Status', 'Status', 'Y', NOW(), NOW()),
+(UUID(), 'settings', 'Settings', 'Configuraciones', 'configurações', 'Y', NOW(), NOW()),
+(UUID(), 'list_of_proposals', 'List of Proposals / Goals', 'Lista de propuestas / Metas', 'Lista de propostas / Metas', 'Y', NOW(), NOW()),
+(UUID(), 'goals_of_month', 'Goal of the month', 'Metas / Mes:', 'Metas / Mês', 'Y', NOW(), NOW()),
+(UUID(), 'total_reached', 'Total Reached', 'Total Alcanzado', 'Total Alcançado', 'Y', NOW(), NOW()),
+(UUID(), 'reached', 'Reached', 'Alcanzado', 'Alcançado', 'Y', NOW(), NOW()),
+(UUID(), 'dashboard', 'Dashboard', 'Dashboard', 'Dashboard', 'Y', NOW(), NOW()),
+(UUID(), 'proposals', 'Proposals', 'Propuestas', 'Propostas', 'Y', NOW(), NOW()),
+(UUID(), 'providers', 'Provider', 'Proveedor', 'Provedor', 'Y', NOW(), NOW()),
+(UUID(), 'provider', 'Providers', 'Proveedores', 'Provedores', 'Y', NOW(), NOW()),
+(UUID(), 'advertisers', 'Advertisers', 'Clientes', 'Anunciantes', 'Y', NOW(), NOW()),
+(UUID(), 'user_settings', 'User Settings', 'Configuración del usuário', 'Configuração de usuário', 'Y', NOW(), NOW()),
+(UUID(), 'profile', 'Profile', 'Perfil', 'Perfil', 'Y', NOW(), NOW()),
+(UUID(), 'change_password', 'Change Password', 'Cambiar contraseña', 'Mudar Senha', 'Y', NOW(), NOW()),
+(UUID(), 'users', 'Users', 'Usuários', 'Usuários', 'Y', NOW(), NOW()),
+(UUID(), 'logout', 'Logout', 'Salir', 'Sair', 'Y', NOW(), NOW()),
+(UUID(), 'lost', 'Lost', 'Perdido', 'Perdido', 'Y', NOW(), NOW()),
+(UUID(), 'sent', 'Sent', 'Enviada', 'Enviada', 'Y', NOW(), NOW()),
+(UUID(), 'in_negociation', 'In negociation', 'en negociación', 'Em negociação', 'Y', NOW(), NOW()),
+(UUID(), 'advanced_negociation', 'Advanced negociation', 'Negociación avanzada', 'Negociação Avançada', 'Y', NOW(), NOW()),
+(UUID(), 'verbal_approval', 'Verbal approval', 'Aprobación verbal', 'Aprovação verbal', 'Y', NOW(), NOW()),
+(UUID(), 'approved', 'Approved', 'Aprobado', 'Aprovado', 'Y', NOW(), NOW()),
+(UUID(), 'executive', 'Executive', 'Ejecutivo', 'Executivo', 'Y', NOW(), NOW()),
+(UUID(), 'january', 'January', 'Enero', 'Janeiro', 'Y', NOW(), NOW()),
+(UUID(), 'february', 'February', 'Febrero', 'Fevereiro', 'Y', NOW(), NOW()),
+(UUID(), 'march', 'March', 'Marzo', 'Março', 'Y', NOW(), NOW()),
+(UUID(), 'april', 'April', 'Abril', 'Abril', 'Y', NOW(), NOW()),
+(UUID(), 'may', 'May', 'Mayo', 'Maio', 'Y', NOW(), NOW()),
+(UUID(), 'june', 'June', 'Junio', 'Junho', 'Y', NOW(), NOW()),
+(UUID(), 'july', 'July', 'Julio', 'Julho', 'Y', NOW(), NOW()),
+(UUID(), 'august', 'August', 'Agosto', 'Agosto', 'Y', NOW(), NOW()),
+(UUID(), 'september', 'September', 'Septiembre', 'Setembro', 'Y', NOW(), NOW()),
+(UUID(), 'octuber', 'Octuber', 'Octubre', 'Outubro', 'Y', NOW(), NOW()),
+(UUID(), 'november', 'November', 'Noviembre', 'Novembro', 'Y', NOW(), NOW()),
+(UUID(), 'december', 'December', 'Diciembre', 'Dezembro', 'Y', NOW(), NOW()),
+(UUID(), 'client', 'Client', 'Cliente', 'Cliente', 'Y', NOW(), NOW()),
+(UUID(), 'agency', 'Agency', 'Agencia', 'Agência', 'Y', NOW(), NOW()),
+(UUID(), 'offer_name', 'Offer Name', 'Nombre de la campaña', 'Nome da Campanha', 'Y', NOW(), NOW()),
+(UUID(), 'description', 'Description', 'Descripción', 'Descrição', 'Y', NOW(), NOW()),
+(UUID(), 'start_date', 'Start date', 'Fecha início', 'Data inicial', 'Y', NOW(), NOW()),
+(UUID(), 'stop_date', 'Stop date', 'Fecha final', 'Data final', 'Y', NOW(), NOW()),
+(UUID(), 'products', 'Products', 'Productos', 'Produtos', 'Y', NOW(), NOW()),
+(UUID(), 'product', 'Product', 'Producto', 'Produto', 'Y', NOW(), NOW()),
+(UUID(), 'sale_model', 'Sale model', 'Modelo de venta', 'Modelo de venda', 'Y', NOW(), NOW()),
+(UUID(), 'digital_product', 'Digital Product', 'Producto Digital', 'Produto Digital', 'Y', NOW(), NOW()),
+(UUID(), 'currency', 'Currency', 'Moneda', 'Moeda', 'Y', NOW(), NOW()),
+(UUID(), 'unit_price', 'Unit Price', 'Precio Unitario', 'Preço Unitário', 'Y', NOW(), NOW()),
+(UUID(), 'quantity', 'Quantity', 'Cantidad', 'Quantidade', 'Y', NOW(), NOW()),
+(UUID(), 'total', 'Total', 'Total', 'Total', 'Y', NOW(), NOW()),
+(UUID(), 'save', 'Save', 'Ahorrar', 'Salvar', 'Y', NOW(), NOW()),
+(UUID(), 'pixel_required', 'Pixel required', 'Píxel requerido', 'Pixel requerido', 'Y', NOW(), NOW()),
+(UUID(), 'new', 'New', 'Generando', 'Gerando', 'Y', NOW(), NOW());
+
+
+INSERT INTO translates 
+(id, code_str, text_eng, text_esp, text_ptbr, is_active, created_at, updated_at)
+VALUES
+(UUID(), 'proposal', 'Proposal', 'Propuesta', 'Proposta', 'Y', NOW(), NOW()),
+
+
+
+
+
+
 
 SELECT 
 UUID,

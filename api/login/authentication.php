@@ -40,7 +40,7 @@ if($filters == '')
     $filters = '1=2';
 
 // Query user
-$sql = "SELECT id as uuid, level_account, username, email FROM users WHERE account_locked='N' AND ($filters)";
+$sql = "SELECT id as uuid, level_account, username, email, user_language FROM users WHERE account_locked='N' AND ($filters)";
 
 //echo $sql;
 $rs = $DB->getData($sql);
@@ -48,8 +48,9 @@ $rs = $DB->getData($sql);
 header('Content-type: application/json');
 // If returns
 if($rs){
-    $uuid   = $rs[0]['uuid'];
-    $email  = $rs[0]['email'];
+    $uuid           = $rs[0]['uuid'];
+    $email          = $rs[0]['email'];
+    $user_language  = $rs[0]['user_language'];
 
     // create Token
     $jwt = jwToken($uuid,$email,$password);

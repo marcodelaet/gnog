@@ -24,6 +24,7 @@ function handleLogin(form) {
                 // save token on LS
                 localStorage.setItem('tokenGNOG', obj.token);
                 localStorage.setItem('uuid', obj[0].uuid);
+                localStorage.setItem('ulang', obj[0].user_language);
                 localStorage.setItem('lacc', obj[0].level_account);
 
                 var d = new Date();
@@ -31,6 +32,7 @@ function handleLogin(form) {
                 var expires = "expires="+ d.toUTCString();
                 document.cookie = 'tk' + "=" + obj.token+ ";" + expires + ";path=/";
                 document.cookie = 'uuid' + "=" + obj[0].uuid+ ";" + expires + ";path=/";
+                document.cookie = 'ulang' + "=" + obj[0].user_language+ ";" + expires + ";path=/";
                 document.cookie = 'lacc' + "=" + obj[0].level_account+ ";" + expires + ";path=/";
 
                 window.location.href = '?pr=Li9wYWdlcy9kYXNoYm9hcmQvaW5kZXgucGhw';

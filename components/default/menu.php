@@ -22,7 +22,7 @@ if(array_key_exists('tk',$_COOKIE) && (array_key_exists('uuid',$_COOKIE)))
               <span class="material-icons-outlined" style="font-size:4rem;">dashboard</span>
             </div>
             <div class="menu-text">
-              Dashboard
+            <?=translateText('dashboard');?>
             </div>
           </div>
         </a>
@@ -34,7 +34,7 @@ if(array_key_exists('tk',$_COOKIE) && (array_key_exists('uuid',$_COOKIE)))
               <span class="material-icons"  style="font-size:4rem;">price_check</span>
             </div>
             <div class="menu-text">
-              Proposals
+            <?=translateText('proposals');?>
             </div>
           </div>
         </a>
@@ -46,7 +46,7 @@ if(array_key_exists('tk',$_COOKIE) && (array_key_exists('uuid',$_COOKIE)))
               <span class="material-icons"  style="font-size:4rem;">local_shipping</span>
             </div>
             <div class="menu-text">
-              Providers
+            <?=translateText('providers');?>
             </div>
           </div>
         </a>
@@ -58,7 +58,7 @@ if(array_key_exists('tk',$_COOKIE) && (array_key_exists('uuid',$_COOKIE)))
               <span class="material-icons"  style="font-size:4rem;">business</span>
             </div>
             <div class="menu-text">
-              Advertisers
+            <?=translateText('advertisers');?>
             </div>
           </div>
         </a>
@@ -70,7 +70,7 @@ if(array_key_exists('tk',$_COOKIE) && (array_key_exists('uuid',$_COOKIE)))
               <span class="material-icons"  style="font-size:4rem;">manage_accounts</span>
             </div>
             <div class="menu-text">
-              User Settings
+            <?=translateText('user_settings');?>
             </div>
           </div>
         </a>
@@ -81,7 +81,7 @@ if(array_key_exists('tk',$_COOKIE) && (array_key_exists('uuid',$_COOKIE)))
               <span class="material-icons"  style="font-size:4rem;">people</span>
             </div>
             <div class="submenu-text">
-              Users
+            <?=translateText('users');?>
             </div>
           </div> 
         </a>
@@ -91,7 +91,7 @@ if(array_key_exists('tk',$_COOKIE) && (array_key_exists('uuid',$_COOKIE)))
                 <span class="material-icons"  style="font-size:4rem;">logout</span><br/>
               </div>
               <div class="submenu-text">
-                Logout
+              <?=translateText('logout');?>
               </div>
             </div>
           </a>

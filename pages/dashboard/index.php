@@ -22,7 +22,7 @@ if(1==2)
 <div class="lateral-filter-container">
     <div class="input-group col-sm-12">
         <select class="custom-select" name="status_id" id="status_id" title="Status" autocomplete="status_id" onclick="handleListGoalOnLoad(document.getElementById('executive_id').value,undefined,document.getElementById('month').value,document.getElementById('year').value,'status='+returnSelectedStatuses(this)); handleListOnLoad(document.getElementById('executive_id').value,undefined,document.getElementById('month').value,document.getElementById('year').value,'status='+returnSelectedStatuses(this));" multiple>
-            <?=inputFilterNoZeroSelect('status','Status','','percent','')?>
+            <?=inputFilterNoZeroSelect('status',translateText('status'),'','percent','')?>
         </select>
     </div>
     <div class="form-row">
@@ -33,9 +33,9 @@ if(1==2)
     <div class="input-group col-sm-12   ">
         <select class="custom-select" name="executive_id" id="executive_id" title="Assigned Executive" onchange="handleListGoalOnLoad(this.value,undefined,document.getElementById('month').value,document.getElementById('year').value,'status='+returnSelectedStatuses(document.getElementById('status_id'))); handleListOnLoad(this.value,undefined,document.getElementById('month').value,document.getElementById('year').value,'status='+returnSelectedStatuses(document.getElementById('status_id')));" autocomplete="executive_id">
         <?php if($_COOKIE['lacc'] >= 99999) { ?>
-            <?=inputFilterSelect('user','Executive','','username','')?>
+            <?=inputFilterSelect('user',translateText('executive'),'','username','')?>
             <?php } else { ?>
-                <option value="0"> Only admin can select executive</option>
+                <option value="0"><?=translateText('only_admin');?></option>
             <?php } ?>
         </select>
     </div>
@@ -45,18 +45,18 @@ if(1==2)
                 <div class="form-row">
                     <div class="input-group col-sm-7">
                         <select class="custom-select" name="month" id="month" title="Month" autocomplete="month" onchange="handleListGoalOnLoad(document.getElementById('executive_id').value,undefined,this.value,document.getElementById('year').value,'status='+returnSelectedStatuses(document.getElementById('status_id'))); handleListOnLoad(document.getElementById('executive_id').value,undefined,this.value,document.getElementById('year').value,'status='+returnSelectedStatuses(document.getElementById('status_id')));">
-                            <option value="1">January</option>
-                            <option value="2">February</option>
-                            <option value="3">March</option>
-                            <option value="4">April</option>
-                            <option value="5">May</option>
-                            <option value="6">June</option>
-                            <option value="7">July</option>
-                            <option value="8">August</option>
-                            <option value="9">September</option>
-                            <option value="10">Octuber</option>
-                            <option value="11">November</option>
-                            <option value="12">December</option> 
+                            <option value="1"><?=translateText('january');?></option>
+                            <option value="2"><?=translateText('february');?></option>
+                            <option value="3"><?=translateText('march');?></option>
+                            <option value="4"><?=translateText('april');?></option>
+                            <option value="5"><?=translateText('may');?></option>
+                            <option value="6"><?=translateText('june');?></option>
+                            <option value="7"><?=translateText('july');?></option>
+                            <option value="8"><?=translateText('august');?></option>
+                            <option value="9"><?=translateText('september');?></option>
+                            <option value="10"><?=translateText('octuber');?></option>
+                            <option value="11"><?=translateText('november');?></option>
+                            <option value="12"><?=translateText('december');?></option> 
                         </select>
                     </div>
                     <div class="input-group col-sm-5">
@@ -106,13 +106,13 @@ if(1==2)
                     <caption>List of Proposals / Goals</caption>
                     <thead>
                         <tr>
-                            <th scope="col">Offer / Campaign</th>
-                            <th scope="col">Advertiser</th>
-                            <th scope="col">Assign Executive</th>
-                            <th scope="col">Amount</th>
-                            <th scope="col">Monthly</th>
-                            <th scope="col">Status</th>
-                            <th scope="col" style="text-align:center;">Settings</th>
+                            <th scope="col"><?=translateText('offer_campaign');?></th>
+                            <th scope="col"><?=translateText('advertiser');?></th>
+                            <th scope="col"><?=translateText('assign_executive');?></th>
+                            <th scope="col"><?=translateText('amount');?></th>
+                            <th scope="col"><?=translateText('monthly');?></th>
+                            <th scope="col"><?=translateText('status');?></th>
+                            <th scope="col" style="text-align:center;"><?=translateText('settings');?></th>
                         </tr>
                     </thead>
                     <tbody id="listDashboard">
@@ -142,9 +142,9 @@ if(1==2)
             </div>
             <div class="col-sm-6 goal-section" >
                 <div class="hidden" ><spam class="goal-currency" id="goal-currency">MXN</spam></div>
-                <div ><spam class="goal-title">Goal of the month:</spam><spam class="goal-result" id="goal-0">10,000.99</spam><spam class="hidden" id="goal-2">1000099</spam><div>
-                <div ><spam class="goal-title">Total Reached:</spam><spam class="goal-result" id="goal-1">0.99</spam><div>
-                <div ><spam class="goal-title">% Reached:</spam><spam class="goal-result" id="goal-percent">0.01%</spam><div>
+                <div ><spam class="goal-title"><?=translateText('goals_of_month');?>:</spam><spam class="goal-result" id="goal-0">10,000.99</spam><spam class="hidden" id="goal-2">1000099</spam><div>
+                <div ><spam class="goal-title"><?=translateText('total_reached');?>:</spam><spam class="goal-result" id="goal-1">0.99</spam><div>
+                <div ><spam class="goal-title">% <?=translateText('reached');?>:</spam><spam class="goal-result" id="goal-percent">0.01%</spam><div>
             </div>
         </div>
     </div>    

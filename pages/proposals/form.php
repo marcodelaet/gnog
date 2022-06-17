@@ -9,21 +9,21 @@ $moduleName = 'Proposal';
 
 <div class='form-<?=strtolower($moduleName)?>-container'>
     <div class="form-container">
-        <div class="form-header">New <?=$moduleName?></div>
+        <div class="form-header"><?=translateText('new');?> <?=translateText(strtolower($moduleName))?></div>
         <form name='<?=strtolower($moduleName)?>' method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
             <div class="inputs-form-container">
                 <div class="form-row">
                     <div class="col custom-control custom-switch" style="text-align:right;">
                         <input type="checkbox" class="custom-control-input" id="customSwitch1" name="pixel">
-                        <label class="custom-control-label" for="customSwitch1">Pixel required</label>
+                        <label class="custom-control-label" for="customSwitch1"><?=translateText('pixel_required');?></label>
                     </div>
                 </div>
                 <div class="form-row" >
                     <div class="col">
-                        <label for="client_id">Client</label>
+                        <label for="client_id"><?=translateText('client');?></label>
                         <spam id="sclient">
                             <select name="client_id" id="selectclient" title="client_id" class="form-control" autocomplete="client_id" onchange="if(agency_id.value == '0') { listAdvertiserContacts(this.value) }" required>
-                                <?=inputSelect('advertiser','Client','is_agency-N','name','')?>
+                                <?=inputSelect('advertiser',translateText('client'),'is_agency-N','name','')?>
                             </select>
                         </spam>
                         <div class="invalid-feedback">
@@ -31,10 +31,10 @@ $moduleName = 'Proposal';
                         </div>
                     </div>
                     <div class="col">
-                        <label for="agency_id">Agency</label>
+                        <label for="agency_id"><?=translateText('agency');?></label>
                         <spam id="sagency">
                             <select name="agency_id" id="selectagency" title="agency_id" class="form-control" autocomplete="agency_id" onchange="listAdvertiserContacts(this.value)">
-                                <?=inputSelect('advertiser','Agency','is_agency-Y','name','')?>
+                                <?=inputSelect('advertiser',translateText('agency'),'is_agency-Y','name','')?>
                             </select>
                         </spam>
                     </div>
@@ -42,11 +42,11 @@ $moduleName = 'Proposal';
                 <div id="div-selectContact"></div>
                 <div class="form-row">
                     <div class="col">
-                        <label for="name">Offer Name</label>
+                        <label for="name"><?=translateText('offer_name');?></label>
                         <input
                         required
                         name ='name' 
-                        placeholder='Offer Name'
+                        placeholder='<?=translateText('offer_name');?>'
                         title = 'name'
                         value=''
                         class="form-control" 
@@ -60,7 +60,7 @@ $moduleName = 'Proposal';
                     </div>
                 </div>
                 <div class="form-row">
-                    <label for="name">Description</label>
+                    <label for="name"><?=translateText('description');?></label>
                     <div class="input-group mb-3">
                         <textarea
                         required
@@ -77,7 +77,7 @@ $moduleName = 'Proposal';
                 </div>
                 <div class="form-row">
                     <div class="col">
-                        <label for="start_date">Start date</label>
+                        <label for="start_date"><?=translateText('start_date');?></label>
                         <input
                         required
                         name ='start_date' 
@@ -94,7 +94,7 @@ $moduleName = 'Proposal';
                         </div>
                     </div>
                     <div class="col">
-                        <label for="stop_date">Stop date</label>
+                        <label for="stop_date"><?=translateText('stop_date');?></label>
                         <input
                         required
                         name ='stop_date' 
@@ -115,14 +115,14 @@ $moduleName = 'Proposal';
                     <div class="col">
                         <div class="form-row" >
                             <div class="col main-contact-header">
-                                Products
+                            <?=translateText('products');?>
                             </div>
                             <div class="col-2">
-                                <label for="currency">Currency</label>
+                                <label for="currency"><?=translateText('currency');?></label>
                                 <select
                                 required
                                 name ='currency' 
-                                title = 'Currency'
+                                title = '<?=translateText('currency');?>'
                                 class="form-control"
                                 autocomplete="currency">
                                     <option value="MXN">MXN</option>
@@ -135,7 +135,7 @@ $moduleName = 'Proposal';
                             <div class="form-row">
                                 <div class="col custom-control custom-switch" style="text-align:right;">
                                     <input type="checkbox" class="custom-control-input" value="0" onchange="refilterProductsType(this.value);" id="customSwitch2" name="digital_product">
-                                    <label class="custom-control-label" for="customSwitch2">Digital Product</label>
+                                    <label class="custom-control-label" for="customSwitch2"><?=translateText('digital_product');?></label>
                                 </div>
                             </div>
                         </div>
@@ -143,7 +143,7 @@ $moduleName = 'Proposal';
                             <div id="product_0">
                                 <div class="form-row">
                                     <div class="col" id="div-selectProduct">
-                                        <label for="product_id[]">Product</label>
+                                        <label for="product_id[]"><?=translateText('product');?></label>
                                         <spam id="sproduct">
                                             <select name="product_id[]" title="product_id" class="form-control" autocomplete="product_id" required>
                                                 <?=inputSelect('product','Product','is_digital="N"','name','')?>
@@ -154,7 +154,7 @@ $moduleName = 'Proposal';
                                         </div>
                                     </div>
                                     <div class="col" id="div-selectSaleModel">
-                                        <label for="salemodel_id[]">Sale model</label>
+                                        <label for="salemodel_id[]"><?=translateText('sale_model');?></label>
                                         <spam id="ssalemodel">
                                             <select name="salemodel_id[]" title="salemodel_id" class="form-control" autocomplete="salemodel_id">
                                                 <?=inputSelect('salemodel','Sale model','is_digital="N"','name','')?>
@@ -167,7 +167,7 @@ $moduleName = 'Proposal';
                                 </div>
                                 <div class="form-row" >
                                     <div class="col">
-                                        <label for="price[]">Unit Price</label><br/>
+                                        <label for="price[]"><?=translateText('unit_price');?></label><br/>
                                         <input
                                         required
                                         onkeypress="$(this).mask('#.###.##0,00', {reverse: true});"
@@ -175,7 +175,7 @@ $moduleName = 'Proposal';
                                         id='price_0'
                                         name ='price[]' 
                                         placeholder="999,99"
-                                        title = 'Unit price'
+                                        title = '<?=translateText('unit_price');?>'
                                         value=''
                                         class="form-control" 
                                         type="currency" 
@@ -187,13 +187,13 @@ $moduleName = 'Proposal';
                                         </div>
                                     </div>
                                     <div class="col">
-                                        <label for="quantity[]">Quantity</label>
+                                        <label for="quantity[]"><?=translateText('quantity');?></label>
                                         <input
                                         required
                                         onblur="calcAmountTotal(<?=strtolower($moduleName)?>,0)"
                                         name ='quantity[]' 
-                                        placeholder='Quantity'
-                                        title = 'Quantity'
+                                        placeholder='<?=translateText('quantity');?>'
+                                        title = '<?=translateText('quantity');?>'
                                         value=''
                                         class="form-control" 
                                         type="number"
@@ -206,22 +206,22 @@ $moduleName = 'Proposal';
                                 </div>
                                 <div class="form-row" >
                                     <div class="col">
-                                        <label for="amount[]">Amount</label><br/>
+                                        <label for="amount[]"><?=translateText('amount');?></label><br/>
                                         <input
                                         id='amount_0'
                                         name ='amount[]'
                                         readonly 
                                         placeholder="0,00"
-                                        title = 'Amount'
+                                        title = '<?=translateText('amount');?>'
                                         value='0,00'
                                         class="form-control"
                                         />
                                     </div>
                                     <div class="col">
-                                        <label for="provider_id[]">Provider</label>
+                                        <label for="provider_id[]"><?=translateText('provider');?></label>
                                         <spam id="sprovider">
                                             <select name="provider_id[]" title="provider_id" class="form-control">
-                                                <?=inputSelect('provider','Provider','','name','')?>
+                                                <?=inputSelect('provider',translateText('provider'),'','name','')?>
                                             </select>
                                         </spam>
                                     </div>
@@ -249,29 +249,29 @@ $moduleName = 'Proposal';
                 </div>
                 <div class="form-row">
                     <div class="col">
-                        <label for="total">Total</label><br/>
+                        <label for="total"><?=translateText('total');?></label><br/>
                         <input
                         id='total'
                         name ='total'
                         readonly 
                         placeholder="0,00"
-                        title = 'Total'
+                        title = '<?=translateText('total');?>'
                         value='0,00'
                         class="form-control"
                         />
                     </div>
                     <div class="col">
-                        <label for="status_id">Status</label>
+                        <label for="status_id"><?=translateText('status');?></label>
                         <spam id="sstatus">
                             <select name="status_id" id="selectstatus" title="status_id" class="form-control">
-                                <?=inputSelect('status','Status','','percent','')?>
+                                <?=inputSelect('status',translateText('status'),'','percent','')?>
                             </select>
                         </spam>
                     </div>
                 </div>
             </div>
             <div class="inputs-button-container">
-                <button class="button" name="btnSave" type="button" onClick="handleSubmit(<?=strtolower($moduleName)?>)" >Save</button>
+                <button class="button" name="btnSave" type="button" onClick="handleSubmit(<?=strtolower($moduleName)?>)" ><?=translateText('save');?></button>
             </div>
         </form>
       <?php
