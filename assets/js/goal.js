@@ -166,7 +166,7 @@ function handleEditGoalSubmit(tid,form) {
         alert('Please, fill all required fields (*)');
 }
 
-function handleListGoalOnLoad() {
+function handleListGoalOnLoad(currency) {
     errors      = 0;
     authApi     = csrf_token;
     var locat       = window.location.hostname;
@@ -178,6 +178,15 @@ function handleListGoalOnLoad() {
 
     var filters     = '&year='+year+'&month='+month;
 
+    xcurrency       = 'MXN';
+    if((typeof currency != 'undefined') && ((currency !== '') && (currency != 'undefined'))){
+        xcurrency       = currency;
+    } else {
+        document.getElementById('rate_id').value=xcurrency;
+    }
+
+    filters     += '&currency='+xcurrency;
+
     if(locat.slice(-1) != '/')
         locat += '/';
 
@@ -185,7 +194,7 @@ function handleListGoalOnLoad() {
 
     } else{
         const requestURL = window.location.protocol+'//'+locat+'api/'+moduleGoal+'s/auth_'+moduleGoal+'_list.php?auth_api='+authApi+filters;
-        //alert(requestURL);
+        console.log(requestURL);
         const request   = new XMLHttpRequest();
         request.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {

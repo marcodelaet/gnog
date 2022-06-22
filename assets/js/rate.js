@@ -56,11 +56,6 @@ function getCurrencyValue(base,to,value,localSite){
                         var formatter = new Intl.NumberFormat(lang, {
                             style: 'currency',
                             currency: obj.to,
-                            //maximumSignificantDigits: 2,
-    
-                            // These options are needed to round to whole numbers if that's what you want.
-                            //minimumFractionDigits: 2, // (this suffices for whole numbers, but will print 2500.10 as $2,500.1)
-                            //maximumFractionDigits: 0, // (causes 2500.99 to be printed as $2,501)
                         });
                         //alert(formatter.format(obj.newValue));
                         switch(localSite){
@@ -77,9 +72,6 @@ function getCurrencyValue(base,to,value,localSite){
                         }
                         index++;
                         document.getElementById('goal-currency').innerHTML = obj.to;
-                        //form.btnSave.innerHTML = "Save";
-                        //alert('Status: '+obj.status);
-                        //window.location.href = '?pr=Li9wYWdlcy9wcm9wb3NhbHMvdGtwL2luZGV4LnBocA==';
                     }
                     else{
                         //form.btnSave.innerHTML = "Saving...";
@@ -93,7 +85,7 @@ function getCurrencyValue(base,to,value,localSite){
     }
 }
 
-function updateCurrencyListValue(base,to,value,idValueName,localSite){
+function updateCurrencyListValue(base,to,value,localSite){
     errors      = 0;
     authApi     = csrf_token;
     message     = '';
@@ -102,6 +94,7 @@ function updateCurrencyListValue(base,to,value,idValueName,localSite){
     querystring = new Array('&base='+base+'&to='+to+'&value='+value);
     valueArray      = [];
     currencyArray   = [];
+    lineAidsArray   = []; 
 
 
     // getting values to convertion
@@ -120,6 +113,8 @@ function updateCurrencyListValue(base,to,value,idValueName,localSite){
             newIntValue += arrayNewValueDot[indexNewValueDot];
         }
         valueArray.push(parseInt(newIntValue));
+        lineAidsArray.push(value[indexOfValues].id);
+        //alert("ID: " + value[indexOfValues].id);
     }
     
     //alert(valueArray[0]);
@@ -166,7 +161,8 @@ function updateCurrencyListValue(base,to,value,idValueName,localSite){
                         switch(localSite){
                             case 'dashboard':
                                // alert('show: '+indexx);
-                                    document.getElementById(idValueName+'-'+indexx).innerHTML = formatter.format(obj.newValue);
+                               //alert('show a: '+lineAidsArray[indexx]);
+                                    document.getElementById(lineAidsArray[indexx]).innerHTML = formatter.format(obj.newValue);
                             break;
                             default:
         
@@ -190,7 +186,7 @@ function updateCurrencyListValue(base,to,value,idValueName,localSite){
     }
 }
 
-function updateCurrencyListMonthlyValue(base,to,value,idValueName,localSite){
+function updateCurrencyListMonthlyValue(base,to,value,localSite){
     errors      = 0;
     authApi     = csrf_token;
     message     = '';
@@ -199,6 +195,7 @@ function updateCurrencyListMonthlyValue(base,to,value,idValueName,localSite){
     querystring = new Array('&base='+base+'&to='+to+'&value='+value);
     valueArray      = [];
     currencyArray   = [];
+    lineidsArray    = [];
 
 
     // getting values to convertion
@@ -217,6 +214,8 @@ function updateCurrencyListMonthlyValue(base,to,value,idValueName,localSite){
             newIntValue += arrayNewValueDot[indexNewValueDot];
         }
         valueArray.push(parseInt(newIntValue));
+        lineidsArray.push(value[indexOfValues].id);
+        //alert("ID: " + value[indexOfValues].id);
     }
     
     //alert(valueArray[0]);
@@ -263,7 +262,8 @@ function updateCurrencyListMonthlyValue(base,to,value,idValueName,localSite){
                         switch(localSite){
                             case 'dashboard':
                                // alert('show: '+indexm);
-                                    document.getElementById(idValueName+'-'+indexm).innerHTML = formatter.format(obj.newValue);
+                               //alert('show: '+lineidsArray[indexm]);
+                                    document.getElementById(lineidsArray[indexm]).innerHTML = formatter.format(obj.newValue);
                             break;
                             default:
         

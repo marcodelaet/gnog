@@ -19,8 +19,15 @@ if(array_key_exists('auth_api',$_REQUEST)){
     // User Group
     $group          = $_COOKIE['lacc'];
 
+
+    $currency_selected = 'MXN';
+    if(array_key_exists('currency',$_REQUEST)){
+        $currency_selected = $_REQUEST['currency'];
+    }
+
+
     // setting query
-    $columns        = "UUID,product_id,product_name,salemodel_id,salemodel_name,provider_id,provider_name,user_id,username,client_id,client_name,agency_id,agency_name,status_id,status_name,status_percent,offer_name,description,start_date,stop_date,month_diff_data,sum(amount_dolar) as amount,sum(amount_dolar_int) as amount_int, sum(amount_per_month_dolar) as amount_per_month, sum(amount_per_month_dolar_int) as amount_per_month_int, 'USD' as currency,quantity,is_active";
+    $columns        = "UUID,product_id,product_name,salemodel_id,salemodel_name,provider_id,provider_name,user_id,username,client_id,client_name,agency_id,agency_name,status_id,status_name,status_percent,offer_name,description,start_date,stop_date,month_diff_data,sum(amount_$currency_selected) as amount,sum(amount_".$currency_selected."_int) as amount_int, sum(amount_per_month_$currency_selected) as amount_per_month, sum(amount_per_month_".$currency_selected."_int) as amount_per_month_int, '$currency_selected' as currency,quantity,is_active";
     $tableOrView    = "view_proposals";
     $orderBy        = " group by UUID";
 

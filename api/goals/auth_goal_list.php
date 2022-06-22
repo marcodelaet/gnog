@@ -19,8 +19,14 @@ if(array_key_exists('auth_api',$_REQUEST)){
     // User Group
     $group          = 'user';
 
+    if(array_key_exists('currency',$_REQUEST)){
+        if($_REQUEST['currency']!==''){
+            $currency         = $_REQUEST['currency'];
+        }
+    }
+
     // setting query
-    $columns        = "username,UUID,goal_amount,sum(goal_amount) as total_amount,currency_id as currency,goal_month,goal_year";
+    $columns        = "username,UUID,goal_$currency as goal_amount,sum(goal_$currency) as total_amount,'$currency' as currency,goal_month,goal_year";
     $tableOrView    = "view_goals";
     $orderBy        = "";
     $groupBy        = "";

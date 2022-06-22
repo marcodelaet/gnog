@@ -11,7 +11,7 @@ function returnSelectedStatuses(statuses){
 }
 
 
-function handleListOnLoad(uid,status,month,year,search) {
+function handleListOnLoad(uid,status,month,year,search,currency) {
     errors      = 0;
     authApi     = csrf_token;
     locat       = window.location.hostname;
@@ -22,6 +22,7 @@ function handleListOnLoad(uid,status,month,year,search) {
     var xmonth      = today.getMonth()+1; // getMonth starts at 0
     var xlenDate    = ('00'+ xmonth).length;
     var xyear       = today.getFullYear();
+    var xcurrency   = 'MXN';
 
     var stringJsonDataProposals  = '['; 
 
@@ -37,11 +38,18 @@ function handleListOnLoad(uid,status,month,year,search) {
     } else {
         document.getElementById('year').value=xyear;
     }
-    var mySQLFullDate = xyear+'-'+xmonth+'-'+xday;
+    //currency filter
+    if((typeof currency != 'undefined') && ((currency !== '') && (currency != 'undefined'))){
+        xcurrency     = currency;
+    } else {
+        document.getElementById('rate_id').value=xcurrency;
+    }
+
+    //var mySQLFullDate = xyear+'-'+xmonth+'-'+xday;
     var xmonthfull  = ('00' + xmonth).substring(xlenDate-2,xlenDate);
     var yearMonth = xyear+xmonthfull;
 
-    filters     = '';
+    filters     = '&currency='+xcurrency;
     //uid
     if(typeof uid == 'undefined')
         uid  = '';
@@ -61,11 +69,12 @@ function handleListOnLoad(uid,status,month,year,search) {
         locat += '/';
 
     if(errors > 0){
-
+        
     } else{
         tableList   = document.getElementById('listDashboard');
         const requestURL = window.location.protocol+'//'+locat+'api/'+module_dash+'/auth_'+module_dash+'_list.php?auth_api='+authApi+filters;
         console.log(requestURL);
+        //alert(requestURL);
         const request = new XMLHttpRequest();
         request.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {

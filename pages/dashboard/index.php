@@ -81,7 +81,7 @@ if(1==2)
                     </div>
                     <div class="input-group col-sm-5">
                         <div class="currency-select">
-                            <select class="custom-select" name="rate_id" title="Rates" autocomplete="rate_id" onChange="updateCurrencyListValue(document.getElementsByClassName('currency-line'),this.value,document.getElementsByClassName('amount-line'),'amount','dashboard'); updateCurrencyListMonthlyValue(document.getElementsByClassName('currency-line'),this.value,document.getElementsByClassName('amount-month-line'),'amount-month','dashboard'); getCurrencyValue(document.getElementById('goal-currency').innerText,this.value,document.getElementById('goal-0').innerText+'---'+document.getElementById('goal-1').innerText+'---'+document.getElementById('goal-2').innerText,'dashboard');">
+                            <select class="custom-select" id="rate_id" name="rate_id" title="Rates" autocomplete="rate_id" onChange="handleListGoalOnLoad(this.value); handleListOnLoad('','','','','',this.value);// getCurrencyValue(document.getElementById('goal-currency').innerText,this.value,document.getElementById('goal-0').innerText+'---'+document.getElementById('goal-1').innerText+'---'+document.getElementById('goal-2').innerText,'dashboard'); updateCurrencyListValue(document.getElementsByClassName('currency-line'),this.value,document.getElementsByClassName('amount-line'),'dashboard'); updateCurrencyListMonthlyValue(document.getElementsByClassName('currency-line'),this.value,document.getElementsByClassName('amount-month-line'),'dashboard'); ">
                                 <?=inputFilterNoZeroSelect('rate','Rates','','orderby','USD')?>
                             </select>
                         </div>
