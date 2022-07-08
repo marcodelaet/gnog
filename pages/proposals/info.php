@@ -12,41 +12,28 @@
     <div class="card-header">
         <div class="<?=strtolower($moduleName)?>-header">
             <div class="<?=strtolower($moduleName)?>-main" >
-                <spam id="<?=strtolower($moduleName)?>_name"><?=$moduleName?></spam>
-                <spam class="<?=strtolower($moduleName)?>-group" id="group"></spam>
+                <spam id="<?=strtolower($moduleName)?>-name"><?=$moduleName?></spam>
+                <spam class="<?=strtolower($moduleName)?>-client" id="client"></spam>
+                <spam class="<?=strtolower($moduleName)?>-description" id="description"></spam><br/>
+                <spam class="<?=strtolower($moduleName)?>-dates" id="dates"></spam>
+                
             </div>
         </div>
     </div>
     <div class="card-body <?=strtolower($moduleName)?>-body">
         <!--***************************************
-        ****** Contact Section *******************-->
-        <h5 class="card-title main-contact-header">Contact</h5>
-        <div class="<?=strtolower($moduleName)?>-data">
-            <spam id="card-contact-fullname">aaaaaa bbbbbb da xxxx </spam><spam id="card-contact-position"> (zzzzz)</spam>
-        </div>
-        <div class="<?=strtolower($moduleName)?>-data">
-        <div class="<?=strtolower($moduleName)?>-data">
-            <spam class="material-icons icon-data">location_on</spam>
-            <spam id="card-address">99, example, street</spam>
-        </div>
-        </div>
-        <div class="<?=strtolower($moduleName)?>-data">
-            <spam class="material-icons icon-data">email</spam>
-            <spam id="card-email">email@dma.com</spam>
-        </div>
-        <div class="<?=strtolower($moduleName)?>-data">
-            <spam class="material-icons icon-data">phone</spam>
-            <spam id="card-phone">+5255999999</spam>
-        </div>
-        <!--***************************************
         ****** Products Section *******************-->
-        <h5 class="card-title main-contact-header" style="margin-top:2rem;">Product</h5>
+        <h5 class="card-title main-products-header">Products</h5>
         <div class="<?=strtolower($moduleName)?>-data">
-            <spam id="card-product">aaaaaa bbbbbb da xxxx </spam> - <spam id="card-product-price"> $$$</spam>
-        </div>    
-        <div class="<?=strtolower($moduleName)?>-data">
-            <spam id="card-salemodel">xxxx</spam>
+            <div id="products-list">
+                <spam >aaaaaa bbbbbb da xxxx </spam><spam >- R$ 0,00</spam>
+            </div>
         </div>
+        <div class="margin-space">&nbsp;</div>
+        <div class="<?=strtolower($moduleName)?>-data">
+        <?=inputDropDownStyle('status','','percent','')?>
+            </div>
+
         <div class="inputs-button-container">
             <Button class="button" type="button" onClick="window.location='?pr=<?=base64_encode('./pages/'.strtolower($moduleName).'s/index.php')?>'" >Back to <?=$moduleName?>s</Button>
         </div>
