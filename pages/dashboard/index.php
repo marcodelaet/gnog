@@ -130,11 +130,7 @@ if(1==2)
         </div>
         <div class="row">
             <div class="graph" id="graph-proposals"></div>
-        </div>
-<!--        <div class="row">
-            <div class="graph" id="graph-goals"></div>
-        </div>
-    </div>-->    
+        </div>   
     <div>
         <div class="row">
             <div class="col-sm-6">
@@ -142,9 +138,9 @@ if(1==2)
             </div>
             <div class="col-sm-6 goal-section" >
                 <div class="hidden" ><spam class="goal-currency" id="goal-currency">MXN</spam></div>
-                <div ><spam class="goal-title"><?=translateText('goals_of_month');?>:</spam><spam class="goal-result" id="goal-0">10,000.99</spam><spam class="hidden" id="goal-2">1000099</spam><div>
-                <div ><spam class="goal-title"><?=translateText('total_reached');?>:</spam><spam class="goal-result" id="goal-1">0.99</spam><div>
-                <div ><spam class="goal-title">% <?=translateText('reached');?>:</spam><spam class="goal-result" id="goal-percent">0.01%</spam><div>
+                <div ><spam class="goal-title"><?=translateText('goals_of_month');?>:</spam><spam class="goal-result" id="goal-0">0.00</spam><spam class="hidden" id="goal-2">0</spam><div>
+                <div ><spam class="goal-title"><?=translateText('total_reached');?>:</spam><spam class="goal-result" id="goal-1">0.00</spam><div>
+                <div ><spam class="goal-title">% <?=translateText('reached');?>:</spam><spam class="goal-result" id="goal-percent">0.00%</spam><div>
             </div>
         </div>
     </div>    

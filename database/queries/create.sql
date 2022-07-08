@@ -89,7 +89,35 @@ CREATE VIEW view_goals AS (
 	g.goal_month,
 	g.goal_year,
 	g.currency_id,
-	(g.goal_amount / c.rate) AS goal_dolar
+	(g.goal_amount / c.rate) * cusd.rate AS goal_USD,
+	(g.goal_amount / c.rate) * cmxn.rate AS goal_MXN,
+	(g.goal_amount / c.rate) * cbrl.rate AS goal_BRL,
+	(g.goal_amount / c.rate) * ceur.rate AS goal_EUR
+	FROM 
+	goals g
+	INNER JOIN users u 
+	ON g.user_id = u.id
+	INNER JOIN currencies c 
+	ON c.id = g.currency_id
+	INNER JOIN currencies cusd ON cusd.id = 'USD'
+	INNER JOIN currencies cbrl ON cbrl.id = 'BRL'
+	INNER JOIN currencies cmxn ON cmxn.id = 'MXN'
+	INNER JOIN currencies ceur ON ceur.id = 'EUR'
+);
+
+
+SELECT
+	u.username,
+	(g.user_id) AS UUID,
+	g.goal_amount,
+	g.goal_month,
+	g.goal_year,
+	g.currency_id,
+	(g.goal_amount / c.rate) * cusd.rate AS goal_USD,
+	(g.goal_amount / c.rate) * cmxn.rate AS goal_MXN,
+	(g.goal_amount / c.rate) * cbrl.rate AS goal_BRL,
+	(g.goal_amount / c.rate) * ceur.rate AS goal_EUR
+	
 	
 	FROM 
 	goals g
@@ -97,7 +125,12 @@ CREATE VIEW view_goals AS (
 	ON g.user_id = u.id
 	INNER JOIN currencies c 
 	ON c.id = g.currency_id
-);
+	inner join currencies cusd on cusd.id = 'USD'
+	INNER JOIN currencies cbrl ON cbrl.id = 'BRL'
+	INNER JOIN currencies cmxn ON cmxn.id = 'MXN'
+	INNER JOIN currencies ceur ON ceur.id = 'EUR'
+	;
+
 
 SELECT *, SUM(goal_amount) AS total_amount FROM view_goals WHERE goal_month = 4 GROUP BY goal_year;
 
@@ -479,71 +512,6 @@ CREATE VIEW view_proposals AS (
 	(ppp.price * ppp.quantity) / 100 AS amount,
 	((ppp.price * ppp.quantity) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1)) AS amount_per_month_int,
 	((ppp.price * ppp.quantity) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1)) / 100 AS amount_per_month,
-	((ppp.price * ppp.quantity) / c.rate) AS amount_USD_int,
-	((ppp.price * ppp.quantity) / c.rate) / 100 AS amount_USD,
-	(((ppp.price * ppp.quantity) / c.rate) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1)) AS amount_per_month_USD_int,
-	(((ppp.price * ppp.quantity) / c.rate) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1)) / 100 AS amount_per_month_USD,
-	((ppp.price * ppp.quantity) / c.rate) AS amount_MXN_int,
-	((ppp.price * ppp.quantity) / c.rate) / 100 AS amount_MXN,
-	(((ppp.price * ppp.quantity) / c.rate) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1)) AS amount_per_month_MXN_int,
-	(((ppp.price * ppp.quantity) / c.rate) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1)) / 100 AS amount_per_month_MXN,
-	((ppp.price * ppp.quantity) / c.rate) AS amount_BRL_int,
-	((ppp.price * ppp.quantity) / c.rate) / 100 AS amount_BRL,
-	(((ppp.price * ppp.quantity) / c.rate) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1)) AS amount_per_month_BRL_int,
-	(((ppp.price * ppp.quantity) / c.rate) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1)) / 100 AS amount_per_month_BRL,
-	((ppp.price * ppp.quantity) / c.rate) AS amount_EUR_int,
-	((ppp.price * ppp.quantity) / c.rate) / 100 AS amount_EUR,
-	(((ppp.price * ppp.quantity) / c.rate) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1)) AS amount_per_month_EUR_int,
-	(((ppp.price * ppp.quantity) / c.rate) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1)) / 100 AS amount_per_month_EUR,	
-	pps.is_pixel,
-	pps.is_active,
-	CONCAT((pps.id),pd.name,sm.name,pv.name,u.username,adv.corporate_name,pps.offer_name,ppp.currency) AS search
-	FROM 
-	proposals pps
-	LEFT JOIN proposalsxproducts ppp ON ppp.proposal_id = pps.id
-	LEFT JOIN products pd ON pd.id = ppp.product_id
-	LEFT JOIN salemodels sm ON sm.id = ppp.salemodel_id
-	LEFT JOIN providers pv ON pv.id = ppp.provider_id
-	LEFT JOIN currencies c ON c.id = ppp.currency
-	INNER JOIN statuses s ON s.id = pps.status_id
-	INNER JOIN users u ON u.id = pps.user_id
-	INNER JOIN advertisers adv ON adv.id = pps.advertiser_id
-	LEFT JOIN advertisers age ON age.id = pps.agency_id
-);
-
-
-SELECT
-	(pps.id) AS UUID,
-	(ppp.product_id) AS product_id,
-	pd.name AS product_name,
-	(ppp.salemodel_id) AS salemodel_id,
-	sm.name AS salemodel_name,
-	(ppp.provider_id) AS provider_id,
-	pv.name AS provider_name,
-	(pps.user_id) AS user_id,
-	u.username,
-	(pps.advertiser_id) AS client_id,
-	adv.corporate_name AS client_name,
-	(pps.agency_id) AS agency_id,
-	age.corporate_name AS agency_name,
-	pps.status_id,
-	s.name AS status_name,
-	s.percent AS status_percent,
-	pps.offer_name,
-	pps.description,
-	pps.start_date,
-	pps.stop_date,
-	TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1 AS month_diff_data, 
-	ppp.price / 100 AS price,
-	ppp.price AS price_int,
-	ppp.currency,
-	ppp.quantity,
-	c.rate AS rate,
-	c.id AS currency_c,
-	(ppp.price * ppp.quantity) AS amount_int,
-	(ppp.price * ppp.quantity) / 100 AS amount,
-	((ppp.price * ppp.quantity) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1)) AS amount_per_month_int,
-	((ppp.price * ppp.quantity) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1)) / 100 AS amount_per_month,
 	CASE 
 	WHEN c.id = 'USD' THEN
 	(
@@ -686,6 +654,191 @@ SELECT
 	LEFT JOIN salemodels sm ON sm.id = ppp.salemodel_id
 	LEFT JOIN providers pv ON pv.id = ppp.provider_id
 	INNER JOIN currencies c ON c.id = ppp.currency
+	INNER JOIN currencies cusd ON cusd.id = 'USD'
+	INNER JOIN currencies cmxn ON cmxn.id = 'MXN'
+	INNER JOIN currencies cbrl ON cbrl.id = 'BRL'
+	INNER JOIN currencies ceur ON ceur.id = 'EUR'
+	INNER JOIN statuses s ON s.id = pps.status_id
+	INNER JOIN users u ON u.id = pps.user_id
+	INNER JOIN advertisers adv ON adv.id = pps.advertiser_id
+	LEFT JOIN advertisers age ON age.id = pps.agency_id
+);
+
+
+SELECT
+	(pps.id) AS UUID,
+	(ppp.product_id) AS product_id,
+	pd.name AS product_name,
+	(ppp.salemodel_id) AS salemodel_id,
+	sm.name AS salemodel_name,
+	(ppp.provider_id) AS provider_id,
+	pv.name AS provider_name,
+	(pps.user_id) AS user_id,
+	u.username,
+	(pps.advertiser_id) AS client_id,
+	adv.corporate_name AS client_name,
+	(pps.agency_id) AS agency_id,
+	age.corporate_name AS agency_name,
+	pps.status_id,
+	s.name AS status_name,
+	s.percent AS status_percent,
+	pps.offer_name,
+	pps.description,
+	pps.start_date,
+	pps.stop_date,
+	TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1 AS month_diff_data, 
+	ppp.price / 100 AS price,
+	ppp.price AS price_int,
+	ppp.currency,
+	ppp.quantity,
+	c.rate AS rate,
+	c.id AS currency_c,
+	(ppp.price * ppp.quantity) AS amount_int,
+	(ppp.price * ppp.quantity) / 100 AS amount,
+	((ppp.price * ppp.quantity) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1)) AS amount_per_month_int,
+	((ppp.price * ppp.quantity) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1)) / 100 AS amount_per_month,
+	case 
+	when c.id = 'USD' THEN
+	(
+		(ppp.price * ppp.quantity)
+	) else 
+	(
+		(((ppp.price * ppp.quantity) / c.rate) * cusd.rate)
+	) end  AS amount_USD_int,
+	CASE
+	WHEN c.id = 'USD' THEN
+	(
+		(ppp.price * ppp.quantity) / 100
+	) ELSE 
+	(
+		(((ppp.price * ppp.quantity) / c.rate) * cusd.rate) / 100
+	) end AS amount_USD,
+	CASE
+	WHEN c.id = 'USD' THEN
+	(
+		((ppp.price * ppp.quantity) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1))
+	) ELSE 
+	(
+		((((ppp.price * ppp.quantity) / c.rate) * cusd.rate) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1))
+	) end AS amount_per_month_USD_int,
+	CASE
+	WHEN c.id = 'USD' THEN
+	(
+		((ppp.price * ppp.quantity) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1)) / 100
+	) ELSE 
+	(
+		((((ppp.price * ppp.quantity) / c.rate) * cusd.rate) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1)) / 100
+	) end AS amount_per_month_USD,
+	
+	CASE
+	WHEN c.id = 'MXN' THEN
+	(
+		(ppp.price * ppp.quantity)
+	) ELSE 
+	(
+		(((ppp.price * ppp.quantity) / c.rate) * cmxn.rate)
+	) END  AS amount_MXN_int,
+	CASE
+	WHEN c.id = 'MXN' THEN
+	(
+		(ppp.price * ppp.quantity) / 100
+	) ELSE 
+	(
+		(((ppp.price * ppp.quantity) / c.rate) * cmxn.rate) / 100
+	) END AS amount_MXN,
+	CASE
+	WHEN c.id = 'MXN' THEN
+	(
+		((ppp.price * ppp.quantity) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1))
+	) ELSE 
+	(
+		((((ppp.price * ppp.quantity) / c.rate) * cmxn.rate) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1))
+	) END AS amount_per_month_MXN_int,
+	CASE
+	WHEN c.id = 'MXN' THEN
+	(
+		((ppp.price * ppp.quantity) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1)) / 100
+	) ELSE 
+	(
+		((((ppp.price * ppp.quantity) / c.rate) * cmxn.rate) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1)) / 100
+	) END AS amount_per_month_MXN,
+	
+	CASE
+	WHEN c.id = 'BRL' THEN
+	(
+		(ppp.price * ppp.quantity)
+	) ELSE 
+	(
+		(((ppp.price * ppp.quantity) / c.rate) * cbrl.rate)
+	) END  AS amount_BRL_int,
+	CASE
+	WHEN c.id = 'BRL' THEN
+	(
+		(ppp.price * ppp.quantity) / 100
+	) ELSE 
+	(
+		(((ppp.price * ppp.quantity) / c.rate) * cbrl.rate) / 100
+	) END AS amount_BRL,
+	CASE
+	WHEN c.id = 'BRL' THEN
+	(
+		((ppp.price * ppp.quantity) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1))
+	) ELSE 
+	(
+		((((ppp.price * ppp.quantity) / c.rate) * cbrl.rate) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1))
+	) END AS amount_per_month_BRL_int,
+	CASE
+	WHEN c.id = 'BRL' THEN
+	(
+		((ppp.price * ppp.quantity) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1)) / 100
+	) ELSE 
+	(
+		((((ppp.price * ppp.quantity) / c.rate) * cbrl.rate) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1)) / 100
+	) END AS amount_per_month_BRL,
+	
+	CASE
+	WHEN c.id = 'EUR' THEN
+	(
+		(ppp.price * ppp.quantity)
+	) ELSE 
+	(
+		(((ppp.price * ppp.quantity) / c.rate) * ceur.rate)
+	) END  AS amount_EUR_int,
+	CASE
+	WHEN c.id = 'EUR' THEN
+	(
+		(ppp.price * ppp.quantity) / 100
+	) ELSE 
+	(
+		(((ppp.price * ppp.quantity) / c.rate) * ceur.rate) / 100
+	) END AS amount_EUR,
+	CASE
+	WHEN c.id = 'EUR' THEN
+	(
+		((ppp.price * ppp.quantity) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1))
+	) ELSE 
+	(
+		((((ppp.price * ppp.quantity) / c.rate) * ceur.rate) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1))
+	) END AS amount_per_month_EUR_int,
+	CASE
+	WHEN c.id = 'EUR' THEN
+	(
+		((ppp.price * ppp.quantity) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1)) / 100
+	) ELSE 
+	(
+		((((ppp.price * ppp.quantity) / c.rate) * ceur.rate) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1)) / 100
+	) END AS amount_per_month_EUR,
+		
+	pps.is_pixel,
+	pps.is_active,
+	CONCAT((pps.id),pd.name,sm.name,pv.name,u.username,adv.corporate_name,pps.offer_name,ppp.currency) AS search
+	FROM 
+	proposals pps
+	LEFT JOIN proposalsxproducts ppp ON ppp.proposal_id = pps.id
+	LEFT JOIN products pd ON pd.id = ppp.product_id
+	LEFT JOIN salemodels sm ON sm.id = ppp.salemodel_id
+	LEFT JOIN providers pv ON pv.id = ppp.provider_id
+	inner JOIN currencies c ON c.id = ppp.currency
 	INNER JOIN currencies cusd ON cusd.id = 'USD'
 	INNER JOIN currencies cmxn ON cmxn.id = 'MXN'
 	INNER JOIN currencies cbrl ON cbrl.id = 'BRL'

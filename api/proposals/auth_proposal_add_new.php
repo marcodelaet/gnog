@@ -43,9 +43,9 @@ if(array_key_exists('auth_api',$_REQUEST)){
     // Response JSON 
     if($rs){
         // setting SELECT query
-        $columns        = "UUID,offer_name";
-        $tableOrView    = "view_proposals";
-        $filters        = "WHERE offer_name = '$name' AND client_id = '$client_id' AND description = '$description'";
+        $columns        = "id,offer_name";
+        $tableOrView    = "proposals";
+        $filters        = "WHERE offer_name = '$name' AND advertiser_id = '$client_id' AND description = '$description'";
         // Query creation
         $sqlGet = "SELECT $columns FROM $tableOrView $filters";
         // LIST data
@@ -59,10 +59,10 @@ if(array_key_exists('auth_api',$_REQUEST)){
             echo json_encode($rsGet);
         }
         else
-            echo $sqlGet;
+            echo 'Error Get: ' . $sqlGet;
     }
     else
-        echo $sql;
+        echo 'Error Insert: ' . $sql;
 }
 
 //close connection

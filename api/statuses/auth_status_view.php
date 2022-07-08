@@ -16,7 +16,7 @@ if(array_key_exists('auth_api',$_GET)){
     //if($localStorage == $_REQUEST['auth_api']){}
 
     // setting query
-    $columns = "id as uuid_full, concat(name,' (',percent,'%)') as name, percent, description, is_active";
+    $columns = "id as uuid_full, concat(name,' (',percent,'%)') as name, name as simple_name, percent, description, is_active";
     $tableOrView    = "statuses";
     $orderBy        = "order by name";
 

@@ -49,7 +49,7 @@ function handleSubmit(form) {
                 if (this.readyState == 4 && this.status == 200) {
                     // Typical action to be performed when the document is ready:
                     obj = JSON.parse(request.responseText);
-                    proposal_id = obj[0].UUID;
+                    proposal_id = obj[0].id;
                    
                     //alert('len: ' + objProduct.length);
                     virg            = '';
@@ -202,7 +202,7 @@ function handleViewOnLoad(tid) {
 
     } else{
         const requestURL = window.location.protocol+'//'+locat+'api/proposals/auth_proposal_get.php?auth_api='+authApi+filters;
-        //alert(requestURL);
+        console.log(requestURL);
         const request   = new XMLHttpRequest();
         position        = '*****';
         request.onreadystatechange = function() {
@@ -211,7 +211,7 @@ function handleViewOnLoad(tid) {
                 // Create our number formatter.
                 var formatter = new Intl.NumberFormat(lang, {
                     style: 'currency',
-                    currency: obj[0].currency,
+                    currency: obj[0].currency_c,
                     //maximumSignificantDigits: 2,
 
                     // These options are needed to round to whole numbers if that's what you want.
@@ -220,16 +220,36 @@ function handleViewOnLoad(tid) {
                 });
                 if(obj[0].main_contact_position!='')
                     position = obj[0].main_contact_position;
-                document.getElementById('provider_name').innerHTML          = obj[0].name;
-                document.getElementById('group').innerHTML                  = obj[0].webpage_url;
-                document.getElementById('card-contact-fullname').innerHTML  = obj[0].main_contact_name + ' ' + obj[0].main_contact_surname
-                document.getElementById('card-contact-position').innerHTML  = ' ('+position+')';
-                document.getElementById('card-address').innerHTML           = obj[0].address;
-                document.getElementById('card-email').innerHTML             = obj[0].main_contact_email;
-                document.getElementById('card-phone').innerHTML             = '+'+obj[0].phone_international_code.replace(" ","") + obj[0].phone_number.replace(" ","");
-                document.getElementById('card-product').innerHTML           = obj[0].product_name;
-                document.getElementById('card-product-price').innerHTML     = formatter.format(obj[0].product_price);
-                document.getElementById('card-salemodel').innerHTML         = obj[0].salemodel_name;
+                client = obj[0].client_name;
+                if(obj[0].agency_name != null)
+                    client += ' / ' + obj[0].agency_name;
+
+                xxhtml                = '';
+                color_status = '#d60b0e';
+                if(obj[0].status_percent == '100')
+                    color_status = '#298c3d';
+                if(obj[0].status_percent == '90')
+                    color_status = '#03fc84';
+                if(obj[0].status_percent == '75')
+                    color_status = '#77fc03';
+                if(obj[0].status_percent == '50')
+                    color_status = '#ebfc03';
+                if(obj[0].status_percent == '25')
+                    color_status = '#fc3d03';
+                startDate           = new Date(obj[0].start_date);
+                formattedStartDate  = startDate.getDate()+"/"+(parseInt(startDate.getMonth())+1)+"/"+startDate.getFullYear();
+                stopDate            = new Date(obj[0].stop_date);
+                formattedStopDate   = stopDate.getDate()+"/"+(parseInt(stopDate.getMonth())+1)+"/"+stopDate.getFullYear(); 
+                document.getElementById('proposal-name').innerHTML          = obj[0].offer_name;
+                document.getElementById('client').innerHTML                 = client;
+                document.getElementById('description').innerHTML            = obj[0].description;
+                document.getElementById('dates').innerHTML                  = "("+ formattedStartDate+" - "+formattedStopDate+")";
+                document.getElementById('statusDropdownMenuButton').innerHTML            = '<spam class="material-icons icon-data" id="card-status-icon" style="color:'+color_status+'">thermostat</spam>' + obj[0].status_name + ' ('+ + obj[0].status_percent+'%)';
+                // products list for statement
+                for(i=0;i<obj.length;i++){
+                    xxhtml += '<spam class="product-line">'+obj[i].quantity + ' x ' + obj[i].product_name + ' / ' + obj[i].salemodel_name+' - '+formatter.format(obj[i].amount)+'</spam><br />';
+                }
+                document.getElementById('products-list').innerHTML          = xxhtml;                
             }
             else{
                 //form.btnSave.innerHTML = "Searching...";
