@@ -2,3 +2,6 @@ public/advertiser/csv/*
 public/provider/csv/*
 public/proposal/csv/*
 database/.config
+composer.json
+composer.lock
+index_.php

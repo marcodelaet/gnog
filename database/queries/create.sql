@@ -16,9 +16,28 @@ SELECT LEFT(UUID,13) AS UUID, UUID AS uuid_full, product_id, product_name, salem
 
 USE gnogcrm_db;
 
+#SETTINGS
+CREATE TABLE IF NOT EXISTS settings (
+id VARCHAR(40) PRIMARY KEY NOT NULL,
+setting_key VARCHAR(50) NOT NULL,
+setting_value VARCHAR(200) NOT NULL,
+setting_description TEXT,
+is_active ENUM('N','Y') NOT NULL,
+created_at DATETIME NOT NULL,
+updated_at DATETIME NOT NULL
+);
+
+#INSERTING DEFAULT SETTINGS
+INSERT INTO settings (id,setting_key, setting_value, setting_description, is_active, created_at, updated_at) 
+VALUES 
+(UUID(),'spreedsheet_file_location','./public/sheets/','Location where the spreedsheets are','Y',now(),now()),
+(UUID(),'billboards_file_name','carteleras.xlsx','Spreedsheet contains all billboard locations, providers,values and codes','Y',now(),now());
+
+
+
 # CURRENCIES
 CREATE TABLE IF NOT EXISTS currencies (
-id VARCHAR(3) PRIMARY KEY NOT NULL UNIQUE,
+id VARCHAR(3) PRIMARY KEY NOT NULL,
 rate FLOAT NOT NULL,
 orderby TINYINT,
 is_active ENUM('N','Y') NOT NULL,
@@ -28,7 +47,7 @@ updated_at DATETIME NOT NULL
 
 # USERS
 CREATE TABLE IF NOT EXISTS users (
-id VARCHAR(40) PRIMARY KEY NOT NULL UNIQUE,
+id VARCHAR(40) PRIMARY KEY NOT NULL,
 username VARCHAR(20) NOT NULL UNIQUE,
 user_language VARCHAR(5) NOT NULL,
 email VARCHAR(60) NOT NULL,
@@ -70,7 +89,7 @@ INSERT INTO users (id, username, email,mobile_international_code, mobile_prefix,
 
 # GOAL
 CREATE TABLE IF NOT EXISTS `goals` (
-id VARCHAR(40) PRIMARY KEY NOT NULL UNIQUE,
+id VARCHAR(40) PRIMARY KEY NOT NULL,
 user_id VARCHAR(40) NOT NULL,
 goal_month VARCHAR(2) NOT NULL,
 goal_year VARCHAR(4) NOT NULL,
@@ -136,7 +155,7 @@ SELECT *, SUM(goal_amount) AS total_amount FROM view_goals WHERE goal_month = 4 
 
 # PROFILES
 CREATE TABLE IF NOT EXISTS `profiles` (
-id VARCHAR(40) PRIMARY KEY NOT NULL UNIQUE,
+id VARCHAR(40) PRIMARY KEY NOT NULL,
 user_id VARCHAR(40),
 photo VARCHAR(200),
 country VARCHAR(3),
@@ -147,7 +166,7 @@ updated_at DATETIME NOT NULL
 
 # TOKENS
 CREATE TABLE IF NOT EXISTS `tokens` (
-id VARCHAR(40) PRIMARY KEY NOT NULL UNIQUE,
+id VARCHAR(40) PRIMARY KEY NOT NULL,
 user_id VARCHAR(40),
 token VARCHAR(250),
 expires TIMESTAMP NOT NULL,
@@ -160,7 +179,7 @@ updated_at DATETIME NOT NULL
 
 # ADVERTISERS
 CREATE TABLE IF NOT EXISTS advertisers (
-id VARCHAR(40) PRIMARY KEY NOT NULL UNIQUE,
+id VARCHAR(40) PRIMARY KEY NOT NULL,
 corporate_name VARCHAR(40) NOT NULL UNIQUE,
 address	TEXT NOT NULL,
 is_agency ENUM('N','Y') NOT NULL,
@@ -171,7 +190,7 @@ updated_at DATETIME NOT NULL
 
 # CONTACTS
 CREATE TABLE IF NOT EXISTS contacts (
-id VARCHAR(40) PRIMARY KEY NOT NULL UNIQUE,
+id VARCHAR(40) PRIMARY KEY NOT NULL,
 module_name VARCHAR(40) NOT NULL, # advertiser / provider
 contact_name VARCHAR(20) NOT NULL,
 contact_surname VARCHAR(20),
@@ -246,21 +265,21 @@ CREATE VIEW view_advertisers AS (
 
 SELECT * FROM view_advertisercontacts;
 
-SELECT LEFT(UUID,13)AS UUID, UUID AS uuid_full, 
+SELECT LEFT(uuid,13)AS uuid, uuid AS uuid_full, 
 COUNT(contact_client_id) AS qty_contact, 
 corporate_name, address, CONCAT(contact_name,' ',contact_surname,' (', contact_email,')') AS contact, contact_name, contact_surname, contact_email, contact_position, phone_international_code, phone_prefix, phone_number, is_agency, is_active, CONCAT('+',phone_international_code,phone_number) AS phone 
 FROM view_advertisers 
 #
-GROUP BY UUID
+GROUP BY uuid
 ORDER BY corporate_name ;
 
 SELECT * FROM view_advertisers;
 
 # PRODUCTS
 CREATE TABLE IF NOT EXISTS products (
-id VARCHAR(40) PRIMARY KEY NOT NULL UNIQUE,
-NAME VARCHAR(40) NOT NULL,
-DESCRIPTION TEXT,
+id VARCHAR(40) PRIMARY KEY NOT NULL,
+name VARCHAR(40) NOT NULL,
+description TEXT,
 is_digital ENUM('N','Y') NOT NULL,
 is_active ENUM('N','Y') NOT NULL,
 created_at DATETIME NOT NULL,
@@ -302,7 +321,7 @@ VALUES
 
 #STATUSES
 CREATE TABLE IF NOT EXISTS statuses (
-id TINYINT PRIMARY KEY NOT NULL UNIQUE AUTO_INCREMENT,
+id TINYINT PRIMARY KEY NOT NULL AUTO_INCREMENT,
 NAME VARCHAR(40) NOT NULL,
 percent TINYINT NOT NULL,
 DESCRIPTION TEXT,
@@ -323,7 +342,7 @@ VALUES
 
 #SALE MODELS
 CREATE TABLE IF NOT EXISTS salemodels (
-id VARCHAR(40) PRIMARY KEY NOT NULL UNIQUE,
+id VARCHAR(40) PRIMARY KEY NOT NULL,
 NAME VARCHAR(40) NOT NULL,
 DESCRIPTION TEXT,
 is_digital ENUM('N','Y') NOT NULL,
@@ -383,7 +402,7 @@ VALUES
 
 # PROVIDERS
 CREATE TABLE IF NOT EXISTS providers (
-id VARCHAR(40) PRIMARY KEY NOT NULL UNIQUE,
+id VARCHAR(40) PRIMARY KEY NOT NULL,
 NAME VARCHAR(40) NOT NULL UNIQUE,
 address	TEXT,
 webpage_url VARCHAR(200),
@@ -395,7 +414,7 @@ updated_at DATETIME NOT NULL
 
 # PROVIDERSXPRODUCT
 CREATE TABLE IF NOT EXISTS providersxproduct (
-id VARCHAR(40) PRIMARY KEY NOT NULL UNIQUE,
+id VARCHAR(40) PRIMARY KEY NOT NULL,
 provider_id VARCHAR(40) NOT NULL,
 product_id VARCHAR(40) NOT NULL,
 salemodel_id VARCHAR(40),
@@ -442,7 +461,7 @@ CREATE VIEW view_providers AS (
 
 #PROPOSALS
 CREATE TABLE IF NOT EXISTS proposals (
-id VARCHAR(40) PRIMARY KEY NOT NULL UNIQUE,
+id VARCHAR(40) PRIMARY KEY NOT NULL,
 user_id VARCHAR(40) NOT NULL,
 advertiser_id VARCHAR(40) NOT NULL,
 agency_id VARCHAR(40),
@@ -462,10 +481,11 @@ updated_at DATETIME NOT NULL
 
 # PROPOSALS x PRODUCTS
 CREATE TABLE IF NOT EXISTS proposalsxproducts (
-id VARCHAR(40) PRIMARY KEY NOT NULL UNIQUE,
+id VARCHAR(40) PRIMARY KEY NOT NULL,
 proposal_id VARCHAR(40),
 product_id VARCHAR(40),
 salemodel_id VARCHAR(40),
+billboard_id VARCHAR(40),
 provider_id VARCHAR(40),
 price BIGINT,
 currency VARCHAR(3) NOT NULL,
@@ -853,7 +873,7 @@ SELECT TIMESTAMPDIFF(MONTH, start_date, stop_date) FROM view_proposals;
 
 # MODULES
 CREATE TABLE modules (
-id VARCHAR(40) PRIMARY KEY NOT NULL UNIQUE,
+id VARCHAR(40) PRIMARY KEY NOT NULL,
 NAME VARCHAR(20) NOT NULL,
 is_active ENUM('N','Y') NOT NULL,
 created_at DATETIME NOT NULL,
@@ -862,7 +882,7 @@ updated_at DATETIME NOT NULL
 
 # LOG HISTORY
 CREATE TABLE loghistory (
-id VARCHAR(40) PRIMARY KEY NOT NULL UNIQUE,
+id VARCHAR(40) PRIMARY KEY NOT NULL,
 user_id VARCHAR(40) NOT NULL,
 module_name VARCHAR(20) NOT NULL,
 DESCRIPTION TEXT NOT NULL,
@@ -874,7 +894,7 @@ updated_at DATETIME NOT NULL
 
 # TRANSLATES
 CREATE TABLE translates (
-id VARCHAR(40) PRIMARY KEY NOT NULL UNIQUE,
+id VARCHAR(40) PRIMARY KEY NOT NULL,
 code_str VARCHAR(20) NOT NULL,
 text_eng TEXT NOT NULL,
 text_esp TEXT,
@@ -954,6 +974,12 @@ INSERT INTO translates
 (id, code_str, text_eng, text_esp, text_ptbr, is_active, created_at, updated_at)
 VALUES
 (UUID(), 'add', 'New', 'Añadir', 'Adicionar', 'Y', NOW(), NOW());
+
+
+INSERT INTO translates 
+(id, code_str, text_eng, text_esp, text_ptbr, is_active, created_at, updated_at)
+VALUES
+(UUID(), 'billboard', 'Billboard', 'Cartelera', 'Painel', 'Y', NOW(), NOW());
 
 INSERT INTO translates 
 (id, code_str, text_eng, text_esp, text_ptbr, is_active, created_at, updated_at)
