@@ -5,6 +5,16 @@ $moduleName = 'Proposal';
 <link rel="stylesheet" href="<?=$dir?>./assets/css/Inputs.css">
 <link rel="stylesheet" href="<?=$dir?>./assets/css/RecoveryLink.css">
 <link rel="stylesheet" href="<?=$dir?>./assets/css/Button.css">
+<style>
+  /* Style the input field */
+  .billboardId {
+    padding: 20px;
+    margin-top: -6px;
+    border: 0;
+    border-radius: 0;
+    background: #f1f1f1;
+  }
+  </style>
 <script src="<?=$dir?>./assets/js/<?=strtolower($moduleName)?>.js" type="text/javascript"></script>
 
 <div class='form-<?=strtolower($moduleName)?>-container'>
@@ -200,7 +210,33 @@ $moduleName = 'Proposal';
                                         autocomplete="quantity"
                                         />
                                         <div class="invalid-feedback">
-                                            Please type the position / role of the main contact.
+                                            Please type the quantity of this product.
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="col">
+                                        <label for="CarteleraId"><?=translateText('billboard')?> ID</label><br/>
+                                        <div class="dropdown">
+                                            <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+                                                <?=translateText('billboard')?> ID
+                                                <span class="caret"></span>
+                                            </button>
+                                            <ul class="dropdown-menu">
+                                                <input class="form-control billboardId" id="billboardId_0" type="text" placeholder="Search..">
+                                                <li><a href="#">GTO-GTO-004-E-01</a></li>
+                                                <li><a href="#">GTO-GTO-004-E-02</a></li>
+                                                <li><a href="#">QRO-[CA-257-E-01</a></li>
+                                                <li><a href="#">QRO-[CA-257-E-02</a></li>
+                                                <li><a href="#">QRO--258-E-01</a></li>
+                                                <li><a href="#">QRO--258-E-02</a></li>
+                                                <li><a href="#">QRO--261-E-01</a></li>
+                                                <li><a href="#">QRO--261-E-02</a></li>
+                                                <li><a href="#">QRO--262-E-01</a></li>
+                                                <li><a href="#">QRO--262-E-02</a></li>
+                                                <li><a href="#">QRO--263-E-01</a></li>
+                                                <li><a href="#">QRO--263-E-02</a></li>
+                                            </ul>
                                         </div>
                                     </div>
                                 </div>
@@ -291,3 +327,14 @@ $moduleName = 'Proposal';
       ?>
     </div>    
 </div>
+
+<script>
+$(document).ready(function(){
+  $(".billboardId").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $(".dropdown-menu li").filter(function() {
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+    });
+  });
+});
+</script>

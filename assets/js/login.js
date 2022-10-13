@@ -3,9 +3,11 @@ function handleLogin(form) {
     password    = form.password.value;
     filters     = 'username='+username+'&password='+password;
     locat       = window.location.hostname;
-
+    //alert(locat);
     if(locat.slice(-1) != '/')
         locat += '/';
+
+       // alert(locat);
 
     const requestURL = window.location.protocol+'//'+locat+'api/login/authentication.php';
     //alert(requestURL+'?'+filters);
@@ -21,6 +23,7 @@ function handleLogin(form) {
                 form.password.value = '';
             }
             else{
+                //console.log(obj);
                 // save token on LS
                 localStorage.setItem('tokenGNOG', obj.token);
                 localStorage.setItem('uuid', obj[0].uuid);
