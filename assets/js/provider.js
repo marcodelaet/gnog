@@ -4,7 +4,7 @@ module  = 'provider';
 //alert(csrf_token);
 
 function handleSubmit(form) {
-    if (form.name.value !== '' && form.address.value !== '' && form.main_contact_email.value !== '' || product_id != '0' || salemodel_id != '0') {
+    if (form.name.value !== '' && form.address.value !== '' || product_id != '0' || salemodel_id != '0') {
         //form.submit();
         errors      = 0;
         authApi     = csrf_token;
@@ -107,7 +107,7 @@ function handleSubmitCSV(form){
 }
 
 function handleEditSubmit(tid,form) {
-    if (form.name.value !== '' && form.address.value !== '' && form.main_contact_email.value !== '' || product_id != '0' || salemodel_id != '0') {
+    if (form.name.value !== '' && form.address.value !== '' && (product_id != '0' || salemodel_id != '0')) {
         //form.submit();
    
         errors      = 0;
@@ -125,7 +125,7 @@ function handleEditSubmit(tid,form) {
         webpage_url             = form.webpage_url.value;
         if(webpage_url !== ''){
             sett     += '&webpage_url='+webpage_url;
-        }
+        }/*
         main_contact_name       = form.main_contact_name.value;
         if(main_contact_name !== ''){
             sett     += '&main_contact_name='+main_contact_name;
@@ -137,7 +137,7 @@ function handleEditSubmit(tid,form) {
         main_contact_email      = form.main_contact_email.value;
         if(main_contact_email !== ''){
             sett     += '&main_contact_email='+main_contact_email;
-        }
+        }*/
         /*phone_ddi  = form.mobile_ddi.value;
         if(phone_ddi !== ''){
             sett     += '&phone_ddi='+phone_ddi.replace(' ','');
@@ -146,10 +146,10 @@ function handleEditSubmit(tid,form) {
         if(phone !== ''){
             sett     += '&phone='+phone.replace(" ","");
         }
-        main_contact_position   = form.main_contact_position.value;
+        /*main_contact_position   = form.main_contact_position.value;
         if(main_contact_position !== ''){
             sett     += '&main_contact_position='+main_contact_position;
-        }
+        }*/
         product_id                   = form.product_id.value;
         if(product_id !== ''){
             sett     += '&product_id='+product_id.replace(" ","");
@@ -290,12 +290,12 @@ function handleOnLoad(tid,form) {
                 form.name.value                     = obj[0].name;
                 form.address.value                  = obj[0].address;
                 form.webpage_url.value              = obj[0].webpage_url;
-                form.main_contact_name.value        = obj[0].main_contact_name;
+                /*form.main_contact_name.value        = obj[0].main_contact_name;
                 form.main_contact_surname.value     = obj[0].main_contact_surname;
-                form.main_contact_email.value       = obj[0].main_contact_email;
+                form.main_contact_email.value       = obj[0].main_contact_email;*/
                 //form.phone_ddi.value              = obj[0].phone_international_code.replace(" ","");
-                form.phone.value                    = obj[0].phone_number.replace(" ","");
-                form.main_contact_position.value    = obj[0].main_contact_position;
+                /*form.phone.value                    = obj[0].phone_number.replace(" ","");
+                form.main_contact_position.value    = obj[0].main_contact_position;*/
                 form.product_price.value            = formatter.format(obj[0].product_price);
                 form.product_id.value               = obj[0].product_id;
                 form.salemodel_id.value             = obj[0].salemodel_id;
