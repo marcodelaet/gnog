@@ -1,7 +1,12 @@
-public/advertiser/csv/*
-public/provider/csv/*
-public/proposal/csv/*
-database/.config
+/public/advertiser/csv/*
+/public/provider/csv/*
+/public/proposal/csv/*
+/
+/database/.config
 composer.json
 composer.lock
 index_.php
+/node_modules/
+vendor/
+/public/billboards/
+/public/sheets/

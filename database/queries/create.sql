@@ -477,6 +477,128 @@ created_at DATETIME NOT NULL,
 updated_at DATETIME NOT NULL
 );
 
+# VIEW
+CREATE TABLE IF NOT EXISTS viewpoints (
+id VARCHAR(40) PRIMARY KEY NOT NULL,
+name VARCHAR(40) NOT NULL,
+is_active ENUM('N','Y') NOT NULL,
+created_at DATETIME NOT NULL,
+updated_at DATETIME NOT NULL
+);
+
+INSERT INTO viewpoints (id,name,is_active,created_at,updated_at) 
+VALUES 
+(UUID(),'Frontal','Y',NOW(),NOW()),
+(UUID(),'Cruzada','Y',NOW(),NOW()),
+(UUID(),'Natural','Y',NOW(),NOW());
+
+# BILLBOARD
+CREATE TABLE IF NOT EXISTS billboards (
+id VARCHAR(40) PRIMARY KEY NOT NULL,
+name_key VARCHAR(20) UNIQUE NOT NULL,
+address TEXT,
+state VARCHAR(20),
+category VARCHAR(30) NOT NULL,
+coordenates VARCHAR(40) NOT NULL,
+latitud VARCHAR(40) NOT NULL,
+longitud VARCHAR(40) NOT NULL,
+price_int BIGINT NOT NULL,
+cost_int BIGINT NOT NULL,
+width INT NOT NULL,
+height INT NOT NULL,
+photo VARCHAR(200),
+provider_id VARCHAR(40),
+salemodel_id VARCHAR(40) NOT NULL,
+viewpoint_id VARCHAR(40) NOT NULL,
+is_iluminated ENUM('N','Y') NOT NULL,
+is_digital ENUM('N','Y') NOT NULL,
+is_active ENUM('N','Y') NOT NULL,
+created_at DATETIME NOT NULL,
+updated_at DATETIME NOT NULL,
+INDEX name_key_index (name_key)
+);
+
+# ADDING FK PROVIDER
+ALTER TABLE `billboards`
+    ADD CONSTRAINT `fk_provider` 
+	FOREIGN KEY (`provider_id`)
+    REFERENCES `providers` (`id`);
+
+# ADDING FK SALE MODEL
+ALTER TABLE `billboards`
+    ADD CONSTRAINT `fk_salemodel` 
+	FOREIGN KEY (`salemodel_id`)
+    REFERENCES `salemodels` (`id`);
+
+# ADDING FK VIEWPOINT
+ALTER TABLE `billboards`
+    ADD CONSTRAINT `fk_viewpoint` 
+	FOREIGN KEY (`viewpoint_id`)
+    REFERENCES `viewpoints` (`id`);
+
+
+INSERT INTO billboard (id,name_key,address,state,category,coordenates,latitud,longitud,price_int,cost_int,width,height,photo,
+provider_id,salemodel_id,viewpoint_id,is_iluminated, is_digital, is_active, created_at, updated_at) 
+VALUES
+(UUID(),'key','address','state','category','coordenates','latitud','longitud',price_int,cost_int,width,height,'photo',provider_id,salemodel_id,viewpoint_id,'is_iluminated','is_digital','Y',now(),now());
+
+
+# VIEW BILLBOARDS
+CREATE VIEW view_billboards AS 
+(
+	SELECT
+	b.id as UUID,
+	b.name_key as name,
+	b.category as category,
+	b.address as address,
+	b.state as state,
+	b.height / 100 as height,
+	b.width / 100 as width,
+	b.coordenates as coordenates,
+	b.latitud as latitud,
+	b.longitud as longitud,
+	b.price_int as price_int,
+	(b.price_int * 100) / 100 as price,
+	b.cost_int as cost_int,
+	(b.cost_int * 100) / 100 as cost,
+	b.is_iluminated as is_iluminated,
+	b.is_digital as is_digital,
+	b.is_active as is_active,
+	p.name as provider_name,
+	sm.name as salemodel_name,
+	sm.id as salemodel_id,
+	vp.id as viewpoint_id,
+	p.id as provider_id,
+	vp.name as viewpoint_name,
+	b.photo as photo,
+    pb.proposalproduct_id as proposalproduct_id,
+    pb.is_active as is_productbillboard_active,
+	CONCAT(name_key,p.name,sm.name,vp.name,b.state,b.address) as search
+	FROM billboards b
+	INNER JOIN providers p ON b.provider_id = p.id
+	INNER JOIN salemodels sm ON b.salemodel_id = sm.id
+	INNER JOIN viewpoints vp ON b.viewpoint_id = vp.id
+    LEFT JOIN productsxbillboards pb ON b.id = pb.billboard_id 
+);
+
+
+
+/*
+     [i]['Tipo'] 			- product_id
+     [i]['Clave'] 			- name_key 
+     [i]['Dirección']		- address
+     [i]['Estado']			- state
+     [i]['Vista']			- viewpoint_id
+     [i]['Base']			- width
+     [i]['Alto']			- height
+     [i]['Iluminación']		- is_iluminated
+     [i]['Latitud']			- latitud
+     [i]['Longitud']		- longitud
+     [i]['Tarifa Publicada']- price
+     [i]['Categoría (NSE)']	- category
+     [i]['Renta']			- cost_int
+     [i]['Proveedor']		- provider_id
+*/
 
 
 # PROPOSALS x PRODUCTS
@@ -485,11 +607,22 @@ id VARCHAR(40) PRIMARY KEY NOT NULL,
 proposal_id VARCHAR(40),
 product_id VARCHAR(40),
 salemodel_id VARCHAR(40),
-billboard_id VARCHAR(40),
 provider_id VARCHAR(40),
-price BIGINT,
+state VARCHAR(50),
+price_int BIGINT,
 currency VARCHAR(3) NOT NULL,
 quantity INTEGER,
+is_active ENUM('N','Y') NOT NULL,
+created_at DATETIME NOT NULL,
+updated_at DATETIME NOT NULL
+);
+
+# PRODUCTS x BILLBOARDS
+CREATE TABLE IF NOT EXISTS productsxbillboards (
+id VARCHAR(40) PRIMARY KEY NOT NULL,
+proposalproduct_id VARCHAR(40),
+billboard_id VARCHAR(40),
+price_int BIGINT,
 is_active ENUM('N','Y') NOT NULL,
 created_at DATETIME NOT NULL,
 updated_at DATETIME NOT NULL
@@ -502,12 +635,14 @@ SELECT UUID,offer_name FROM view_proposals WHERE offer_name = 'Nissan - INFINITI
 CREATE VIEW view_proposals AS (
 	SELECT
 	(pps.id) AS UUID,
+	ppp.id as proposalproduct_id,
 	(ppp.product_id) AS product_id,
 	pd.name AS product_name,
 	(ppp.salemodel_id) AS salemodel_id,
 	sm.name AS salemodel_name,
 	(ppp.provider_id) AS provider_id,
 	pv.name AS provider_name,
+    ppp.state AS state,
 	(pps.user_id) AS user_id,
 	u.username,
 	(pps.advertiser_id) AS client_id,
@@ -522,157 +657,175 @@ CREATE VIEW view_proposals AS (
 	pps.start_date,
 	pps.stop_date,
 	TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1 AS month_diff_data, 
-	ppp.price / 100 AS price,
-	ppp.price AS price_int,
+	ppp.price_int / 100 AS price,
+	ppp.price_int AS price_int,
 	ppp.currency,
 	ppp.quantity,
 	c.rate AS rate,
 	c.id AS currency_c,
-	(ppp.price * ppp.quantity) AS amount_int,
-	(ppp.price * ppp.quantity) / 100 AS amount,
-	((ppp.price * ppp.quantity) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1)) AS amount_per_month_int,
-	((ppp.price * ppp.quantity) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1)) / 100 AS amount_per_month,
+	(ppp.price_int * ppp.quantity) AS amount_int,
+	(ppp.price_int * ppp.quantity) / 100 AS amount,
+	((ppp.price_int * ppp.quantity) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1)) AS amount_per_month_int,
+	((ppp.price_int * ppp.quantity) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1)) / 100 AS amount_per_month,
 	CASE 
 	WHEN c.id = 'USD' THEN
 	(
-		(ppp.price * ppp.quantity)
+		(ppp.price_int * ppp.quantity)
 	) ELSE 
 	(
-		(((ppp.price * ppp.quantity) / c.rate) * cusd.rate)
+		(((ppp.price_int * ppp.quantity) / c.rate) * cusd.rate)
 	) END  AS amount_USD_int,
 	CASE
 	WHEN c.id = 'USD' THEN
 	(
-		(ppp.price * ppp.quantity) / 100
+		(ppp.price_int * ppp.quantity) / 100
 	) ELSE 
 	(
-		(((ppp.price * ppp.quantity) / c.rate) * cusd.rate) / 100
+		(((ppp.price_int * ppp.quantity) / c.rate) * cusd.rate) / 100
 	) END AS amount_USD,
 	CASE
 	WHEN c.id = 'USD' THEN
 	(
-		((ppp.price * ppp.quantity) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1))
+		((ppp.price_int * ppp.quantity) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1))
 	) ELSE 
 	(
-		((((ppp.price * ppp.quantity) / c.rate) * cusd.rate) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1))
+		((((ppp.price_int * ppp.quantity) / c.rate) * cusd.rate) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1))
 	) END AS amount_per_month_USD_int,
 	CASE
 	WHEN c.id = 'USD' THEN
 	(
-		((ppp.price * ppp.quantity) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1)) / 100
+		((ppp.price_int * ppp.quantity) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1)) / 100
 	) ELSE 
 	(
-		((((ppp.price * ppp.quantity) / c.rate) * cusd.rate) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1)) / 100
+		((((ppp.price_int * ppp.quantity) / c.rate) * cusd.rate) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1)) / 100
 	) END AS amount_per_month_USD,
 	
 	CASE
 	WHEN c.id = 'MXN' THEN
 	(
-		(ppp.price * ppp.quantity)
+		(ppp.price_int * ppp.quantity)
 	) ELSE 
 	(
-		(((ppp.price * ppp.quantity) / c.rate) * cmxn.rate)
+		(((ppp.price_int * ppp.quantity) / c.rate) * cmxn.rate)
 	) END  AS amount_MXN_int,
 	CASE
 	WHEN c.id = 'MXN' THEN
 	(
-		(ppp.price * ppp.quantity) / 100
+		(ppp.price_int * ppp.quantity) / 100
 	) ELSE 
 	(
-		(((ppp.price * ppp.quantity) / c.rate) * cmxn.rate) / 100
+		(((ppp.price_int * ppp.quantity) / c.rate) * cmxn.rate) / 100
 	) END AS amount_MXN,
 	CASE
 	WHEN c.id = 'MXN' THEN
 	(
-		((ppp.price * ppp.quantity) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1))
+		((ppp.price_int * ppp.quantity) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1))
 	) ELSE 
 	(
-		((((ppp.price * ppp.quantity) / c.rate) * cmxn.rate) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1))
+		((((ppp.price_int * ppp.quantity) / c.rate) * cmxn.rate) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1))
 	) END AS amount_per_month_MXN_int,
 	CASE
 	WHEN c.id = 'MXN' THEN
 	(
-		((ppp.price * ppp.quantity) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1)) / 100
+		((ppp.price_int * ppp.quantity) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1)) / 100
 	) ELSE 
 	(
-		((((ppp.price * ppp.quantity) / c.rate) * cmxn.rate) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1)) / 100
+		((((ppp.price_int * ppp.quantity) / c.rate) * cmxn.rate) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1)) / 100
 	) END AS amount_per_month_MXN,
 	
 	CASE
 	WHEN c.id = 'BRL' THEN
 	(
-		(ppp.price * ppp.quantity)
+		(ppp.price_int * ppp.quantity)
 	) ELSE 
 	(
-		(((ppp.price * ppp.quantity) / c.rate) * cbrl.rate)
+		(((ppp.price_int * ppp.quantity) / c.rate) * cbrl.rate)
 	) END  AS amount_BRL_int,
 	CASE
 	WHEN c.id = 'BRL' THEN
 	(
-		(ppp.price * ppp.quantity) / 100
+		(ppp.price_int * ppp.quantity) / 100
 	) ELSE 
 	(
-		(((ppp.price * ppp.quantity) / c.rate) * cbrl.rate) / 100
+		(((ppp.price_int * ppp.quantity) / c.rate) * cbrl.rate) / 100
 	) END AS amount_BRL,
 	CASE
 	WHEN c.id = 'BRL' THEN
 	(
-		((ppp.price * ppp.quantity) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1))
+		((ppp.price_int * ppp.quantity) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1))
 	) ELSE 
 	(
-		((((ppp.price * ppp.quantity) / c.rate) * cbrl.rate) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1))
+		((((ppp.price_int * ppp.quantity) / c.rate) * cbrl.rate) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1))
 	) END AS amount_per_month_BRL_int,
 	CASE
 	WHEN c.id = 'BRL' THEN
 	(
-		((ppp.price * ppp.quantity) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1)) / 100
+		((ppp.price_int * ppp.quantity) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1)) / 100
 	) ELSE 
 	(
-		((((ppp.price * ppp.quantity) / c.rate) * cbrl.rate) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1)) / 100
+		((((ppp.price_int * ppp.quantity) / c.rate) * cbrl.rate) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1)) / 100
 	) END AS amount_per_month_BRL,
 	
 	CASE
 	WHEN c.id = 'EUR' THEN
 	(
-		(ppp.price * ppp.quantity)
+		(ppp.price_int * ppp.quantity)
 	) ELSE 
 	(
-		(((ppp.price * ppp.quantity) / c.rate) * ceur.rate)
+		(((ppp.price_int * ppp.quantity) / c.rate) * ceur.rate)
 	) END  AS amount_EUR_int,
 	CASE
 	WHEN c.id = 'EUR' THEN
 	(
-		(ppp.price * ppp.quantity) / 100
+		(ppp.price_int * ppp.quantity) / 100
 	) ELSE 
 	(
-		(((ppp.price * ppp.quantity) / c.rate) * ceur.rate) / 100
+		(((ppp.price_int * ppp.quantity) / c.rate) * ceur.rate) / 100
 	) END AS amount_EUR,
 	CASE
 	WHEN c.id = 'EUR' THEN
 	(
-		((ppp.price * ppp.quantity) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1))
+		((ppp.price_int * ppp.quantity) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1))
 	) ELSE 
 	(
-		((((ppp.price * ppp.quantity) / c.rate) * ceur.rate) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1))
+		((((ppp.price_int * ppp.quantity) / c.rate) * ceur.rate) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1))
 	) END AS amount_per_month_EUR_int,
 	CASE
 	WHEN c.id = 'EUR' THEN
 	(
-		((ppp.price * ppp.quantity) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1)) / 100
+		((ppp.price_int * ppp.quantity) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1)) / 100
 	) ELSE 
 	(
-		((((ppp.price * ppp.quantity) / c.rate) * ceur.rate) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1)) / 100
+		((((ppp.price_int * ppp.quantity) / c.rate) * ceur.rate) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1)) / 100
 	) END AS amount_per_month_EUR,
-		
 	pps.is_pixel,
 	pps.is_active,
+	b.id as billboard_id,
+	b.name_key as billboard_name,
+	b.height as billboard_height,
+	b.width as billboard_width,
+	smb.name as billboard_salemodel_name,
+	pvb.name as billboard_provider_name,
+	vp.name as billboard_viewpoint_name,
+	(b.cost_int / 100) as billboard_cost,
+	b.cost_int as billboard_cost_int,
+	b.state as billboard_state,
+	(pb.price_int / 100) as billboard_price,
+	pb.price_int as billboard_price_int,
+	pb.is_active as is_proposalbillboard_active,
+	ppp.is_active as is_proposalproduct_active,
 	CONCAT((pps.id),pd.name,sm.name,pv.name,u.username,adv.corporate_name,pps.offer_name,ppp.currency) AS search
 	FROM 
 	proposals pps
 	LEFT JOIN proposalsxproducts ppp ON ppp.proposal_id = pps.id
 	LEFT JOIN products pd ON pd.id = ppp.product_id
+	LEFT JOIN productsxbillboards pb ON pb.proposalproduct_id = ppp.id 
 	LEFT JOIN salemodels sm ON sm.id = ppp.salemodel_id
 	LEFT JOIN providers pv ON pv.id = ppp.provider_id
+	LEFT JOIN billboards b ON b.id = pb.billboard_id
+	LEFT JOIN viewpoints vp ON vp.id = b.viewpoint_id
+	LEFT JOIN salemodels smb ON smb.id = b.salemodel_id
+	LEFT JOIN providers pvb ON pvb.id = b.provider_id
 	INNER JOIN currencies c ON c.id = ppp.currency
 	INNER JOIN currencies cusd ON cusd.id = 'USD'
 	INNER JOIN currencies cmxn ON cmxn.id = 'MXN'
@@ -984,9 +1137,14 @@ VALUES
 INSERT INTO translates 
 (id, code_str, text_eng, text_esp, text_ptbr, is_active, created_at, updated_at)
 VALUES
-;
+(UUID(), 'dimensions', 'Dimensions', 'Dimensiones', 'Dimensões', 'Y', NOW(), NOW()),
+(UUID(), 'viewpoint', 'View', 'Vista', 'Visão', 'Y', NOW(), NOW()),
+(UUID(), 'key', 'Key', 'Clave', 'Chave', 'Y', NOW(), NOW());
 
-
+INSERT INTO translates 
+(id, code_str, text_eng, text_esp, text_ptbr, is_active, created_at, updated_at)
+VALUES
+(UUID(), 'state', 'State', 'Estado', 'UF', 'Y', NOW(), NOW());
 
 
 

@@ -1,4 +1,9 @@
 <?php
+/*
+error_reporting(E_ALL);
+ini_set('display_errors', 1); 
+*/
+
 //REQUIRE GLOBAL conf
 require_once('../../database/.config');
 
@@ -24,11 +29,21 @@ if(array_key_exists('auth_api',$_REQUEST)){
         }
     }
 
+    $offSet         = 0;
+    $numberOfRegistries = 500;
     $columns        = "left(uuid,13) as uuid, uuid as uuid_full, product_id, product_name, $addColumn salemodel_id, salemodel_name, product_price, currency, name, address, webpage_url, concat(contact_name,' ', contact_surname,' (', contact_email,')') as contact, contact_name, contact_surname, contact_email, contact_position, phone_international_code, phone_prefix, phone_number, concat('+',phone_international_code,phone_number) as phone, is_active";
     $tableOrView    = "view_providers";
     $orderBy        = "order by name";
-
+    
     $groupBy        = "";
+
+    // page
+    if(array_key_exists('p',$_REQUEST)){
+        if($_REQUEST['p']!==''){
+            $offSet        = intval($_REQUEST['p']) * $numberOfRegistries;
+        }
+    }
+    $limit          = "limit $offSet, $numberOfRegistries";
 
     // order by
     if(array_key_exists('orderby',$_REQUEST)){
@@ -71,14 +86,19 @@ if(array_key_exists('auth_api',$_REQUEST)){
 
     // Query creation
     $sql = "SELECT $columns FROM $tableOrView $filters $groupBy $orderBy";
+    $sqlPaged = "SELECT $columns FROM $tableOrView $filters $groupBy $orderBy $limit";
     // LIST data
     //echo $sql;
-    $rs = $DB->getData($sql);
+    $rs = $DB->getData($sqlPaged);
+    $rsNumRows = $DB->numRows($sql);
 
-    // Response JSON 
+    // Response JSON
+    header('Content-type: application/json'); 
     if($rs){
-        header('Content-type: application/json');
-        echo json_encode($rs);
+        echo json_encode(["result" => "OK","data" => $rs, "rows" => "$rsNumRows"]);
+    }
+    else {
+        echo json_encode(["result" => "ERROR", "data" => "$sqlPaged"]);
     }
 }
 

@@ -67,7 +67,7 @@ if(array_key_exists('tk',$_COOKIE) && (array_key_exists('uuid',$_COOKIE)))
         <a class="nav-link dropdown-toggle" title="Users Settings" href="?pr=<?=base64_encode('./pages/users/index.php')?>" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           <div class="menu-option">
             <div class="menu-icon">
-              <span class="material-icons"  style="font-size:4rem;">manage_accounts</span>
+              <span class="material-icons"  style="font-size:4rem;">settings</span>
             </div>
             <div class="menu-text">
             <?=translateText('user_settings');?>
@@ -75,16 +75,36 @@ if(array_key_exists('tk',$_COOKIE) && (array_key_exists('uuid',$_COOKIE)))
           </div>
         </a>
         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink" >
-        <a class="dropdown-item" id="nav-item-users-list" title="List of Users" href="?pr=<?=base64_encode('./pages/users/index.php')?>" >
-          <div class="submenu-option">
-            <div class="submenu-icon">
-              <span class="material-icons"  style="font-size:4rem;">people</span>
-            </div>
-            <div class="submenu-text">
-            <?=translateText('users');?>
-            </div>
-          </div> 
-        </a>
+          <a class="dropdown-item" id="nav-item-billboards-list" title="List of <?=translateText('billboard');?>" href="?pr=<?=base64_encode('./pages/billboards/index.php')?>" >
+            <div class="submenu-option">
+              <div class="submenu-icon">
+                <span class="material-icons"  style="font-size:4rem;">indeterminate_check_box</span>
+              </div>
+              <div class="submenu-text">
+              <?=translateText('billboard');?>
+              </div>
+            </div> 
+          </a>  
+          <a class="dropdown-item" id="nav-item-billboards-list" title="List of <?=translateText('billboard');?>" href="?pr=<?=base64_encode('./pages/maps/index.php')?>&smid=a1ec69ae-cd6c-11ec-a3eb-008cfa5abdac&state=Colima" >
+            <div class="submenu-option">
+              <div class="submenu-icon">
+                <span class="material-icons"  style="font-size:4rem;">map</span>
+              </div>
+              <div class="submenu-text"> Mapa
+              
+              </div>
+            </div> 
+          </a>  
+          <a class="dropdown-item" id="nav-item-users-list" title="List of Users" href="?pr=<?=base64_encode('./pages/users/index.php')?>" >
+            <div class="submenu-option">
+              <div class="submenu-icon">
+                <span class="material-icons"  style="font-size:4rem;">people</span>
+              </div>
+              <div class="submenu-text">
+              <?=translateText('users');?>
+              </div>
+            </div> 
+          </a>
           <a class="dropdown-item" title="Logout" href="?pr=<?=base64_encode('./pages/users/logout/index.php')?>">
             <div class="submenu-option">
               <div class="submenu-icon">
@@ -107,4 +127,4 @@ if(array_key_exists('tk',$_COOKIE) && (array_key_exists('uuid',$_COOKIE)))
     </picture>
   </a>
 </nav>
-<?php   // echo base64_encode('./pages/advertisers/contacts/form.php')?>
+<?php   // echo base64_encode('./pages/maps/')?>
