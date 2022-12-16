@@ -1,6 +1,6 @@
-document.getElementById('nav-item-providers').setAttribute('class',document.getElementById('nav-item-providers').getAttribute('class').replace(' active','') + ' active');
+document.getElementById('nav-item-users').setAttribute('class',document.getElementById('nav-item-users').getAttribute('class').replace(' active','') + ' active');
 var csrf_token = $('meta[name="csrf-token"]').attr('content');
-module  = 'provider';
+module  = 'billboard';
 //alert(csrf_token);
 
 function handleSubmit(form) {
@@ -33,7 +33,7 @@ function handleSubmit(form) {
         if(errors > 0){
             alert(message);
         } else{
-            const requestURL = window.location.protocol+'//'+locat+'api/providers/auth_provider_add_new.php?auth_api='+authApi+'&name='+xname+'&webpage_url='+webpage_url+'&address='+address+'&product_id='+product_id+'&salemodel_id='+salemodel_id+'&product_price='+product_price+'&currency='+currency;
+            const requestURL = window.location.protocol+'//'+locat+'api/billboards/auth_billboard_add_new.php?auth_api='+authApi+'&name='+xname+'&webpage_url='+webpage_url+'&address='+address+'&product_id='+product_id+'&salemodel_id='+salemodel_id+'&product_price='+product_price+'&currency='+currency;
             console.log(requestURL);
             const request = new XMLHttpRequest();
             request.onreadystatechange = function() {
@@ -56,15 +56,15 @@ function handleSubmit(form) {
         alert('Please, fill all required fields (*)');
 }
 
-function handleSubmitCSV(form){
-    if (form.provider_file.value !== '') {
+function handleSubmitXLSX(form){
+    if (form.billboard_file.value !== '') {
         //form.submit();
         errors      = 0;
         authApi     = csrf_token;
 
-        file        = form.provider_file;
+        file        = form.billboard_file;
         var formData = new FormData(form);
-        //formData.append("provider_file", fileInputElement.provider_file);
+        //formData.append("billboard_file", fileInputElement.billboard_file);
         
         locat       = window.location.hostname;
         if(locat.slice(-1) != '/')
@@ -79,20 +79,25 @@ function handleSubmitCSV(form){
         if(errors > 0){
 
         } else{
-            const requestURL = window.location.protocol+'//'+locat+'api/providers/auth_provider_csv_upload.php';
+            const requestURL = window.location.protocol+'//'+locat+'api/billboards/auth_billboard_xlsx_upload.php';
+            console.log(requestURL);
             const request = new XMLHttpRequest();
             request.onreadystatechange = function() {
                 if (this.readyState == 4 && this.status == 200) {
                     // Typical action to be performed when the document is ready:
+                    //document.write(request.responseText);
                     console.log(request.responseText);
                     obj = JSON.parse(request.responseText);
 
-                    form.btnSave.innerHTML = "Upload list of Providers";
+                    form.btnSave.innerHTML = "Upload list of billboards";
                     //alert('Status: '+obj.status);
                     if(obj.status === "OK")
-                        window.location.href = '?pr=Li9wYWdlcy9wcm92aWRlcnMvdGtwZWRpdC9pbmRleC5waHA=';
-                    else
+                        window.location.href = '?pr=Li9wYWdlcy9iaWxsYm9hcmRzL2luZGV4LnBocA==';
+                    else{
+                        console.log(obj.message);
                         alert(obj.message);
+                    }
+                        
                 }
                 else{
                     form.btnSave.innerHTML = "Uploading...";
@@ -176,7 +181,7 @@ function handleEditSubmit(tid,form) {
         if(errors > 0){
            
         } else{
-            const requestURL = window.location.protocol+'//'+locat+'api/providers/auth_provider_edit.php?auth_api='+authApi+sett;
+            const requestURL = window.location.protocol+'//'+locat+'api/billboards/auth_billboard_edit.php?auth_api='+authApi+sett;
             console.log(requestURL);
             const request = new XMLHttpRequest();
             request.onreadystatechange = function() {
@@ -199,12 +204,12 @@ function handleEditSubmit(tid,form) {
         alert('Please, fill all required fields (*)');
 }
 
-function handleViewOnLoad(tid) {
+function handleViewOnLoad(bid) {
     errors      = 0;
     authApi     = csrf_token;
     locat       = window.location.hostname;
 
-    filters     = '&tid='+tid;
+    filters     = '&bid='+bid;
 
     if(locat.slice(-1) != '/')
         locat += '/';
@@ -212,38 +217,33 @@ function handleViewOnLoad(tid) {
     if(errors > 0){
 
     } else{
-        const requestURL = window.location.protocol+'//'+locat+'api/providers/auth_provider_get.php?auth_api='+authApi+filters;
+        const requestURL = window.location.protocol+'//'+locat+'api/billboards/auth_billboard_get.php?auth_api='+authApi+filters;
         //alert(requestURL);
         const request   = new XMLHttpRequest();
-        position        = '*****';
         request.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {
                 obj = JSON.parse(request.responseText);
-                // Create our number formatter.
-                var formatter = new Intl.NumberFormat('pt-BR', {
-                    style: 'currency',
-                    currency: obj[0].currency,
-                    //maximumSignificantDigits: 2,
+                if(obj['response'] == 'OK'){
+                    // Create our number formatter.
+                    var formatter = new Intl.NumberFormat('pt-BR', {
+                        style: 'currency',
+                        currency: 'MXN',
+                        //maximumSignificantDigits: 2,
 
-                    // These options are needed to round to whole numbers if that's what you want.
-                    //minimumFractionDigits: 2, // (this suffices for whole numbers, but will print 2500.10 as $2,500.1)
-                    //maximumFractionDigits: 0, // (causes 2500.99 to be printed as $2,501)
-                });
-                if(obj[0].main_contact_position!='')
-                    position = obj[0].main_contact_position;
-                phone_number = obj[0].phone_number.replace(" ","");
-                if(obj[0].phone_prefix!='')
-                    phone_number = obj[0].phone_prefix+obj[0].phone_number.replace(" ","");
-                document.getElementById('provider_name').innerHTML          = obj[0].name;
-                document.getElementById('group').innerHTML                  = obj[0].webpage_url;
-                document.getElementById('card-contact-fullname').innerHTML  = obj[0].main_contact_name + ' ' + obj[0].main_contact_surname
-                document.getElementById('card-contact-position').innerHTML  = ' ('+position+')';
-                document.getElementById('card-address').innerHTML           = obj[0].address;
-                document.getElementById('card-email').innerHTML             = obj[0].main_contact_email;
-                document.getElementById('card-phone').innerHTML             = '+'+obj[0].phone_international_code.replace(" ","") + phone_number;
-                document.getElementById('card-product').innerHTML           = obj[0].product_name;
-                document.getElementById('card-product-price').innerHTML     = formatter.format(obj[0].product_price);
-                document.getElementById('card-salemodel').innerHTML         = obj[0].salemodel_name;
+                        // These options are needed to round to whole numbers if that's what you want.
+                        //minimumFractionDigits: 2, // (this suffices for whole numbers, but will print 2500.10 as $2,500.1)
+                        //maximumFractionDigits: 0, // (causes 2500.99 to be printed as $2,501)
+                    });
+                    document.getElementById('field-key').innerHTML          = obj['data'][0].name;
+                    document.getElementById('field-address').innerHTML      = obj['data'][0].address;
+                    document.getElementById('field-salemodel').innerHTML    = obj['data'][0].salemodel_name;
+                    document.getElementById('field-viewpoint').innerHTML    = obj['data'][0].viewpoint_name;
+                    document.getElementById('field-coordenates').innerHTML  = obj['data'][0].coordenates;
+                    document.getElementById('field-dimension').innerHTML    = (parseInt(obj['data'][0].height)/100).toFixed(1) + 'x' + (parseInt(obj['data'][0].width)/100).toFixed(1);
+                    document.getElementById('field-image-photo').src  = '/assets/img/logo_gnog_media_y_tecnologia.svg';
+                } else {
+                    alert(obj['response']);
+                }
             }
             else{
                 //form.btnSave.innerHTML = "Searching...";
@@ -268,7 +268,7 @@ function handleOnLoad(tid,form) {
     if(errors > 0){
 
     } else{
-        const requestURL = window.location.protocol+'//'+locat+'api/providers/auth_provider_get.php?auth_api='+authApi+filters;
+        const requestURL = window.location.protocol+'//'+locat+'api/billboards/auth_billboard_get.php?auth_api='+authApi+filters;
         //alert(requestURL);
         const request = new XMLHttpRequest();
         request.onreadystatechange = function() {
@@ -311,13 +311,13 @@ function handleOnLoad(tid,form) {
     }
 }
 
-function handleListOnLoad(search) {
+function handleListOnLoad(search,page) {
     errors      = 0;
     authApi     = csrf_token;
     locat       = window.location.hostname;
 
-    groupby     = '&groupby=UUID';
-    addColumn   = '&addcolumn=count(contact_provider_id) as qty_contact';
+    groupby     = '';
+    addColumn   = '';
 
     filters     = '';
     if(typeof search == 'undefined')
@@ -326,82 +326,67 @@ function handleListOnLoad(search) {
         filters     += '&search='+search;
     }
 
+    pages       = '';
+    if(typeof page == 'undefined')
+        page  = '1';
+    if(page !== '1'){
+        pages     += '&p='+(parseInt(page)-1);
+    }
+
     if(locat.slice(-1) != '/')
         locat += '/';
 
     if(errors > 0){
 
     } else{
-        tableList   = document.getElementById('listProviders');
-        const requestURL = window.location.protocol+'//'+locat+'api/providers/auth_provider_view.php?auth_api='+authApi+filters+groupby+addColumn;
+        tableList   = document.getElementById('listBillboards');
+        const requestURL = window.location.protocol+'//'+locat+'api/billboards/auth_billboard_view.php?auth_api='+authApi+filters+groupby+addColumn+pages;
         console.log(requestURL);
         const request = new XMLHttpRequest();
         request.onreadystatechange = function() {
-            //console.log(this.readyState + '/n' + this.status);
             if (this.readyState == 4 && this.status == 200) {
                 // Typical action to be performed when the document is ready:
                 obj         = JSON.parse(request.responseText);
                 html        = '';
                 country     = '';
-                console.log(obj);
+                
                 for(var i=0;i < obj['data'].length; i++){
-                    
                     color_status = '#d60b0e';
-                    if(obj['data'][i].is_active == 'Y')
+                    if(obj['data'][i].is_active == 'Y') {
                         color_status = '#298c3d';
-
-                    switch (obj['data'][i].phone_international_code) {
-                        case '52':
-                            country = 'MEX';
-                            break;
-                        case '55':
-                            country = 'BRA';
-                            break;
-                        case '1':
-                            country = 'USA';
-                            break;
-                        default:
-                            country = 'XXX';
                     }
-                    phone_number    = "";
-                    contact         = "-------";
-                   //alert(typeof(obj['data'][i].contact));
-                   phone_number = "--------"
-                    if((obj['data'][i].contact !== 'null') && (obj['data'][i].contact !== null)){
-                        phone_number    = obj['data'][i].phone;
-                        contact         = obj['data'][i].contact;
-                        if((obj['data'][i].phone_prefix!='') && (obj['data'][i].phone_prefix !== 'null') && (obj['data'][i].phone_prefix !== null))
-                            phone_number = '+'+obj['data'][i].phone_international_code+obj['data'][i].phone_prefix+obj['data'][i].phone_number.replace(" ","");
-
-                        if((obj['data'][i].phone_prefix == 'null') || (obj['data'][i].phone_prefix == null))
-                            phone_number = '+'+obj['data'][i].phone_international_code+obj['data'][i].phone_number.replace(" ","");
+                    color_iluminated = '#d60b0e';
+                    if(obj['data'][i].is_iluminated == 'Y') {
+                        color_status = '#298c3d';
                     }
-                    webpage = '-------';
-                    if( (obj['data'][i].webpage_url !== 'null') && (obj['data'][i].webpage_url !== null))
-                        webpage = obj['data'][i].webpage_url;
-                    string_qty_contact = "No contacts";
-                    if(obj['data'][i].qty_contact > 0)
-                        string_qty_contact = obj['data'][i].qty_contact + ' contact';
-                    if(obj['data'][i].qty_contact > 1)
-                        string_qty_contact += 's';
-                    html += '<tr><td>'+obj['data'][i].name+'</td><td>'+webpage+'</td><td nowrap>'+string_qty_contact+'</td><td style="text-align:center;"><span id="locked_status_'+obj['data'][i].uuid_full+'" class="material-icons" style="color:'+color_status+'">circle</span></td><td nowrap style="text-align:center;">';
+                    color_digital = '#d60b0e';
+                    if(obj['data'][i].is_digital == 'Y') {
+                        color_status = '#298c3d';
+                    }
+                    
+                    html += '<tr><td>'+obj['data'][i].provider_name+'</td><td>'+obj['data'][i].name+'</td><td nowrap>'+obj['data'][i].viewpoint_name+'</td><td nowrap>'+parseFloat(obj['data'][i].height).toFixed(2)+' x '+parseFloat(obj['data'][i].width).toFixed(2)+'</td><td nowrap>'+obj['data'][i].salemodel_name+'</td><td style="text-align:center;"><span id="locked_status_'+obj['data'][i].uuid_full+'" class="material-icons" style="color:'+color_status+'">circle</span></td><td nowrap style="text-align:center;">';
                     // information card
-                    html += '<a href="?pr=Li9wYWdlcy9wcm92aWRlcnMvaW5mby5waHA=&tid='+obj['data'][i].uuid_full+'"><span class="material-icons" style="font-size:1.5rem; color:black;" title="Information Card '+obj['data'][i].name+'">info</span></a>';
+                    html += '<a onclick=\'window.open("./pages/billboards/info.php?bid='+obj['data'][i].uuid_full+'","billboard-'+obj['data'][i].uuid_full+'","height=510.2,width=652,resizable=0,scrollbars=0,status=0,titlebar=0,toolbar=0,location=0,menubar=0")\'><span class="material-icons" style="font-size:1.5rem; color:black;" title="Information Card - '+obj['data'][i].salemodel_name+' '+obj['data'][i].name+'">info</span></a>';
 
                     // Edit form
-                    html += '<a href="?pr=Li9wYWdlcy9wcm92aWRlcnMvZm9ybWVkaXQucGhw&tid='+obj['data'][i].uuid_full+'"><span class="material-icons" style="font-size:1.5rem; color:black;" title="Edit '+module + ' '+obj['data'][i].name+'">edit</span></a>';
+                    html += '<a href="?pr=Li9wYWdlcy9iaWxsYm9hcmRzL2luZm8ucGhw&bid='+obj['data'][i].uuid_full+'"><span class="material-icons" style="font-size:1.5rem; color:black;" title="Edit - '+obj['data'][i].salemodel_name+' '+obj['data'][i].name+'">edit</span></a>';
 
                     // Remove 
-                    html += '<a href="javascript:void(0)" onclick="handleRemove(\''+obj['data'][i].uuid_full+'\',\''+obj['data'][i].is_active+'\')"><span class="material-icons" style="font-size:1.5rem; color:black;" title="Remove '+module + ' '+obj['data'][i].name+'">delete</span></a>';
+                    html += '<a href="javascript:void(0)" onclick="handleRemove(\''+obj['data'][i].uuid_full+'\',\''+obj['data'][i].is_active+'\')"><span class="material-icons" style="font-size:1.5rem; color:black;" title="Remove - '+obj['data'][i].salemodel_name+' '+obj['data'][i].name+'">delete</span></a>';
 
                     // Add Contact
-                    html += '<a href="?pr=Li9wYWdlcy9hZHZlcnRpc2Vycy9jb250YWN0cy9mb3JtLnBocA==&md=Provider&tid='+obj['data'][i].uuid_full+'"><span class="material-icons" style="font-size:1.5rem; color:black;" title="Add a contact to '+module + ' '+obj['data'][i].name+'">contact_mail</span></a>';
+                    //html += '<a href="?pr=Li9wYWdlcy9hZHZlcnRpc2Vycy9jb250YWN0cy9mb3JtLnBocA==&md=billboard&tid='+obj['data'][i].uuid_full+'"><span class="material-icons" style="font-size:1.5rem; color:black;" title="Add a contact to '+module + ' '+obj['data'][i].name+'">contact_mail</span></a>';
 
                     html += '</td></tr>';
                 }
                 tableList.innerHTML = html;
+                pagesController(page,obj['pages']);
+                if(parseInt(page) > parseInt(obj['pages'])){
+                    page        = 1;
+                    filter.goto.value = 1;
+                }
             }
-            else{
+            else {
                 html = '<tr><td colspan="5"><div style="margin-left:45%; margin-right:45%;" class="spinner-border" style="text-align:center;" role="status">';
                 html += '<span class="sr-only">Loading...</span>';
                 html += '</div></td></tr>';
@@ -416,6 +401,36 @@ function handleListOnLoad(search) {
     // window.location.href = '?pr=Li9wYWdlcy91c2Vycy9saXN0LnBocA==';
 }
 
+function pagesController(actualpage,totalpages){
+    document.getElementById('btn_firstpage').disabled=false;
+    document.getElementById('btn_beforepage').disabled=false;
+    document.getElementById('btn_nextpage').disabled=false;
+    document.getElementById('btn_lastpage').disabled=false;
+
+    if(parseInt(filter.goto.value) <= 1){ 
+        document.getElementById('btn_firstpage').disabled=true;
+        document.getElementById('btn_beforepage').disabled=true;
+    }
+    if(parseInt(filter.goto.value) >= totalpages){ 
+        document.getElementById('btn_nextpage').disabled=true;
+        document.getElementById('btn_lastpage').disabled=true;
+    }
+
+    filter.totalpages.value = totalpages;
+    document.getElementById('text-totalpages').innerText = totalpages;
+
+}
+
+function gotoLast(){
+    totalpages = filter.totalpages.value;
+    if(parseInt(filter.goto.value) <= totalpages){
+        handleListOnLoad(filter.search.value,totalpages); 
+        filter.goto.value = totalpages;
+    }else{
+        document.getElementById('btn_lastpage').disabled=true;
+    }
+}
+
 function handleRemove(tid,locked_status){
     authApi     = csrf_token;
     filters     = '&tid='+tid+'&lk='+locked_status;
@@ -427,7 +442,7 @@ function handleRemove(tid,locked_status){
     color_status = '#298c3d';
     if(locked_status == 'Y')
         color_status = '#d60b0e';
-    const requestURL = window.location.protocol+'//'+locat+'api/providers/auth_provider_remove.php?auth_api='+authApi+filters;
+    const requestURL = window.location.protocol+'//'+locat+'api/billboards/auth_billboard_remove.php?auth_api='+authApi+filters;
     //alert(requestURL);
     const request = new XMLHttpRequest();
     request.onreadystatechange = function() {

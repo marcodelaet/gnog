@@ -19,7 +19,7 @@ if(array_key_exists('auth_api',$_REQUEST)){
     $group          = 'admin';
 
     // setting query
-    $columns        = "UUID,is_proposalbillboard_active,proposalproduct_id,product_id,product_name,salemodel_id,salemodel_name,provider_id,provider_name,user_id,username,client_id,client_name,agency_id,agency_name,status_id,status_name,status_percent,offer_name,description,start_date,stop_date,currency_c,billboard_state,billboard_name,billboard_height,billboard_width,state,billboard_state,billboard_cost,billboard_cost_int,billboard_price,billboard_price_int,billboard_id, billboard_provider_name,billboard_salemodel_name,billboard_viewpoint_name,amount,quantity,is_active";
+    $columns        = "CASE WHEN billboard_provider_name IS NULL THEN '0' ELSE COUNT(UUID) END AS numRows, salemodel_name, state";
     $tableOrView    = "view_proposals";
 
     // filters
@@ -38,12 +38,12 @@ if(array_key_exists('auth_api',$_REQUEST)){
         }
     }
 
-    if(array_key_exists('ppid',$_REQUEST)){
-        if($_REQUEST['ppid']!==''){
+    if(array_key_exists('pppid',$_REQUEST)){
+        if($_REQUEST['pppid']!==''){
             if($filters != '')
                 $filters .= " AND ";
-            $uuid         = $_REQUEST['ppid'];
-            $filters        .= " uuid = '$uuid'";
+            $uuid         = $_REQUEST['pppid'];
+            $filters        .= " proposalproduct_id = '$uuid'";
         }
     }
 
@@ -69,18 +69,8 @@ if(array_key_exists('auth_api',$_REQUEST)){
         $filters = "WHERE ".$filters;
     }
 
-    $orderBy        = "order by proposalproduct_id";
-    // order by
-    if(array_key_exists('orderby',$_REQUEST)){
-        if($_REQUEST['orderby']!==''){
-            $ordered        = $_REQUEST['orderby'];
-            $orderBy        = " ORDER BY $ordered";
-        }
-    }
-
-
     // Query creation
-    $sql = "SELECT $columns FROM $tableOrView $filters $orderBy";
+    $sql = "SELECT $columns FROM $tableOrView $filters";
     // LIST data
     //echo $sql;
     $rs = $DB->getData($sql);
@@ -92,7 +82,7 @@ if(array_key_exists('auth_api',$_REQUEST)){
     // Response JSON 
     if($rs){
         header('Content-type: application/json');
-        echo json_encode($rs);
+        echo json_encode(["response" => 'OK','data' => $rs]);
     }
 }
 

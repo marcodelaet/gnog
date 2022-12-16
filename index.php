@@ -4,8 +4,8 @@ require_once __DIR__ . '/vendor/autoload.php';
 
 
 
-ini_set('error_reporting', E_ALL);
-ini_set('display_errors', true);
+//ini_set('error_reporting', E_ALL);
+//ini_set('display_errors', true);
 
 require_once __DIR__.'/vendor/shuchkin/simplexlsx/src/SimpleXLSX.php';
 
@@ -21,7 +21,7 @@ require_once('./assets/lib/translation.php');
 <?php
 require_once('./components/header.main.php');
 ?>
-  <body>
+  <body <?php if($_REQUEST['pr'] == base64_encode('./pages/maps/index.php')) { ?> onload="theMap('<?=$_REQUEST['smid']?>','<?=$_REQUEST['state']?>','<?=$_REQUEST['pppid']?>');" <?php } ?>>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root">
       <?php

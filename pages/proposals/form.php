@@ -123,9 +123,9 @@ $moduleName = 'Proposal';
                 </div>
                 <div class="form-row main-contact-section">
                     <div class="col">
-                        <div class="form-row" >
-                            <div class="col main-contact-header">
-                            <?=translateText('products');?>
+                        <div class="form-row"  style="margin-top:2rem;">
+                            <div class="col main-contact-header" style="text-weight:bolder; text-decoration:underline overline; font-size:1.2rem;">
+                                <?=translateText('products');?>
                             </div>
                             <div class="col-2">
                                 <label for="currency"><?=translateText('currency');?></label>
@@ -151,6 +151,15 @@ $moduleName = 'Proposal';
                         </div>
                         <div id="product-section">
                             <div id="product_0">
+                                <div class="form-row" id="div-selectState">
+                                    <div class="col">
+                                        &nbsp;
+                                    </div>
+                                    <div class="col-2">
+                                        <input class="stateId" name="state_id[]" id="stateId_0" type="hidden">
+                                        <?=inputDropDownSearchStyle('state','state','is_active=true','state','tete')?>
+                                    </div>
+                                </div>
                                 <div class="form-row">
                                     <div class="col" id="div-selectProduct">
                                         <label for="product_id[]"><?=translateText('product');?></label>
@@ -166,7 +175,7 @@ $moduleName = 'Proposal';
                                     <div class="col" id="div-selectSaleModel">
                                         <label for="salemodel_id[]"><?=translateText('sale_model');?></label>
                                         <spam id="ssalemodel">
-                                            <select name="salemodel_id[]" title="salemodel_id" class="form-control" autocomplete="salemodel_id">
+                                            <select name="salemodel_id[]" title="salemodel_id" class="form-control" autocomplete="salemodel_id" >
                                                 <?=inputSelect('salemodel','Sale model','is_digital="N"','name','')?>
                                             </select>
                                         </spam>
@@ -214,32 +223,6 @@ $moduleName = 'Proposal';
                                         </div>
                                     </div>
                                 </div>
-                                <div class="form-row">
-                                    <div class="col">
-                                        <label for="CarteleraId"><?=translateText('billboard')?> ID</label><br/>
-                                        <div class="dropdown">
-                                            <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
-                                                <?=translateText('billboard')?> ID
-                                                <span class="caret"></span>
-                                            </button>
-                                            <ul class="dropdown-menu">
-                                                <input class="form-control billboardId" id="billboardId_0" type="text" placeholder="Search..">
-                                                <li><a href="#">GTO-GTO-004-E-01</a></li>
-                                                <li><a href="#">GTO-GTO-004-E-02</a></li>
-                                                <li><a href="#">QRO-[CA-257-E-01</a></li>
-                                                <li><a href="#">QRO-[CA-257-E-02</a></li>
-                                                <li><a href="#">QRO--258-E-01</a></li>
-                                                <li><a href="#">QRO--258-E-02</a></li>
-                                                <li><a href="#">QRO--261-E-01</a></li>
-                                                <li><a href="#">QRO--261-E-02</a></li>
-                                                <li><a href="#">QRO--262-E-01</a></li>
-                                                <li><a href="#">QRO--262-E-02</a></li>
-                                                <li><a href="#">QRO--263-E-01</a></li>
-                                                <li><a href="#">QRO--263-E-02</a></li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
                                 <div class="form-row" >
                                     <div class="col">
                                         <label for="amount[]"><?=translateText('amount');?></label><br/>
@@ -271,7 +254,7 @@ $moduleName = 'Proposal';
                         </div>
                         <div class="form-row" >
                             <div class="col" style="text-align:right;">
-                                <button class="btn-primary material-icons-outlined" type="button" onclick="newProductForm('product-section','product-new');">add_circle_outline</button>
+                                <button class="btn-primary material-icons-outlined" type="button" onclick="newProductForm('product-section','product-new',32);">add_circle_outline</button>
                             </div>
                         </div>
                         <div id="product-new">
@@ -330,11 +313,94 @@ $moduleName = 'Proposal';
 
 <script>
 $(document).ready(function(){
-  $(".billboardId").on("keyup", function() {
+  $("#stateName_0").on("keyup", function() {
     var value = $(this).val().toLowerCase();
     $(".dropdown-menu li").filter(function() {
       $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
     });
   });
 });
+
+$(document).ready(function(){
+  $("#stateName_1").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $(".dropdown-menu li").filter(function() {
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+    });
+  });
+});
+
+$(document).ready(function(){
+  $("#stateName_2").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $(".dropdown-menu li").filter(function() {
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+    });
+  });
+});
+
+$(document).ready(function(){
+  $("#stateName_3").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $(".dropdown-menu li").filter(function() {
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+    });
+  });
+});
+
+$(document).ready(function(){
+  $("#stateName_4").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $(".dropdown-menu li").filter(function() {
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+    });
+  });
+});
+
+$(document).ready(function(){
+  $("#stateName_5").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $(".dropdown-menu li").filter(function() {
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+    });
+  });
+});
+
+$(document).ready(function(){
+  $("#stateName_6").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $(".dropdown-menu li").filter(function() {
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+    });
+  });
+});
+
+$(document).ready(function(){
+  $("#stateName_7").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $(".dropdown-menu li").filter(function() {
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+    });
+  });
+});
+
+$(document).ready(function(){
+  $("#stateName_8").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $(".dropdown-menu li").filter(function() {
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+    });
+  });
+});
+
+$(document).ready(function(){
+  $("#stateName_9").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $(".dropdown-menu li").filter(function() {
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+    });
+  });
+});
+
+
 </script>

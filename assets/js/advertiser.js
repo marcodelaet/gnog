@@ -337,7 +337,7 @@ function handleListOnLoad(search) {
                     if(obj[i].qty_contact > 1)
                         string_qty_contact += 's';
                         
-                    html += '<tr><td>'+obj[i].corporate_name+'</td><td>'+advertiser_type+'</td><td nowrap>'+string_qty_contact+'</td><td style="text-align:center;"><span id="locked_status_'+obj[i].uuid_full+'" class="material-icons" style="color:'+color_status+'">attribution</span></td><td nowrap style="text-align:center;">';
+                    html += '<tr><td>'+obj[i].corporate_name+'</td><td>'+advertiser_type+'</td><td nowrap>'+string_qty_contact+'</td><td style="text-align:center;"><span id="locked_status_'+obj[i].uuid_full+'" class="material-icons" style="color:'+color_status+'">circle</span></td><td nowrap style="text-align:center;">';
                     // information card
                     html += '<a href="?pr=Li9wYWdlcy9hZHZlcnRpc2Vycy9pbmZvLnBocA==&tid='+obj[i].uuid_full+'"><span class="material-icons" style="font-size:1.5rem; color:black;" title="Information Card '+obj[i].corporate_name+'">info</span></a>';
 

@@ -15,46 +15,58 @@ if(array_key_exists('auth_api',$_REQUEST)){
     // check auth_api === local storage
     //if($localStorage == $_REQUEST['auth_api']){}
 
-    
-
-
     // values to insert
     $product_id     = str_replace("[","",str_replace("]","",$_REQUEST['product_id'])); 
     $proposal_id    = $_REQUEST['proposal_id']; 
     $salemodel_id   = str_replace("[","",str_replace("]","",$_REQUEST['salemodel_id'])); 
     $price          = str_replace("[","",str_replace("]","",$_REQUEST['price'])); 
-    $currency       = $_REQUEST['currency']; 
+    $currency       = $_REQUEST['currency'];
+    $state_id       = str_replace("[","",str_replace("]","",$_REQUEST['state'])); 
     $quantity       = str_replace("[","",str_replace("]","",$_REQUEST['quantity'])); 
     $xprovider      = str_replace("[","",str_replace("]","",$_REQUEST['provider_id']));
     $provider_id    = "null"; 
+    $xquantity       = "1";
+    $xprice          = "0";
     
     $aProducts  = explode(",",$product_id);
     $aSalemodel = explode(",",$salemodel_id);
     $aPrice     = explode(",",$price);
     $aQuantity  = explode(",",$quantity);
     $aProvider  = explode(",",$xprovider);
+    $aState     = explode(",",$state_id);
 
+    $lastIndex  = 0;
+    $response   = "ERROR"; 
     for($i = 0; $i < count($aProducts); $i++){
+        
         if(array_key_exists('provider_id',$_REQUEST)){
             if($aProvider[$i] !== '0')
-                $provider_id         = "('".$aProvider[$i]."')";
+                $provider_id= "('".$aProvider[$i]."')";
         }
- 
+        if(array_key_exists('quantity',$_REQUEST)){
+            if(($aQuantity[$i] !== '0') || ($aQuantity[$i] !== ''))
+                $xquantity   = $aQuantity[$i];
+        }
+        if(array_key_exists('price',$_REQUEST)){
+            if(($aPrice[$i] !== '0') || ($aPrice[$i] !== ''))
+                $xprice      = $aPrice[$i];
+        }
 
         // Query creation
-        $sql = "INSERT INTO proposalsxproducts (id,product_id,proposal_id,salemodel_id,provider_id,price,currency,quantity,is_active,created_at,updated_at) VALUES ((UUID()),('".$aProducts[$i]."'),('$proposal_id'),('".$aSalemodel[$i]."'),$provider_id,".$aPrice[$i].",'$currency',".$aQuantity[$i].",'Y',now(),now())";
+        $sql = "INSERT INTO proposalsxproducts (id,product_id,proposal_id,salemodel_id,provider_id,state,price_int,currency,quantity,is_active,created_at,updated_at) VALUES ((UUID()),('".$aProducts[$i]."'),('$proposal_id'),('".$aSalemodel[$i]."'),$provider_id,'$aState[$i]',$xprice,'$currency',$xquantity,'Y',now(),now())";
+        //echo "<BR/>".$sql;
         // INSERT data
         $rs = $DB->executeInstruction($sql);
 
-    
-
         // Response JSON 
         if($rs){
-            if($i === 0)
-                header('Content-type: application/json');
-            echo json_encode(["index" => $i,"status" => 'OK']);
-        }
-    }
+            $lastIndex  = $i;
+            $response   = "OK";
+                
+        } else { $response = "ERROR - SQL: ". $sql;}
+    } 
+    header('Content-type: application/json');
+    echo json_encode(["lastIndex" => $i,"status" => $response]);
 }
 
 //close connection

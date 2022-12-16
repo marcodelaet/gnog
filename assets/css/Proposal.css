@@ -20,6 +20,47 @@
     box-shadow: 0.375rem 0.375rem 0.375rem #999; 
 }
 
+.list-products-container {
+  /*  margin-top: 1.8rem;   */ 
+}
+
+.list-products-row {
+    margin-top: 1.8rem;    
+}
+
+.list-billboards-row {
+    margin-top: 0.4rem;    
+}
+
+.list-billboards-container {
+    max-width: 100%;
+   /* margin-top: 0.4rem; */
+    margin-left:2rem;
+    margin-right:1rem;
+    overflow: auto;
+    font-size: 0.8rem !important;
+}
+
+.deleted-billboard{
+    text-decoration:line-through;
+    color:darkred;
+}
+
+.deleted-exception{
+    text-decoration:none !important;
+}
+
+#offer-name{
+    display:block;
+    position: inherit;
+}
+#advertiser-name{
+    display:block;
+    position: inherit;
+    font-size: 1rem !important; 
+    color:#647487;
+}
+
 .main-products-section {
     max-width: 100%;
     margin: 1.875rem auto;
