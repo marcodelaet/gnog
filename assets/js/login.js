@@ -10,7 +10,7 @@ function handleLogin(form) {
        // alert(locat);
 
     const requestURL = window.location.protocol+'//'+locat+'api/login/authentication.php';
-    //alert(requestURL+'?'+filters);
+    console.log(requestURL+'?'+filters);
     const request = new XMLHttpRequest();
     request.open('POST', requestURL,true);
     request.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');

@@ -24,8 +24,8 @@ if(array_key_exists('auth_api',$_REQUEST)){
     $webpage_url            = $_GET['webpage_url'];
     $address                = $_GET['address'];
 
-    $columns    = "id, product_id, salemodel_id, product_price, currency, name, webpage_url, address, is_active, created_at, updated_at";
-    $values     = "(UUID()),('$product_id'),('$salemodel_id'),$product_price,'$currency','$name','$webpage_url','$address','Y',now(),now()";
+    $columns    = "id, name, webpage_url, address, is_active, created_at, updated_at";
+    $values     = "(UUID()),'$name','$webpage_url','$address','Y',now(),now()";
     $table      = "providers";
 
     // Query creation
@@ -35,9 +35,22 @@ if(array_key_exists('auth_api',$_REQUEST)){
 
     // Response JSON 
     if($rs){
-        header('Content-type: application/json');
-        echo json_encode(['status' => 'OK']);
+        // getting provider_id 
+        /*
+        $sql_pv = "SELECT id FROM $table WHERE currency='$currency' AND name='$name' AND webpage_url='$webpage_url' AND address='$address' AND is_active = 'Y'";
+        $rs_pv  = $DB->getData($sql_pv);
+        $provider_id = $rs_pv[0]['id'];
+        if($rs_pv){
+            $sql_pvp    = "INSERT INTO providersxproduct (id, provider_id, product_id, salemodel_id, product_price, currency, is_active, created_at, updated_at) VALUES (UUID(), '$provider_id', '$product_id', '$salemodel_id', $product_price, '$currency', 'Y', now(), now())"; 
+            // INSERT providersxproduct
+            $rs_pvp = $DB->executeInstruction($sql);
+            if($rs_pvp){*/
+                header('Content-type: application/json');
+                echo json_encode(['status' => 'OK']);/*    
+            }
+        }*/
     }
+
 }
 
 //close connection
