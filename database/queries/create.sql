@@ -12,8 +12,6 @@ pwd: GN0gR&@d&r
 
 CREATE DATABASE IF NOT EXISTS gnogcrm_db;
 
-SELECT LEFT(UUID,13) AS UUID, UUID AS uuid_full, product_id, product_name, salemodel_id, salemodel_name, product_price, currency, NAME, address, webpage_url, CONCAT(contact_name,' ', contact_surname,' (', contact_email,')') AS contact, contact_name, contact_surname, contact_email, contact_position, phone_international_code, phone_prefix, phone_number, CONCAT('+',phone_international_code,phone_number) AS phone, is_active FROM view_providers ORDER BY NAME;
-
 USE gnogcrm_db;
 
 #SETTINGS
@@ -50,8 +48,9 @@ CREATE TABLE IF NOT EXISTS users (
 id VARCHAR(40) PRIMARY KEY NOT NULL,
 username VARCHAR(20) NOT NULL UNIQUE,
 user_language VARCHAR(5) NOT NULL,
-email VARCHAR(60) NOT NULL,
+email VARCHAR(60) NOT NULL UNIQUE,
 level_account INT NOT NULL,
+user_type VARCHAR(20) NOT NULL,
 mobile_international_code VARCHAR(3),
 mobile_prefix VARCHAR(3),
 mobile_number VARCHAR(12),
@@ -72,6 +71,7 @@ CREATE VIEW view_users AS (
 	user_language,
 	email,
 	level_account,
+	user_type,
 	mobile_international_code,
 	mobile_prefix,
 	mobile_number,
@@ -124,35 +124,6 @@ CREATE VIEW view_goals AS (
 	INNER JOIN currencies ceur ON ceur.id = 'EUR'
 );
 
-
-SELECT
-	u.username,
-	(g.user_id) AS UUID,
-	g.goal_amount,
-	g.goal_month,
-	g.goal_year,
-	g.currency_id,
-	(g.goal_amount / c.rate) * cusd.rate AS goal_USD,
-	(g.goal_amount / c.rate) * cmxn.rate AS goal_MXN,
-	(g.goal_amount / c.rate) * cbrl.rate AS goal_BRL,
-	(g.goal_amount / c.rate) * ceur.rate AS goal_EUR
-	
-	
-	FROM 
-	goals g
-	INNER JOIN users u 
-	ON g.user_id = u.id
-	INNER JOIN currencies c 
-	ON c.id = g.currency_id
-	inner join currencies cusd on cusd.id = 'USD'
-	INNER JOIN currencies cbrl ON cbrl.id = 'BRL'
-	INNER JOIN currencies cmxn ON cmxn.id = 'MXN'
-	INNER JOIN currencies ceur ON ceur.id = 'EUR'
-	;
-
-
-SELECT *, SUM(goal_amount) AS total_amount FROM view_goals WHERE goal_month = 4 GROUP BY goal_year;
-
 # PROFILES
 CREATE TABLE IF NOT EXISTS `profiles` (
 id VARCHAR(40) PRIMARY KEY NOT NULL,
@@ -194,7 +165,7 @@ id VARCHAR(40) PRIMARY KEY NOT NULL,
 module_name VARCHAR(40) NOT NULL, # advertiser / provider
 contact_name VARCHAR(20) NOT NULL,
 contact_surname VARCHAR(20),
-contact_email VARCHAR(60) NOT NULL,
+contact_email VARCHAR(60) NOT NULL UNIQUE,
 contact_position VARCHAR(20),
 contact_client_id VARCHAR(40),
 phone_international_code VARCHAR(3),
@@ -262,18 +233,6 @@ CREATE VIEW view_advertisers AS (
 	advertisers adv
 	LEFT JOIN view_advertisercontacts ct ON ct.contact_client_id = adv.id
 );
-
-SELECT * FROM view_advertisercontacts;
-
-SELECT LEFT(uuid,13)AS uuid, uuid AS uuid_full, 
-COUNT(contact_client_id) AS qty_contact, 
-corporate_name, address, CONCAT(contact_name,' ',contact_surname,' (', contact_email,')') AS contact, contact_name, contact_surname, contact_email, contact_position, phone_international_code, phone_prefix, phone_number, is_agency, is_active, CONCAT('+',phone_international_code,phone_number) AS phone 
-FROM view_advertisers 
-#
-GROUP BY uuid
-ORDER BY corporate_name ;
-
-SELECT * FROM view_advertisers;
 
 # PRODUCTS
 CREATE TABLE IF NOT EXISTS products (
@@ -628,9 +587,6 @@ created_at DATETIME NOT NULL,
 updated_at DATETIME NOT NULL
 );
 
-SELECT UUID,offer_name FROM view_proposals WHERE offer_name = 'Nissan - INFINITI, prueba programmatic' AND client_id = 'd15b0b10-d2e8-11ec-ae10-6c0b8496fec0' AND DESCRIPTION = 'El objetivo de la marca es tráfico al sitio, sobre esto hay que cubrir un mínimo de 44,500 visitas al sitio por mes y descargas de KBAs ( Lead Book a Test Drive Visits, Lead, Request a Quote Visti, Download Visits, Dealers Search Visits)Los formatos que normalmente se activan son Display y Native.';
-
-
 # VIEW PROPOSALS
 CREATE VIEW view_proposals AS (
 	SELECT
@@ -837,197 +793,10 @@ CREATE VIEW view_proposals AS (
 	LEFT JOIN advertisers age ON age.id = pps.agency_id
 );
 
-
-SELECT
-	(pps.id) AS UUID,
-	(ppp.product_id) AS product_id,
-	pd.name AS product_name,
-	(ppp.salemodel_id) AS salemodel_id,
-	sm.name AS salemodel_name,
-	(ppp.provider_id) AS provider_id,
-	pv.name AS provider_name,
-	(pps.user_id) AS user_id,
-	u.username,
-	(pps.advertiser_id) AS client_id,
-	adv.corporate_name AS client_name,
-	(pps.agency_id) AS agency_id,
-	age.corporate_name AS agency_name,
-	pps.status_id,
-	s.name AS status_name,
-	s.percent AS status_percent,
-	pps.offer_name,
-	pps.description,
-	pps.start_date,
-	pps.stop_date,
-	TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1 AS month_diff_data, 
-	ppp.price / 100 AS price,
-	ppp.price AS price_int,
-	ppp.currency,
-	ppp.quantity,
-	c.rate AS rate,
-	c.id AS currency_c,
-	(ppp.price * ppp.quantity) AS amount_int,
-	(ppp.price * ppp.quantity) / 100 AS amount,
-	((ppp.price * ppp.quantity) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1)) AS amount_per_month_int,
-	((ppp.price * ppp.quantity) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1)) / 100 AS amount_per_month,
-	case 
-	when c.id = 'USD' THEN
-	(
-		(ppp.price * ppp.quantity)
-	) else 
-	(
-		(((ppp.price * ppp.quantity) / c.rate) * cusd.rate)
-	) end  AS amount_USD_int,
-	CASE
-	WHEN c.id = 'USD' THEN
-	(
-		(ppp.price * ppp.quantity) / 100
-	) ELSE 
-	(
-		(((ppp.price * ppp.quantity) / c.rate) * cusd.rate) / 100
-	) end AS amount_USD,
-	CASE
-	WHEN c.id = 'USD' THEN
-	(
-		((ppp.price * ppp.quantity) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1))
-	) ELSE 
-	(
-		((((ppp.price * ppp.quantity) / c.rate) * cusd.rate) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1))
-	) end AS amount_per_month_USD_int,
-	CASE
-	WHEN c.id = 'USD' THEN
-	(
-		((ppp.price * ppp.quantity) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1)) / 100
-	) ELSE 
-	(
-		((((ppp.price * ppp.quantity) / c.rate) * cusd.rate) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1)) / 100
-	) end AS amount_per_month_USD,
-	
-	CASE
-	WHEN c.id = 'MXN' THEN
-	(
-		(ppp.price * ppp.quantity)
-	) ELSE 
-	(
-		(((ppp.price * ppp.quantity) / c.rate) * cmxn.rate)
-	) END  AS amount_MXN_int,
-	CASE
-	WHEN c.id = 'MXN' THEN
-	(
-		(ppp.price * ppp.quantity) / 100
-	) ELSE 
-	(
-		(((ppp.price * ppp.quantity) / c.rate) * cmxn.rate) / 100
-	) END AS amount_MXN,
-	CASE
-	WHEN c.id = 'MXN' THEN
-	(
-		((ppp.price * ppp.quantity) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1))
-	) ELSE 
-	(
-		((((ppp.price * ppp.quantity) / c.rate) * cmxn.rate) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1))
-	) END AS amount_per_month_MXN_int,
-	CASE
-	WHEN c.id = 'MXN' THEN
-	(
-		((ppp.price * ppp.quantity) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1)) / 100
-	) ELSE 
-	(
-		((((ppp.price * ppp.quantity) / c.rate) * cmxn.rate) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1)) / 100
-	) END AS amount_per_month_MXN,
-	
-	CASE
-	WHEN c.id = 'BRL' THEN
-	(
-		(ppp.price * ppp.quantity)
-	) ELSE 
-	(
-		(((ppp.price * ppp.quantity) / c.rate) * cbrl.rate)
-	) END  AS amount_BRL_int,
-	CASE
-	WHEN c.id = 'BRL' THEN
-	(
-		(ppp.price * ppp.quantity) / 100
-	) ELSE 
-	(
-		(((ppp.price * ppp.quantity) / c.rate) * cbrl.rate) / 100
-	) END AS amount_BRL,
-	CASE
-	WHEN c.id = 'BRL' THEN
-	(
-		((ppp.price * ppp.quantity) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1))
-	) ELSE 
-	(
-		((((ppp.price * ppp.quantity) / c.rate) * cbrl.rate) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1))
-	) END AS amount_per_month_BRL_int,
-	CASE
-	WHEN c.id = 'BRL' THEN
-	(
-		((ppp.price * ppp.quantity) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1)) / 100
-	) ELSE 
-	(
-		((((ppp.price * ppp.quantity) / c.rate) * cbrl.rate) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1)) / 100
-	) END AS amount_per_month_BRL,
-	
-	CASE
-	WHEN c.id = 'EUR' THEN
-	(
-		(ppp.price * ppp.quantity)
-	) ELSE 
-	(
-		(((ppp.price * ppp.quantity) / c.rate) * ceur.rate)
-	) END  AS amount_EUR_int,
-	CASE
-	WHEN c.id = 'EUR' THEN
-	(
-		(ppp.price * ppp.quantity) / 100
-	) ELSE 
-	(
-		(((ppp.price * ppp.quantity) / c.rate) * ceur.rate) / 100
-	) END AS amount_EUR,
-	CASE
-	WHEN c.id = 'EUR' THEN
-	(
-		((ppp.price * ppp.quantity) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1))
-	) ELSE 
-	(
-		((((ppp.price * ppp.quantity) / c.rate) * ceur.rate) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1))
-	) END AS amount_per_month_EUR_int,
-	CASE
-	WHEN c.id = 'EUR' THEN
-	(
-		((ppp.price * ppp.quantity) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1)) / 100
-	) ELSE 
-	(
-		((((ppp.price * ppp.quantity) / c.rate) * ceur.rate) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1)) / 100
-	) END AS amount_per_month_EUR,
-		
-	pps.is_pixel,
-	pps.is_active,
-	CONCAT((pps.id),pd.name,sm.name,pv.name,u.username,adv.corporate_name,pps.offer_name,ppp.currency) AS search
-	FROM 
-	proposals pps
-	LEFT JOIN proposalsxproducts ppp ON ppp.proposal_id = pps.id
-	LEFT JOIN products pd ON pd.id = ppp.product_id
-	LEFT JOIN salemodels sm ON sm.id = ppp.salemodel_id
-	LEFT JOIN providers pv ON pv.id = ppp.provider_id
-	inner JOIN currencies c ON c.id = ppp.currency
-	INNER JOIN currencies cusd ON cusd.id = 'USD'
-	INNER JOIN currencies cmxn ON cmxn.id = 'MXN'
-	INNER JOIN currencies cbrl ON cbrl.id = 'BRL'
-	INNER JOIN currencies ceur ON ceur.id = 'EUR'
-	INNER JOIN statuses s ON s.id = pps.status_id
-	INNER JOIN users u ON u.id = pps.user_id
-	INNER JOIN advertisers adv ON adv.id = pps.advertiser_id
-	LEFT JOIN advertisers age ON age.id = pps.agency_id;
-
-
-SELECT TIMESTAMPDIFF(MONTH, start_date, stop_date) FROM view_proposals;
-
 # MODULES
 CREATE TABLE modules (
 id VARCHAR(40) PRIMARY KEY NOT NULL,
-NAME VARCHAR(20) NOT NULL,
+name VARCHAR(20) NOT NULL,
 is_active ENUM('N','Y') NOT NULL,
 created_at DATETIME NOT NULL,
 updated_at DATETIME NOT NULL
@@ -1038,7 +807,7 @@ CREATE TABLE loghistory (
 id VARCHAR(40) PRIMARY KEY NOT NULL,
 user_id VARCHAR(40) NOT NULL,
 module_name VARCHAR(20) NOT NULL,
-DESCRIPTION TEXT NOT NULL,
+description TEXT NOT NULL,
 user_token VARCHAR(250) NOT NULL,
 form_token VARCHAR(250),
 created_at DATETIME NOT NULL,
@@ -1063,7 +832,7 @@ VALUES
 (UUID(), 'only_admin', 'Only admin can select executive', 'Solamente gerentes pueden seleccionar ejecutivos', 'Apenas Administradores podem selecionar Executivos', 'Y', NOW(), NOW()),
 (UUID(), 'offer_campaign', 'Offer / Campaign', 'Oferta / Campaña', 'Oferta / Campanha', 'Y', NOW(), NOW()),
 (UUID(), 'advertiser', 'Advertiser', 'Cliente', 'Anunciante', 'Y', NOW(), NOW()),
-(UUID(), 'assign_executive', 'Assign Executive', 'Ejetivo', 'Executivo', 'Y', NOW(), NOW()),
+(UUID(), 'assign_executive', 'Assign Executive', 'Ejecutivo', 'Executivo', 'Y', NOW(), NOW()),
 (UUID(), 'amount', 'Amount', 'Monto', 'Valor total', 'Y', NOW(), NOW()),
 (UUID(), 'monthly', 'Monthly', 'Mensual', 'Mensal', 'Y', NOW(), NOW()),
 (UUID(), 'status', 'Status', 'Status', 'Status', 'Y', NOW(), NOW()),
@@ -1146,51 +915,209 @@ INSERT INTO translates
 VALUES
 (UUID(), 'state', 'State', 'Estado', 'UF', 'Y', NOW(), NOW());
 
+INSERT INTO translates 
+(id, code_str, text_eng, text_esp, text_ptbr, is_active, created_at, updated_at)
+VALUES
+(UUID(), 'upload', 'Upload Invoices', 'Ingressar Facturas', 'Upload de Invoices', 'Y', NOW(), NOW()),
+(UUID(), 'upload_files', 'Upload Files', 'Subir Archivos', 'Upload de Arquivos', 'Y', NOW(), NOW()),
+(UUID(), 'month', 'Month', 'Mês', 'Mês', 'Y', NOW(), NOW()),
+(UUID(), 'search', 'Search', 'Buscar', 'Buscar', 'Y', NOW(), NOW()),
+(UUID(), 'payed_at', 'Payed at', 'Fecha de pago', 'Data de Pagamento', 'Y', NOW(), NOW());
 
 
+INSERT INTO translates 
+(id, code_str, text_eng, text_esp, text_ptbr, is_active, created_at, updated_at)
+VALUES
+(UUID(), 'choose', 'Choose', 'Elejir', 'Escolha', 'Y', NOW(), NOW()),
+(UUID(), 'invoice_file', 'Invoice file', 'archivo de Facturas', 'arquivo de Fatura', 'Y', NOW(), NOW()),
+(UUID(), 'po_file', 'Purchase Order file', 'archivo de Orden de Compra', 'arquivo de Ordem de Compra', 'Y', NOW(), NOW()),
+(UUID(), 'report_file', 'Report file', 'archivo de Report', 'arquivo de Relatório', 'Y', NOW(), NOW()),
+(UUID(), 'presentation_file', 'Presentation file', 'archivo de Presentación', 'arquivo de Apresentação', 'Y', NOW(), NOW()),
+(UUID(), 'username', 'User Name', 'Nombre del usuario', 'Usuario', 'Y', NOW(), NOW()),
+(UUID(), 'email', 'E-Mail', 'Correo', 'Email', 'Y', NOW(), NOW()),
+(UUID(), 'mobile_number', 'Mobile Number', 'Teléfono Mobile', 'Celular', 'Y', NOW(), NOW()),
+(UUID(), 'password', 'Password', 'Contraseña', 'Senha', 'Y', NOW(), NOW()),
+(UUID(), 'retype', 'Retype', 'Volver a escribir', 'Redigite', 'Y', NOW(), NOW()),
+(UUID(), 'areacode', 'Area Code', 'Código de AREA', 'Código de Área', 'Y', NOW(), NOW()),
+(UUID(), 'number', 'Number', 'Numero', 'Numero', 'Y', NOW(), NOW()),
+(UUID(), 'user', 'User', 'Usuario', 'Usuário', 'Y', NOW(), NOW()),
+(UUID(), 'offer', 'Offer', 'Campaña', 'Campanha', 'Y', NOW(), NOW()),
+(UUID(), 'phone_number', 'Phone Number', 'Teléfono', 'Telefone', 'Y', NOW(), NOW()),
+(UUID(), 'product', 'Product', 'Producto', 'Produto', 'Y', NOW(), NOW()),
+(UUID(), 'any_to_select', 'Any', 'No hay', 'Nenhum', 'Y', NOW(), NOW()),
+(UUID(), 'to_select', 'enable to select', 'disponible para seleccionar', 'disponível para selecionar', 'Y', NOW(), NOW()),
+(UUID(), 'files', 'Files', 'Archivos', 'Arquivos', 'Y', NOW(), NOW()),
+(UUID(), 'invoices', 'Invoices', 'Facturas', 'Faturas', 'Y', NOW(), NOW()),
+(UUID(), 'invoice_number', 'Invoice Number', 'N&ordm; factura', 'N&ordm; fatura', 'Y', NOW(), NOW()),
+(UUID(), 'po_number', 'P.O. Number', 'N&ordm; Orden de Compra', 'N&ordm; P.O.', 'Y', NOW(), NOW()),
+(UUID(), 'invoice', 'Invoice', 'Factura', 'Fatura', 'Y', NOW(), NOW()),
+(UUID(), 'po', 'P.O.', 'Orden de compra', 'Ordem de compra', 'Y', NOW(), NOW()),
+(UUID(), 'report', 'Report file', 'Archivo de Report', 'Relatório', 'Y', NOW(), NOW()),
+(UUID(), 'presentation', 'Presentation', 'Presentación', 'Apresentação', 'Y', NOW(), NOW()),
+(UUID(), 'xml', 'XML file', 'Archivo XML', 'Arquivo XML', 'Y', NOW(), NOW()),
+(UUID(), 'invoice_created_at', 'Sent date', 'Fecha del ingresso', 'Data de envio', 'Y', NOW(), NOW()),
+(UUID(), 'payed_amount', 'Amount payed', 'Monto pagado', 'Total pago', 'Y', NOW(), NOW()),
+(UUID(), 'xml_file', 'XML file (Only for MEX)', 'archivo XML (Solo para MEX)', 'arquivo XML (Apenas para MEX)', 'Y', NOW(), NOW()),
+(UUID(), 'year', 'Year', 'Año', 'Ano', 'Y', NOW(), NOW());
 
 
+INSERT INTO translates 
+(id, code_str, text_eng, text_esp, text_ptbr, is_active, created_at, updated_at)
+VALUES
+(UUID(), 'waiting_approval', 'Waiting for approval', 'A la espera de aprobación', 'Aguardando aprovação', 'Y', NOW(), NOW());
+
+
+# FILES
+CREATE TABLE IF NOT EXISTS files (
+id VARCHAR(40) PRIMARY KEY NOT NULL,
+file_location VARCHAR(240) NOT NULL,
+file_name VARCHAR(240) NOT NULL,
+file_type VARCHAR(40) NOT NULL,
+invoice_id VARCHAR(40),
+user_id VARCHAR(40) NOT NULL,
+description TEXT,
+is_active ENUM('N','Y') NOT NULL,
+created_at DATETIME NOT NULL,
+updated_at DATETIME NOT NULL
+);
+
+# INVOICES
+CREATE TABLE IF NOT EXISTS invoices (
+id VARCHAR(40) PRIMARY KEY NOT NULL,
+provider_id VARCHAR(40) NOT NULL,
+invoice_number VARCHAR(40) NOT NULL,
+invoice_amount_int INTEGER NOT NULL,
+invoice_amount_paid_int INTEGER,
+invoice_amount_currency VARCHAR(3),
+invoice_last_payment_date DATE,
+invoice_month VARCHAR(2) NOT NULL,
+invoice_year VARCHAR(4) NOT NULL,
+order_number VARCHAR(40),
+proposalproduct_id VARCHAR(40),
+invoice_status VARCHAR(200),
+is_active ENUM('N','Y') NOT NULL,
+created_at DATETIME NOT NULL,
+updated_at DATETIME NOT NULL
+);
+
+# ADDING FK USER
+ALTER TABLE files
+    ADD CONSTRAINT fk_user 
+	FOREIGN KEY (user_id)
+    REFERENCES users (id);
+
+# ADDING FK INVOICE
+ALTER TABLE files
+    ADD CONSTRAINT fk_invoice 
+	FOREIGN KEY (invoice_id)
+    REFERENCES invoices (id);
+
+
+# ADDING FK CURRENCY
+ALTER TABLE invoices
+    ADD CONSTRAINT fk_currency 
+	FOREIGN KEY (invoice_amount_currency)
+    REFERENCES currencies (id);
+
+# ADDING FK PROPOSALPRODUCT
+ALTER TABLE invoices
+    ADD CONSTRAINT fk_proposalproduct 
+	FOREIGN KEY (proposalproduct_id)
+    REFERENCES proposalsxproducts (id);
+
+# ADDING FK PROVIDER
+ALTER TABLE invoices
+    ADD CONSTRAINT fk_providerInvoice 
+	FOREIGN KEY (provider_id)
+    REFERENCES providers (id);
+
+# VIEW INVOICES_FILES
+CREATE VIEW view_invoices_files AS (
 SELECT 
-UUID,
-product_id,
-product_name,
-salemodel_id,
-salemodel_name,
-provider_id,
-provider_name,
-user_id,
-username,
-client_id,
-client_name,
-agency_id,
-agency_name,
-status_id,
-status_name,
-status_percent,
-offer_name,
-DESCRIPTION,
-start_date,
-stop_date,
-month_diff_data,
-SUM(amount_dolar) AS amount,
-SUM(amount_dolar_int) AS amount_int, 
-SUM(amount_per_month_dolar) AS amount_per_month, 
-SUM(amount_per_month_dolar_int) AS amount_per_month_int, 
-'USD' AS currency,
-quantity,
-is_active 
-FROM view_proposals 
-WHERE 
-is_active = 'Y' 
-AND 
-( 
-	(CONCAT(YEAR(stop_date),RIGHT(CONCAT('00',MONTH(stop_date)),2)) >= '202206') 
-AND 	
-	(CONCAT(YEAR(start_date),RIGHT(CONCAT('00',MONTH(start_date)),2)) <= '202206') 
-)
+i.id as invoice_id,
+i.provider_id as provider_id,
+pv.name as provider_name,
+i.invoice_number as invoice_number,
+i.invoice_amount_int as invoice_amount_int,
+i.invoice_amount_int / 100 as invoice_amount,
+i.invoice_amount_paid_int as invoice_amount_paid_int,
+i.invoice_amount_paid_int / 100 as invoice_amount_paid,
+i.invoice_amount_currency as invoice_amount_currency,
+i.invoice_last_payment_date as invoice_last_payment_date,
+i.invoice_month as invoice_month,
+i.invoice_year as invoice_year,
+i.order_number as order_number,
+i.proposalproduct_id as proposalproduct_id,
+i.invoice_status as invoice_status,
+i.is_active as invoice_is_active,
+i.created_at as invoice_created_at,
+i.updated_at as invoice_updated_at,
+f.id as file_id,
+f.file_location as file_location,
+f.file_name as file_name,
+f.file_type as file_type,
+f.user_id as user_id,
+u.email as user_email,
+f.description as file_description,
+f.is_active as file_is_active,
+f.created_at as file_created_at,
+f.updated_at as file_updated_at,
+pp.proposal_id as proposal_id,
+p.offer_name as offer_name,
+pp.product_id as product_id,
+pd.name as product_name,
+pp.salemodel_id as salemodel_id,
+sm.name as salemodel_name,
+CONCAT(p.offer_name,'|',pd.name,'|',sm.name,'|',file_name,'|',pv.name,'|',i.invoice_number,'|',i.order_number,'|',i.invoice_status) as search
+FROM 
+invoices i
+INNER JOIN files f ON f.invoice_id = i.id
+INNER JOIN proposalsxproducts pp ON pp.id = i.proposalproduct_id
+INNER JOIN proposals p ON p.id = pp.proposal_id
+INNER JOIN providers pv ON pv.id = i.provider_id
+INNER JOIN users u ON f.user_id = u.id
+LEFT JOIN products pd ON pd.id = pp.product_id
+LEFT JOIN salemodels sm ON sm.id = pp.salemodel_id
  
-GROUP BY UUID;
+);
 
-SELECT UUID,product_id,product_name,salemodel_id,salemodel_name,provider_id,provider_name,user_id,username,client_id,client_name,agency_id,agency_name,status_id,status_name,status_percent,offer_name,DESCRIPTION,start_date,stop_date,month_diff_data,SUM(amount) AS amount,SUM(amount_int) AS amount_int, SUM(amount_per_month) AS amount_per_month, SUM(amount_per_month_int) AS amount_per_month_int, currency,quantity,is_active FROM view_proposals WHERE user_id = '49381e2d-787b-11ec-81fa-6c0b8496fec0' AND (stop_date >= '2022-2-24' AND start_date <= '2022-2-24')  GROUP BY UUID;
-
-SELECT UUID,product_id,product_name,salemodel_id,salemodel_name,provider_id,provider_name,user_id,username,client_id,client_name,agency_id,agency_name,status_id,status_name,status_percent,offer_name,DESCRIPTION,start_date,stop_date,month_diff_data,SUM(amount_dolar) AS amount,SUM(amount_dolar_int) AS amount_int, SUM(amount_per_month_dolar) AS amount_per_month, SUM(amount_per_month_dolar_int) AS amount_per_month_int, 'USD' AS currency,quantity,is_active FROM view_proposals WHERE is_active = 'Y'user_id = '49381e2d-787b-11ec-81fa-6c0b8496fec0' AND ( (CONCAT(YEAR(stop_date),RIGHT(CONCAT('00',MONTH(stop_date)),2)) >= '202206') AND (CONCAT(YEAR(start_date),RIGHT(CONCAT('00',MONTH(start_date)),2)) <= '202206') ) GROUP BY UUID;
+# VIEW CREATION_USER_PROVIDER
+CREATE VIEW view_full_profiles_data AS (
+SELECT 
+c.id as contact_id,
+c.module_name as contact_module_name,
+c.contact_email as contact_email,
+c.contact_client_id as contact_client_id,
+p.id as provider_id,
+a.id as advertiser_id,
+c.contact_name as contact_name,
+c.contact_surname as contact_surname,
+c.contact_position as contact_position,
+c.is_active as contact_is_active,
+p.name as provider_name,
+a.corporate_name as advertiser_name,
+p.is_active as provider_is_active,
+a.is_active as advertiser_is_active,
+u.username as username, 
+u.user_language as user_language, 
+u.email as user_email, 
+u.level_account as user_level_account, 
+u.user_type as user_type,
+u.mobile_international_code as user_international_code, 
+u.mobile_number as user_mobile_number, 
+u.authentication_string as authentication_string,
+c.phone_international_code as contact_international_code,
+c.phone_number as contact_phone_number,
+u.token as user_token, 
+u.account_locked as user_locked_status,
+pf.photo as profile_photo,
+pf.aboutme as profile_aboutme,
+pf.country as profile_country,
+u.id as user_id
+FROM 
+contacts c 
+LEFT JOIN providers p ON (p.id = c.contact_client_id AND c.module_name = 'provider')
+LEFT JOIN advertisers a ON (a.id = c.contact_client_id AND c.module_name = 'advertiser')
+LEFT JOIN users u ON c.contact_email = u.email
+LEFT JOIN profiles pf ON pf.user_id = u.id
+);
