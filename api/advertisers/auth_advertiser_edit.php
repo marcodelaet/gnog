@@ -41,7 +41,7 @@ if(array_key_exists('auth_api',$_REQUEST)){
     }
 
     // Query creation
-    $sql = "UPDATE advertisers SET $sett WHERE id=('".$_REQUEST['tid']."')";
+    $sql = "UPDATE advertisers SET $sett WHERE id=('".$_REQUEST['aid']."')";
     // INSERT data
     $rs = $DB->executeInstruction($sql);
 

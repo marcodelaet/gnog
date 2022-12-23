@@ -106,14 +106,14 @@ function handleSubmitCSV(form){
         alert('Please, fill all required fields (*)');
 }
 
-function handleEditSubmit(tid,form) {
+function handleEditSubmit(pid,form) {
     if (form.name.value !== '' && form.address.value !== '' && (product_id != '0' || salemodel_id != '0')) {
         //form.submit();
    
         errors      = 0;
         authApi     = csrf_token;
         
-        sett     = '&tid='+tid;
+        sett     = '&pid='+pid;
         xname          = form.name.value;
         if(xname !== ''){
             sett     += '&name='+xname;
@@ -199,12 +199,12 @@ function handleEditSubmit(tid,form) {
         alert('Please, fill all required fields (*)');
 }
 
-function handleViewOnLoad(tid) {
+function handleViewOnLoad(pid) {
     errors      = 0;
-    authApi     = csrf_token;
+    authApi     = 'dasdasdkasdeewef';
     locat       = window.location.hostname;
 
-    filters     = '&tid='+tid;
+    filters     = '&pid='+pid;
 
     if(locat.slice(-1) != '/')
         locat += '/';
@@ -212,38 +212,67 @@ function handleViewOnLoad(tid) {
     if(errors > 0){
 
     } else{
-        const requestURL = window.location.protocol+'//'+locat+'api/providers/auth_provider_get.php?auth_api='+authApi+filters;
+        const requestURL = window.location.protocol+'//'+locat+'api/'+module+'s/auth_'+module+'_get.php?auth_api='+authApi+filters;
         //alert(requestURL);
         const request   = new XMLHttpRequest();
-        position        = '*****';
+        email           = 'no_email';
+        address         = 'no_address';
         request.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {
+                // Typical action to be performed when the document is ready:
                 obj = JSON.parse(request.responseText);
-                // Create our number formatter.
-                var formatter = new Intl.NumberFormat('pt-BR', {
-                    style: 'currency',
-                    currency: obj[0].currency,
-                    //maximumSignificantDigits: 2,
-
-                    // These options are needed to round to whole numbers if that's what you want.
-                    //minimumFractionDigits: 2, // (this suffices for whole numbers, but will print 2500.10 as $2,500.1)
-                    //maximumFractionDigits: 0, // (causes 2500.99 to be printed as $2,501)
-                });
-                if(obj[0].main_contact_position!='')
-                    position = obj[0].main_contact_position;
                 phone_number = obj[0].phone_number.replace(" ","");
-                if(obj[0].phone_prefix!='')
+                if((obj[0].phone_prefix!='') && (obj[0].phone_prefix!='0'))
                     phone_number = obj[0].phone_prefix+obj[0].phone_number.replace(" ","");
-                document.getElementById('provider_name').innerHTML          = obj[0].name;
-                document.getElementById('group').innerHTML                  = obj[0].webpage_url;
-                document.getElementById('card-contact-fullname').innerHTML  = obj[0].main_contact_name + ' ' + obj[0].main_contact_surname
-                document.getElementById('card-contact-position').innerHTML  = ' ('+position+')';
-                document.getElementById('card-address').innerHTML           = obj[0].address;
-                document.getElementById('card-email').innerHTML             = obj[0].main_contact_email;
-                document.getElementById('card-phone').innerHTML             = '+'+obj[0].phone_international_code.replace(" ","") + phone_number;
-                document.getElementById('card-product').innerHTML           = obj[0].product_name;
-                document.getElementById('card-product-price').innerHTML     = formatter.format(obj[0].product_price);
-                document.getElementById('card-salemodel').innerHTML         = obj[0].salemodel_name;
+                if(obj[0].address!=''){
+                    address = obj[0].address;     
+                }
+                if(obj[0].webpage_url!=''){
+                    webpage = obj[0].webpage_url;     
+                }
+                document.getElementById('provider_name').innerHTML                      = obj[0].name;
+                document.getElementById('webpage').innerHTML                            = webpage;
+                document.getElementById('card-address').innerHTML                       = address;
+
+                xuser       = '';
+                position    = '*****';
+                xhtml       = '';
+                for(i=0;i < obj.length; i++){
+                    xuserIcon   = 'person';
+                    xcopy       = '';
+                    if(obj[i].contact_position!='')
+                        position = obj[i].contact_position;
+                    
+                    if((obj[i].username!='') && (typeof(obj[i].username)!='object')){
+                        xeffect     = '';
+                        xuser       = obj[i].username;
+                    } else {
+                        xeffect = 'insider'; 
+                        xuser = 'https://providers.gnogmedia.com?pr=Li9wYWdlcy91c2Vycy9mb3JtLnBocA==&cpid='+obj[i].contact_provider_id;
+                        xcopy = '&nbsp;&nbsp;&nbsp;<a style="color: #212529" href="javascript:void(0)" title="'+translateText('copy_user_crt_url',localStorage.getItem('ulang'))+' ('+obj[i].contact_email+')" onclick="copyStringToClipboard(\''+xuser+'\'\)"><spam class="material-icons icon-data">content_copy</spam></a>';
+                        xcopy += '&nbsp;<a style="color: #212529" href="javascript:void(0)" title="'+translateText('send_user_crt_url_to',localStorage.getItem('ulang'))+' '+obj[i].contact_email+'" onclick=""><spam class="material-icons icon-data">send</spam></a>';
+                    }
+                    xhtml += '<div class="space-blank">&nbsp;</div>';
+                    xhtml += '<div class="'+module+'-data">';
+                    xhtml += '    <spam id="card-contact-fullname-and-position">'+obj[i].contact_name + ' ' + obj[i].contact_surname + ' ('+position+')</spam>';
+                    xhtml += '</div>';
+                    xhtml += '<div class="'+module+'-data">';
+                    xhtml += '    <spam class="material-icons icon-data">email</spam>';
+                    xhtml += '    <spam id="card-email">'+obj[i].contact_email+'</spam>';
+                    xhtml += '</div>';
+                    xhtml += '<div class="'+module+'-data">';
+                    xhtml += '    <spam class="material-icons icon-data">phone</spam>';
+                    xhtml += '    <spam id="card-phone">+'+obj[i].phone_international_code.replace(" ","") + phone_number+'</spam>';
+                    xhtml += '</div>';
+                    xhtml += '<div class="'+module+'-data">';
+                    xhtml += '    <spam class="material-icons icon-data">'+xuserIcon+'</spam>';
+                    xhtml += '    <spam id="card-user-'+obj[i].contact_provider_id+'" class="card-user '+xeffect+'">'+xuser+'</spam>';
+                    xhtml += xcopy;
+                    xhtml += '</div>';
+
+                    
+                }
+                document.getElementById("list-contacts").innerHTML = xhtml;
             }
             else{
                 //form.btnSave.innerHTML = "Searching...";
@@ -255,12 +284,12 @@ function handleViewOnLoad(tid) {
     }
 }
 
-function handleOnLoad(tid,form) {
+function handleOnLoad(pid,form) {
     errors      = 0;
     authApi     = csrf_token;
     locat       = window.location.hostname;
 
-    filters     = '&tid='+tid;
+    filters     = '&pid='+pid;
   
     if(locat.slice(-1) != '/')
         locat += '/';
@@ -386,16 +415,16 @@ function handleListOnLoad(search) {
                         string_qty_contact += 's';
                     html += '<tr><td>'+obj['data'][i].name+'</td><td>'+webpage+'</td><td nowrap>'+string_qty_contact+'</td><td style="text-align:center;"><span id="locked_status_'+obj['data'][i].uuid_full+'" class="material-icons" style="color:'+color_status+'">circle</span></td><td nowrap style="text-align:center;">';
                     // information card
-                    html += '<a href="?pr=Li9wYWdlcy9wcm92aWRlcnMvaW5mby5waHA=&tid='+obj['data'][i].uuid_full+'"><span class="material-icons" style="font-size:1.5rem; color:black;" title="Information Card '+obj['data'][i].name+'">info</span></a>';
+                    html += '<a href="?pr=Li9wYWdlcy9wcm92aWRlcnMvaW5mby5waHA=&pid='+obj['data'][i].uuid_full+'"><span class="material-icons" style="font-size:1.5rem; color:black;" title="Information Card '+obj['data'][i].name+'">info</span></a>';
 
                     // Edit form
-                    html += '<a href="?pr=Li9wYWdlcy9wcm92aWRlcnMvZm9ybWVkaXQucGhw&tid='+obj['data'][i].uuid_full+'"><span class="material-icons" style="font-size:1.5rem; color:black;" title="Edit '+module + ' '+obj['data'][i].name+'">edit</span></a>';
+                    html += '<a href="?pr=Li9wYWdlcy9wcm92aWRlcnMvZm9ybWVkaXQucGhw&pid='+obj['data'][i].uuid_full+'"><span class="material-icons" style="font-size:1.5rem; color:black;" title="Edit '+module + ' '+obj['data'][i].name+'">edit</span></a>';
 
                     // Remove 
                     html += '<a href="javascript:void(0)" onclick="handleRemove(\''+obj['data'][i].uuid_full+'\',\''+obj['data'][i].is_active+'\')"><span class="material-icons" style="font-size:1.5rem; color:black;" title="Remove '+module + ' '+obj['data'][i].name+'">delete</span></a>';
 
                     // Add Contact
-                    html += '<a href="?pr=Li9wYWdlcy9hZHZlcnRpc2Vycy9jb250YWN0cy9mb3JtLnBocA==&md=Provider&tid='+obj['data'][i].uuid_full+'"><span class="material-icons" style="font-size:1.5rem; color:black;" title="Add a contact to '+module + ' '+obj['data'][i].name+'">contact_mail</span></a>';
+                    html += '<a href="?pr=Li9wYWdlcy9hZHZlcnRpc2Vycy9jb250YWN0cy9mb3JtLnBocA==&md=Provider&pid='+obj['data'][i].uuid_full+'"><span class="material-icons" style="font-size:1.5rem; color:black;" title="Add a contact to '+module + ' '+obj['data'][i].name+'">contact_mail</span></a>';
 
                     html += '</td></tr>';
                 }
@@ -416,9 +445,9 @@ function handleListOnLoad(search) {
     // window.location.href = '?pr=Li9wYWdlcy91c2Vycy9saXN0LnBocA==';
 }
 
-function handleRemove(tid,locked_status){
+function handleRemove(pid,locked_status){
     authApi     = csrf_token;
-    filters     = '&tid='+tid+'&lk='+locked_status;
+    filters     = '&pid='+pid+'&lk='+locked_status;
     
     locat       = window.location.hostname;
     if(locat.slice(-1) != '/')
@@ -434,7 +463,7 @@ function handleRemove(tid,locked_status){
         if (this.readyState == 4 && this.status == 200) {
             // Typical action to be performed when the document is ready:
             obj = JSON.parse(request.responseText);
-            document.getElementById('locked_status_'+tid).style = 'color:'+color_status;
+            document.getElementById('locked_status_'+pid).style = 'color:'+color_status;
         }
     };
     request.open('GET', requestURL);

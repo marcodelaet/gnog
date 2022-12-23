@@ -3,16 +3,16 @@
 <link rel="stylesheet" href="<?=$dir?>./assets/css/Inputs.css">
 <link rel="stylesheet" href="<?=$dir?>./assets/css/Button.css">
 <script src="<?=$dir?>./assets/js/<?=strtolower($moduleName)?>.js" type="text/javascript"></script>
-<?php if(array_key_exists('tid',$_REQUEST)){ ?>
+<?php if(array_key_exists('aid',$_REQUEST)){ ?>
 <script>
-    handleViewOnLoad("<?=$_REQUEST['tid']?>")
+    handleViewOnLoad("<?=$_REQUEST['aid']?>")
 </script>
 <?php } ?>
 <div class="card bg-light mb-3" id="<?=strtolower($moduleName)?>-card">
     <div class="card-header">
         <div class="<?=strtolower($moduleName)?>-header">
             <div class="photo-container" >
-                <img class="<?=strtolower($moduleName)?>-photo" id="<?=strtolower($moduleName)?>-proto-<?=$_REQUEST['tid']?>" src="/public/<?=strtolower($moduleName)?>/images/logo_example.png" style="background-color:#FFF"/>
+                <img class="<?=strtolower($moduleName)?>-photo" id="<?=strtolower($moduleName)?>-proto-<?=$_REQUEST['aid']?>" src="/public/<?=strtolower($moduleName)?>/images/logo_example.png" style="background-color:#FFF"/>
             </div>
             <div class="<?=strtolower($moduleName)?>-main" >
                 <spam id="<?=strtolower($moduleName)?>_name"><?=$moduleName?></spam>

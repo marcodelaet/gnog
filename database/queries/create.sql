@@ -407,6 +407,10 @@ CREATE VIEW view_providers AS (
 	ct.phone_international_code,
 	ct.phone_prefix,
 	ct.phone_number,
+	u.username,
+	u.user_language,
+	u.user_type,
+	u.account_locked,
 	CONCAT('+',ct.phone_international_code,ct.phone_prefix,ct.phone_number) AS phone,
 	pv.is_active,
 	CONCAT((pv.id),pd.name,sm.name,pv.name,pv.webpage_url,ct.contact_name,ct.contact_surname,ct.contact_email,'+',ct.phone_international_code,ct.phone_number) AS search
@@ -416,7 +420,14 @@ CREATE VIEW view_providers AS (
 	LEFT JOIN products pd ON pd.id = pp.product_id
 	LEFT JOIN salemodels sm ON sm.id = pp.salemodel_id
 	LEFT JOIN contacts ct ON (ct.module_name = 'provider' AND ct.is_active='Y') AND (ct.contact_client_id = pv.id)
+	LEFT JOIN users u ON ct.contact_email = u.email
 );
+
+CREATE INDEX idx_email 
+ON users (email(20));
+
+CREATE INDEX idx_email 
+ON contacts (contact_email(20));
 
 #PROPOSALS
 CREATE TABLE IF NOT EXISTS proposals (
@@ -964,7 +975,12 @@ VALUES
 INSERT INTO translates 
 (id, code_str, text_eng, text_esp, text_ptbr, is_active, created_at, updated_at)
 VALUES
-(UUID(), 'waiting_approval', 'Waiting for approval', 'A la espera de aprobación', 'Aguardando aprovação', 'Y', NOW(), NOW());
+(UUID(), 'waiting_approval', 'Waiting for approval', 'A la espera de aprobación', 'Aguardando aprovação', 'Y', NOW(), NOW()),
+(UUID(), 'send_user_crt_url_to', 'Send user creation link to', 'Enviar la liga de creación del usuario para', 'Enviar link de criação de usuário para', 'Y', NOW(), NOW()),
+(UUID(), 'copy_user_crt_url', 'Copy user creation link', 'Copiar liga de creación del usuario', 'Copiar link de criação de usuário', 'Y', NOW(), NOW()),
+(UUID(), 'copied_to_clipboard', 'copied to clipboard', 'copiado al portapapeles', 'copiado para a área de transferência', 'Y', NOW(), NOW());
+
+
 
 
 # FILES
