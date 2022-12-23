@@ -54,7 +54,7 @@ if(array_key_exists('auth_api',$_REQUEST)){
         }
     }
     // Query creation
-    $sql = "UPDATE providers SET $sett WHERE id=('".$_REQUEST['tid']."')";
+    $sql = "UPDATE providers SET $sett WHERE id=('".$_REQUEST['pid']."')";
     // INSERT data
     $rs = $DB->executeInstruction($sql);
 

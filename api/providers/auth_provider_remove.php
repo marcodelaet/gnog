@@ -22,7 +22,7 @@ if(array_key_exists('auth_api',$_REQUEST)){
     $sett   = "updated_at=now(),is_active='$locked'";
 
     // Query creation
-    $sql = "UPDATE providers SET $sett WHERE id=('".$_REQUEST['tid']."')";
+    $sql = "UPDATE providers SET $sett WHERE id=('".$_REQUEST['pid']."')";
     // INSERT data
     $rs = $DB->executeInstruction($sql);
 

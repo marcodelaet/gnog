@@ -99,7 +99,7 @@ function handleSubmitCSV(form){
         alert('Please, fill all required fields (*)');
 }
 
-function handleEditSubmit(tid,form) {
+function handleEditSubmit(aid,form) {
     if (form.corporate_name.value !== '' && form.address.value !== '' && form.main_contact_email.value !== '') {
         //form.submit();
    
@@ -110,7 +110,7 @@ function handleEditSubmit(tid,form) {
         if(form.agency.checked)
             agency              = 'Y';
         
-        sett     = '&tid='+tid;
+        sett     = '&aid='+aid;
         sett     += '&agency='+agency;
         corporate_name          = form.corporate_name.value;
         if(corporate_name !== ''){
@@ -237,12 +237,12 @@ function handleViewOnLoad(aid) {
     }
 }
 
-function handleOnLoad(tid,form) {
+function handleOnLoad(aid,form) {
     errors      = 0;
     authApi     = 'dasdasdkasdeewef';
     locat       = window.location.hostname;
 
-    filters     = '&tid='+tid;
+    filters     = '&aid='+aid;
   
     if(locat.slice(-1) != '/')
         locat += '/';
@@ -339,16 +339,16 @@ function handleListOnLoad(search) {
                         
                     html += '<tr><td>'+obj[i].corporate_name+'</td><td>'+advertiser_type+'</td><td nowrap>'+string_qty_contact+'</td><td style="text-align:center;"><span id="locked_status_'+obj[i].uuid_full+'" class="material-icons" style="color:'+color_status+'">circle</span></td><td nowrap style="text-align:center;">';
                     // information card
-                    html += '<a href="?pr=Li9wYWdlcy9hZHZlcnRpc2Vycy9pbmZvLnBocA==&tid='+obj[i].uuid_full+'"><span class="material-icons" style="font-size:1.5rem; color:black;" title="Information Card '+obj[i].corporate_name+'">info</span></a>';
+                    html += '<a href="?pr=Li9wYWdlcy9hZHZlcnRpc2Vycy9pbmZvLnBocA==&aid='+obj[i].uuid_full+'"><span class="material-icons" style="font-size:1.5rem; color:black;" title="Information Card '+obj[i].corporate_name+'">info</span></a>';
 
                     // Edit form
-                    html += '<a href="?pr=Li9wYWdlcy9hZHZlcnRpc2Vycy9mb3JtZWRpdC5waHA=&tid='+obj[i].uuid_full+'"><span class="material-icons" style="font-size:1.5rem; color:black;" title="Edit '+module + ' '+obj[i].corporate_name+'">edit</span></a>';
+                    html += '<a href="?pr=Li9wYWdlcy9hZHZlcnRpc2Vycy9mb3JtZWRpdC5waHA=&aid='+obj[i].uuid_full+'"><span class="material-icons" style="font-size:1.5rem; color:black;" title="Edit '+module + ' '+obj[i].corporate_name+'">edit</span></a>';
 
                     // Remove 
                     html += '<a href="javascript:void(0)" onclick="handleRemove(\''+obj[i].uuid_full+'\',\''+obj[i].is_active+'\')"><span class="material-icons" style="font-size:1.5rem; color:black;" title="Remove '+module + ' '+obj[i].corporate_name+'">delete</span></a>';
 
                     // Add Contact
-                    html += '<a href="?pr=Li9wYWdlcy9hZHZlcnRpc2Vycy9jb250YWN0cy9mb3JtLnBocA==&md=Advertiser&tid='+obj[i].uuid_full+'"><span class="material-icons" style="font-size:1.5rem; color:black;" title="Add a contact to '+module + ' '+obj[i].corporate_name+'">contact_mail</span></a>';
+                    html += '<a href="?pr=Li9wYWdlcy9hZHZlcnRpc2Vycy9jb250YWN0cy9mb3JtLnBocA==&md=Advertiser&aid='+obj[i].uuid_full+'"><span class="material-icons" style="font-size:1.5rem; color:black;" title="Add a contact to '+module + ' '+obj[i].corporate_name+'">contact_mail</span></a>';
 
                     html += '</td></tr>';
                 }
@@ -369,9 +369,9 @@ function handleListOnLoad(search) {
     // window.location.href = '?pr=Li9wYWdlcy91c2Vycy9saXN0LnBocA==';
 }
 
-function handleRemove(tid,locked_status){
+function handleRemove(aid,locked_status){
     authApi     = 'dasdasdkasdeewef';
-    filters     = '&tid='+tid+'&lk='+locked_status;
+    filters     = '&aid='+aid+'&lk='+locked_status;
     
     locat       = window.location.hostname;
     if(locat.slice(-1) != '/')
@@ -387,7 +387,7 @@ function handleRemove(tid,locked_status){
         if (this.readyState == 4 && this.status == 200) {
             // Typical action to be performed when the document is ready:
             obj = JSON.parse(request.responseText);
-            document.getElementById('locked_status_'+tid).style = 'color:'+color_status;
+            document.getElementById('locked_status_'+aid).style = 'color:'+color_status;
         }
     };
     request.open('GET', requestURL);
