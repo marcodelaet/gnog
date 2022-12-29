@@ -206,52 +206,80 @@ function handleEditSubmit(tid,form) {
         alert('Please, fill all required fields (*)');
 }
 
-function handleViewOnLoad(tid) {
+function handleViewOnLoad(iid) {
     errors      = 0;
     authApi     = csrf_token;
     locat       = window.location.hostname;
 
-    filters     = '&tid='+tid;
+    filters     = '&iid='+iid;
 
     if(locat.slice(-1) != '/')
         locat += '/';
 
+    location_replace  = locat.replace('crm.','providers.');
+    if(location_replace.slice(-1) != '/')
+        location_replace += '/';
+
     if(errors > 0){
 
     } else{
-        const requestURL = window.location.protocol+'//'+locat+'api/providers/auth_provider_get.php?auth_api='+authApi+filters;
-        //alert(requestURL);
+        const requestURL = window.location.protocol+'//'+locat+'api/invoices/auth_invoice_get.php?auth_api='+authApi+filters;
+        //console.log(requestURL);
         const request   = new XMLHttpRequest();
-        position        = '*****';
         request.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {
                 obj = JSON.parse(request.responseText);
                 // Create our number formatter.
-                var formatter = new Intl.NumberFormat('pt-BR', {
+                var formatter = new Intl.NumberFormat('es-MX', {
                     style: 'currency',
-                    currency: obj[0].currency,
+                    currency: obj[0].invoice_amount_currency,
                     //maximumSignificantDigits: 2,
 
                     // These options are needed to round to whole numbers if that's what you want.
                     //minimumFractionDigits: 2, // (this suffices for whole numbers, but will print 2500.10 as $2,500.1)
                     //maximumFractionDigits: 0, // (causes 2500.99 to be printed as $2,501)
                 });
-                if(obj[0].main_contact_position!='')
-                    position = obj[0].main_contact_position;
-                phone_number = obj[0].phone_number.replace(" ","");
-                if(obj[0].phone_prefix!='')
-                    phone_number = obj[0].phone_prefix+obj[0].phone_number.replace(" ","");
-                document.getElementById('provider_name').innerHTML          = obj[0].name;
-                document.getElementById('group').innerHTML                  = obj[0].webpage_url;
-                document.getElementById('card-contact-fullname').innerHTML  = obj[0].main_contact_name + ' ' + obj[0].main_contact_surname
-                document.getElementById('card-contact-position').innerHTML  = ' ('+position+')';
-                document.getElementById('card-address').innerHTML           = obj[0].address;
-                document.getElementById('card-email').innerHTML             = obj[0].main_contact_email;
-                document.getElementById('card-phone').innerHTML             = '+'+obj[0].phone_international_code.replace(" ","") + phone_number;
-                document.getElementById('card-product').innerHTML           = obj[0].product_name;
-                document.getElementById('card-product-price').innerHTML     = formatter.format(obj[0].product_price);
+
+                for(i=0;i<obj.length;i++){
+                    location_file = window.location.protocol+'//'+(obj[i].file_location).replace('../../',location_replace);
+                    //alert(obj[i].file_name.substring(0,7));
+                    if(obj[i].file_name.substring(0,7)=='invoice'){
+                        invoice_file_html = '<a target="_blank" href="'+location_file+obj[i].file_name+'"><spam class="material-icons icon-data jump">download</spam></a>';
+                    }
+                    if(obj[i].file_name.substring(0,2)=='po'){
+                        po_file_html = '<a target="_blank" href="'+location_file+obj[i].file_name+'"><spam class="material-icons icon-data jump">download</spam></a>';
+                    }
+                    if(obj[i].file_name.substring(0,6)=='report'){
+                        report_file_html = '<a target="_blank" href="'+location_file+obj[i].file_name+'"><spam class="material-icons icon-data jump">download</spam></a>';
+                    }
+                    if(obj[i].file_name.substring(0,12)=='presentation'){
+                        presentation_file_html = '<a target="_blank" href="'+location_file+obj[i].file_name+'"><spam class="material-icons icon-data jump">download</spam></a>';
+                    }
+                }
+
+                paid_amount = obj[0].invoice_amount_paid_int;
+                //alert(typeof(paid_amount) + ' / '+ paid_amount );
+                if((typeof(paid_amount) == 'object') || (paid_amount == 'null')){
+                    paid_amount = 0;
+                }
+                document.getElementById('provider-name').innerHTML          = obj[0].provider_name;
+                document.getElementById('invoice-number').innerHTML         = obj[0].invoice_number;
+                document.getElementById('offer-name').innerHTML             = obj[0].offer_name + ' / ' + obj[0].product_name+ ' - ' + obj[0].salemodel_name;
+                document.getElementById('month-year').innerHTML             = obj[0].invoice_month + '/' + obj[0].invoice_year;
+                document.getElementById('invoice-value').innerHTML          = ' - ' + translateText('invoice_amount',localStorage.getItem('ulang')) +': '+formatter.format(obj[0].invoice_amount);
+                document.getElementById('paid-value').innerHTML             = ' - ' + translateText('paid',localStorage.getItem('ulang')) +': '+formatter.format((obj[0].invoice_amount_paid_int)/100);
+
+                document.getElementsByName('invoice_amount')[0].value       = obj[0].invoice_amount; // modal deny
+                document.getElementsByName('invoice_amount')[1].value       = obj[0].invoice_amount; // modal approval / pay
+                document.getElementsByName('paid_amount')[0].value          = paid_amount; // modal deny
+                document.getElementsByName('paid_amount')[1].value          = paid_amount; // modal approval / pay
+
+                document.getElementById('invoice-file').innerHTML           = invoice_file_html;
+                document.getElementById('po-file').innerHTML                = po_file_html;
+                document.getElementById('report-file').innerHTML            = report_file_html;
+                document.getElementById('presentation-file').innerHTML      = presentation_file_html;
                 document.getElementById('card-salemodel').innerHTML         = obj[0].salemodel_name;
-            }
+              }
             else{
                 //form.btnSave.innerHTML = "Searching...";
             }
@@ -388,8 +416,8 @@ function handleListOnLoad(search) {
                             html += '<td style="text-align:center" nowrap>'+obj.data[i].invoice_month+'/'+obj.data[i].invoice_year+'</td>';
                             html += '<td style="text-align:right" nowrap>'+amount_paid+'</td>';
                             html += '<td nowrap>'+last_payment_date+'</td>';
-                            html += '<td style="text-align:center" nowrap>'+invoice_status+'</td>';
-                            html += '<td style="text-align:center" nowrap><a href="'+obj.data[i].invoice_id+'"><span class="material-icons-outlined"  style="font-size:1.5rem; color:black;"  title="Ver factura '+obj.data[i].invoice_number+'" >visibility</span></a></td>';
+                            html += '<td style="text-align:center" nowrap>'+invoice_status.charAt(0).toUpperCase()+invoice_status.slice(1)+'</td>';
+                            html += '<td style="text-align:center" nowrap><a href="?pr=Li9wYWdlcy9maW5hbmNpYWwvaW52b2ljZXMvaW5mby5waHA=&iid='+obj.data[i].invoice_id+'&sts='+obj.data[i].invoice_status+'"><span class="material-icons-outlined"  style="font-size:1.5rem; color:black;"  title="Ver factura '+obj.data[i].invoice_number+'" >visibility</span></a></td>';
                             html += '<td nowrap style="text-align:center;">';
                         }
                         // FILES
@@ -429,6 +457,83 @@ function handleListOnLoad(search) {
         request.send();
     }
     // window.location.href = '?pr=Li9wYWdlcy91c2Vycy9saXN0LnBocA==';
+}
+
+/**************************************************
+ * changing invoice status
+ * receiving options: approval, pay or deny
+ * pay: depends from status to change directly 
+ * to paid / parcial_paid or first changing to 
+ * invoice_approved 
+ * later try to compare amount value and amount 
+ * paid to change status to paid or parcial paid  
+ **************************************************/
+function invoiceChangeStatus(form,option){
+    authApi     = csrf_token;
+
+    locat       = window.location.hostname;
+    if(locat.slice(-1) != '/')
+        locat += '/';
+    
+    status_old  = form.sts.value;
+    new_status  = status_old;
+
+    errors = 0;
+    message = "";
+
+    // denied
+    if(option == 'deny'){
+        new_status = 'approval_denied';
+    }
+
+    // approved
+    if(option == 'approval'){
+        new_status = 'invoice_approved';
+    }
+
+    // paid
+    if(option == 'pay'){
+        if((parseFloat(form.invoice_value.value) == 0) || (parseFloat(form.invoice_value.value) == "")){
+            errors++;
+            message += "\ninvoice_value_zero";
+        }
+        if(errors == 0){
+            paid_total = parseFloat(form.invoice_value.value) + parseFloat(parseInt(form.paid_amount.value)/100);
+            if(parseFloat(form.invoice_amount.value) > ( paid_total)){
+                new_status = 'parcial_paid';
+            } else {
+                new_status = 'paid';
+            }
+        }
+    }
+
+    var formData = new FormData(form);
+    formData.append('auth_api',authApi);
+    formData.append('option',option);
+    formData.append('newstatus',new_status);
+    
+    const newlocation = window.location.search.replace(status_old,new_status)
+alert(newlocation + '\nTotal: '+paid_total);
+    const requestURL = window.location.protocol+'//'+locat+'api/invoices/auth_invoice_update.php';
+    //console.log(requestURL);
+    //console.log(formData);
+    const request = new XMLHttpRequest();
+    request.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            // Typical action to be performed when the document is ready:
+            console.log(request.responseText);
+            obj = JSON.parse(request.responseText);
+            
+            if(obj.status == 'OK')
+                window.location.href = newlocation;
+            else
+                alert(obj.status + ': '+ obj.message);
+        }
+    };
+    request.open('POST', requestURL);
+    //request.responseType = 'json';
+    request.send(formData);
+
 }
 
 function handleRemove(tid,locked_status){
