@@ -124,7 +124,7 @@ $moduleName = 'Proposal';
                 <div class="form-row main-contact-section">
                     <div class="col">
                         <div class="form-row"  style="margin-top:2rem;">
-                            <div class="col main-contact-header" style="text-weight:bolder; text-decoration:underline overline; font-size:1.2rem;">
+                            <div class="col main-contact-header" style="font-weight: bolder; text-decoration:underline overline; font-size:1.2rem;">
                                 <?=translateText('products');?>
                             </div>
                             <div class="col-2">

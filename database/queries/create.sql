@@ -828,7 +828,7 @@ updated_at DATETIME NOT NULL
 # TRANSLATES
 CREATE TABLE translates (
 id VARCHAR(40) PRIMARY KEY NOT NULL,
-code_str VARCHAR(20) NOT NULL,
+code_str VARCHAR(40) NOT NULL,
 text_eng TEXT NOT NULL,
 text_esp TEXT,
 text_ptbr TEXT,
@@ -978,7 +978,39 @@ VALUES
 (UUID(), 'waiting_approval', 'Waiting for approval', 'A la espera de aprobación', 'Aguardando aprovação', 'Y', NOW(), NOW()),
 (UUID(), 'send_user_crt_url_to', 'Send user creation link to', 'Enviar la liga de creación del usuario para', 'Enviar link de criação de usuário para', 'Y', NOW(), NOW()),
 (UUID(), 'copy_user_crt_url', 'Copy user creation link', 'Copiar liga de creación del usuario', 'Copiar link de criação de usuário', 'Y', NOW(), NOW()),
-(UUID(), 'copied_to_clipboard', 'copied to clipboard', 'copiado al portapapeles', 'copiado para a área de transferência', 'Y', NOW(), NOW());
+(UUID(), 'copied_to_clipboard', 'copied to clipboard', 'copiado al portapapeles', 'copiado para a área de transferência', 'Y', NOW(), NOW()),
+(UUID(), 'deny_files', 'deny files', 'negar archivos', 'negar arquivos', 'Y', NOW(), NOW()),
+(UUID(), 'approve_files', 'approve files', 'aprobar archivos', 'aprovar arquivos', 'Y', NOW(), NOW()),
+(UUID(), 'send_message', 'Send message', 'Enviar mensaje', 'Enviar mensagem', 'Y', NOW(), NOW()),
+(UUID(), 'close', 'Close', 'Cerrar', 'Fechar', 'Y', NOW(), NOW()),
+(UUID(), 'motive', 'Motive', 'Motivo', 'Motivo', 'Y', NOW(), NOW()),
+(UUID(), 'save_without_payment', 'Save without pay', 'grabar sin pago', 'Gravar sem pagar', 'Y', NOW(), NOW()),
+(UUID(), 'approval_only', 'approval only', 'solo aprobacción', 'apenas aprovação', 'Y', NOW(), NOW()),
+(UUID(), 'payment_date', 'Payment date', 'Fecha de pago', 'Data de pagamento', 'Y', NOW(), NOW()),
+(UUID(), 'pay_invoice', 'pay invoice', 'pagar factura', 'pagar fatura', 'Y', NOW(), NOW()),
+(UUID(), 'pay', 'pay', 'pagar', 'pagar', 'Y', NOW(), NOW()),
+(UUID(), 'paid', 'paid', 'pagada', 'paga', 'Y', NOW(), NOW()),
+(UUID(), 'parcial_paid', 'parcial paid', 'pagada parcial', 'paga parcialmente', 'Y', NOW(), NOW()),
+(UUID(), 'invoice_approved', 'Invoice approved', 'factura aprobada', 'fatura aprovada', 'Y', NOW(), NOW()),
+(UUID(), 'invoice_amount', 'invoice amount', 'monto de la factura', 'valor da fatura', 'Y', NOW(), NOW()),
+(UUID(), 'approval_denied', 'approval denied', 'aprobación negada', 'aprovação negada', 'Y', NOW(), NOW()),
+(UUID(), 'no_id_information', 'no ID information', 'no hay información del ID', 'sem informação de ID', 'Y', NOW(), NOW()),
+(UUID(), 'no_user_information', 'no user information', 'no hay información del usuario', 'sem informação de usuário', 'Y', NOW(), NOW()),
+(UUID(), 'no_token_information', 'no token information', 'no hay información de la clave del usuario', 'sem informação de token de usuário', 'Y', NOW(), NOW()),
+(UUID(), 'no_newstatus_information', 'no new status information', 'no hay información del nuevo status', 'sem informação de novo status', 'Y', NOW(), NOW()),
+(UUID(), 'no_status_information', 'no status information', 'no hay información del status', 'sem informação de status', 'Y', NOW(), NOW()),
+(UUID(), 'no_motive_information', 'motive must be a string with more than 20 characters', 'el motivo hay de tener 20 caracteres o más', 'motivo precisa ter 20 caracteres ou mais', 'Y', NOW(), NOW()),
+(UUID(), 'no_currency_information', 'no currency information', 'no hay información de la moneda', 'sem informação de moeda', 'Y', NOW(), NOW()),
+(UUID(), 'no_paidamount_information', 'no paid amount information', 'no hay información del monto pagado', 'sem informação do valor pago', 'Y', NOW(), NOW()),
+(UUID(), 'no_paymentdate_information', 'no payment date information', 'no hay información de la fecha de pago', 'sem informação da data de pagamento', 'Y', NOW(), NOW()),
+
+
+
+
+
+(UUID(), 'from_invoice', 'from invoice', 'de la factura', 'da fatura', 'Y', NOW(), NOW());
+
+
 
 
 
