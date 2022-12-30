@@ -513,7 +513,7 @@ function invoiceChangeStatus(form,option){
     formData.append('newstatus',new_status);
     
     const newlocation = window.location.search.replace(status_old,new_status)
-alert(newlocation + '\nTotal: '+paid_total);
+    //alert(newlocation + '\nTotal: '+paid_total);
     const requestURL = window.location.protocol+'//'+locat+'api/invoices/auth_invoice_update.php';
     //console.log(requestURL);
     //console.log(formData);
