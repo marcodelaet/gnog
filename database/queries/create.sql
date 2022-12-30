@@ -1005,6 +1005,13 @@ VALUES
 (UUID(), 'no_paymentdate_information', 'no payment date information', 'no hay información de la fecha de pago', 'sem informação da data de pagamento', 'Y', NOW(), NOW()),
 
 
+INSERT INTO translates 
+(id, code_str, text_eng, text_esp, text_ptbr, is_active, created_at, updated_at)
+VALUES
+(UUID(), 'offer_period', 'Offer period', 'Periodo de la campaña', 'Período da campanha', 'Y', NOW(), NOW()),
+(UUID(), 'yyyy/mm/dd', 'yyyy/mm/dd', 'aaaa/mm/dd', 'aaaa/mm/dd', 'Y', NOW(), NOW()),
+(UUID(), 'format', 'format', 'formato', 'formato', 'Y', NOW(), NOW());
+
 
 
 
