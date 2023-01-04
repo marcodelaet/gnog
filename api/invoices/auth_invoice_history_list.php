@@ -1,8 +1,4 @@
 <?php
-
-ini_set('error_reporting', E_ALL);
-ini_set('display_errors', true);
-
 //REQUIRE GLOBAL conf
 require_once('../../database/.config');
 
@@ -20,19 +16,20 @@ if(array_key_exists('auth_api',$_REQUEST)){
     //if($localStorage == $_REQUEST['auth_api']){}
 
     // setting query
-    $columns        = "left(uuid,13) as uuid, uuid as uuid_full, username, account_locked, product_id, product_name, salemodel_id, salemodel_name, product_price, currency, name, address, webpage_url, contact_provider_id, concat(contact_name,' ', contact_surname,' (', contact_email,')') as contact, contact_name, contact_surname, contact_email, contact_position, phone_international_code, phone_prefix, phone_number, concat('+',phone_international_code,phone_number) as phone, is_active";
-    $tableOrView    = "view_providers";
+    $columns        = "user_id, module_name, module_id, DATE_FORMAT(created_at, '%Y/%m/%d %h:%i:%s') as history_date, description_en, description_es, description_ptbr";
+    $tableOrView    = "loghistory";
+    $orderBy        = "order by created_at desc";
 
     // filters
     $uuid                   = '';
 
-    $filters                = '';
-    if(array_key_exists('pid',$_REQUEST)){
-        if($_REQUEST['pid']!==''){
+    $filters                = "module_name = 'invoices'";
+    if(array_key_exists('iid',$_REQUEST)){
+        if($_REQUEST['iid']!==''){
             if($filters != '')
                 $filters .= " AND ";
-            $uuid         = $_REQUEST['pid'];
-            $filters        .= " uuid = '$uuid'";
+            $uuid         = $_REQUEST['iid'];
+            $filters        .= " module_id = '$uuid'";
         }
     }
    
@@ -43,7 +40,7 @@ if(array_key_exists('auth_api',$_REQUEST)){
 
 
     // Query creation
-    $sql = "SELECT $columns FROM $tableOrView $filters";
+    $sql = "SELECT $columns FROM $tableOrView $filters $orderBy";
     // LIST data
    // echo $sql;
     $rs = $DB->getData($sql);
