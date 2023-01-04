@@ -52,7 +52,6 @@ if(1==2)
                                 <th class="column" scope="col"><?=translateText('paid_at');?></th>
                                 <th class="column" style="text-align:center;" scope="col"><?=translateText('status');?></th>
                                 <th class="column" scope="col">&nbsp;</th>
-                                <th class="column" scope="col" style="text-align:center;"><?=translateText('files');?></th>
                             </tr>
                         </thead>
                         <tbody id="listInvoices">
@@ -77,66 +76,36 @@ if(1==2)
         </div>
     </div>
 
-<div class="modal fade" id="logModal" tabindex="-1" aria-labelledby="logModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="logModalLabel"><?=translateText('history')?> <?=translateText('from_invoice')?> </h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                    <div class="form-group">
-                        <div class="inputs-form-container">
-                            <div class="input-group mb-3">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text"><?=translateText('currency')?></span>
-                                </div>
-                            <select
-                            required
-                            name ='currency' 
-                            title = '<?=translateText('currency');?>'
-                            class="form-control"
-                            autocomplete="currency"
-                            onchange="if(this.value=='BRL'){document.getElementById('currency-symbol').innerText='R$';} else {document.getElementById('currency-symbol').innerText='$';}">
-                                <option value="MXN">MXN</option>
-                                <option value="USD">USD</option>
-                                <option value="BRL">BRL</option>
-                            </select> &nbsp;&nbsp;&nbsp;&nbsp;
-                            <div class="input-group-prepend">
-                                <span class="input-group-text" id="currency-symbol">$</span>
-                                <span class="input-group-text">0.00</span>
-                            </div>
-                            <input type='currency' class="form-control" placeholder="Total Pagado" name="invoice_value" id="invoice_value"  title="Total Pagado" autocomplete="invoice_value" onkeypress="$(this).mask('#,###,##0.00', {reverse: true});"/>
-                        </div>
-                        <div class="input-group mb-3">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text"><?=translateText('payment_date')?></span>
-                            </div>
-                            <input type='date' class="form-control" placeholder="<?=translateText('payment_date')?>" name="payment_date" id="payment_date"  title="<?=translateText('payment_date')?>" autocomplete="payment_date"/>
-                        </div>
-                    </div>
+
+    <div class="modal fade rounded" id="logModal" tabindex="-1" aria-labelledby="logModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="logModalLabel"><?=translateText('history')?> <?=translateText('from_invoice')?> </h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                 </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal"><?=translateText('close')?></button>
-                <button type="button" class="btn btn-primary" onclick="invoiceChangeStatus(frmApprove,'pay')"><?=ucfirst(translateText('pay'))?></button>
+                <div class="modal-body">
+                    <div class="history-list" id="history"></div>
+                </div>
+                <div class="modal-footer">
+                </div>
             </div>
         </div>
     </div>
-</div>
+
 
     <script>
         handleListOnLoad();
 
     $('#logModal').on('show.bs.modal', function (event) {
-        var button = $(event.relatedTarget) // Button that triggered the modal
-        var action = button.data('whatever') // Extract info from data-* attributes
+       // var button = $(event.relatedTarget) // Button that triggered the modal
+        //var action = button.data('whatever') // Extract info from data-* attributes
         // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
         // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
-        var modal = $(this)
-        modal.find('.modal-title').text(action + ' '+document.getElementById('invoice-number').innerText);
+        //var modal = $(this)
+       //modal.find('.modal-title').text(action + ' '+document.getElementById('invoice-number').innerText);
         // modal.find('.modal-body input').val(recipient)
     });
     </script>

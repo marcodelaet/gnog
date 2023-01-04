@@ -293,6 +293,61 @@ function handleViewOnLoad(iid) {
     }
 }
 
+function listStatusHistory(iid){
+    errors      = 0;
+    authApi     = csrf_token;
+    locat       = window.location.hostname;
+
+    filters     = '&iid='+iid;
+
+    if(locat.slice(-1) != '/')
+        locat += '/';
+
+    if(errors > 0){
+
+    } else{
+        const requestURL = window.location.protocol+'//'+locat+'api/invoices/auth_invoice_history_list.php?auth_api='+authApi+filters;
+       // console.log(requestURL);
+        const request   = new XMLHttpRequest();
+        request.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                obj = JSON.parse(request.responseText);
+                history_html = '';
+
+                user_language = localStorage.getItem('ulang');
+                description = '';
+                for(i=0;i<obj.length;i++){
+                    switch (user_language){
+                        case 'eng':
+                            description = obj[i].description_en;
+                            break;
+                        case 'esp':
+                            description = obj[i].description_es;
+                            break;
+                        case 'ptbr':
+                            description = obj[i].description_ptbr;
+                            break;
+                    }
+                    history_html += '<p>'+obj[i].history_date+' - '+description+'</p>';
+                    if(i < (obj.length - 1))
+                    history_html += '<hr/>';
+                }
+
+                document.getElementById('history').innerHTML      = history_html;
+                // show modal
+                $('#logModal').modal('show');
+
+              }
+            else{
+                //form.btnSave.innerHTML = "Searching...";
+            }
+        };
+        request.open('GET', requestURL);
+        //request.responseType = 'json';
+        request.send();
+    }
+}
+
 function handleOnLoad(tid,form) {
     errors      = 0;
     authApi     = csrf_token;
@@ -408,7 +463,26 @@ function handleListOnLoad(search) {
                             last_payment_date = '';
                         }
                         invoice_status = translateText(obj.data[i].invoice_status,localStorage.getItem('ulang'));
-
+                        /* **********
+                        ** success  - verde
+                        ** ++ invoice_approved
+                        ** ++ approved
+                        ** ++ paid
+                        ** ++ 
+                        ** danger   - vermelho
+                        ** ++ denied
+                        ** ++
+                        ** warning  - amarelo
+                        ** ++ paid_parcial
+                        ** ++ waiting_approval
+                        ***** */
+                        color_badge = 'success';
+                        if( (obj.data[i].invoice_status == 'waiting_approval') || (obj.data[i].invoice_status == 'parcial_paid')){
+                            color_badge = 'warning';
+                        }
+                        if(obj.data[i].invoice_status == 'approval_denied'){
+                            color_badge = 'danger';
+                        }
                         if(invoice_id != obj.data[i].invoice_id){
                             html += '<tr><td nowrap>'+obj.data[i].provider_name+'</td>';
                             html += '<td nowrap>'+obj.data[i].offer_name+' / '+ obj.data[i].product_name +' - '+ obj.data[i].salemodel_name +'</td>';
@@ -419,7 +493,7 @@ function handleListOnLoad(search) {
                             html += '<td style="text-align:center" nowrap>'+obj.data[i].invoice_month+'/'+obj.data[i].invoice_year+'</td>';
                             html += '<td style="text-align:right" nowrap>'+amount_paid+'</td>';
                             html += '<td nowrap>'+last_payment_date+'</td>';
-                            html += '<td style="text-align:center" nowrap>'+invoice_status.charAt(0).toUpperCase()+invoice_status.slice(1)+'</td>';
+                            html += '<td style="text-align:center" nowrap><a href="javascript:void(0)" onclick="listStatusHistory(\''+obj.data[i].invoice_id+'\')" class="badge badge-'+color_badge+'">'+invoice_status+'</a></td>';
                             html += '<td style="text-align:center" nowrap><a href="?pr=Li9wYWdlcy9maW5hbmNpYWwvaW52b2ljZXMvaW5mby5waHA=&iid='+obj.data[i].invoice_id+'&sts='+obj.data[i].invoice_status+'"><span class="material-icons-outlined"  style="font-size:1.5rem; color:black;"  title="Ver factura '+obj.data[i].invoice_number+'" >visibility</span></a></td>';
                          //   html += '<td nowrap style="text-align:center;">';
                         }
@@ -441,15 +515,15 @@ function handleListOnLoad(search) {
                 } else {
                     if(search !== ''){
                         alert('la busqueda no hay retornado resultos para: ' + search);
-                        html = '<tr><td colspan="10" style="text-align:center;">0 resultos para <b>'+search+'</b></td></tr>';
+                        html = '<tr><td colspan="11" style="text-align:center;">0 resultos para <b>'+search+'</b></td></tr>';
                     } else {
-                        html = '<tr><td colspan="10" style="text-align:center;">0 resultos</td></tr>';
+                        html = '<tr><td colspan="11" style="text-align:center;">0 resultos</td></tr>';
                     }
                 } 
                 tableList.innerHTML = html;
             }
             else{
-                html = '<tr><td colspan="10"><div style="margin-left:45%; margin-right:45%;" class="spinner-border" style="text-align:center;" role="status">';
+                html = '<tr><td colspan="11"><div style="margin-left:45%; margin-right:45%;" class="spinner-border" style="text-align:center;" role="status">';
                 html += '<span class="sr-only">Loading...</span>';
                 html += '</div></td></tr>';
                 tableList.innerHTML = html;
