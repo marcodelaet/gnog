@@ -246,6 +246,9 @@ function handleViewOnLoad(iid) {
                     if(obj[i].file_name.substring(0,7)=='invoice'){
                         invoice_file_html = '<a target="_blank" href="'+location_file+obj[i].file_name+'"><spam class="material-icons icon-data jump">download</spam></a>';
                     }
+                    if(obj[i].file_name.substring(0,3)=='xml'){
+                        xml_file_html = '<a target="_blank" href="'+location_file+obj[i].file_name+'"><spam class="material-icons icon-data jump">download</spam></a>';
+                    }
                     if(obj[i].file_name.substring(0,2)=='po'){
                         po_file_html = '<a target="_blank" href="'+location_file+obj[i].file_name+'"><spam class="material-icons icon-data jump">download</spam></a>';
                     }
@@ -276,9 +279,9 @@ function handleViewOnLoad(iid) {
 
                 document.getElementById('invoice-file').innerHTML           = invoice_file_html;
                 document.getElementById('po-file').innerHTML                = po_file_html;
+                document.getElementById('xml-file').innerHTML               = xml_file_html;
                 document.getElementById('report-file').innerHTML            = report_file_html;
                 document.getElementById('presentation-file').innerHTML      = presentation_file_html;
-                document.getElementById('card-salemodel').innerHTML         = obj[0].salemodel_name;
               }
             else{
                 //form.btnSave.innerHTML = "Searching...";
@@ -418,21 +421,22 @@ function handleListOnLoad(search) {
                             html += '<td nowrap>'+last_payment_date+'</td>';
                             html += '<td style="text-align:center" nowrap>'+invoice_status.charAt(0).toUpperCase()+invoice_status.slice(1)+'</td>';
                             html += '<td style="text-align:center" nowrap><a href="?pr=Li9wYWdlcy9maW5hbmNpYWwvaW52b2ljZXMvaW5mby5waHA=&iid='+obj.data[i].invoice_id+'&sts='+obj.data[i].invoice_status+'"><span class="material-icons-outlined"  style="font-size:1.5rem; color:black;"  title="Ver factura '+obj.data[i].invoice_number+'" >visibility</span></a></td>';
-                            html += '<td nowrap style="text-align:center;">';
+                         //   html += '<td nowrap style="text-align:center;">';
                         }
                         // FILES
                         // adding files icons / links
-                        html += '<a href="'+obj.data[i].file_location+obj.data[i].file_name+'" target="_blank"><span class="material-icons" style="font-size:1.5rem; color:black;" title="'+obj.data[i].file_name+'">download</span></a>';
+                        
+                        //html += '<a href="'+obj.data[i].file_location+obj.data[i].file_name+'" target="_blank"><span class="material-icons" style="font-size:1.5rem; color:black;" title="'+obj.data[i].file_name+'">download</span></a>';
 
                         if(invoice_id != obj.data[i].invoice_id){
                             countingstars = 0; // reseting counting files
-                            if(countingstars > 0)
-                                html += '</td></tr>';
+                            //if(countingstars > 0)
+                          //      html += '</td></tr>';
                             // setting new invoice id
                             invoice_id = obj.data[i].invoice_id;
                         } else {
                             countingstars++;
-                        }
+                        } 
                     }
                 } else {
                     if(search !== ''){

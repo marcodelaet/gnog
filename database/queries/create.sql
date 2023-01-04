@@ -507,7 +507,7 @@ ALTER TABLE `billboards`
     REFERENCES `viewpoints` (`id`);
 
 
-INSERT INTO billboard (id,name_key,address,state,category,coordenates,latitud,longitud,price_int,cost_int,width,height,photo,
+INSERT INTO billboards (id,name_key,address,state,category,coordenates,latitud,longitud,price_int,cost_int,width,height,photo,
 provider_id,salemodel_id,viewpoint_id,is_iluminated, is_digital, is_active, created_at, updated_at) 
 VALUES
 (UUID(),'key','address','state','category','coordenates','latitud','longitud',price_int,cost_int,width,height,'photo',provider_id,salemodel_id,viewpoint_id,'is_iluminated','is_digital','Y',now(),now());
@@ -1010,16 +1010,8 @@ INSERT INTO translates
 VALUES
 (UUID(), 'offer_period', 'Offer period', 'Periodo de la campaña', 'Período da campanha', 'Y', NOW(), NOW()),
 (UUID(), 'yyyy/mm/dd', 'yyyy/mm/dd', 'aaaa/mm/dd', 'aaaa/mm/dd', 'Y', NOW(), NOW()),
-(UUID(), 'format', 'format', 'formato', 'formato', 'Y', NOW(), NOW());
-
-
-
-
+(UUID(), 'format', 'format', 'formato', 'formato', 'Y', NOW(), NOW()),
 (UUID(), 'from_invoice', 'from invoice', 'de la factura', 'da fatura', 'Y', NOW(), NOW());
-
-
-
-
 
 
 # FILES

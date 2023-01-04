@@ -49,10 +49,6 @@ if($status != 'waiting_approval'){
                 <spam id="invoice-file"></spam>
             </div>
             <div class="<?=strtolower($moduleName)?>-data">
-                <spam class="file-list-item"><?=translateText('xml_file')?></spam>
-                <spam id="xml-file"></spam>
-            </div>
-            <div class="<?=strtolower($moduleName)?>-data">
                 <spam class="file-list-item"><?=translateText('po_file')?></spam>
                 <spam id="po-file"></spam>
             </div>
@@ -179,23 +175,26 @@ if($status != 'waiting_approval'){
 
 
 <script type="text/javascript">
-    $('#motiveModal').on('show.bs.modal', function (event) {
-      var button = $(event.relatedTarget) // Button that triggered the modal
-      var recipient = button.data('whatever') // Extract info from data-* attributes
-      // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
-      // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
-      var modal = $(this)
-      modal.find('.modal-title').text('<?=ucfirst(translateText('deny_files'))?> <?=translateText('from_invoice')?> '+document.getElementById('invoice-number').innerText);
-    // modal.find('.modal-body input').val(recipient)
-    });
+$('#motiveModal').on('show.bs.modal', function (event) {
+  var button = $(event.relatedTarget) // Button that triggered the modal
+  var recipient = button.data('whatever') // Extract info from data-* attributes
+  // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
+  // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
+  var modal = $(this)
+  modal.find('.modal-title').text('<?=ucfirst(translateText('deny_files'))?> <?=translateText('from_invoice')?> '+document.getElementById('invoice-number').innerText);
+ // modal.find('.modal-body input').val(recipient)
+});
 
-    $('#approveModal').on('show.bs.modal', function (event) {
-      var button = $(event.relatedTarget) // Button that triggered the modal
-      var action = button.data('whatever') // Extract info from data-* attributes
-      // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
-      // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
-      var modal = $(this)
-      modal.find('.modal-title').text(action + ' '+document.getElementById('invoice-number').innerText);
-    // modal.find('.modal-body input').val(recipient)
-    });
+$('#approveModal').on('show.bs.modal', function (event) {
+  var button = $(event.relatedTarget) // Button that triggered the modal
+  var action = button.data('whatever') // Extract info from data-* attributes
+  // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
+  // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
+  var modal = $(this)
+  modal.find('.modal-title').text(action + ' '+document.getElementById('invoice-number').innerText);
+ // modal.find('.modal-body input').val(recipient)
+})
+
+
+
 </script>
