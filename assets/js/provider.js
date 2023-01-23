@@ -10,10 +10,12 @@ function handleSubmit(form) {
         authApi     = csrf_token;
         message     = '';
 
-        xname                   = form.name.value;
-        address                 = form.address.value;
-        webpage_url             = form.webpage_url.value;
-        product_id              = form.product_id.value;
+        user_token  = form.tku.value;
+        user_id     = form.uid.value;
+        xname       = encodeURIComponent(form.name.value);
+        address     = encodeURIComponent(form.address.value);
+        webpage_url = encodeURIComponent(form.webpage_url.value);
+        product_id  = form.product_id.value;
         if(product_id == '0'){
             message += 'Please, select a product!\n';
             errors++;
@@ -33,7 +35,7 @@ function handleSubmit(form) {
         if(errors > 0){
             alert(message);
         } else{
-            const requestURL = window.location.protocol+'//'+locat+'api/providers/auth_provider_add_new.php?auth_api='+authApi+'&name='+xname+'&webpage_url='+webpage_url+'&address='+address+'&product_id='+product_id+'&salemodel_id='+salemodel_id+'&product_price='+product_price+'&currency='+currency;
+            const requestURL = window.location.protocol+'//'+locat+'api/providers/auth_provider_add_new.php?auth_api='+authApi+'&tk='+user_token+'&uid='+user_id+'&name='+xname+'&webpage_url='+webpage_url+'&address='+address+'&product_id='+product_id+'&salemodel_id='+salemodel_id+'&product_price='+product_price+'&currency='+currency;
             console.log(requestURL);
             const request = new XMLHttpRequest();
             request.onreadystatechange = function() {

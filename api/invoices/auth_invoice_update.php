@@ -29,9 +29,7 @@ if(array_key_exists('auth_api',$_POST)){
     $tableOrView    = "invoices";
 
     $auth_api   = $_POST['auth_api'];
-
     
-
     // filters
     $filters        = '';
 
@@ -140,9 +138,6 @@ if(array_key_exists('auth_api',$_POST)){
         // e comparar com o valor da base invoice_amount_int. Se a soma >= valor 
         // a pagar, muda status para pago
         
-        
-
-
         if(array_key_exists('payment_date',$_POST))
         {
             if(trim($_POST['payment_date']) != ''){

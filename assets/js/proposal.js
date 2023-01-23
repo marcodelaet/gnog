@@ -84,6 +84,7 @@ function handleSubmit(form) {
                             xquantity = objQuantity[i].value;
                         quantity        += virg + xquantity;
                         provider_id     += virg + objProviderId[i].value;
+                        //if(objState[i].value)
                         state_id        += virg + objState[i].value;
                     }
                     addProduct('['+product_id+']','['+salemodel_id+']','['+price+']',currency,'['+quantity+']','['+provider_id+']',proposal_id,'['+state_id+']');

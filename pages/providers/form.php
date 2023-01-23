@@ -137,6 +137,8 @@ $moduleName = 'Provider';
                 </div>
             </div>
             <div class="inputs-button-container">
+                <input type="hidden" name="tku" value="<?=$_COOKIE['tk']?>" />
+                <input type="hidden" name="uid" value="<?=$_COOKIE['uuid']?>" />
                 <button class="button" name="btnSave" type="button" onClick="handleSubmit(<?=strtolower($moduleName)?>)" >Save</button>
             </div>
         </form>
