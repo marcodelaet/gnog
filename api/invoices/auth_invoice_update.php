@@ -5,6 +5,18 @@ require_once('../../database/.config');
 // REQUIRE conexion class
 require_once('../../database/connect.database.php');
 
+// Loading SendMail class
+require('../../assets/lib/SendMail.php');
+
+// Creating a new instance to SendMail class
+$SendGNogMail = new SendMail();
+
+$from_name     = 'GNog Media - Providers';
+$from_email    = 'nocontestar@gnogmedia.com';
+//$to_name       = 'Lorena Saitta, Christian Nolasco, Fernando Nogueira, Marco De Laet, Estephanie Torres, Amanda Gómes Morales, Juan Jose';
+//$to_email      = 'lorena@gnogmedia.com, finanzas@gnog.com.mx, fernando@gnog.com.mx, it@gnog.com.br, estephanie@gnog.com.mx, amanda@gnog.com.mx, juan@gnog.com.mx';
+$signFilePath  = 'platform_CRM.png';
+
 if(!isset($DB)){
     $DB = new MySQLDB($DATABASE_HOST,$DATABASE_USER,$DATABASE_PASSWORD,$DATABASE_NAME);
 
@@ -194,14 +206,30 @@ if(array_key_exists('auth_api',$_POST)){
                 $description_es     = 'factura '.json_decode(translateTextInLanguage($newStatus,'esp'),true)['translation'] . ', monto del pago $'.$_POST['invoice_value']. ' (moneda: '.$_POST['currency'].')';
                 $description_ptbr   = 'fatura '.json_decode(translateTextInLanguage($newStatus,'ptbr'),true)['translation'] . ', valor pago $'.$_POST['invoice_value']. ' (moeda: '.$_POST['currency'].')';
         }
-                
-            //$message = "setHistory($user_id,'invoices',$description,$user_token,$form_token,'text')";
-            setHistory($user_id,'invoices',$invoice_id,$description_en,$description_es,$description_ptbr,$user_token,$auth_api,'text');
 
-            /*****************************************************************
-             * sending email | if $newStatus1 <> waiting_approval, send 
-             * $newStatus1 and later $newStatus 
-             ********************************************************* */ 
+            // getting user information
+            $sql_get_user = "SELECT i.invoice_number, CONCAT(p.contact_name,' ',p.contact_surname) as full_name, p.name as provider_name, u.email from view_users u INNER JOIN view_providers p ON p.contact_email = u.email INNER JOIN invoices i ON i.provider_id = p.UUID WHERE i.id = '$uuid'";
+            $rs_get_user  = $DB->getData($sql_get_user);
+
+            $invoice_number     = $rs_get_user[0]['invoice_number']; 
+            $user_fullname      = $rs_get_user[0]['full_name'];
+            $user_email         = $rs_get_user[0]['email'];
+            $user_providername  = $rs_get_user[0]['provider_name'];
+        
+            //changing TO to logged user
+            $to_name     = "$user_fullname";
+            $to_email    = "$user_email";
+        
+            // setting history log
+            setHistory($user_id,'invoices',$invoice_id,$description_en,$description_es,$description_ptbr,$user_token,$auth_api,'text');        
+            
+            $subject       = "Notificación - Invoice: $invoice_number";
+            $messageHtml   = "<p>Esp: <p>$description_es </p></p>";
+            $messageHtml   .= "<p>PtBR: <p>$description_ptbr </p></p>";
+            $messageHtml   .= "<p>Eng: <p>$description_en </p></p>";
+            
+            $SendGNogMail->sendGNogMail($from_name,$from_email,$to_name,$to_email,$subject,$messageHtml,$signFilePath);
+        
             $message .= "\n- data record successfully";
             //$return = json_encode(["status" => "Error","message" => $message]);
             $response = json_encode(["status" => "OK","message" => $message]);
