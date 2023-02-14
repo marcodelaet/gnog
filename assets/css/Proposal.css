@@ -20,6 +20,10 @@
     box-shadow: 0.375rem 0.375rem 0.375rem #999; 
 }
 
+.provider-name{
+    font-weight: bold;
+}
+
 .list-products-container {
   /*  margin-top: 1.8rem;   */ 
 }

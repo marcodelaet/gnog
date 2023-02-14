@@ -156,8 +156,8 @@ $moduleName = 'Proposal';
                                         &nbsp;
                                     </div>
                                     <div class="col-2">
-                                        <input class="stateId" name="state_id[]" id="stateId_0" type="hidden">
-                                        <?=inputDropDownSearchStyle('state','state','is_active=true','state','tete')?>
+                                        <input class="stateId" name="state_id[]" id="stateId_0" type="hidden" value="All">
+                                        <?=inputDropDownSearchStyle('state','state','is_active|||Y','state','tete')?>
                                     </div>
                                 </div>
                                 <div class="form-row">

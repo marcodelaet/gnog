@@ -1,5 +1,14 @@
 <?php
 $moduleName = $_REQUEST['md'];
+if(array_key_exists('tid',$_REQUEST)){
+    $clientID = $_REQUEST['tid'];
+}
+if(array_key_exists('aid',$_REQUEST)){
+    $clientID = $_REQUEST['aid'];
+}
+if(array_key_exists('pid',$_REQUEST)){
+    $clientID = $_REQUEST['pid'];
+}
 $subModuleName = 'Contact';
 ?>
 <link rel="stylesheet" href="<?=$dir?>./assets/css/<?=$subModuleName?>.css">
@@ -118,7 +127,7 @@ $subModuleName = 'Contact';
                     </div>
                     <div class="form-row">
                         <div class="col">
-                            <input type="hidden" name="ElementID" value="<?=$_GET['tid']?>"/>
+                            <input type="hidden" name="ElementID" value="<?=$clientID?>"/>
                             <input type="hidden" name="auth_api" value=csrf_token />
                             <input type="hidden" name="phone_ddi" value="000" />
                         </div>
