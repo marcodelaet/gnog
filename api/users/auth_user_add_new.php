@@ -31,7 +31,7 @@ if(array_key_exists('auth_api',$_REQUEST)){
     $authentication_string  = md5($_REQUEST['password']);
 
     // Query creation
-    $sql = "INSERT INTO users (id,username,email,mobile_international_code,mobile_number,authentication_string,account_locked,created_at,updated_at) VALUES ((UUID()),'$username','$email',$mobile_ddi,$mobile,'$authentication_string','N',now(),now())";
+    $sql = "INSERT INTO users (id,username,email,level_account,user_type,mobile_international_code,mobile_number,authentication_string,account_locked,created_at,updated_at) VALUES ((UUID()),'$username','$email','20','user',$mobile_ddi,$mobile,'$authentication_string','N',now(),now())";
     // INSERT data
     $rs = $DB->executeInstruction($sql);
 
