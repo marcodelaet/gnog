@@ -337,7 +337,9 @@ function handleListEditOnLoad(ppid) {
                         '<div class="col-sm-2">';
                         //html += '<a href="?pr=Li9wYWdlcy9tYXBzL2luZGV4LnBocA==&pid='+obj[i].provider_id+'&ppid='+ppid+'"><span class="material-icons" style="font-size:1.2rem;">edit</span></a>';
                         html += '</div>';
-                        html += '</div>';    
+                        html += '</div>';
+                        // if in a different provider, product must be showed again  
+                        productOld = 0;    
                     }
                     // products list
                     product = obj[i].salemodel_name + obj[i].state;
