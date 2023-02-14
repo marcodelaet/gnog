@@ -276,7 +276,7 @@ function handleListEditOnLoad(ppid) {
     locat       = window.location.hostname;
 
     filters     = '&ppid='+ppid;
-    orderby     = '&orderby=state ASC,proposalproduct_id,billboard_name';
+    orderby     = '&orderby=state ASC,provider_id ASC,proposalproduct_id,billboard_name';
   
     if(locat.slice(-1) != '/')
         locat += '/';
@@ -321,21 +321,38 @@ function handleListEditOnLoad(ppid) {
                 });
 
 
-                productOld = 0;
-                html = '';
-                numberProducts = 0;
+                productOld      = 0;
+                providerOld     = 0;
+                html            = '';
+                numberProducts  = 0;
+                numberProviders = 0;
+                aBillboards     = ['Arco','Bajo Puente','Cartelera','Caseta','Columna','Mupi','Muro','Pantalla','Pantalla Led','Parabus','Puente Peatonal','Puente Vehicular','Reloj Digital','Valla'];
                 for(i=0;i < obj.length; i++){
-                    // list products
+                    // providers
+                    provider = obj[i].provider_id;
+                    if(provider != providerOld){
+                        numberProviders++;
+                        html += '<div class="row list-products-row">' +
+                        '<div class="col-sm-6 provider-name">'+obj[i].provider_name+'</div>' +
+                        '<div class="col-sm-2">';
+                        //html += '<a href="?pr=Li9wYWdlcy9tYXBzL2luZGV4LnBocA==&pid='+obj[i].provider_id+'&ppid='+ppid+'"><span class="material-icons" style="font-size:1.2rem;">edit</span></a>';
+                        html += '</div>';
+                        html += '</div>';    
+                    }
+                    // products list
                     product = obj[i].salemodel_name + obj[i].state;
                     if(product != productOld){
                         numberProducts++;
                         html += '<div class="row list-products-row">' +
                         '<div class="col-sm-1">'+(numberProducts)+'</div>' +
-                        '<div class="col-sm-3">'+obj[i].salemodel_name+'</div>' +
-                        '<div class="col-sm-2">'+obj[i].state+'</div>' + 
+                        '<div class="col-sm-3">'+obj[i].product_name+' / '+obj[i].salemodel_name+'</div>' +
+                        '<div class="col-sm-2">'+obj[i].state+'</div>'; 
                         //'<div class="col-sm-2">Rate % All</div>' +
-                        '<div class="col-sm-2"><a href="?pr=Li9wYWdlcy9tYXBzL2luZGV4LnBocA==&smid='+obj[i].salemodel_id+'&ppid='+ppid+'&pppid='+obj[i].proposalproduct_id+'&state='+obj[i].state+'"><span class="material-icons" style="font-size:1.2rem;">map</span></a></div>' +
-                        '</div>';    
+                        if(aBillboards.indexOf(obj[i].salemodel_name) != -1){
+                        //if(obj[i].billboard_salemodel_name != null){
+                            html += '<div class="col-sm-2"><a href="?pr=Li9wYWdlcy9tYXBzL2luZGV4LnBocA==&smid='+obj[i].salemodel_id+'&ppid='+ppid+'&pppid='+obj[i].proposalproduct_id+'&state='+obj[i].state+'"><span class="material-icons" style="font-size:1.2rem;">map</span></a></div>';
+                        }
+                        html += '</div>';    
                     }
                     // css to special times
                     deletedbillboard = '';
@@ -372,11 +389,11 @@ function handleListEditOnLoad(ppid) {
                         '</div>';    
                     }
                     productOld = obj[i].salemodel_name + obj[i].state;
+                    providerOld = obj[i].provider_id;
                 }
                 document.getElementById('list-products').innerHTML = html;
-
             }
-            else{
+            else {
                 //form.btnSave.innerHTML = "Searching...";
             }
         };

@@ -17,7 +17,6 @@ $moduleName = 'Proposal';
     </div>    
 </div>
 
-
 <?php 
 if(array_key_exists('ppid',$_REQUEST)){ 
     $ppid        = $_REQUEST['ppid'];
