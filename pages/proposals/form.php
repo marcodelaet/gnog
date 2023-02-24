@@ -50,8 +50,9 @@ $moduleName = 'Proposal';
                     </div>
                 </div>
                 <div id="div-selectContact"></div>
+                <div class="row">&nbsp;</div>
                 <div class="form-row">
-                    <div class="col">
+                    <div class="col-8">
                         <label for="name"><?=translateText('offer_name');?></label>
                         <input
                         required
@@ -68,20 +69,31 @@ $moduleName = 'Proposal';
                             Please type the Offer name
                         </div>
                     </div>
+                    <div class="col-2" >&nbsp;</div>
+                    <div class="col-2" >
+                        <label for="officeDropdownMenuButton"><?=translateText('gnog_office');?></label>
+                            <?=inputDropDownStyle('office','','orderby','Mexico','4d2af032-b204-11ed-a96a-246fbf72fd9f')?>
+                            <div class="invalid-feedback">
+                                Please choose the Office
+                            </div>
+                    </div>
                 </div>
+                <div class="row">&nbsp;</div>
                 <div class="form-row">
-                    <label for="name"><?=translateText('description');?></label>
-                    <div class="input-group mb-3">
-                        <textarea
-                        required
-                        name ='description' 
-                        placeholder='About the offer'
-                        title = 'description'
-                        class="form-control" 
-                        autocomplete="description"
-                        ></textarea>
-                        <div class="invalid-feedback">
-                            Please type a description about the offer
+                    <div class="col">
+                        <label for="description"><?=translateText('description');?></label>
+                        <div class="input-group mb-3">
+                            <textarea
+                            required
+                            name ='description' 
+                            placeholder='About the offer'
+                            title = 'description'
+                            class="form-control" 
+                            autocomplete="description"
+                            ></textarea>
+                            <div class="invalid-feedback">
+                                Please type a description about the offer
+                            </div>
                         </div>
                     </div>
                 </div>

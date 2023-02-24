@@ -14,10 +14,9 @@ $con = $DB->connect();
 if(array_key_exists('auth_api',$_GET)){
     // check auth_api === local storage
     //if($localStorage == $_REQUEST['auth_api']){}
-
     // setting query
-    $columns = "id as uuid_full, concat(name,' (',percent,'%)') as name, name as simple_name, percent, description, is_active";
-    $tableOrView    = "statuses";
+    $columns = "id as uuid_full, name, icon_flag, orderby, is_active";
+    $tableOrView    = "offices";
     $orderBy        = "order by name";
 
     if(array_key_exists('order',$_GET)){
@@ -27,16 +26,14 @@ if(array_key_exists('auth_api',$_GET)){
     
     // filters
     $filters                = '';
-    if(array_key_exists('search',$_GET)){
-        if($_GET['search']!==''){
-            $jocker         = $_GET['search'];
-            $filters        .= "AND search like '%$jocker%'";
+    if(array_key_exists('where',$_GET)){
+        if($_GET['where']!==''){
+            $jocker         = $_GET['where'];
+            $filters        .= " AND ". str_replace("-","='",$jocker)."'";
         }
     }
     
     $filters = "WHERE is_active='Y' ".$filters;
-    
-
 
     // Query creation
     $sql = "SELECT $columns FROM $tableOrView $filters $orderBy";

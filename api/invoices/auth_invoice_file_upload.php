@@ -121,8 +121,6 @@ $fileSizexml            = $_FILES["invoice-file-xml"]["size"];
 
 $message = '';
 
-
-
 if ($uploadOk > 0) {
     $invoice_status = "waiting_approval"; // need to be on translate table
     

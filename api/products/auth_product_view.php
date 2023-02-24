@@ -45,13 +45,14 @@ if(array_key_exists('auth_api',$_REQUEST)){
     // LIST data
     //echo $sql;
     $rs = $DB->getData($sql);
+    $numRows = $DB->numRows($sql);
 
-  
-
-    // Response JSON 
+    // Response JSON
+    header('Content-type: application/json'); 
     if($rs){
-        header('Content-type: application/json');
-        echo json_encode($rs);
+        echo json_encode(['response'=>'OK','data'=>$rs,'numRows'=>$numRows]);
+    } else {
+        echo json_encode(['response'=>'ERROR']);
     }
 }
 

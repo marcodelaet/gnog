@@ -17,13 +17,11 @@ function handleSubmit(form) {
         pixel      = 'N';
         if(form.pixel.checked)
             pixel               = 'Y';
-        xname                   = form.name.value;
-        client_id               = form.client_id.value;
-        agency_id               = form.agency_id.value;
-        contact_id              = form.contact_id.value;
-        description             = form.description.value;
-        start_date              = form.start_date.value;
-        stop_date               = form.stop_date.value;
+
+        var formData = new FormData(form);
+        formData.append('auth_api',authApi);
+        formData.append('office_id',form.officeDropdownMenuButton.value);
+
         total                   = form.total.value;
         status_id               = form.status_id.value;
         currency                = form.currency.value;
@@ -43,16 +41,16 @@ function handleSubmit(form) {
         if(errors > 0){
             alert(message);
         } else{
-            const requestURL = window.location.protocol+'//'+locat+'api/proposals/auth_proposal_add_new.php?auth_api='+authApi+'&name='+xname+'&pixel='+pixel+'&client_id='+client_id+'&agency_id='+agency_id+'&contact_id='+contact_id+'&description='+description+'&start_date='+start_date+'&stop_date='+stop_date+'&status_id='+status_id;
+            const requestURL = window.location.protocol+'//'+locat+'api/proposals/auth_proposal_add_new.php';
             //console.log(requestURL);
             const request = new XMLHttpRequest();
             request.onreadystatechange = function() {
                 if (this.readyState == 4 && this.status == 200) {
                     // Typical action to be performed when the document is ready:
+                    //alert(request.responseText);                    
                     obj = JSON.parse(request.responseText);
+
                     proposal_id = obj[0].id;
-                   
-                    //alert('len: ' + objProduct.length);
                     virg            = '';
                     product_id      = '';
                     salemodel_id    = '';
@@ -96,9 +94,9 @@ function handleSubmit(form) {
                     form.btnSave.innerHTML = "Saving...";
                 }
             };
-            request.open('GET', requestURL, false);
+            request.open('POST', requestURL, false);
             //request.responseType = 'json';
-            request.send();
+            request.send(formData);
         }
     } else
         alert('Please, fill all required fields (*)');

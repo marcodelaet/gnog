@@ -19,25 +19,33 @@ if(array_key_exists('auth_api',$_REQUEST)){
 
     // values to insert
     $user_id        = $_COOKIE['uuid']; // get cookie value
-    $name           = $_GET['name'];
-    $client_id      = $_GET['client_id'];
+    $name           = $_POST['name'];
+    $client_id      = $_POST['client_id'];
     $agency_id      = 'NULL';
-    if($_GET['agency_id'] != '0')
-        $agency_id  = "('".$_GET['agency_id']."')";
-    $contact_id     = $_GET['contact_id'];
-    $description    = $_GET['description'];
-    $start_date     = $_GET['start_date'];
-    $stop_date      = $_GET['stop_date'];
-    $status_id      = $_GET['status_id'];
-    $pixel          = $_GET['pixel'];
+    if($_POST['agency_id'] != '0')
+        $agency_id  = "('".$_POST['agency_id']."')";
+    $contact_id     = $_POST['contact_id'];
+    $office_id      = $_POST['office_id'];
+    $description    = $_POST['description'];
+    $start_date     = $_POST['start_date'];
+    $stop_date      = $_POST['stop_date'];
+    $status_id      = $_POST['status_id'];
+    $pixel_original = $_POST['pixel'];
+
+    $pixel = "N";
+    if(isset($pixel_original)){
+        $pixel = "Y";
+    }
     
-    $columns    = 'id,user_id,status_id,offer_name,advertiser_id,agency_id,contact_id,description,start_date,stop_date,is_pixel,is_active,created_at, updated_at';
-    $values     = "(UUID()),('$user_id'),$status_id,'$name',('$client_id'),$agency_id,('$contact_id'),'$description','$start_date','$stop_date','$pixel','Y',now(),now()";
+    $columns    = 'id,user_id,status_id,offer_name,advertiser_id,agency_id,contact_id,office_id,description,start_date,stop_date,is_pixel,is_active,created_at, updated_at';
+    $values     = "(UUID()),('$user_id'),$status_id,'$name',('$client_id'),$agency_id,('$contact_id'),'$office_id','$description','$start_date','$stop_date','$pixel','Y',now(),now()";
     $table      = "proposals";
 
     // Query creation
     $sql = "INSERT INTO $table ($columns) VALUES ($values)";
-    // INSERT data
+    // INSERT data 
+    //echo $sql;
+    
     $rs = $DB->executeInstruction($sql);
 
     // Response JSON 
@@ -58,11 +66,7 @@ if(array_key_exists('auth_api',$_REQUEST)){
             header('Content-type: application/json');
             echo json_encode($rsGet);
         }
-        else
-            echo 'Error Get: ' . $sqlGet;
     }
-    else
-        echo 'Error Insert: ' . $sql;
 }
 
 //close connection
