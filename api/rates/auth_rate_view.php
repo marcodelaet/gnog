@@ -39,11 +39,15 @@ if(array_key_exists('auth_api',$_REQUEST)){
     // echo $sql;
     // update_at date (yyyymmdd)
     $rs = $DB->getData($sql);
-    
-    //echo "Atualizar <BR/> atualiza em: " . $resultSelect[0]['updated_next'] . '<BR /> agora: ' . $dateNow;
+    $rsNumRows = $DB->numRows($sql);
+
+    // Response JSON
+    header('Content-type: application/json'); 
     if($rs){
-        header('Content-type: application/json');
-        echo json_encode($rs);
+        echo json_encode(["result" => "OK","data" => $rs, "rows" => "$rsNumRows"]);
+    }
+    else {
+        echo json_encode(["result" => "ERROR", "data" => "$sqlPaged"]);
     }
 } else {
     header('Content-type: application/json');

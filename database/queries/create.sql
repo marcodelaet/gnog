@@ -43,6 +43,35 @@ created_at DATETIME NOT NULL,
 updated_at DATETIME NOT NULL
 );
 
+# OFFICES
+CREATE TABLE IF NOT EXISTS offices (
+id VARCHAR(40) PRIMARY KEY NOT NULL,
+name VARCHAR(60) NOT NULL,
+orderby TINYINT, 
+is_active ENUM('N','Y') NOT NULL,
+created_at DATETIME NOT NULL,
+updated_at DATETIME NOT NULL
+);
+
+ALTER TABLE offices
+ADD COLUMN orderby TINYINT AFTER name;
+
+ALTER TABLE offices
+ADD COLUMN icon_flag VARCHAR(30) AFTER orderby;
+
+
+# INSERTING OFFICES
+INSERT INTO 
+offices 
+(id, name, icon_flag, orderby, is_active,created_at,updated_at) 
+VALUES 
+(UUID(),'Mexico','flag_MEX.png',0,'Y',NOW(),NOW()),
+(UUID(),'USA','flag_USA.png',1,'Y',NOW(),NOW()),
+(UUID(),'Brasil','flag_BRA.png',2,'Y',NOW(),NOW());
+
+
+
+
 # USERS
 CREATE TABLE IF NOT EXISTS users (
 id VARCHAR(40) PRIMARY KEY NOT NULL,
@@ -61,6 +90,16 @@ account_locked ENUM('N','Y') NOT NULL,
 created_at DATETIME NOT NULL,
 updated_at DATETIME NOT NULL
 );
+
+ALTER TABLE users
+ADD COLUMN office_id VARCHAR(40) AFTER user_type;
+
+# ADDING FK office
+ALTER TABLE `users`
+    ADD CONSTRAINT `fk_useroffice` 
+	FOREIGN KEY (`office_id`)
+    REFERENCES `offices` (`id`);
+
 
 
 # VIEW USERS
@@ -429,6 +468,7 @@ ON users (email(20));
 CREATE INDEX idx_email 
 ON contacts (contact_email(20));
 
+
 #PROPOSALS
 CREATE TABLE IF NOT EXISTS proposals (
 id VARCHAR(40) PRIMARY KEY NOT NULL,
@@ -446,6 +486,46 @@ is_active ENUM('N','Y') NOT NULL,
 created_at DATETIME NOT NULL,
 updated_at DATETIME NOT NULL
 );
+
+ALTER TABLE proposals
+ADD COLUMN office_id VARCHAR(40) AFTER status_id;
+
+# ADDING FK office
+ALTER TABLE `proposals`
+    ADD CONSTRAINT `fk_proposaloffice` 
+	FOREIGN KEY (`office_id`)
+    REFERENCES `offices` (`id`);
+
+# ADDING FK contact
+ALTER TABLE `proposals`
+    ADD CONSTRAINT `fk_proposalcontact` 
+	FOREIGN KEY (`contact_id`)
+    REFERENCES `contacts` (`id`);
+
+# ADDING FK agency
+ALTER TABLE `proposals`
+    ADD CONSTRAINT `fk_proposalagency` 
+	FOREIGN KEY (`agency_id`)
+    REFERENCES `advertisers` (`id`);
+
+# ADDING FK advertiser
+ALTER TABLE `proposals`
+    ADD CONSTRAINT `fk_proposaladvertiser` 
+	FOREIGN KEY (`advertiser_id`)
+    REFERENCES `advertisers` (`id`);
+
+# ADDING FK user
+ALTER TABLE `proposals`
+    ADD CONSTRAINT `fk_proposaluser` 
+	FOREIGN KEY (`user_id`)
+    REFERENCES `users` (`id`);
+
+# ADDING FK statuses
+ALTER TABLE `proposals`
+    ADD CONSTRAINT `fk_proposalstatus` 
+	FOREIGN KEY (`status_id`)
+    REFERENCES `statuses` (`id`);
+
 
 # VIEW
 CREATE TABLE IF NOT EXISTS viewpoints (
@@ -587,6 +667,31 @@ created_at DATETIME NOT NULL,
 updated_at DATETIME NOT NULL
 );
 
+# ADDING FK PPPROPOSAL
+ALTER TABLE `proposalsxproducts`
+    ADD CONSTRAINT `fk_ppproposal_id` 
+	FOREIGN KEY (`proposal_id`)
+    REFERENCES `proposals` (`id`);
+
+# ADDING FK PPPRODUCT
+ALTER TABLE `proposalsxproducts`
+    ADD CONSTRAINT `fk_ppproduct_id` 
+	FOREIGN KEY (`product_id`)
+    REFERENCES `products` (`id`);
+
+# ADDING FK PPSALEMODEL
+ALTER TABLE `proposalsxproducts`
+    ADD CONSTRAINT `fk_ppsalemodel_id` 
+	FOREIGN KEY (`salemodel_id`)
+    REFERENCES `salemodels` (`id`);
+
+# ADDING FK PPPROVIDER
+ALTER TABLE `proposalsxproducts`
+    ADD CONSTRAINT `fk_ppprovider_id` 
+	FOREIGN KEY (`provider_id`)
+    REFERENCES `providers` (`id`);
+
+
 # PRODUCTS x BILLBOARDS
 CREATE TABLE IF NOT EXISTS productsxbillboards (
 id VARCHAR(40) PRIMARY KEY NOT NULL,
@@ -610,6 +715,8 @@ CREATE VIEW view_proposals AS (
 	(ppp.provider_id) AS provider_id,
 	pv.name AS provider_name,
     ppp.state AS state,
+	o.name AS office_name,
+	o.icon_flag AS office_icon_flag,
 	(pps.user_id) AS user_id,
 	u.username,
 	(pps.advertiser_id) AS client_id,
@@ -793,6 +900,7 @@ CREATE VIEW view_proposals AS (
 	LEFT JOIN viewpoints vp ON vp.id = b.viewpoint_id
 	LEFT JOIN salemodels smb ON smb.id = b.salemodel_id
 	LEFT JOIN providers pvb ON pvb.id = b.provider_id
+	LEFT JOIN offices o ON pps.office_id = o.id
 	INNER JOIN currencies c ON c.id = ppp.currency
 	INNER JOIN currencies cusd ON cusd.id = 'USD'
 	INNER JOIN currencies cmxn ON cmxn.id = 'MXN'
@@ -1014,6 +1122,11 @@ VALUES
 (UUID(), 'yyyy/mm/dd', 'yyyy/mm/dd', 'aaaa/mm/dd', 'aaaa/mm/dd', 'Y', NOW(), NOW()),
 (UUID(), 'format', 'format', 'formato', 'formato', 'Y', NOW(), NOW()),
 (UUID(), 'from_invoice', 'from invoice', 'de la factura', 'da fatura', 'Y', NOW(), NOW());
+
+INSERT INTO translates 
+(id, code_str, text_eng, text_esp, text_ptbr, is_active, created_at, updated_at)
+VALUES
+(UUID(), 'gnog_office', 'In GNog Office of', 'En Oficina GNog de', 'Em Escritório GNog de', 'Y', NOW(), NOW());
 
 
 # FILES
