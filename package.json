@@ -1,5 +1,5 @@
 {
   "dependencies": {
-    "@googlemaps/markerclusterer": "^2.0.13"
+    "@googlemaps/markerclusterer": "^2.0.15"
   }
 }

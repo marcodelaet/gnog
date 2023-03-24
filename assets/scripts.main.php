@@ -10,4 +10,5 @@
   <script src="<?=$dir?>./assets/js/build/translate.js" type="text/javascript"></script>
   <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
   <script src="https://unpkg.com/@googlemaps/markerclusterer/dist/index.min.js"></script>
+ <!-- <script src="<?=$dir?>./assets/js/build/Google/markerclusterer_compiled.js" type="text/javascript"></script>-->
   <script src="<?=$dir?>./assets/js/maps.js" type="text/javascript"></script>

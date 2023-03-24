@@ -29,6 +29,7 @@ if(array_key_exists('auth_api',$_REQUEST)){
     if($group !== 'admin'){
         $filters .= " user_id = '".$_COOKIE['uuid']."' ";
     }
+
     if(array_key_exists('tid',$_REQUEST)){
         if($_REQUEST['tid']!==''){
             if($filters != '')
@@ -69,7 +70,7 @@ if(array_key_exists('auth_api',$_REQUEST)){
         $filters = "WHERE ".$filters;
     }
 
-    $orderBy        = "order by proposalproduct_id";
+    $orderBy        = "order by provider_name ASC, proposalproduct_id ASC";
     // order by
     if(array_key_exists('orderby',$_REQUEST)){
         if($_REQUEST['orderby']!==''){
@@ -78,21 +79,16 @@ if(array_key_exists('auth_api',$_REQUEST)){
         }
     }
 
-
     // Query creation
     $sql = "SELECT $columns FROM $tableOrView $filters $orderBy";
     // LIST data
     //echo $sql;
     $rs = $DB->getData($sql);
 
-    
-
-  
-
     // Response JSON 
     if($rs){
         header('Content-type: application/json');
-        echo json_encode($rs);
+        echo json_encode(['data'=>$rs, $sql]);
     }
 }
 

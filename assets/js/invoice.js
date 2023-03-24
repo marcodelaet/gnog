@@ -224,7 +224,7 @@ function handleViewOnLoad(iid) {
 
     } else{
         const requestURL = window.location.protocol+'//'+locat+'api/invoices/auth_invoice_get.php?auth_api='+authApi+filters;
-        //console.log(requestURL);
+        console.log(requestURL);
         const request   = new XMLHttpRequest();
         request.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {
@@ -240,6 +240,11 @@ function handleViewOnLoad(iid) {
                     //maximumFractionDigits: 0, // (causes 2500.99 to be printed as $2,501)
                 });
 
+                invoice_file_html = '';
+                xml_file_html = '';
+                po_file_html = '';
+                report_file_html = '';
+                presentation_file_html = '';
                 for(i=0;i<obj.length;i++){
                     location_file = window.location.protocol+'//'+(obj[i].file_location).replace('../../',location_replace);
                     //alert(obj[i].file_name.substring(0,7));
