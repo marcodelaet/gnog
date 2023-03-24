@@ -274,7 +274,7 @@ function handleListEditOnLoad(ppid) {
     locat       = window.location.hostname;
 
     filters     = '&ppid='+ppid;
-    orderby     = '&orderby=state ASC,provider_id ASC,proposalproduct_id,billboard_name';
+    orderby     = '&orderby=is_proposalbillboard_active DESC,provider_name ASC,proposalproduct_id,state ASC,billboard_name';
   
     if(locat.slice(-1) != '/')
         locat += '/';
@@ -301,10 +301,10 @@ function handleListEditOnLoad(ppid) {
                     //maximumFractionDigits: 0, // (causes 2500.99 to be printed as $2,501)
                 });
 
-                advertiser_name = obj[0].client_name;
-                if(obj[0].agency_name != '')
-                    advertiser_name += " / " + obj[0].agency_name; 
-                document.getElementById('offer-name').innerText  = obj[0].offer_name;
+                advertiser_name = obj['data'][0].client_name;
+                if(obj['data'][0].agency_name != '')
+                    advertiser_name += " / " + obj['data'][0].agency_name; 
+                document.getElementById('offer-name').innerText  = obj['data'][0].offer_name;
                 document.getElementById('advertiser-name').innerText  = advertiser_name;
 
                 // Create our number formatter.
@@ -321,17 +321,30 @@ function handleListEditOnLoad(ppid) {
 
                 productOld      = 0;
                 providerOld     = 0;
+               // provider        = 0;
+               // provider_name   = '';
                 html            = '';
                 numberProducts  = 0;
                 numberProviders = 0;
                 aBillboards     = ['Arco','Bajo Puente','Cartelera','Caseta','Columna','Mupi','Muro','Pantalla','Pantalla Led','Parabus','Puente Peatonal','Puente Vehicular','Reloj Digital','Valla'];
-                for(i=0;i < obj.length; i++){
+                aProviders      = new Array();
+                for(i=0;i < obj['data'].length; i++){
                     // providers
-                    provider = obj[i].provider_id;
+                    provider        = obj['data'][i].provider_id;
+                    provider_name   = obj['data'][i].provider_name;
+                    showLine        = 1;
+                    if(obj['data'][i].is_proposalbillboard_active === null){
+                        provider_name = "Sin proveedor";
+                        if((aProviders.indexOf(provider) >= 0) && (aBillboards.indexOf(obj['data'][i].salemodel_name) != -1)){
+                            showLine = 0;
+                        }
+                        provider = '111';
+                    }
+
                     if(provider != providerOld){
                         numberProviders++;
                         html += '<div class="row list-products-row">' +
-                        '<div class="col-sm-6 provider-name">'+obj[i].provider_name+'</div>' +
+                        '<div class="col-sm-6 provider-name">'+provider_name+'</div>' +
                         '<div class="col-sm-2">';
                         //html += '<a href="?pr=Li9wYWdlcy9tYXBzL2luZGV4LnBocA==&pid='+obj[i].provider_id+'&ppid='+ppid+'"><span class="material-icons" style="font-size:1.2rem;">edit</span></a>';
                         html += '</div>';
@@ -339,57 +352,65 @@ function handleListEditOnLoad(ppid) {
                         // if in a different provider, product must be showed again  
                         productOld = 0;    
                     }
+
                     // products list
-                    product = obj[i].salemodel_name + obj[i].state;
+                    product = obj['data'][i].salemodel_name + obj['data'][i].state;
                     if(product != productOld){
                         numberProducts++;
-                        html += '<div class="row list-products-row">' +
-                        '<div class="col-sm-1">'+(numberProducts)+'</div>' +
-                        '<div class="col-sm-3">'+obj[i].product_name+' / '+obj[i].salemodel_name+'</div>' +
-                        '<div class="col-sm-2">'+obj[i].state+'</div>'; 
-                        //'<div class="col-sm-2">Rate % All</div>' +
-                        if(aBillboards.indexOf(obj[i].salemodel_name) != -1){
-                        //if(obj[i].billboard_salemodel_name != null){
-                            html += '<div class="col-sm-2"><a href="?pr=Li9wYWdlcy9tYXBzL2luZGV4LnBocA==&smid='+obj[i].salemodel_id+'&ppid='+ppid+'&pppid='+obj[i].proposalproduct_id+'&state='+obj[i].state+'"><span class="material-icons" style="font-size:1.2rem;">map</span></a></div>';
-                        }
-                        html += '</div>';    
+                        if(showLine == 1){
+                            html += '<div class="row list-products-row">' +
+                            '<div class="col-sm-1">'+(numberProducts)+'</div>' +
+                            '<div class="col-sm-3">'+obj['data'][i].product_name+' / '+obj['data'][i].salemodel_name+'</div>' +
+                            '<div class="col-sm-2">'+obj['data'][i].state+'</div>'; 
+                            //'<div class="col-sm-2">Rate % All</div>' +
+                            if(aBillboards.indexOf(obj['data'][i].salemodel_name) != -1){
+                            //if(obj[i].billboard_salemodel_name != null){
+                                html += '<div class="col-sm-2"><a href="?pr=Li9wYWdlcy9tYXBzL2luZGV4LnBocA==&smid='+obj['data'][i].salemodel_id+'&ppid='+ppid+'&pppid='+obj['data'][i].proposalproduct_id+'&state='+obj['data'][i].state+'"><span class="material-icons" style="font-size:1.2rem;">map</span></a></div>';
+                            }
+                            html += '</div>';
+                        }    
                     }
                     // css to special times
                     deletedbillboard = '';
-                    if(obj[i].is_proposalbillboard_active != 'Y'){
+                    if(obj['data'][i].is_proposalbillboard_active != 'Y'){
                         deletedbillboard = 'deleted-billboard';
                     }
+
                     // list billboards
-                    if((obj[i].billboard_name != '')&&(obj[i].billboard_name != null)){
+                    if((obj['data'][i].billboard_name != '')&&(obj['data'][i].billboard_name != null)){
+                        if(provider != providerOld){
+                            aProviders.push(obj['data'][i].provider_id);
+                        }
                         html += '<div class="row list-billboards-row">' +
                         '<div class="col list-billboards-container">' +
                             '<div class="row" >' +
-                                '<div class="col-sm-2 line-list-'+obj[i].billboard_id+' '+deletedbillboard+'">'+obj[i].billboard_name+'</div>' +
-                                '<div class="col-sm-2 line-list-'+obj[i].billboard_id+' '+deletedbillboard+'">'+(parseFloat(obj[i].billboard_width)/100).toFixed(1)+' x '+(parseFloat(obj[i].billboard_height)/100).toFixed(1)+'</div>' +
-                                '<div class="col-sm-1 line-list-'+obj[i].billboard_id+' '+deletedbillboard+'">'+obj[i].billboard_viewpoint_name+'</div>' +
-                                '<div class="col-sm-3 line-list-'+obj[i].billboard_id+' '+deletedbillboard+'">'+formatter.format(obj[i].billboard_cost)+' / <span id="price-'+obj[i].billboard_id+'">'+formatter.format(obj[i].billboard_price)+'</span></div>' +
-                                '<div class="input-group col-sm-3" id="rate-delete-'+obj[i].billboard_id+'">';
+                                '<div class="col-sm-2 line-list-'+obj['data'][i].billboard_id+' '+deletedbillboard+'">'+obj['data'][i].billboard_name+'</div>' +
+                                '<div class="col-sm-2 line-list-'+obj['data'][i].billboard_id+' '+deletedbillboard+'">'+(parseFloat(obj['data'][i].billboard_width)/100).toFixed(1)+' x '+(parseFloat(obj['data'][i].billboard_height)/100).toFixed(1)+'</div>' +
+                                '<div class="col-sm-1 line-list-'+obj['data'][i].billboard_id+' '+deletedbillboard+'">'+obj['data'][i].billboard_viewpoint_name+'</div>' +
+                                '<div class="col-sm-3 line-list-'+obj['data'][i].billboard_id+' '+deletedbillboard+'">'+formatter.format(obj['data'][i].billboard_cost)+' / <span id="price-'+obj['data'][i].billboard_id+'">'+formatter.format(obj['data'][i].billboard_price)+'</span></div>' +
+                                '<div class="input-group col-sm-3" id="rate-delete-'+obj['data'][i].billboard_id+'">';
                                 if(deletedbillboard == '') {
                                     //html += '<label for="fee-'+obj[i].billboard_id+'">Fee rate</label>' +
-                                    html += '<input name="fee-'+obj[i].billboard_id+'" id="fee-'+obj[i].billboard_id+'" placeholder="% Fee" title="Percent (%) fee" aria-label="Percent (%) fee" value="30" class="form-control" style="height:1.5rem !important; width:3.5rem !important;" type="percent" maxlength="2" autocomplete="fee" />'+
+                                    html += '<input name="fee-'+obj['data'][i].billboard_id+'" id="fee-'+obj['data'][i].billboard_id+'" placeholder="% Fee" title="Percent (%) fee" aria-label="Percent (%) fee" value="30" class="form-control" style="height:1.5rem !important; width:3.5rem !important;" type="percent" maxlength="2" autocomplete="fee" />'+
                                     '<div class="input-group-append" style="height:1.5rem !important; width:3.5rem !important;"><span class="input-group-text">% ' +
-                                    '<a href="javascript:void(0);" onclick="executeFeeOnPrice(\''+obj[i].proposalproduct_id+'\',\''+obj[i].billboard_id+'\','+obj[i].billboard_cost_int+',\''+obj[i].billboard_name+'\');">'+
-                                    '<span class="material-icons" style="font-size:1.5rem; color:black;" title="Calcula Fee para '+obj[i].billboard_salemodel_name+' '+obj[i].billboard_name+'">calculate</span>'+
+                                    '<a href="javascript:void(0);" onclick="executeFeeOnPrice(\''+obj['data'][i].proposalproduct_id+'\',\''+obj['data'][i].billboard_id+'\','+obj['data'][i].billboard_cost_int+',\''+obj['data'][i].billboard_name+'\');">'+
+                                    '<span class="material-icons" style="font-size:1.5rem; color:black;" title="Calcula Fee para '+obj['data'][i].billboard_salemodel_name+' '+obj['data'][i].billboard_name+'">calculate</span>'+
                                     '</a></span></div>';
                                 }
                                 html += '</div>' + 
-                                '<div class="col-sm-1" id="button-delete-'+obj[i].billboard_id+'">';
+                                '<div class="col-sm-1" id="button-delete-'+obj['data'][i].billboard_id+'">';
 
                         if(deletedbillboard == '')
-                            html += '<a href="javascript:void(0);" onclick="if(confirm(\'Confirma quitar '+obj[i].salemodel_name+' clave '+obj[i].billboard_name+' en la lista del estado de '+obj[i].state+'?\')){handleRemoveFromList(\''+obj[i].proposalproduct_id+'\',\''+obj[i].billboard_id+'\');}">'+
-                            '<span class="material-icons" style="font-size:1.5rem; color:black;" title="Remove '+obj[i].billboard_salemodel_name+' '+obj[i].billboard_name+' from list">delete</span></a>';
+                            html += '<a href="javascript:void(0);" onclick="if(confirm(\'Confirma quitar '+obj['data'][i].salemodel_name+' clave '+obj['data'][i].billboard_name+' en la lista del estado de '+obj['data'][i].state+'?\')){handleRemoveFromList(\''+obj['data'][i].proposalproduct_id+'\',\''+obj['data'][i].billboard_id+'\');}">'+
+                            '<span class="material-icons" style="font-size:1.5rem; color:black;" title="Remove '+obj['data'][i].billboard_salemodel_name+' '+obj['data'][i].billboard_name+' from list">delete</span></a>';
                         html += '</div>' +
                         '</div>' +
                         '</div>' +
                         '</div>';    
                     }
-                    productOld = obj[i].salemodel_name + obj[i].state;
-                    providerOld = obj[i].provider_id;
+
+                    productOld = obj['data'][i].salemodel_name + obj['data'][i].state;
+                    providerOld = provider;
                 }
                 document.getElementById('list-products').innerHTML = html;
             }

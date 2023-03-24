@@ -389,7 +389,7 @@ function doesFileExist(urlToFile)
 
 function addBillboardOnList(billboard_id, proposalproduct_id,price,provider_id){
     if (billboard_id !== '' && proposalproduct_id !== '' && price !== '') {
-        
+    
         errors      = 0;
         authApi     = csrf_token;
         message     = '';

@@ -101,27 +101,6 @@ ALTER TABLE `users`
     REFERENCES `offices` (`id`);
 
 
-
-# VIEW USERS
-CREATE VIEW view_users AS (
-	SELECT
-	(id) AS UUID,
-	username,
-	user_language,
-	email,
-	level_account,
-	user_type,
-	mobile_international_code,
-	mobile_prefix,
-	mobile_number,
-	CONCAT('+',mobile_international_code,mobile_prefix,mobile_number) AS mobile,
-	token,
-	account_locked,
-	CONCAT((id),username,email,'+',mobile_international_code,mobile_number) AS search
-	FROM 
-	users
-);
-
 # INSERTING USER
 INSERT INTO users (id, username, email,mobile_international_code, mobile_prefix,mobile_number,authentication_string,password_last_changed,account_locked,created_at,updated_at) VALUES (UUID(),'marcodelaet','it@gnog.com.br','55','11','11989348999','e10adc3949ba59abbe56e057f20f883e',NOW(),'N',NOW(),NOW());
 
@@ -136,31 +115,6 @@ currency_id VARCHAR(3) NOT NULL,
 goal_amount BIGINT NOT NULL,
 created_at DATETIME NOT NULL,
 updated_at DATETIME NOT NULL
-);
-
-# VIEW GOALS
-CREATE VIEW view_goals AS (
-	SELECT
-	u.username,
-	(g.user_id) AS UUID,
-	g.goal_amount,
-	g.goal_month,
-	g.goal_year,
-	g.currency_id,
-	(g.goal_amount / c.rate) * cusd.rate AS goal_USD,
-	(g.goal_amount / c.rate) * cmxn.rate AS goal_MXN,
-	(g.goal_amount / c.rate) * cbrl.rate AS goal_BRL,
-	(g.goal_amount / c.rate) * ceur.rate AS goal_EUR
-	FROM 
-	goals g
-	INNER JOIN users u 
-	ON g.user_id = u.id
-	INNER JOIN currencies c 
-	ON c.id = g.currency_id
-	INNER JOIN currencies cusd ON cusd.id = 'USD'
-	INNER JOIN currencies cbrl ON cbrl.id = 'BRL'
-	INNER JOIN currencies cmxn ON cmxn.id = 'MXN'
-	INNER JOIN currencies ceur ON ceur.id = 'EUR'
 );
 
 # PROFILES
@@ -213,64 +167,6 @@ phone_number VARCHAR(12),
 is_active ENUM('N','Y') NOT NULL,
 created_at DATETIME NOT NULL,
 updated_at DATETIME NOT NULL
-);
-
-# drop view view_advertisers;
-
-# VIEW CONTACTS - ADVERTISER
-CREATE VIEW view_advertisercontacts AS (
-SELECT 
-	id AS contact_id,
-	contact_name,
-	contact_surname,
-	contact_email,
-	contact_position,
-	contact_client_id,
-	phone_international_code,
-	phone_prefix,
-	phone_number
-	FROM contacts
-	WHERE module_name = 'advertiser' AND is_active='Y'
-);
-
-# VIEW CONTACTS - PROVIDER
-CREATE VIEW view_providercontacts AS (
-SELECT 
-	id AS contact_id,
-	contact_name,
-	contact_surname,
-	contact_email,
-	contact_position,
-	contact_client_id,
-	phone_international_code,
-	phone_prefix,
-	phone_number
-	FROM contacts
-	WHERE module_name = 'provider' AND is_active='Y'
-);
-
-# VIEW ADVERTISERS
-CREATE VIEW view_advertisers AS (
-	SELECT
-	(adv.id) AS UUID,
-	ct.contact_id,
-	adv.corporate_name,
-	adv.address,
-	ct.contact_name,
-	ct.contact_surname,
-	ct.contact_email,
-	ct.contact_position,
-	ct.contact_client_id,
-	ct.phone_international_code,
-	ct.phone_prefix,
-	ct.phone_number,
-	CONCAT('+',ct.phone_international_code,ct.phone_prefix,ct.phone_number) AS phone,
-	adv.is_agency,
-	adv.is_active,
-	CONCAT((adv.id),adv.corporate_name,ct.contact_name,ct.contact_surname,ct.contact_email,'+',ct.phone_international_code,ct.phone_number) AS search
-	FROM 
-	advertisers adv
-	LEFT JOIN view_advertisercontacts ct ON ct.contact_client_id = adv.id
 );
 
 # PRODUCTS
@@ -423,45 +319,6 @@ created_at DATETIME NOT NULL,
 updated_at DATETIME NOT NULL
 );
 
-
-# VIEW PROVIDERS
-CREATE VIEW view_providers AS (
-	SELECT
-	(pv.id) AS UUID,
-	(pp.product_id) AS product_id,
-	pd.name AS product_name,
-	(pp.salemodel_id) AS salemodel_id,
-	sm.name AS salemodel_name,
-	pp.product_price / 100 AS product_price,
-	pp.product_price AS product_price_int,
-	pp.currency,
-	pv.name,
-	pv.webpage_url,
-	pv.address,
-	ct.id AS contact_provider_id,
-	ct.contact_name,
-	ct.contact_surname,
-	ct.contact_email,
-	ct.contact_position,
-	ct.phone_international_code,
-	ct.phone_prefix,
-	ct.phone_number,
-	u.username,
-	u.user_language,
-	u.user_type,
-	u.account_locked,
-	CONCAT('+',ct.phone_international_code,ct.phone_prefix,ct.phone_number) AS phone,
-	pv.is_active,
-	CONCAT((pv.id),pd.name,sm.name,pv.name,pv.webpage_url,ct.contact_name,ct.contact_surname,ct.contact_email,'+',ct.phone_international_code,ct.phone_number) AS search
-	FROM 
-	providers pv
-	LEFT JOIN providersxproduct pp ON pp.provider_id = pv.id
-	LEFT JOIN products pd ON pd.id = pp.product_id
-	LEFT JOIN salemodels sm ON sm.id = pp.salemodel_id
-	LEFT JOIN contacts ct ON (ct.module_name = 'provider' AND ct.is_active='Y') AND (ct.contact_client_id = pv.id)
-	LEFT JOIN users u ON ct.contact_email = u.email
-);
-
 CREATE INDEX idx_email 
 ON users (email(20));
 
@@ -526,8 +383,7 @@ ALTER TABLE `proposals`
 	FOREIGN KEY (`status_id`)
     REFERENCES `statuses` (`id`);
 
-
-# VIEW
+# VIEWPOINTS
 CREATE TABLE IF NOT EXISTS viewpoints (
 id VARCHAR(40) PRIMARY KEY NOT NULL,
 name VARCHAR(40) NOT NULL,
@@ -591,47 +447,6 @@ INSERT INTO billboards (id,name_key,address,state,category,coordenates,latitud,l
 provider_id,salemodel_id,viewpoint_id,is_iluminated, is_digital, is_active, created_at, updated_at) 
 VALUES
 (UUID(),'key','address','state','category','coordenates','latitud','longitud',price_int,cost_int,width,height,'photo',provider_id,salemodel_id,viewpoint_id,'is_iluminated','is_digital','Y',now(),now());
-
-
-# VIEW BILLBOARDS
-CREATE VIEW view_billboards AS 
-(
-	SELECT
-	b.id as UUID,
-	b.name_key as name,
-	b.category as category,
-	b.address as address,
-	b.state as state,
-	b.height / 100 as height,
-	b.width / 100 as width,
-	b.coordenates as coordenates,
-	b.latitud as latitud,
-	b.longitud as longitud,
-	b.price_int as price_int,
-	(b.price_int * 100) / 100 as price,
-	b.cost_int as cost_int,
-	(b.cost_int * 100) / 100 as cost,
-	b.is_iluminated as is_iluminated,
-	b.is_digital as is_digital,
-	b.is_active as is_active,
-	p.name as provider_name,
-	sm.name as salemodel_name,
-	sm.id as salemodel_id,
-	vp.id as viewpoint_id,
-	p.id as provider_id,
-	vp.name as viewpoint_name,
-	b.photo as photo,
-    pb.proposalproduct_id as proposalproduct_id,
-    pb.is_active as is_productbillboard_active,
-	CONCAT(name_key,p.name,sm.name,vp.name,b.state,b.address) as search
-	FROM billboards b
-	INNER JOIN providers p ON b.provider_id = p.id
-	INNER JOIN salemodels sm ON b.salemodel_id = sm.id
-	INNER JOIN viewpoints vp ON b.viewpoint_id = vp.id
-    LEFT JOIN productsxbillboards pb ON b.id = pb.billboard_id 
-);
-
-
 
 /*
      [i]['Tipo'] 			- product_id
@@ -701,215 +516,6 @@ price_int BIGINT,
 is_active ENUM('N','Y') NOT NULL,
 created_at DATETIME NOT NULL,
 updated_at DATETIME NOT NULL
-);
-
-# VIEW PROPOSALS
-CREATE VIEW view_proposals AS (
-	SELECT
-	(pps.id) AS UUID,
-	ppp.id as proposalproduct_id,
-	(ppp.product_id) AS product_id,
-	pd.name AS product_name,
-	(ppp.salemodel_id) AS salemodel_id,
-	sm.name AS salemodel_name,
-	(ppp.provider_id) AS provider_id,
-	pv.name AS provider_name,
-    ppp.state AS state,
-	o.name AS office_name,
-	o.icon_flag AS office_icon_flag,
-	(pps.user_id) AS user_id,
-	u.username,
-	(pps.advertiser_id) AS client_id,
-	adv.corporate_name AS client_name,
-	(pps.agency_id) AS agency_id,
-	age.corporate_name AS agency_name,
-	pps.status_id,
-	s.name AS status_name,
-	s.percent AS status_percent,
-	pps.offer_name,
-	pps.description,
-	pps.start_date,
-	pps.stop_date,
-	TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1 AS month_diff_data, 
-	ppp.price_int / 100 AS price,
-	ppp.price_int AS price_int,
-	ppp.currency,
-	ppp.quantity,
-	c.rate AS rate,
-	c.id AS currency_c,
-	(ppp.price_int * ppp.quantity) AS amount_int,
-	(ppp.price_int * ppp.quantity) / 100 AS amount,
-	((ppp.price_int * ppp.quantity) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1)) AS amount_per_month_int,
-	((ppp.price_int * ppp.quantity) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1)) / 100 AS amount_per_month,
-	CASE 
-	WHEN c.id = 'USD' THEN
-	(
-		(ppp.price_int * ppp.quantity)
-	) ELSE 
-	(
-		(((ppp.price_int * ppp.quantity) / c.rate) * cusd.rate)
-	) END  AS amount_USD_int,
-	CASE
-	WHEN c.id = 'USD' THEN
-	(
-		(ppp.price_int * ppp.quantity) / 100
-	) ELSE 
-	(
-		(((ppp.price_int * ppp.quantity) / c.rate) * cusd.rate) / 100
-	) END AS amount_USD,
-	CASE
-	WHEN c.id = 'USD' THEN
-	(
-		((ppp.price_int * ppp.quantity) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1))
-	) ELSE 
-	(
-		((((ppp.price_int * ppp.quantity) / c.rate) * cusd.rate) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1))
-	) END AS amount_per_month_USD_int,
-	CASE
-	WHEN c.id = 'USD' THEN
-	(
-		((ppp.price_int * ppp.quantity) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1)) / 100
-	) ELSE 
-	(
-		((((ppp.price_int * ppp.quantity) / c.rate) * cusd.rate) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1)) / 100
-	) END AS amount_per_month_USD,
-	
-	CASE
-	WHEN c.id = 'MXN' THEN
-	(
-		(ppp.price_int * ppp.quantity)
-	) ELSE 
-	(
-		(((ppp.price_int * ppp.quantity) / c.rate) * cmxn.rate)
-	) END  AS amount_MXN_int,
-	CASE
-	WHEN c.id = 'MXN' THEN
-	(
-		(ppp.price_int * ppp.quantity) / 100
-	) ELSE 
-	(
-		(((ppp.price_int * ppp.quantity) / c.rate) * cmxn.rate) / 100
-	) END AS amount_MXN,
-	CASE
-	WHEN c.id = 'MXN' THEN
-	(
-		((ppp.price_int * ppp.quantity) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1))
-	) ELSE 
-	(
-		((((ppp.price_int * ppp.quantity) / c.rate) * cmxn.rate) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1))
-	) END AS amount_per_month_MXN_int,
-	CASE
-	WHEN c.id = 'MXN' THEN
-	(
-		((ppp.price_int * ppp.quantity) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1)) / 100
-	) ELSE 
-	(
-		((((ppp.price_int * ppp.quantity) / c.rate) * cmxn.rate) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1)) / 100
-	) END AS amount_per_month_MXN,
-	
-	CASE
-	WHEN c.id = 'BRL' THEN
-	(
-		(ppp.price_int * ppp.quantity)
-	) ELSE 
-	(
-		(((ppp.price_int * ppp.quantity) / c.rate) * cbrl.rate)
-	) END  AS amount_BRL_int,
-	CASE
-	WHEN c.id = 'BRL' THEN
-	(
-		(ppp.price_int * ppp.quantity) / 100
-	) ELSE 
-	(
-		(((ppp.price_int * ppp.quantity) / c.rate) * cbrl.rate) / 100
-	) END AS amount_BRL,
-	CASE
-	WHEN c.id = 'BRL' THEN
-	(
-		((ppp.price_int * ppp.quantity) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1))
-	) ELSE 
-	(
-		((((ppp.price_int * ppp.quantity) / c.rate) * cbrl.rate) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1))
-	) END AS amount_per_month_BRL_int,
-	CASE
-	WHEN c.id = 'BRL' THEN
-	(
-		((ppp.price_int * ppp.quantity) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1)) / 100
-	) ELSE 
-	(
-		((((ppp.price_int * ppp.quantity) / c.rate) * cbrl.rate) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1)) / 100
-	) END AS amount_per_month_BRL,
-	
-	CASE
-	WHEN c.id = 'EUR' THEN
-	(
-		(ppp.price_int * ppp.quantity)
-	) ELSE 
-	(
-		(((ppp.price_int * ppp.quantity) / c.rate) * ceur.rate)
-	) END  AS amount_EUR_int,
-	CASE
-	WHEN c.id = 'EUR' THEN
-	(
-		(ppp.price_int * ppp.quantity) / 100
-	) ELSE 
-	(
-		(((ppp.price_int * ppp.quantity) / c.rate) * ceur.rate) / 100
-	) END AS amount_EUR,
-	CASE
-	WHEN c.id = 'EUR' THEN
-	(
-		((ppp.price_int * ppp.quantity) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1))
-	) ELSE 
-	(
-		((((ppp.price_int * ppp.quantity) / c.rate) * ceur.rate) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1))
-	) END AS amount_per_month_EUR_int,
-	CASE
-	WHEN c.id = 'EUR' THEN
-	(
-		((ppp.price_int * ppp.quantity) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1)) / 100
-	) ELSE 
-	(
-		((((ppp.price_int * ppp.quantity) / c.rate) * ceur.rate) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1)) / 100
-	) END AS amount_per_month_EUR,
-	pps.is_pixel,
-	pps.is_active,
-	b.id as billboard_id,
-	b.name_key as billboard_name,
-	b.height as billboard_height,
-	b.width as billboard_width,
-	smb.name as billboard_salemodel_name,
-	pvb.name as billboard_provider_name,
-	vp.name as billboard_viewpoint_name,
-	(b.cost_int / 100) as billboard_cost,
-	b.cost_int as billboard_cost_int,
-	b.state as billboard_state,
-	(pb.price_int / 100) as billboard_price,
-	pb.price_int as billboard_price_int,
-	pb.is_active as is_proposalbillboard_active,
-	ppp.is_active as is_proposalproduct_active,
-	CONCAT((pps.id),pd.name,sm.name,pv.name,u.username,adv.corporate_name,pps.offer_name,ppp.currency) AS search
-	FROM 
-	proposals pps
-	LEFT JOIN proposalsxproducts ppp ON ppp.proposal_id = pps.id
-	LEFT JOIN products pd ON pd.id = ppp.product_id
-	LEFT JOIN productsxbillboards pb ON pb.proposalproduct_id = ppp.id 
-	LEFT JOIN salemodels sm ON sm.id = ppp.salemodel_id
-	LEFT JOIN providers pv ON pv.id = ppp.provider_id
-	LEFT JOIN billboards b ON b.id = pb.billboard_id
-	LEFT JOIN viewpoints vp ON vp.id = b.viewpoint_id
-	LEFT JOIN salemodels smb ON smb.id = b.salemodel_id
-	LEFT JOIN providers pvb ON pvb.id = b.provider_id
-	LEFT JOIN offices o ON pps.office_id = o.id
-	INNER JOIN currencies c ON c.id = ppp.currency
-	INNER JOIN currencies cusd ON cusd.id = 'USD'
-	INNER JOIN currencies cmxn ON cmxn.id = 'MXN'
-	INNER JOIN currencies cbrl ON cbrl.id = 'BRL'
-	INNER JOIN currencies ceur ON ceur.id = 'EUR'
-	INNER JOIN statuses s ON s.id = pps.status_id
-	INNER JOIN users u ON u.id = pps.user_id
-	INNER JOIN advertisers adv ON adv.id = pps.advertiser_id
-	LEFT JOIN advertisers age ON age.id = pps.agency_id
 );
 
 # MODULES
@@ -1193,6 +799,395 @@ ALTER TABLE invoices
 	FOREIGN KEY (provider_id)
     REFERENCES providers (id);
 
+# VIEWS
+
+# VIEW USERS
+CREATE VIEW view_users AS (
+	SELECT
+	(id) AS UUID,
+	username,
+	user_language,
+	email,
+	level_account,
+	user_type,
+	mobile_international_code,
+	mobile_prefix,
+	mobile_number,
+	CONCAT('+',mobile_international_code,mobile_prefix,mobile_number) AS mobile,
+	token,
+	account_locked,
+	CONCAT((id),username,email,'+',mobile_international_code,mobile_number) AS search
+	FROM 
+	users
+);
+
+# VIEW GOALS
+CREATE VIEW view_goals AS (
+	SELECT
+	u.username,
+	(g.user_id) AS UUID,
+	g.goal_amount,
+	g.goal_month,
+	g.goal_year,
+	g.currency_id,
+	(g.goal_amount / c.rate) * cusd.rate AS goal_USD,
+	(g.goal_amount / c.rate) * cmxn.rate AS goal_MXN,
+	(g.goal_amount / c.rate) * cbrl.rate AS goal_BRL,
+	(g.goal_amount / c.rate) * ceur.rate AS goal_EUR
+	FROM 
+	goals g
+	INNER JOIN users u 
+	ON g.user_id = u.id
+	INNER JOIN currencies c 
+	ON c.id = g.currency_id
+	INNER JOIN currencies cusd ON cusd.id = 'USD'
+	INNER JOIN currencies cbrl ON cbrl.id = 'BRL'
+	INNER JOIN currencies cmxn ON cmxn.id = 'MXN'
+	INNER JOIN currencies ceur ON ceur.id = 'EUR'
+);
+
+
+# VIEW CONTACTS - ADVERTISER
+CREATE VIEW view_advertisercontacts AS (
+SELECT 
+	id AS contact_id,
+	contact_name,
+	contact_surname,
+	contact_email,
+	contact_position,
+	contact_client_id,
+	phone_international_code,
+	phone_prefix,
+	phone_number
+	FROM contacts
+	WHERE module_name = 'advertiser' AND is_active='Y'
+);
+
+# VIEW CONTACTS - PROVIDER
+CREATE VIEW view_providercontacts AS (
+SELECT 
+	id AS contact_id,
+	contact_name,
+	contact_surname,
+	contact_email,
+	contact_position,
+	contact_client_id,
+	phone_international_code,
+	phone_prefix,
+	phone_number
+	FROM contacts
+	WHERE module_name = 'provider' AND is_active='Y'
+);
+
+# VIEW ADVERTISERS
+CREATE VIEW view_advertisers AS (
+	SELECT
+	(adv.id) AS UUID,
+	ct.contact_id,
+	adv.corporate_name,
+	adv.address,
+	ct.contact_name,
+	ct.contact_surname,
+	ct.contact_email,
+	ct.contact_position,
+	ct.contact_client_id,
+	ct.phone_international_code,
+	ct.phone_prefix,
+	ct.phone_number,
+	CONCAT('+',ct.phone_international_code,ct.phone_prefix,ct.phone_number) AS phone,
+	adv.is_agency,
+	adv.is_active,
+	CONCAT((adv.id),adv.corporate_name,ct.contact_name,ct.contact_surname,ct.contact_email,'+',ct.phone_international_code,ct.phone_number) AS search
+	FROM 
+	advertisers adv
+	LEFT JOIN view_advertisercontacts ct ON ct.contact_client_id = adv.id
+);
+
+# VIEW PROVIDERS
+CREATE VIEW view_providers AS (
+	SELECT
+	(pv.id) AS UUID,
+	(pp.product_id) AS product_id,
+	pd.name AS product_name,
+	(pp.salemodel_id) AS salemodel_id,
+	sm.name AS salemodel_name,
+	pp.product_price / 100 AS product_price,
+	pp.product_price AS product_price_int,
+	pp.currency,
+	pv.name,
+	pv.webpage_url,
+	pv.address,
+	ct.id AS contact_provider_id,
+	ct.contact_name,
+	ct.contact_surname,
+	ct.contact_email,
+	ct.contact_position,
+	ct.phone_international_code,
+	ct.phone_prefix,
+	ct.phone_number,
+	u.username,
+	u.user_language,
+	u.user_type,
+	u.account_locked,
+	CONCAT('+',ct.phone_international_code,ct.phone_prefix,ct.phone_number) AS phone,
+	pv.is_active,
+	CONCAT((pv.id),pd.name,sm.name,pv.name,pv.webpage_url,ct.contact_name,ct.contact_surname,ct.contact_email,'+',ct.phone_international_code,ct.phone_number) AS search
+	FROM 
+	providers pv
+	LEFT JOIN providersxproduct pp ON pp.provider_id = pv.id
+	LEFT JOIN products pd ON pd.id = pp.product_id
+	LEFT JOIN salemodels sm ON sm.id = pp.salemodel_id
+	LEFT JOIN contacts ct ON (ct.module_name = 'provider' AND ct.is_active='Y') AND (ct.contact_client_id = pv.id)
+	LEFT JOIN users u ON ct.contact_email = u.email
+);
+
+# VIEW BILLBOARDS
+CREATE VIEW view_billboards AS 
+(
+	SELECT
+	b.id as UUID,
+	b.name_key as name,
+	b.category as category,
+	b.address as address,
+	b.state as state,
+	b.height / 100 as height,
+	b.width / 100 as width,
+	b.coordenates as coordenates,
+	b.latitud as latitud,
+	b.longitud as longitud,
+	b.price_int as price_int,
+	(b.price_int * 100) / 100 as price,
+	b.cost_int as cost_int,
+	(b.cost_int * 100) / 100 as cost,
+	b.is_iluminated as is_iluminated,
+	b.is_digital as is_digital,
+	b.is_active as is_active,
+	p.name as provider_name,
+	sm.name as salemodel_name,
+	sm.id as salemodel_id,
+	vp.id as viewpoint_id,
+	p.id as provider_id,
+	vp.name as viewpoint_name,
+	b.photo as photo,
+    pb.proposalproduct_id as proposalproduct_id,
+    pb.is_active as is_productbillboard_active,
+	CONCAT(name_key,p.name,sm.name,vp.name,b.state,b.address) as search
+	FROM billboards b
+	INNER JOIN providers p ON b.provider_id = p.id
+	INNER JOIN salemodels sm ON b.salemodel_id = sm.id
+	INNER JOIN viewpoints vp ON b.viewpoint_id = vp.id
+    LEFT JOIN productsxbillboards pb ON b.id = pb.billboard_id 
+);
+
+# VIEW PROPOSALS
+CREATE VIEW view_proposals AS (
+	SELECT
+	(pps.id) AS UUID,
+	ppp.id as proposalproduct_id,
+	(ppp.product_id) AS product_id,
+	pd.name AS product_name,
+	(ppp.salemodel_id) AS salemodel_id,
+	sm.name AS salemodel_name,
+	(ppp.provider_id) AS provider_id,
+	pv.name AS provider_name,
+    ppp.state AS state,
+	o.name AS office_name,
+	o.icon_flag AS office_icon_flag,
+	(pps.user_id) AS user_id,
+	u.username,
+	(pps.advertiser_id) AS client_id,
+	adv.corporate_name AS client_name,
+	(pps.agency_id) AS agency_id,
+	age.corporate_name AS agency_name,
+	pps.status_id,
+	s.name AS status_name,
+	s.percent AS status_percent,
+	pps.offer_name,
+	pps.description,
+	pps.start_date,
+	pps.stop_date,
+	TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1 AS month_diff_data, 
+	ppp.price_int / 100 AS price,
+	ppp.price_int AS price_int,
+	ppp.currency,
+	ppp.quantity,
+	c.rate AS rate,
+	c.id AS currency_c,
+	(ppp.price_int * ppp.quantity) AS amount_int,
+	(ppp.price_int * ppp.quantity) / 100 AS amount,
+	((ppp.price_int * ppp.quantity) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1)) AS amount_per_month_int,
+	((ppp.price_int * ppp.quantity) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1)) / 100 AS amount_per_month,
+	CASE 
+	WHEN c.id = 'USD' THEN
+	(
+		(ppp.price_int * ppp.quantity)
+	) ELSE 
+	(
+		(((ppp.price_int * ppp.quantity) / c.rate) * cusd.rate)
+	) END  AS amount_USD_int,
+	CASE
+	WHEN c.id = 'USD' THEN
+	(
+		(ppp.price_int * ppp.quantity) / 100
+	) ELSE 
+	(
+		(((ppp.price_int * ppp.quantity) / c.rate) * cusd.rate) / 100
+	) END AS amount_USD,
+	CASE
+	WHEN c.id = 'USD' THEN
+	(
+		((ppp.price_int * ppp.quantity) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1))
+	) ELSE 
+	(
+		((((ppp.price_int * ppp.quantity) / c.rate) * cusd.rate) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1))
+	) END AS amount_per_month_USD_int,
+	CASE
+	WHEN c.id = 'USD' THEN
+	(
+		((ppp.price_int * ppp.quantity) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1)) / 100
+	) ELSE 
+	(
+		((((ppp.price_int * ppp.quantity) / c.rate) * cusd.rate) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1)) / 100
+	) END AS amount_per_month_USD,
+	
+	CASE
+	WHEN c.id = 'MXN' THEN
+	(
+		(ppp.price_int * ppp.quantity)
+	) ELSE 
+	(
+		(((ppp.price_int * ppp.quantity) / c.rate) * cmxn.rate)
+	) END  AS amount_MXN_int,
+	CASE
+	WHEN c.id = 'MXN' THEN
+	(
+		(ppp.price_int * ppp.quantity) / 100
+	) ELSE 
+	(
+		(((ppp.price_int * ppp.quantity) / c.rate) * cmxn.rate) / 100
+	) END AS amount_MXN,
+	CASE
+	WHEN c.id = 'MXN' THEN
+	(
+		((ppp.price_int * ppp.quantity) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1))
+	) ELSE 
+	(
+		((((ppp.price_int * ppp.quantity) / c.rate) * cmxn.rate) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1))
+	) END AS amount_per_month_MXN_int,
+	CASE
+	WHEN c.id = 'MXN' THEN
+	(
+		((ppp.price_int * ppp.quantity) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1)) / 100
+	) ELSE 
+	(
+		((((ppp.price_int * ppp.quantity) / c.rate) * cmxn.rate) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1)) / 100
+	) END AS amount_per_month_MXN,
+	
+	CASE
+	WHEN c.id = 'BRL' THEN
+	(
+		(ppp.price_int * ppp.quantity)
+	) ELSE 
+	(
+		(((ppp.price_int * ppp.quantity) / c.rate) * cbrl.rate)
+	) END  AS amount_BRL_int,
+	CASE
+	WHEN c.id = 'BRL' THEN
+	(
+		(ppp.price_int * ppp.quantity) / 100
+	) ELSE 
+	(
+		(((ppp.price_int * ppp.quantity) / c.rate) * cbrl.rate) / 100
+	) END AS amount_BRL,
+	CASE
+	WHEN c.id = 'BRL' THEN
+	(
+		((ppp.price_int * ppp.quantity) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1))
+	) ELSE 
+	(
+		((((ppp.price_int * ppp.quantity) / c.rate) * cbrl.rate) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1))
+	) END AS amount_per_month_BRL_int,
+	CASE
+	WHEN c.id = 'BRL' THEN
+	(
+		((ppp.price_int * ppp.quantity) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1)) / 100
+	) ELSE 
+	(
+		((((ppp.price_int * ppp.quantity) / c.rate) * cbrl.rate) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1)) / 100
+	) END AS amount_per_month_BRL,
+	
+	CASE
+	WHEN c.id = 'EUR' THEN
+	(
+		(ppp.price_int * ppp.quantity)
+	) ELSE 
+	(
+		(((ppp.price_int * ppp.quantity) / c.rate) * ceur.rate)
+	) END  AS amount_EUR_int,
+	CASE
+	WHEN c.id = 'EUR' THEN
+	(
+		(ppp.price_int * ppp.quantity) / 100
+	) ELSE 
+	(
+		(((ppp.price_int * ppp.quantity) / c.rate) * ceur.rate) / 100
+	) END AS amount_EUR,
+	CASE
+	WHEN c.id = 'EUR' THEN
+	(
+		((ppp.price_int * ppp.quantity) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1))
+	) ELSE 
+	(
+		((((ppp.price_int * ppp.quantity) / c.rate) * ceur.rate) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1))
+	) END AS amount_per_month_EUR_int,
+	CASE
+	WHEN c.id = 'EUR' THEN
+	(
+		((ppp.price_int * ppp.quantity) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1)) / 100
+	) ELSE 
+	(
+		((((ppp.price_int * ppp.quantity) / c.rate) * ceur.rate) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1)) / 100
+	) END AS amount_per_month_EUR,
+	pps.is_pixel,
+	pps.is_active,
+	b.id as billboard_id,
+	b.name_key as billboard_name,
+	b.height as billboard_height,
+	b.width as billboard_width,
+	smb.name as billboard_salemodel_name,
+	pvb.name as billboard_provider_name,
+	vp.name as billboard_viewpoint_name,
+	(b.cost_int / 100) as billboard_cost,
+	b.cost_int as billboard_cost_int,
+	b.state as billboard_state,
+	(pb.price_int / 100) as billboard_price,
+	pb.price_int as billboard_price_int,
+	pb.is_active as is_proposalbillboard_active,
+	ppp.is_active as is_proposalproduct_active,
+	CONCAT((pps.id),pd.name,sm.name,pv.name,u.username,adv.corporate_name,pps.offer_name,ppp.currency) AS search
+	FROM 
+	proposals pps
+	LEFT JOIN proposalsxproducts ppp ON ppp.proposal_id = pps.id
+	LEFT JOIN products pd ON pd.id = ppp.product_id
+	LEFT JOIN productsxbillboards pb ON pb.proposalproduct_id = ppp.id 
+	LEFT JOIN salemodels sm ON sm.id = ppp.salemodel_id
+	LEFT JOIN providers pv ON pv.id = ppp.provider_id
+	LEFT JOIN billboards b ON b.id = pb.billboard_id
+	LEFT JOIN viewpoints vp ON vp.id = b.viewpoint_id
+	LEFT JOIN salemodels smb ON smb.id = b.salemodel_id
+	LEFT JOIN providers pvb ON pvb.id = b.provider_id
+	LEFT JOIN offices o ON pps.office_id = o.id
+	INNER JOIN currencies c ON c.id = ppp.currency
+	INNER JOIN currencies cusd ON cusd.id = 'USD'
+	INNER JOIN currencies cmxn ON cmxn.id = 'MXN'
+	INNER JOIN currencies cbrl ON cbrl.id = 'BRL'
+	INNER JOIN currencies ceur ON ceur.id = 'EUR'
+	INNER JOIN statuses s ON s.id = pps.status_id
+	INNER JOIN users u ON u.id = pps.user_id
+	INNER JOIN advertisers adv ON adv.id = pps.advertiser_id
+	LEFT JOIN advertisers age ON age.id = pps.agency_id
+);
+
 # VIEW INVOICES_FILES
 CREATE VIEW view_invoices_files AS (
 SELECT 
@@ -1240,7 +1235,6 @@ INNER JOIN providers pv ON pv.id = i.provider_id
 INNER JOIN users u ON f.user_id = u.id
 LEFT JOIN products pd ON pd.id = pp.product_id
 LEFT JOIN salemodels sm ON sm.id = pp.salemodel_id
- 
 );
 
 # VIEW CREATION_USER_PROVIDER
