@@ -43,7 +43,7 @@ if(array_key_exists('tk',$_COOKIE) && (array_key_exists('uuid',$_COOKIE)))
         <a class="nav-link" title="<?=translateText('providers');?>" href="?pr=<?=base64_encode('./pages/providers/index.php')?>">
           <div class="menu-option">
             <div class="menu-icon">
-              <span class="material-icons"  style="font-size:4rem;">local_shipping</span>
+              <span class="material-icons"  style="font-size:4rem;">store</span>
             </div>
             <div class="menu-text">
             <?=translateText('providers');?>
