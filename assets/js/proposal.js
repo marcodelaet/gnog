@@ -21,6 +21,7 @@ function handleSubmit(form) {
         var formData = new FormData(form);
         formData.append('auth_api',authApi);
         formData.append('office_id',form.officeDropdownMenuButton.value);
+        formData.append('pixel_option',pixel);
 
         total                   = form.total.value;
         status_id               = form.status_id.value;
@@ -47,7 +48,7 @@ function handleSubmit(form) {
             request.onreadystatechange = function() {
                 if (this.readyState == 4 && this.status == 200) {
                     // Typical action to be performed when the document is ready:
-                    //alert(request.responseText);                    
+                    //console.log(request.responseText);                    
                     obj = JSON.parse(request.responseText);
 
                     proposal_id = obj[0].id;
@@ -274,7 +275,7 @@ function handleListEditOnLoad(ppid) {
     locat       = window.location.hostname;
 
     filters     = '&ppid='+ppid;
-    orderby     = '&orderby=is_proposalbillboard_active DESC,provider_name ASC,proposalproduct_id,state ASC,billboard_name';
+    orderby     = '&orderby=is_proposalbillboard_active DESC,concat(product_name,salemodel_name),provider_name ASC,state ASC,billboard_name';
   
     if(locat.slice(-1) != '/')
         locat += '/';
@@ -328,36 +329,15 @@ function handleListEditOnLoad(ppid) {
                 numberProviders = 0;
                 aBillboards     = ['Arco','Bajo Puente','Cartelera','Caseta','Columna','Mupi','Muro','Pantalla','Pantalla Led','Parabus','Puente Peatonal','Puente Vehicular','Reloj Digital','Valla'];
                 aProviders      = new Array();
+                showLine        = 1;
+
                 for(i=0;i < obj['data'].length; i++){
-                    // providers
-                    provider        = obj['data'][i].provider_id;
-                    provider_name   = obj['data'][i].provider_name;
-                    showLine        = 1;
-                    if(obj['data'][i].is_proposalbillboard_active === null){
-                        provider_name = "Sin proveedor";
-                        if((aProviders.indexOf(provider) >= 0) && (aBillboards.indexOf(obj['data'][i].salemodel_name) != -1)){
-                            showLine = 0;
-                        }
-                        provider = '111';
-                    }
-
-                    if(provider != providerOld){
-                        numberProviders++;
-                        html += '<div class="row list-products-row">' +
-                        '<div class="col-sm-6 provider-name">'+provider_name+'</div>' +
-                        '<div class="col-sm-2">';
-                        //html += '<a href="?pr=Li9wYWdlcy9tYXBzL2luZGV4LnBocA==&pid='+obj[i].provider_id+'&ppid='+ppid+'"><span class="material-icons" style="font-size:1.2rem;">edit</span></a>';
-                        html += '</div>';
-                        html += '</div>';
-                        // if in a different provider, product must be showed again  
-                        productOld = 0;    
-                    }
-
                     // products list
                     product = obj['data'][i].salemodel_name + obj['data'][i].state;
                     if(product != productOld){
+                        providerOld     = 0;
                         numberProducts++;
-                        if(showLine == 1){
+                       // if(showLine == 1){
                             html += '<div class="row list-products-row">' +
                             '<div class="col-sm-1">'+(numberProducts)+'</div>' +
                             '<div class="col-sm-3">'+obj['data'][i].product_name+' / '+obj['data'][i].salemodel_name+'</div>' +
@@ -365,16 +345,43 @@ function handleListEditOnLoad(ppid) {
                             //'<div class="col-sm-2">Rate % All</div>' +
                             if(aBillboards.indexOf(obj['data'][i].salemodel_name) != -1){
                             //if(obj[i].billboard_salemodel_name != null){
-                                html += '<div class="col-sm-2"><a href="?pr=Li9wYWdlcy9tYXBzL2luZGV4LnBocA==&smid='+obj['data'][i].salemodel_id+'&ppid='+ppid+'&pppid='+obj['data'][i].proposalproduct_id+'&state='+obj['data'][i].state+'"><span class="material-icons" style="font-size:1.2rem;">map</span></a></div>';
+                                html += '<div class="col-sm-2"><a title="'+ucfirst(translateText('choose',localStorage.getItem('ulang')))+' '+obj['data'][i].salemodel_name+' '+translateText('on_map',localStorage.getItem('ulang'))+'" href="?pr=Li9wYWdlcy9tYXBzL2luZGV4LnBocA==&smid='+obj['data'][i].salemodel_id+'&ppid='+ppid+'&pppid='+obj['data'][i].proposalproduct_id+'&state='+obj['data'][i].state+'"><span class="material-icons" style="font-size:1.2rem;">map</span></a></div>';
+                            } else {
+                                html += '<div class="col-sm-2"><a title="'+ucfirst(translateText('add+',localStorage.getItem('ulang')))+' '+translateText('provider',localStorage.getItem('ulang'))+'" href="?pr=Li9wYWdlcy9tYXBzL2luZGV4LnBocA==&smid='+obj['data'][i].salemodel_id+'&ppid='+ppid+'&pppid='+obj['data'][i].proposalproduct_id+'&state='+obj['data'][i].state+'"><span class="material-icons" style="font-size:1.2rem;">add_business</span></a></div>';
                             }
                             html += '</div>';
-                        }    
+                        //}    
                     }
                     // css to special times
                     deletedbillboard = '';
                     if(obj['data'][i].is_proposalbillboard_active != 'Y'){
                         deletedbillboard = 'deleted-billboard';
                     }
+                    
+                    // providers
+                    provider        = obj['data'][i].provider_id;
+                    provider_name   = obj['data'][i].provider_name;
+                    showLine        = 1;
+                    if(obj['data'][i].is_proposalbillboard_active === null){
+                       // provider_name = "";// "Sin proveedor";
+                        if((aProviders.indexOf(provider) >= 0) && (aBillboards.indexOf(obj['data'][i].salemodel_name) != -1)){
+                            showLine = 0;
+                        }
+                        //provider = '111';
+                    }
+
+                    if(provider != providerOld){
+                        numberProviders++;
+                        html += '<div class="row list-products-row">' +
+                        '<div class="col-sm-2">' +
+                        '<div class="col-sm-12 provider-name">'+provider_name+'</div>';
+                        //html += '<a href="?pr=Li9wYWdlcy9tYXBzL2luZGV4LnBocA==&pid='+obj[i].provider_id+'&ppid='+ppid+'"><span class="material-icons" style="font-size:1.2rem;">edit</span></a>';
+                        html += '</div>';
+                        html += '</div>';
+                        // if in a different provider, product must be showed again  
+                        productOld = 0;    
+                    }
+                    
 
                     // list billboards
                     if((obj['data'][i].billboard_name != '')&&(obj['data'][i].billboard_name != null)){
@@ -802,7 +809,7 @@ function refilterProductsType(typeInt){
     typeInt++;
     if(typeInt > 1)
         typeInt = 0;
-    document.getElementById('customSwitch2').value = typeInt;
+    document.getElementById('digital_product').value = typeInt;
     
     errors      = 0;
     authApi     = csrf_token;

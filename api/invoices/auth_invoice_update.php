@@ -104,7 +104,7 @@ if(array_key_exists('auth_api',$_POST)){
 
     $motive = ''; // utilizar urldecode / urlencode (motive)
     if($option == 'deny'){
-        if((array_key_exists('motive',$_POST)) && strlen($_POST['motive'])>20){
+        if((array_key_exists('motive',$_POST)) && strlen($_POST['motive'])>10){
             $motive = $_POST['motive'];
         } else {
             $errors++;
@@ -205,8 +205,10 @@ if(array_key_exists('auth_api',$_POST)){
                 $description_en     = 'invoice '.json_decode(translateTextInLanguage($newStatus,'eng'),true)['translation'] . ', paid value $'.$_POST['invoice_value']. ' (currency: '.$_POST['currency'].')';
                 $description_es     = 'factura '.json_decode(translateTextInLanguage($newStatus,'esp'),true)['translation'] . ', monto del pago $'.$_POST['invoice_value']. ' (moneda: '.$_POST['currency'].')';
                 $description_ptbr   = 'fatura '.json_decode(translateTextInLanguage($newStatus,'ptbr'),true)['translation'] . ', valor pago $'.$_POST['invoice_value']. ' (moeda: '.$_POST['currency'].')';
-        }
-
+            }
+            /* *************************************************
+            ** SENDING EMAIL AND CREATING HISTORY LOG
+            ************************************************* */
             // getting user information
             $sql_get_user = "SELECT i.invoice_number, CONCAT(p.contact_name,' ',p.contact_surname) as full_name, p.name as provider_name, u.email from view_users u INNER JOIN view_providers p ON p.contact_email = u.email INNER JOIN invoices i ON i.provider_id = p.UUID WHERE i.id = '$uuid'";
             $rs_get_user  = $DB->getData($sql_get_user);
@@ -216,10 +218,14 @@ if(array_key_exists('auth_api',$_POST)){
             $user_email         = $rs_get_user[0]['email'];
             $user_providername  = $rs_get_user[0]['provider_name'];
         
-            //changing TO to logged user
-            $to_name     = "$user_fullname";
-            $to_email    = "$user_email";
-        
+            if(substr($SUBDOMAIN,0,4) == 'beta') {
+                $to_name     = "TESTE BETA - Homologação";
+                $to_email    = "it@gnog.com.br";
+            } else {
+                //changing TO to logged user
+                $to_name     = "$user_fullname";
+                $to_email    = "$user_email";
+            }        
             // setting history log
             setHistory($user_id,'invoices',$invoice_id,$description_en,$description_es,$description_ptbr,$user_token,$auth_api,'text');        
             
@@ -228,11 +234,17 @@ if(array_key_exists('auth_api',$_POST)){
             $messageHtml   .= "<p>PtBR: <p>$description_ptbr </p></p>";
             $messageHtml   .= "<p>Eng: <p>$description_en </p></p>";
             
-            $SendGNogMail->sendGNogMail($from_name,$from_email,$to_name,$to_email,$subject,$messageHtml,$signFilePath);
-        
+            if($LOCALSERVER != 'local') {
+                $SendGNogMail->sendGNogMail($from_name,$from_email,$to_name,$to_email,$subject,$messageHtml,$signFilePath);
+            }
+            /*************************************
+             * END SEND MAIL AND HISTORY SECTION
+             *************************************/
+            
             $message .= "\n- data record successfully";
             //$return = json_encode(["status" => "Error","message" => $message]);
             $response = json_encode(["status" => "OK","message" => $message]);
+
         } else {
             $response = json_encode(["status" => "Error","message" => $message]);
         } 

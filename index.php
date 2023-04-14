@@ -23,6 +23,24 @@ require_once('./components/header.main.php');
 ?>
   <body <?php if($_REQUEST['pr'] == base64_encode('./pages/maps/index.php')) { ?> onload="theMap('<?=$_REQUEST['smid']?>','<?=$_REQUEST['state']?>','<?=$_REQUEST['pppid']?>');" <?php } ?>>
     <noscript>You need to enable JavaScript to run this app.</noscript>
+<?php      if($LOCALSERVER == 'local') {
+?>
+<div id="develop-area">
+      DEVELOP AREA   -   DEVELOP AREA   -   DEVELOP AREA   -   DEVELOP AREA   -   DEVELOP AREA   -   DEVELOP AREA   -   DEVELOP AREA   -   DEVELOP AREA   -   DEVELOP AREA     
+    </div>
+<?php  
+} else {
+  if(substr($SUBDOMAIN,0,4) == 'beta') {
+    ?> 
+    <div id="beta-notify">
+    BETA HOMOLOGATION - BETA HOMOLOGATION - BETA HOMOLOGATION - BETA HOMOLOGATION - BETA HOMOLOGATION
+    </div>
+    <?php
+  } else { 
+    // nothing  
+  }
+}
+?>    
     <div id="root">
       <?php
 require('./components/menu.main.php');

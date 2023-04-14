@@ -86,3 +86,7 @@ function copyStringToClipboard (str) {
     request.send(formData);
     return (xresponse);
  }
+
+ function ucfirst(word){
+    return word.charAt(0).toUpperCase() + word.slice(1);
+ }

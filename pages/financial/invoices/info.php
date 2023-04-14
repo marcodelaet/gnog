@@ -97,7 +97,7 @@ if($status != 'waiting_approval'){
       <div class="modal-body">
         <form name="frmDeny">
           <div class="form-group">
-            <label for="motive" class="col-form-label"><?=translateText('motive')?>: <i>(min 20 chars)</i></label>
+            <label for="motive" class="col-form-label"><?=translateText('motive')?>: <i>(min 10 chars)</i></label>
             <textarea class="form-control" id="motive" name="motive"></textarea>
           </div>
           <input type="hidden" name="iid" value="<?=$_REQUEST['iid']?>" />
@@ -110,7 +110,7 @@ if($status != 'waiting_approval'){
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal"><?=translateText('close')?></button>
-        <button type="button" class="btn btn-primary" onclick="invoiceChangeStatus(frmDeny,'deny')"><?=translateText('save')?></button>
+        <button type="button" class="btn btn-primary" onclick="this.disabled = true; invoiceChangeStatus(frmDeny,'deny')"><?=translateText('save')?></button>
       </div>
     </div>
   </div>
@@ -168,9 +168,9 @@ if($status != 'waiting_approval'){
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal"><?=translateText('close')?></button>
-        <button type="button" class="btn btn-primary" onclick="invoiceChangeStatus(frmApprove,'pay')"><?=ucfirst(translateText('pay'))?></button>
+        <button type="button" class="btn btn-primary" onclick="this.disabled = true; invoiceChangeStatus(frmApprove,'pay')"><?=ucfirst(translateText('pay'))?></button>
 <?php if($status == 'waiting_approval'){ ?>
-        <button type="button" id="btn-approval-only" class="btn btn-warning" onclick="invoiceChangeStatus(frmApprove,'approval')"><?=ucfirst(translateText('approval_only'))?></button>
+        <button type="button" id="btn-approval-only" class="btn btn-warning" onclick="this.disabled = true; invoiceChangeStatus(frmApprove,'approval')"><?=ucfirst(translateText('approval_only'))?></button>
 <?php  } ?>
       </div>
     </div>

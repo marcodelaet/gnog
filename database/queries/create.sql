@@ -734,6 +734,13 @@ INSERT INTO translates
 VALUES
 (UUID(), 'gnog_office', 'In GNog Office of', 'En Oficina GNog de', 'Em Escritório GNog de', 'Y', NOW(), NOW());
 
+INSERT INTO translates 
+(id, code_str, text_eng, text_esp, text_ptbr, is_active, created_at, updated_at)
+VALUES
+(UUID(), 'on_map', 'on map', 'en el mapa', 'no mapa', 'Y', NOW(), NOW()),
+(UUID(), 'add+', 'add', 'añadir', 'adicionar', 'Y', NOW(), NOW());
+
+ 
 
 # FILES
 CREATE TABLE IF NOT EXISTS files (

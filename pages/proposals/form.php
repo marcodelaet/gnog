@@ -1,5 +1,10 @@
 <?php
 $moduleName = 'Proposal';
+
+$mexico_id = '57b71c86-b204-11ed-997f-008cfa5abdac';
+if('1' == '2'){
+    $mexico_id = '4d2af032-b204-11ed-a96a-246fbf72fd9f';
+}
 ?>
 <link rel="stylesheet" href="<?=$dir?>./assets/css/<?=$moduleName?>.css">
 <link rel="stylesheet" href="<?=$dir?>./assets/css/Inputs.css">
@@ -24,8 +29,8 @@ $moduleName = 'Proposal';
             <div class="inputs-form-container">
                 <div class="form-row">
                     <div class="col custom-control custom-switch" style="text-align:right;">
-                        <input type="checkbox" class="custom-control-input" id="customSwitch1" name="pixel">
-                        <label class="custom-control-label" for="customSwitch1"><?=translateText('pixel_required');?></label>
+                        <input type="checkbox" class="custom-control-input" id="pixel" name="pixel">
+                        <label class="custom-control-label" for="pixel"><?=translateText('pixel_required');?></label>
                     </div>
                 </div>
                 <div class="form-row" >
@@ -72,7 +77,7 @@ $moduleName = 'Proposal';
                     <div class="col-2" >&nbsp;</div>
                     <div class="col-2" >
                         <label for="officeDropdownMenuButton"><?=translateText('gnog_office');?></label>
-                            <?=inputDropDownStyle('office','','orderby','Mexico','4d2af032-b204-11ed-a96a-246fbf72fd9f')?>
+                            <?=inputDropDownStyle('office','','orderby','Mexico',$mexico_id)?>
                             <div class="invalid-feedback">
                                 Please choose the Office
                             </div>
@@ -156,8 +161,8 @@ $moduleName = 'Proposal';
                         <div>
                             <div class="form-row">
                                 <div class="col custom-control custom-switch" style="text-align:right;">
-                                    <input type="checkbox" class="custom-control-input" value="0" onchange="refilterProductsType(this.value);" id="customSwitch2" name="digital_product">
-                                    <label class="custom-control-label" for="customSwitch2"><?=translateText('digital_product');?></label>
+                                    <input type="checkbox" class="custom-control-input" value="0" onchange="refilterProductsType(this.value);" id="digital_product" name="digital_product">
+                                    <label class="custom-control-label" for="digital_product"><?=translateText('digital_product');?></label>
                                 </div>
                             </div>
                         </div>
