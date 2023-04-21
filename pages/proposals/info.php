@@ -3,9 +3,9 @@
 <link rel="stylesheet" href="<?=$dir?>./assets/css/Inputs.css">
 <link rel="stylesheet" href="<?=$dir?>./assets/css/Button.css">
 <script src="<?=$dir?>./assets/js/<?=strtolower($moduleName)?>.js" type="text/javascript"></script>
-<?php if(array_key_exists('tid',$_REQUEST)){ ?>
+<?php if(array_key_exists('ppid',$_REQUEST)){ ?>
 <script>
-    handleViewOnLoad("<?=$_REQUEST['tid']?>")
+    handleViewOnLoad("<?=$_REQUEST['ppid']?>")
 </script>
 <?php } ?>
 <div class="card bg-light mb-3" id="<?=strtolower($moduleName)?>-card">
@@ -23,7 +23,7 @@
     <div class="card-body <?=strtolower($moduleName)?>-body">
         <!--***************************************
         ****** Products Section *******************-->
-        <h5 class="card-title main-products-header">Products</h5>
+        <h5 class="card-title main-products-header"><?=translateText('Products')?></h5>
         <div class="<?=strtolower($moduleName)?>-data">
             <div id="products-list">
                 <spam >aaaaaa bbbbbb da xxxx </spam><spam >- R$ 0,00</spam>
@@ -31,7 +31,8 @@
         </div>
         <div class="margin-space">&nbsp;</div>
         <div class="<?=strtolower($moduleName)?>-data">
-        <?=inputDropDownStyle('status','','percent','')?>
+        
+        <?=inputDropDownStyle('status','','percent','','')?>
             </div>
 
         <div class="inputs-button-container">

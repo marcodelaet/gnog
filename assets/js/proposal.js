@@ -196,12 +196,13 @@ function handleEditSubmit(tid,form) {
         alert('Please, fill all required fields (*)');
 }
 
-function handleViewOnLoad(tid) {
+function handleViewOnLoad(ppid) {
     errors      = 0;
+    //alert('ok');
     authApi     = csrf_token;
     locat       = window.location.hostname;
 
-    filters     = '&tid='+tid;
+    filters     = '&ppid='+ppid;
 
     if(locat.slice(-1) != '/')
         locat += '/';
@@ -219,43 +220,45 @@ function handleViewOnLoad(tid) {
                 // Create our number formatter.
                 var formatter = new Intl.NumberFormat(lang, {
                     style: 'currency',
-                    currency: obj[0].currency_c,
+                    currency: obj['data'][0].currency_c,
                     //maximumSignificantDigits: 2,
 
                     // These options are needed to round to whole numbers if that's what you want.
                     //minimumFractionDigits: 2, // (this suffices for whole numbers, but will print 2500.10 as $2,500.1)
                     //maximumFractionDigits: 0, // (causes 2500.99 to be printed as $2,501)
                 });
-                if(obj[0].main_contact_position!='')
-                    position = obj[0].main_contact_position;
-                client = obj[0].client_name;
-                if(obj[0].agency_name != null)
-                    client += ' / ' + obj[0].agency_name;
+                if(obj['data'][0].main_contact_position!='')
+                    position = obj['data'][0].main_contact_position;
+                client = obj['data'][0].client_name;
+                if(obj['data'][0].agency_name != null)
+                    client += ' / ' + obj['data'][0].agency_name;
 
                 xxhtml                = '';
                 color_status = '#d60b0e';
-                if(obj[0].status_percent == '100')
+                if(obj['data'][0].status_percent == '100')
                     color_status = '#298c3d';
-                if(obj[0].status_percent == '90')
+                if(obj['data'][0].status_percent == '90')
                     color_status = '#03fc84';
-                if(obj[0].status_percent == '75')
+                if(obj['data'][0].status_percent == '75')
                     color_status = '#77fc03';
-                if(obj[0].status_percent == '50')
+                if(obj['data'][0].status_percent == '50')
                     color_status = '#ebfc03';
-                if(obj[0].status_percent == '25')
+                if(obj['data'][0].status_percent == '25')
                     color_status = '#fc3d03';
-                startDate           = new Date(obj[0].start_date);
+                startDate           = new Date(obj['data'][0].start_date);
                 formattedStartDate  = startDate.getDate()+"/"+(parseInt(startDate.getMonth())+1)+"/"+startDate.getFullYear();
-                stopDate            = new Date(obj[0].stop_date);
+                stopDate            = new Date(obj['data'][0].stop_date);
                 formattedStopDate   = stopDate.getDate()+"/"+(parseInt(stopDate.getMonth())+1)+"/"+stopDate.getFullYear(); 
-                document.getElementById('proposal-name').innerHTML          = obj[0].offer_name;
+                document.getElementById('proposal-name').innerHTML          = obj['data'][0].offer_name;
                 document.getElementById('client').innerHTML                 = client;
-                document.getElementById('description').innerHTML            = obj[0].description;
+                document.getElementById('description').innerHTML            = obj['data'][0].description;
                 document.getElementById('dates').innerHTML                  = "("+ formattedStartDate+" - "+formattedStopDate+")";
-                document.getElementById('statusDropdownMenuButton').innerHTML            = '<spam class="material-icons icon-data" id="card-status-icon" style="color:'+color_status+'">thermostat</spam>' + obj[0].status_name + ' ('+ + obj[0].status_percent+'%)';
+                //document.getElementById('statusDropdownMenuButton').innerHTML            = '<spam class="material-icons icon-data" id="card-status-icon" style="color:'+color_status+'">thermostat</spam>' + obj[0].status_name + ' ('+ obj[0].status_percent+'%)';
+                document.getElementById('statusDropdownMenuButton').value = obj['data'][0].status_id; 
+                document.getElementById('statusDropdownMenuButton').innerHTML = '<spam class="material-icons icon-data" id="card-status-icon" style="color:'+color_status+'">thermostat</spam>' + translateText(obj['data'][0].status_name,localStorage.getItem('ulang')) + ' ('+ obj['data'][0].status_percent+'%)';
                 // products list for statement
-                for(i=0;i<obj.length;i++){
-                    xxhtml += '<spam class="product-line">'+obj[i].quantity + ' x ' + obj[i].product_name + ' / ' + obj[i].salemodel_name+' - '+formatter.format(obj[i].amount)+'</spam><br />';
+                for(var i=0;i<obj['data'].length;i++){
+                    xxhtml += '<spam class="product-line">'+obj['data'][i].quantity + ' x ' + obj['data'][i].product_name + ' / ' + obj['data'][i].salemodel_name+' - '+formatter.format(obj['data'][i].amount)+'</spam><br />';
                 }
                 document.getElementById('products-list').innerHTML          = xxhtml;                
             }
@@ -477,13 +480,28 @@ function handleListOnLoad(search) {
                         color_status = '#d60b0e';
                         if(obj[i].is_active == 'Y')
                             color_status = '#298c3d';
+
+
+
+                        color_status = '#d60b0e';
+                        if(obj[i].status_percent == '100')
+                            color_status = '#298c3d';
+                        if(obj[i].status_percent == '90')
+                            color_status = '#03fc84';
+                        if(obj[i].status_percent == '75')
+                            color_status = '#77fc03';
+                        if(obj[i].status_percent == '50')
+                            color_status = '#ebfc03';
+                        if(obj[i].status_percent == '25')
+                            color_status = '#fc3d03';
+                            
                         agency = '';
                         if(typeof(obj[i].agency_name) === 'string')
                             agency = ' / '+obj[i].agency_name;
                         amount = obj[i].amount;
                         start_date  = new Date(obj[i].start_date);
                         stop_date   = new Date(obj[i].stop_date);
-                        html += '<tr><td>'+obj[i].offer_name+'</td><td nowrap>'+obj[i].client_name+agency+'</td><td nowrap>'+obj[i].username+'</td><td nowrap>'+formatter.format(amount)+'</td><td>'+start_date.toLocaleString(lang).split(" ")[0].replace(",","")+'</td><td>'+stop_date.toLocaleString(lang).split(" ")[0].replace(",","")+'</td><td style="text-align:center;"><span id="locked_status_'+obj[i].UUID+'" class="material-icons" style="color:'+color_status+'">attribution</span></td><td nowrap style="text-align:center;">';
+                        html += '<tr><td>'+obj[i].offer_name+'</td><td nowrap>'+obj[i].client_name+agency+'</td><td nowrap>'+obj[i].username+'</td><td nowrap>'+formatter.format(amount)+'</td><td>'+start_date.toLocaleString(lang).split(" ")[0].replace(",","")+'</td><td>'+stop_date.toLocaleString(lang).split(" ")[0].replace(",","")+'</td><td style="text-align:center;" ><span id="status_'+obj[i].UUID+'" class="material-icons" title="'+obj[i].status_percent+'% '+obj[i].status_name+'" style="color:'+color_status+'">thermostat</span></td><td nowrap style="text-align:center;">';
                         // information card
                         html += '<a href="?pr=Li9wYWdlcy9wcm9wb3NhbHMvaW5mby5waHA=&ppid='+obj[i].UUID+'"><span class="material-icons" style="font-size:1.5rem; color:black;" title="Information Card '+obj[i].offer_name+'">info</span></a>';
 
@@ -491,7 +509,7 @@ function handleListOnLoad(search) {
                         html += '<a href="?pr=Li9wYWdlcy9wcm9wb3NhbHMvZm9ybWVkaXQucGhw&ppid='+obj[i].UUID+'"><span class="material-icons" style="font-size:1.5rem; color:black;" title="Edit '+module + ' '+obj[i].offer_name+'">edit</span></a>';
 
                         // Remove 
-                        html += '<a href="javascript:void(0)" onclick="handleRemove(\''+obj[i].UUID+'\',\''+obj[i].is_active+'\')"><span class="material-icons" style="font-size:1.5rem; color:black;" title="Remove '+module + ' '+obj[i].offer_name+'">delete</span></a>';
+                        html += '<a href="javascript:void(0)" onclick="handleRemove(\''+obj[i].UUID+'\',\''+obj[i].status_percent+'\')"><span class="material-icons" style="font-size:1.5rem; color:black;" title="Remove '+module + ' '+obj[i].offer_name+'">delete</span></a>';
 
                         html += '</td></tr>';
                     }
@@ -550,9 +568,9 @@ function handleRemoveFromList(proposalproduct_id,billboard_id){
 }
 
 
-function handleRemove(tid,locked_status){
+function handleRemove(ppid,status){
     authApi     = csrf_token;
-    filters     = '&tid='+tid+'&lk='+locked_status;
+    filters     = '&ppid='+ppid+'&lk='+status;
     
     locat       = window.location.hostname;
     if(locat.slice(-1) != '/')

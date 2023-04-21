@@ -11,28 +11,30 @@ $DB = new MySQLDB($DATABASE_HOST,$DATABASE_USER,$DATABASE_PASSWORD,$DATABASE_NAM
 $con = $DB->connect();
 
 // check authentication / local Storage
-if(array_key_exists('auth_api',$_REQUEST)){
+if(array_key_exists('auth_api',$_POST)){
     // check auth_api === local storage
-    //if($localStorage == $_REQUEST['auth_api']){}
+    //if($localStorage == $_POST['auth_api']){}
 
     // values to insert
-    $username               = $_REQUEST['username']; 
-    $email                  = $_REQUEST['email'];
+    $username               = $_POST['username']; 
+    $email                  = $_POST['email'];
     $mobile_ddi             = "'000'";
-    if(array_key_exists('mobile_international_code',$_REQUEST)){
-        if($_REQUEST['mobile_international_code']!=='')
-            $mobile_ddi         = "'".$_REQUEST['mobile_international_code']."'";
+    if(array_key_exists('mobile_international_code',$_POST)){
+        if($_POST['mobile_international_code']!=='')
+            $mobile_ddi         = "'".$_POST['mobile_international_code']."'";
     }
     $mobile                 = "'000'";
-    if(array_key_exists('mobile_number',$_REQUEST)){
-        if($_REQUEST['mobile_number']!=='')
-            $mobile         = "'".$_REQUEST['mobile_number']."'";
+    if(array_key_exists('mobile_number',$_POST)){
+        if($_POST['mobile_number']!=='')
+            $mobile         = "'".$_POST['mobile_number']."'";
     }
-    $authentication_string  = md5($_REQUEST['password']);
+    $office_id              = $_POST['office'];
+    $authentication_string  = md5($_POST['password']);
 
     // Query creation
-    $sql = "INSERT INTO users (id,username,email,level_account,user_type,mobile_international_code,mobile_number,authentication_string,account_locked,created_at,updated_at) VALUES ((UUID()),'$username','$email','20','user',$mobile_ddi,$mobile,'$authentication_string','N',now(),now())";
+    $sql = "INSERT INTO users (id,username,email,level_account,user_type,user_language,office_id,mobile_international_code,mobile_number,authentication_string,account_locked,created_at,updated_at) VALUES ((UUID()),'$username','$email','20','user','esp','$office_id',$mobile_ddi,$mobile,'$authentication_string','N',now(),now())";
     // INSERT data
+    //echo $sql;
     $rs = $DB->executeInstruction($sql);
 
   
