@@ -78,8 +78,14 @@ function setHistory($user_id,$module_name,$module_id,$description_en,$descriptio
     // call conexion instance
     $con = $DBHistory->connect();
 
+    $nowDateTime = "now()";
+    if($module_name == 'invoices_payed_from_waiting'){ // if is approval time before paied status
+        $nowDateTime = "subtime(now(), '0:0:10.000000')";
+        $module_name = 'invoices';
+    }
+
     // Query
-    $sql = "INSERT INTO loghistory (id, user_id, module_name, module_id, description_en, description_es, description_ptbr, user_token, form_token, created_at, updated_at) VALUES (UUID(),'$user_id', '$module_name', '$module_id', '$description_en','$description_es','$description_ptbr', '$user_token', '$form_token', now(), now())"; 
+    $sql = "INSERT INTO loghistory (id, user_id, module_name, module_id, description_en, description_es, description_ptbr, user_token, form_token, created_at, updated_at) VALUES (UUID(),'$user_id', '$module_name', '$module_id', '$description_en','$description_es','$description_ptbr', '$user_token', '$form_token', $nowDateTime, $nowDateTime)"; 
 
     $rs = $DBHistory->executeInstruction($sql);
     if($rs){

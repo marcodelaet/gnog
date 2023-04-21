@@ -135,7 +135,8 @@ if($status != 'waiting_approval'){
                         </div>
                         <select
                         required
-                        name ='currency' 
+                        name='currency' 
+                        id='modal_approval_currency'
                         title = '<?=translateText('currency');?>'
                         class="form-control"
                         autocomplete="currency"
