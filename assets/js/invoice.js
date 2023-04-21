@@ -287,8 +287,14 @@ function handleViewOnLoad(iid) {
                 document.getElementById('xml-file').innerHTML               = xml_file_html;
                 document.getElementById('report-file').innerHTML            = report_file_html;
                 document.getElementById('presentation-file').innerHTML      = presentation_file_html;
-              }
-            else{
+
+                document.getElementById('modal_approval_currency').value = obj[0].invoice_amount_currency; 
+                if(obj[0].invoice_amount_currency=='BRL'){
+                    document.getElementById('currency-symbol').innerText='R$';
+                } else {
+                    document.getElementById('currency-symbol').innerText='$';
+                }
+            } else {
                 //form.btnSave.innerHTML = "Searching...";
             }
         };

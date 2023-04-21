@@ -199,7 +199,7 @@ if(array_key_exists('auth_api',$_POST)){
             // pay option
             if($option == 'pay'){
                 if($status == "waiting_approval"){ // if paid on approval -> set history to approval first
-                    setHistory($user_id,'invoices',$invoice_id,$description_en,$description_es,$description_ptbr,$user_token,$auth_api,'text');
+                    setHistory($user_id,'invoices_payed_from_waiting',$invoice_id,$description_en,$description_es,$description_ptbr,$user_token,$auth_api,'text');
                     // creating description text about payment
                 }
                 $description_en     = 'invoice '.json_decode(translateTextInLanguage($newStatus,'eng'),true)['translation'] . ', paid value $'.$_POST['invoice_value']. ' (currency: '.$_POST['currency'].')';
