@@ -111,7 +111,7 @@ if(1==2)
                             <th scope="col"><?=translateText('assign_executive');?></th>
                             <th scope="col"><?=translateText('amount');?></th>
                             <th scope="col"><?=translateText('monthly');?></th>
-                            <th scope="col"><?=translateText('status');?></th>
+                            <th scope="col" style="text-align:center;"><?=translateText('status');?></th>
                             <th scope="col" style="text-align:center;"><?=translateText('settings');?></th>
                         </tr>
                     </thead>

@@ -13,6 +13,8 @@ function handleSubmit(form) {
         mobile      = form.mobile.value;
         password    = form.password.value;
         password2   = form.retype_password.value;
+        office      = form.officeDropdownMenuButton.value;
+        
         locat       = window.location.hostname;
         if(locat.slice(-1) != '/')
             locat += '/';
@@ -26,12 +28,13 @@ function handleSubmit(form) {
         if(errors > 0){
 
         } else{
-            const requestURL = window.location.protocol+'//'+locat+'api/'+module+'s/auth_'+module+'_add_new.php?auth_api='+authApi+'&username='+username+'&email='+email+'&mobile_international_code='+mobile_ddi+'&mobile_number='+mobile+'&password='+password;
-            
+            const requestURL = window.location.protocol+'//'+locat+'api/'+module+'s/auth_'+module+'_add_new.php';
+            const querystring = 'auth_api='+authApi+'&username='+username+'&email='+email+'&mobile_international_code='+mobile_ddi+'&office='+office+'&mobile_number='+mobile+'&password='+password;
             const request = new XMLHttpRequest();
             request.onreadystatechange = function() {
                 if (this.readyState == 4 && this.status == 200) {
                    // Typical action to be performed when the document is ready:
+                   //alert(request.responseText);
                    obj = JSON.parse(request.responseText);
                    form.btnSave.innerHTML = "Save";
                    //alert('Status: '+obj.status);
@@ -41,9 +44,10 @@ function handleSubmit(form) {
                     form.btnSave.innerHTML = "Saving...";
                 }
             };
-            request.open('GET', requestURL);
+            request.open('POST', requestURL, false);
+            request.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
             //request.responseType = 'json';
-            request.send();
+            request.send(querystring);
         }
     } else
         alert('Please, fill all required fields (*)');

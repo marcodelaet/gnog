@@ -44,7 +44,7 @@ $moduleNameProp = 'Proposal';
                     <th scope="col"><?=translateText('amount')?></th>
                     <th scope="col"><?=translateText('start_date')?></th>
                     <th scope="col"><?=translateText('stop_date')?></th>
-                    <th scope="col"><?=translateText('status')?></th>
+                    <th scope="col" style="text-align:center;"><?=translateText('status')?></th>
                     <th scope="col" style="text-align:center;"><?=translateText('settings')?></th>
                 </tr>
             </thead>

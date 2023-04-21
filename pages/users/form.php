@@ -21,12 +21,21 @@ if(array_key_exists('username',$_POST))
 
 <div class='form-user-container'>
     <div class="form-container">
-        <div class="form-header">New User</div>
+        <div class="form-header"><?=translateText('new');?> <?=translateText('user');?></div>
         <form name='user' method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
             <div class="inputs-form-container">
+                <div class="form-row justify-content-end">
+                    <div class="col text-right" >
+                        <label for="officeDropdownMenuButton"><?=translateText('gnog_office');?></label>
+                        <?=inputDropDownStyle('office','','orderby','Mexico',$mexico_id)?>
+                        <div class="invalid-feedback">
+                            Please choose the Office
+                        </div>
+                    </div>
+                </div>
                 <div class="form-row">
                     <div class="col">
-                        <label for="username">Username</label>
+                        <label for="username"><?=translateText('username');?></label>
                         <input
                         required
                         name ='username' 
@@ -35,7 +44,7 @@ if(array_key_exists('username',$_POST))
                         value='<?=$username?>'
                         class="form-control" 
                         type="text" 
-                        maxlength="30"
+                        maxlength="20"
                         autocomplete="username"
                         />
                         <div class="invalid-feedback">
@@ -45,7 +54,7 @@ if(array_key_exists('username',$_POST))
                 </div>
                 <div class="form-row" style="margin-top:1rem">
                     <div class="col">
-                        <label for="email">E-mail</label>
+                        <label for="email"><?=translateText('email');?></label>
                         <input
                         required
                         name ='email' 
@@ -60,7 +69,7 @@ if(array_key_exists('username',$_POST))
                         </div>
                     </div>
                     <div class="col">
-                        <label for="mobile">Mobile N&ordm;</label><br/>
+                        <label for="mobile"><?=translateText('mobile_number');?></label><br/>
                         <input
                         id  = 'mobile'
                         name ='mobile' 
@@ -80,7 +89,7 @@ if(array_key_exists('username',$_POST))
                 </div>
                 <div class="form-row" style="margin-top:1rem">
                     <div class="col">
-                        <label for="password">Password</label>
+                        <label for="password"><?=translateText('password');?></label>
                         <input 
                         required
                         name ='password'
@@ -96,7 +105,7 @@ if(array_key_exists('username',$_POST))
                         </div>
                     </div>
                     <div class="col">
-                        <label for="retype_password">Retype Password</label>
+                        <label for="retype_password"><?=translateText('retype');?> <?=translateText('password');?></label>
                         <input 
                         required
                         name ='retype_password'

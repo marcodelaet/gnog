@@ -172,12 +172,12 @@ function inputDropDownStyle($table,$where,$order,$selectedDescription,$selectedV
     //return $fullUrl;
     $homepage = file_get_contents($fullUrl);
     $obj = json_decode($homepage);
-    $html        = '';
-    $html       .= '<div class="dropdown">';
-    $html       .= '<button class="btn btn-secondary dropdown-toggle" type="button" id="'.$table.'DropdownMenuButton" name="'.$table.'DropdownMenuButton" value="'.$selectedValue.'" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">'.$selectedDescription;
-
-    $html       .= '</button>';
-    $html       .= '<div class="dropdown-menu" aria-labelledby="'.$table.'DropdownMenuButton">';
+    $html       = '';
+    $button     = '';
+    $divInitIn  = '';
+    $divInitFin = '';
+    $divInitIn  .= '<div class="dropdown">';
+    $divInitFin .= '<div class="dropdown-menu" aria-labelledby="'.$table.'DropdownMenuButton">';
     for($i=0;$i < count($obj->data); $i++){
         $className      = "";
         $markingSelect  = ''; 
@@ -202,7 +202,7 @@ function inputDropDownStyle($table,$where,$order,$selectedDescription,$selectedV
                 break;
             case  'office':
                 $id = $obj->data[$i]->uuid_full;
-                $icon = '<img src="./assets/img/'.$obj->data[$i]->icon_flag .'" height="24"/>';
+                $icon = '<spam><img src="./assets/img/'.$obj->data[$i]->icon_flag .'" height="24"/></spam>';
                 $name = $obj->data[$i]->name;
                 break;
             case  'advertiser':
@@ -223,11 +223,20 @@ function inputDropDownStyle($table,$where,$order,$selectedDescription,$selectedV
                 $id = $obj->data[$i]->uuid_full;
                 $name = $obj->data[$i]->name;
                 break;
-        }             
+        }
+        if(($selectedValue == 0) || ($selectedValue == '') || (!isset($selectedValue))){         
+            if($i==0){
+                $button     .= '<button class="btn btn-secondary dropdown-toggle" type="button" id="'.$table.'DropdownMenuButton" name="'.$table.'DropdownMenuButton" value="'.$id.'" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">'.$selectedDescription;
+                $button     .= '</button>';
+            } 
+        } else {
+            $button     .= '<button class="btn btn-secondary dropdown-toggle" type="button" id="'.$table.'DropdownMenuButton" name="'.$table.'DropdownMenuButton" value="'.$selectedValue.'" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">'.$selectedDescription;
+            $button     .= '</button>';
+        }    
         $html .= '<a class="dropdown-item" href="javascript:void(0);" onclick="document.getElementById(\''.$table.'DropdownMenuButton\').value = \''.$id.'\'; document.getElementById(\''.$table.'DropdownMenuButton\').innerHTML = \''.$name.'\'" >'.$icon.' '.$name.'</a>';
     }
-    $html .= '</div></div>';
-    return $html;
+    $htmlFull = $divInitIn.$button.$divInitFin.$html.'</div></div>';
+    return $htmlFull;
 }
 
 function inputDropDownSearchStyle($table,$title,$where,$order,$selected){
