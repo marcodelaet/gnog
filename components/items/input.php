@@ -230,8 +230,10 @@ function inputDropDownStyle($table,$where,$order,$selectedDescription,$selectedV
                 $button     .= '</button>';
             } 
         } else {
-            $button     .= '<button class="btn btn-secondary dropdown-toggle" type="button" id="'.$table.'DropdownMenuButton" name="'.$table.'DropdownMenuButton" value="'.$selectedValue.'" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">'.$selectedDescription;
-            $button     .= '</button>';
+            if($i==0){
+                $button     .= '<button class="btn btn-secondary dropdown-toggle" type="button" id="'.$table.'DropdownMenuButton" name="'.$table.'DropdownMenuButton" value="'.$selectedValue.'" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">'.$selectedDescription;
+                $button     .= '</button>';
+            }
         }    
         $html .= '<a class="dropdown-item" href="javascript:void(0);" onclick="document.getElementById(\''.$table.'DropdownMenuButton\').value = \''.$id.'\'; document.getElementById(\''.$table.'DropdownMenuButton\').innerHTML = \''.$name.'\'" >'.$icon.' '.$name.'</a>';
     }

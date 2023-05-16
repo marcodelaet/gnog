@@ -47,6 +47,9 @@ require('./components/menu.main.php');
 require('./components/content.main.php');
 require_once('./components/footer.main.php');
    //phpinfo();
+
+
+//echo '?pr='.base64_encode('./pages/users/login/formedit.php').'&tid=98eb8c5c-eebb-11ed-9ed2-008cfa5abdac';
 ?>
       </div>
    </body>

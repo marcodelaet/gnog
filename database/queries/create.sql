@@ -740,6 +740,12 @@ VALUES
 (UUID(), 'on_map', 'on map', 'en el mapa', 'no mapa', 'Y', NOW(), NOW()),
 (UUID(), 'add+', 'add', 'añadir', 'adicionar', 'Y', NOW(), NOW());
 
+
+INSERT INTO translates 
+(id, code_str, text_eng, text_esp, text_ptbr, is_active, created_at, updated_at)
+VALUES
+(UUID(), '0_proposals', 'Providers is not working in anyone proposal', 'Proveedor no estás trabajando en ninguna propuesta', 'Provedor não está trabalhando em nenhuma proposta', 'Y', NOW(), NOW());
+
  
 
 # FILES
