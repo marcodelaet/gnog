@@ -42,6 +42,13 @@
     margin-bottom:1rem;
 }
 
+
+.main-proposals-header{
+    font-weight: bold;
+    font-size: 1.1rem;
+    margin-bottom:1rem;
+}
+
 .product-section {
     max-width: 100%;
     margin: 1.875rem auto;
@@ -70,12 +77,20 @@
     margin-right:3rem;
 }
 
-.provider-body {
+.provider-body-contacts {
     margin-left:3rem;
     margin-right:3rem;
     overflow: auto;
     flex-wrap: nowrap;
 }
+
+.provider-body-proposals {
+    margin-left:3rem;
+    margin-right:3rem;
+    overflow: auto;
+    flex-wrap: nowrap;
+}
+
 
 .provider-data{
     display: flex;

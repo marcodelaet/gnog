@@ -20,8 +20,8 @@ if(array_key_exists('auth_api',$_REQUEST)){
     //if($localStorage == $_REQUEST['auth_api']){}
 
     // setting query
-    $columns        = "left(uuid,13) as uuid, uuid as uuid_full, username, account_locked, product_id, product_name, salemodel_id, salemodel_name, product_price, currency, name, address, webpage_url, contact_provider_id, concat(contact_name,' ', contact_surname,' (', contact_email,')') as contact, contact_name, contact_surname, contact_email, contact_position, phone_international_code, phone_prefix, phone_number, concat('+',phone_international_code,phone_number) as phone, is_active";
-    $tableOrView    = "view_providers";
+    $columns        = "left(uuid,13) as uuid, uuid as uuid_full, offer_name, product_name, salemodel_name, CONCAT(offer_name,' - ', product_name, ' / ' , salemodel_name) as product_full_name, proposalproduct_id, product_id, salemodel_id, is_active";
+    $tableOrView    = "view_proposals";
 
     // filters
     $uuid                   = '';
@@ -31,13 +31,13 @@ if(array_key_exists('auth_api',$_REQUEST)){
         if($_REQUEST['pid']!==''){
             if($filters != '')
                 $filters .= " AND ";
-            $uuid         = $_REQUEST['pid'];
-            $filters        .= " uuid = '$uuid'";
+            $pid         = $_REQUEST['pid'];
+            $filters        .= " provider_id = '$pid'";
         }
     }
    
     if($filters !== ''){
-        $filters = "WHERE ".$filters;
+        $filters = "WHERE is_active='Y' AND ".$filters;
     }
 
 
@@ -45,9 +45,10 @@ if(array_key_exists('auth_api',$_REQUEST)){
     // Query creation
     $sql = "SELECT $columns FROM $tableOrView $filters";
     // LIST data
-   // echo $sql;
+    //echo $sql;
     $rs = $DB->getData($sql);
     $numRows = $DB->numRows($sql);
+
     
 
   

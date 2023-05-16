@@ -5,7 +5,8 @@
 <script src="<?=$dir?>./assets/js/<?=strtolower($moduleName)?>.js" type="text/javascript"></script>
 <?php if(array_key_exists('pid',$_REQUEST)){ ?>
 <script>
-    handleViewOnLoad("<?=$_REQUEST['pid']?>")
+    handleViewOnLoad("<?=$_REQUEST['pid']?>");
+    handleLoadProposals("<?=$_REQUEST['pid']?>");
 </script>
 <?php } ?>
 <div class="card bg-light mb-3" id="<?=strtolower($moduleName)?>-card">
@@ -20,7 +21,27 @@
             </div>
         </div>
     </div>
-    <div class="card-body <?=strtolower($moduleName)?>-body">
+    <div class="card-body <?=strtolower($moduleName)?>-body-proposals">
+        <div class="row">
+            <div class="col-md-10">
+                <h5 class="card-title main-proposals-header">Proposals</h5> 
+            </div>
+            <div class="col-md-2">
+                <a href="?pr=<?=base64_encode('./pages/providers/proposal/addform.php')?>&pid=<?=$_REQUEST['pid']?>"><span class="material-icons" style="font-size: 1.2rem;">add_business</span></a> 
+            </div>
+        </div>
+        <div id="list-proposals">
+            <div class="space-blank">&nbsp;</div>
+            <div class="<?=strtolower($moduleName)?>-data">
+                <spam id="card-proposal-name">
+                    <li>Offer Name 1</li>
+                    <li>Offer Name 2</li>
+
+                </spam>
+            </div>
+        </div>
+    </div>
+    <div class="card-body <?=strtolower($moduleName)?>-body-contacts">
         <h5 class="card-title main-contact-header">Contact</h5> 
         <div class="<?=strtolower($moduleName)?>-data">
             <spam class="material-icons icon-data">location_on</spam>

@@ -201,9 +201,9 @@ function handleEditSubmit(pid,form) {
         alert('Please, fill all required fields (*)');
 }
 
-function handleViewOnLoad(pid) {
+function handleLoadProposals(pid){
     errors      = 0;
-    authApi     = 'dasdasdkasdeewef';
+    authApi     = csrf_token;
     locat       = window.location.hostname;
 
     filters     = '&pid='+pid;
@@ -213,66 +213,113 @@ function handleViewOnLoad(pid) {
 
     if(errors > 0){
 
-    } else{
+    } else{ 
+        const requestURL = window.location.protocol+'//'+locat+'api/'+module+'s/auth_'+module+'_list_proposals.php?auth_api='+authApi+filters;
+        console.log(requestURL);
+        const request   = new XMLHttpRequest();
+        request.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                // Typical action to be performed when the document is ready:
+                propobj = JSON.parse(request.responseText);
+                xhtmllist = '';
+                if(propobj['result'] == 'OK'){
+                    for(pi=0;pi < propobj['data'].length; pi++){
+                        xhtmllist += '<li>'+propobj['data'][pi].product_full_name+'</li>';
+                    }
+                } else {
+                    xhtmllist = '<i>'+translateText('0_proposals',localStorage.getItem('ulang'))+'</i>';
+                }
+
+                document.getElementById('card-proposal-name').innerHTML = xhtmllist;
+            }
+            else{
+                //form.btnSave.innerHTML = "Searching...";
+            }
+        };
+        request.open('GET', requestURL, true);
+        //request.responseType = 'json';
+        request.send();
+    }
+}
+
+
+function handleViewOnLoad(pid) {
+    errors      = 0;
+    authApi     = csrf_token;
+    locat       = window.location.hostname;
+
+    filters     = '&pid='+pid;
+
+    if(locat.slice(-1) != '/')
+        locat += '/';
+
+    if(errors > 0){
+
+    } else{ 
         const requestURL = window.location.protocol+'//'+locat+'api/'+module+'s/auth_'+module+'_get.php?auth_api='+authApi+filters;
-        //alert(requestURL);
+        console.log('user:\n'+requestURL);
         const request   = new XMLHttpRequest();
         email           = 'no_email';
         address         = 'no_address';
+        webpage         = 'no_webpage';
         request.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {
                 // Typical action to be performed when the document is ready:
                 obj = JSON.parse(request.responseText);
-                phone_number = obj[0].phone_number.replace(" ","");
-                if((obj[0].phone_prefix!='') && (obj[0].phone_prefix!='0'))
-                    phone_number = obj[0].phone_prefix+obj[0].phone_number.replace(" ","");
-                if(obj[0].address!=''){
-                    address = obj[0].address;     
+                phone_number = obj['data'][0].phone_number.replace(" ","");
+                if((obj['data'][0].phone_prefix!='') && (obj['data'][0].phone_prefix!='0'))
+                    phone_number = obj['data'][0].phone_prefix+obj['data'][0].phone_number.replace(" ","");
+                if(obj['data'][0].address!=''){
+                    address = obj['data'][0].address;     
                 }
-                if(obj[0].webpage_url!=''){
-                    webpage = obj[0].webpage_url;     
+                if(obj['data'][0].webpage_url!=''){
+                    webpage = obj['data'][0].webpage_url;     
                 }
-                document.getElementById('provider_name').innerHTML                      = obj[0].name;
+                document.getElementById('provider_name').innerHTML                      = obj['data'][0].name;
                 document.getElementById('webpage').innerHTML                            = webpage;
                 document.getElementById('card-address').innerHTML                       = address;
 
                 xuser       = '';
                 position    = '*****';
                 xhtml       = '';
-                for(i=0;i < obj.length; i++){
-                    xuserIcon   = 'person';
-                    xcopy       = '';
-                    if(obj[i].contact_position!='')
-                        position = obj[i].contact_position;
-                    
-                    if((obj[i].username!='') && (typeof(obj[i].username)!='object')){
-                        xeffect     = '';
-                        xuser       = obj[i].username;
-                    } else {
-                        xeffect = 'insider'; 
-                        xuser = 'https://providers.gnogmedia.com?pr=Li9wYWdlcy91c2Vycy9mb3JtLnBocA==&cpid='+obj[i].contact_provider_id;
-                        xcopy = '&nbsp;&nbsp;&nbsp;<a style="color: #212529" href="javascript:void(0)" title="'+translateText('copy_user_crt_url',localStorage.getItem('ulang'))+' ('+obj[i].contact_email+')" onclick="copyStringToClipboard(\''+xuser+'\'\)"><spam class="material-icons icon-data">content_copy</spam></a>';
-                        xcopy += '&nbsp;<a style="color: #212529" href="javascript:void(0)" title="'+translateText('send_user_crt_url_to',localStorage.getItem('ulang'))+' '+obj[i].contact_email+'" onclick=""><spam class="material-icons icon-data">send</spam></a>';
-                    }
-                    xhtml += '<div class="space-blank">&nbsp;</div>';
-                    xhtml += '<div class="'+module+'-data">';
-                    xhtml += '    <spam id="card-contact-fullname-and-position">'+obj[i].contact_name + ' ' + obj[i].contact_surname + ' ('+position+')</spam>';
-                    xhtml += '</div>';
-                    xhtml += '<div class="'+module+'-data">';
-                    xhtml += '    <spam class="material-icons icon-data">email</spam>';
-                    xhtml += '    <spam id="card-email">'+obj[i].contact_email+'</spam>';
-                    xhtml += '</div>';
-                    xhtml += '<div class="'+module+'-data">';
-                    xhtml += '    <spam class="material-icons icon-data">phone</spam>';
-                    xhtml += '    <spam id="card-phone">+'+obj[i].phone_international_code.replace(" ","") + phone_number+'</spam>';
-                    xhtml += '</div>';
-                    xhtml += '<div class="'+module+'-data">';
-                    xhtml += '    <spam class="material-icons icon-data">'+xuserIcon+'</spam>';
-                    xhtml += '    <spam id="card-user-'+obj[i].contact_provider_id+'" class="card-user '+xeffect+'">'+xuser+'</spam>';
-                    xhtml += xcopy;
-                    xhtml += '</div>';
+                if(obj['result'] == 'OK'){
+                    for(i=0;i < obj['data'].length; i++){
+                        xuserIcon   = 'person';
+                        xcopy       = '';
+                        if(obj['data'][i].contact_position!='')
+                            position = obj['data'][i].contact_position;
+                        
+                        if((obj['data'][i].username!='') && (typeof(obj['data'][i].username)!='object')){
+                            xeffect     = '';
+                            xuser       = obj['data'][i].username;
+                        } else {
+                            xeffect = 'insider'; 
+                            xuser = 'https://providers.gnogmedia.com?pr=Li9wYWdlcy91c2Vycy9mb3JtLnBocA==&cpid='+obj['data'][i].contact_provider_id;
+                            xcopy = '&nbsp;&nbsp;&nbsp;<a style="color: #212529" href="javascript:void(0)" title="'+translateText('copy_user_crt_url',localStorage.getItem('ulang'))+' ('+obj['data'][i].contact_email+')" onclick="copyStringToClipboard(\''+xuser+'\'\)"><spam class="material-icons icon-data">content_copy</spam></a>';
+                            xcopy += '&nbsp;<a style="color: #212529" href="javascript:void(0)" title="'+translateText('send_user_crt_url_to',localStorage.getItem('ulang'))+' '+obj['data'][i].contact_email+'" onclick=""><spam class="material-icons icon-data">send</spam></a>';
+                        }
+                        xhtml += '<div class="space-blank">&nbsp;</div>';
+                        xhtml += '<div class="'+module+'-data">';
+                        xhtml += '    <spam id="card-contact-fullname-and-position">'+obj['data'][i].contact_name + ' ' + obj['data'][i].contact_surname + ' ('+position+')</spam>';
+                        xhtml += '</div>';
+                        xhtml += '<div class="'+module+'-data">';
+                        xhtml += '    <spam class="material-icons icon-data">email</spam>';
+                        xhtml += '    <spam id="card-email">'+obj['data'][i].contact_email+'</spam>';
+                        xhtml += '</div>';
+                        xhtml += '<div class="'+module+'-data">';
+                        xhtml += '    <spam class="material-icons icon-data">phone</spam>';
+                        xhtml += '    <spam id="card-phone">+'+obj['data'][i].phone_international_code.replace(" ","") + phone_number+'</spam>';
+                        xhtml += '</div>';
+                        xhtml += '<div class="'+module+'-data">';
+                        xhtml += '    <spam class="material-icons icon-data">'+xuserIcon+'</spam>';
+                        xhtml += '    <spam id="card-user-'+obj['data'][i].contact_provider_id+'" class="card-user '+xeffect+'">'+xuser+'</spam>';
+                        xhtml += xcopy;
+                        xhtml += '</div>';
 
-                    
+                        
+                    }
+                } else {
+                    xhtml = '<div class="'+module+'-data"><spam id="card-user-000000" class="card-user ">0_contacts</spam></div>';
                 }
                 document.getElementById("list-contacts").innerHTML = xhtml;
             }
@@ -280,7 +327,7 @@ function handleViewOnLoad(pid) {
                 //form.btnSave.innerHTML = "Searching...";
             }
         };
-        request.open('GET', requestURL);
+        request.open('GET', requestURL, true);
         //request.responseType = 'json';
         request.send();
     }
