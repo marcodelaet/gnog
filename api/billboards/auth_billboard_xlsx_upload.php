@@ -56,19 +56,24 @@ if ($uploadOk > 0) {
         }
         $message = "";
         for($i=0;$i < count($rows);$i++){
+            $cleanClave = str_replace("\n","",str_replace("\r","",$rows[$i]['Clave']));
             // CHECKING DUPLICATION
-            $sqlbillboards  = "SELECT name_key FROM billboards WHERE LOWER(name_key) = LOWER('".$rows[$i]['Clave']."')";
-
+            $sqlbillboards  = "SELECT name_key, provider_id FROM billboards WHERE LOWER(name_key) = LOWER('".$cleanClave."')";
             // Executing Query 
             $rsbillboardID = $DB->getDataSingle($sqlbillboards);
 
-            $claveInExcel = isset($rows[$i]['Clave']) ? $rows[$i]['Clave'] : null;
+            $claveInExcel = isset($cleanClave) ? $cleanClave : null;
+
             if($rsbillboardID["name_key"] != $claveInExcel){
-                // Queries getting IDs
+                // Cleaning names
+                $cleanProvider  = str_replace("\n","",str_replace("\r","",$rows[$i]['Proveedor']));
+                $cleanVista     = str_replace("\n","",str_replace("\r","",$rows[$i]['Vista']));
+                $cleanTipo      = str_replace("\n","",str_replace("\r","",$rows[$i]['Tipo']));
                 
-                $sqlSaleModels  = "SELECT id, name FROM salemodels WHERE LOWER(name) = LOWER('".$rows[$i]['Tipo']."')";
-                $sqlViewPoints  = "SELECT id, name FROM viewpoints WHERE REPLACE(LOWER(name),' ','') = REPLACE(LOWER('".$rows[$i]['Vista']."'),' ','')";
-                $sqlProviders   = "SELECT id, name FROM providers WHERE REPLACE(LOWER(name),' ','') LIKE REPLACE(LOWER('".$rows[$i]['Proveedor']."'),' ','')";
+                // Queries getting IDs
+                $sqlSaleModels  = "SELECT id, name FROM salemodels WHERE LOWER(name) = LOWER('".$cleanTipo."')";
+                $sqlViewPoints  = "SELECT id, name FROM viewpoints WHERE REPLACE(LOWER(name),' ','') = REPLACE(LOWER('".$cleanVista."'),' ','')";
+                $sqlProviders   = "SELECT id, name FROM providers WHERE REPLACE(LOWER(name),' ','') LIKE REPLACE(LOWER('".$cleanProvider."'),' ','')";
 
                 //echo $sqlProviders . "\n";
 
@@ -76,11 +81,11 @@ if ($uploadOk > 0) {
 
                 $salemodelID    = 'NULL';
                 $rssalemodelID = $DB->getDataSingle($sqlSaleModels);
-                if(strtolower(trim($rssalemodelID["name"])) == strtolower(trim($rows[$i]['Tipo']))){
+                if(strtolower(trim($rssalemodelID["name"])) == strtolower(trim($cleanTipo))){
                     $salemodelID    = "'".$rssalemodelID["id"]."'";
                 } else {
                     if(($rssalemodelID["name"] == '') || (is_null($rssalemodelID["name"]))){
-                        $insertNewSaleModel = "INSERT INTO salemodels (id, name, description, is_digital, is_active, created_at, updated_at) VALUES (UUID(),'".$rows[$i]['Tipo']."','".$rows[$i]['Tipo']."','N','Y',now(),now())";
+                        $insertNewSaleModel = "INSERT INTO salemodels (id, name, description, is_digital, is_active, created_at, updated_at) VALUES (UUID(),'".$cleanTipo."','".$cleanTipo."','N','Y',now(),now())";
                         $rs_insertNewSaleModel = $DB->executeInstruction($insertNewSaleModel);
                         $message .= $insertNewSaleModel . ' |SSS| ';
                         $salemodelID = "'".$DB->getDataSingle($sqlSaleModels)["id"]."'";
@@ -89,16 +94,16 @@ if ($uploadOk > 0) {
                 $viewPointID    = 'NULL';
                 $rsviewpointID = $DB->getDataSingle($sqlViewPoints);
                 //echo $rsviewpointID["name"] . " -------- " . $rows[$i]['Vista'] . "<BR/>";
-                if(strtolower(trim($rsviewpointID["name"])) == strtolower(trim($rows[$i]['Vista']))){
+                if(strtolower(trim($rsviewpointID["name"])) == strtolower(trim($cleanVista))){
                     $viewPointID    = "'".$rsviewpointID["id"]."'";
                 }
                 $providerID    = 'NULL';
                 $rsproviderID = $DB->getDataSingle($sqlProviders);
-                if(strtolower(trim($rsproviderID["name"])) == strtolower(trim($rows[$i]['Proveedor']))){
+                if(strtolower(trim($rsproviderID["name"])) == strtolower(trim($cleanProvider))){
                     $providerID     = "'".$rsproviderID["id"]."'";
                 }else {
                     if(($rsproviderID["name"] == '') || (is_null($rsproviderID["name"]))){
-                        $insertNewProvider = "INSERT INTO providers (id, name, is_active, created_at, updated_at) VALUES (UUID(),'".$rows[$i]['Proveedor']."','Y',now(),now())";
+                        $insertNewProvider = "INSERT INTO providers (id, name, is_active, created_at, updated_at) VALUES (UUID(),'".$cleanProvider."','Y',now(),now())";
                         $rs_insertNewProvider = $DB->executeInstruction($insertNewProvider);
                         //$message .= $insertNewProvider . ' |PPP| ';
                         $providerID = "'".$DB->getDataSingle($sqlProviders)["id"]."'";
@@ -118,11 +123,25 @@ if ($uploadOk > 0) {
                 $cost_int   = floatval(str_replace(",",".",str_replace("$","",$rows[$i]['Renta']))) * 100;
 
 
-                $insertNewBillboard = "INSERT INTO billboards (id,name_key,address,state,category,coordenates,latitud,longitud,price_int,cost_int,width,height,photo,provider_id,salemodel_id,viewpoint_id,is_iluminated, is_digital, is_active, created_at, updated_at) VALUES (UUID(),'".$rows[$i]['Clave']."','".$rows[$i]['Dirección']."','".$rows[$i]['Estado ']."','".$rows[$i]['Categoría (NSE)']."','".$rows[$i]['Coordenadas']."','".$rows[$i]['Latitud']."','".$rows[$i]['Longitud']."',$price_int,$cost_int,$width,$height,'".$rows[$i]['Clave'].".jpg.jpg',$providerID,$salemodelID,$viewPointID,'$iluminated','N','Y',now(),now())";
+                $insertNewBillboard = "INSERT INTO billboards (id,name_key,address,state,category,coordenates,latitud,longitud,price_int,cost_int,width,height,photo,provider_id,salemodel_id,viewpoint_id,is_iluminated, is_digital, is_active, created_at, updated_at) VALUES (UUID(),'".$rows[$i]['Clave']."','".$rows[$i]['Dirección']."','".$rows[$i]['Estado ']."','".$rows[$i]['Categoría (NSE)']."','".$rows[$i]['Coordenadas']."','".$rows[$i]['Latitud']."','".$rows[$i]['Longitud']."',$price_int,$cost_int,$width,$height,'".$cleanClave.".jpg.jpg',$providerID,$salemodelID,$viewPointID,'$iluminated','N','Y',now(),now())";
 
                 $rs_insertNewBillboard = $DB->executeInstruction($insertNewBillboard);
 
                 //$message .= $insertNewBillboard . ' ***|*** ';
+            } else {
+                // Cleaning names
+                $cleanProvider  = str_replace("\n","",str_replace("\r","",$rows[$i]['Proveedor']));
+
+                // Queries getting IDs
+                $sqlProviders   = "SELECT id, name FROM providers WHERE REPLACE(LOWER(name),' ','') LIKE REPLACE(LOWER('".$cleanProvider."'),' ','')";
+                $rsproviderID = $DB->getDataSingle($sqlProviders);
+                $providerID = $DB->getDataSingle($sqlProviders)["id"];
+
+                // checking if provider changes
+                if($rsbillboardID["provider_id"] != $providerID){
+                    // provider changes
+                }
+
             }
         }
         $return = json_encode(["status" => "OK", "message" => "UPLOADED"]);
