@@ -53,6 +53,28 @@ if('1' == '2'){
                             </select>
                         </spam>
                     </div>
+                    <div class="col custom-control custom-switch" style="text-align:right; vertical-align:middle;">
+                    <br/>
+                        <input type="checkbox" class="custom-control-input" id="taxable" name="taxable">
+                        <label class="custom-control-label" for="taxable"><?=translateText('is_taxable');?></label>
+                    </div>
+                    <div class="col-2">
+                        <br/>
+                        <div class="input-group-prepend">
+                            <input
+                                name ='tax_percent' 
+                                placeholder='30'
+                                title = 'tax %'
+                                value=''
+                                class="form-control" 
+                                type="text" 
+                                size="3"
+                                maxlength="3"
+                                autocomplete="tax"
+                            />
+                            <span class="input-group-text">%</span>
+                        </div>
+                    </div>
                 </div>
                 <div id="div-selectContact"></div>
                 <div class="row">&nbsp;</div>

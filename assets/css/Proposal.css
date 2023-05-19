@@ -45,6 +45,18 @@
     font-size: 0.8rem !important;
 }
 
+
+td{
+    vertical-align: middle !important;
+}
+
+.status-description{
+    font-weight: bold;
+    font-size: 0.8rem;
+
+}
+
+
 .deleted-billboard{
     text-decoration:line-through;
     color:darkred;

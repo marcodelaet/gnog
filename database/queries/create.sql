@@ -338,11 +338,16 @@ offer_name VARCHAR(40) NOT NULL,
 DESCRIPTION TEXT NOT NULL,
 start_date DATETIME NOT NULL,
 stop_date DATETIME NOT NULL,
-is_pixel  ENUM('N','Y') NOT NULL,
+is_taxable ENUM('N','Y') NOT NULL,
+is_pixel ENUM('N','Y') NOT NULL,
 is_active ENUM('N','Y') NOT NULL,
 created_at DATETIME NOT NULL,
 updated_at DATETIME NOT NULL
 );
+
+ALTER TABLE proposals
+ADD COLUMN tax_percent_int TINYINT  AFTER is_taxable;
+
 
 ALTER TABLE proposals
 ADD COLUMN office_id VARCHAR(40) AFTER status_id;
@@ -746,7 +751,11 @@ INSERT INTO translates
 VALUES
 (UUID(), '0_proposals', 'Providers is not working in anyone proposal', 'Proveedor no estás trabajando en ninguna propuesta', 'Provedor não está trabalhando em nenhuma proposta', 'Y', NOW(), NOW());
 
- 
+INSERT INTO translates 
+(id, code_str, text_eng, text_esp, text_ptbr, is_active, created_at, updated_at)
+VALUES
+(UUID(), 'is_taxable', 'is taxable', 'taxable', 'com taxas', 'Y', NOW(), NOW());
+
 
 # FILES
 CREATE TABLE IF NOT EXISTS files (
@@ -1161,6 +1170,8 @@ CREATE VIEW view_proposals AS (
 	(
 		((((ppp.price_int * ppp.quantity) / c.rate) * ceur.rate) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1)) / 100
 	) END AS amount_per_month_EUR,
+	pps.is_taxable,
+	pps.tax_percent_int,
 	pps.is_pixel,
 	pps.is_active,
 	b.id as billboard_id,

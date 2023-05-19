@@ -101,7 +101,7 @@ if ($uploadOk > 0) {
                 $rsproviderID = $DB->getDataSingle($sqlProviders);
                 if(strtolower(trim($rsproviderID["name"])) == strtolower(trim($cleanProvider))){
                     $providerID     = "'".$rsproviderID["id"]."'";
-                }else {
+                } else {
                     if(($rsproviderID["name"] == '') || (is_null($rsproviderID["name"]))){
                         $insertNewProvider = "INSERT INTO providers (id, name, is_active, created_at, updated_at) VALUES (UUID(),'".$cleanProvider."','Y',now(),now())";
                         $rs_insertNewProvider = $DB->executeInstruction($insertNewProvider);
