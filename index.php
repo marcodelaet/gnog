@@ -50,6 +50,7 @@ require_once('./components/footer.main.php');
 
 
 //echo '?pr='.base64_encode('./pages/users/login/formedit.php').'&tid=98eb8c5c-eebb-11ed-9ed2-008cfa5abdac';
+//echo '?pr='.base64_encode('./pages/proposals/add/product/provider/formadd.php');
 ?>
       </div>
    </body>

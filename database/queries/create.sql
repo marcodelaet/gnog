@@ -1009,6 +1009,7 @@ CREATE VIEW view_proposals AS (
 	(ppp.product_id) AS product_id,
 	pd.name AS product_name,
 	(ppp.salemodel_id) AS salemodel_id,
+	pd.is_digital,
 	sm.name AS salemodel_name,
 	(ppp.provider_id) AS provider_id,
 	pv.name AS provider_name,
