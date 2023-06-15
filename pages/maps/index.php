@@ -20,7 +20,7 @@ if(array_key_exists('pppid',$_REQUEST)){
 </div>
 
 <script async
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAh0CRvF_GoQflq2OxsMeAk7GRN5ljY5fA&libraries=places&callback=initMap&v=weekly" defer>
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAh0CRvF_GoQflq2OxsMeAk7GRN5ljY5fA&libraries=places&callback=initAutocomplete&v=weekly" defer>
 </script>
 <script >
     updateUnitsOnCart('<?=$proposalproduct_id?>');

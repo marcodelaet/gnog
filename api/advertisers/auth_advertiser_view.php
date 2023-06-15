@@ -71,14 +71,16 @@ if(array_key_exists('auth_api',$_REQUEST)){
     $sql = "SELECT $columns FROM $tableOrView $filters $groupBy $orderBy";
     // LIST data
     //echo $sql;
-    $rs = $DB->getData($sql);
+    //$rs = $DB->getData($sql);
 
   
 
     // Response JSON 
+    header('Content-type: application/json');
     if($rs){
-        header('Content-type: application/json');
         echo json_encode($rs);
+    } else {
+        echo json_encode($sql);
     }
 }
 

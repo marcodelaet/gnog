@@ -12,6 +12,9 @@ function handleSubmit(form) {
         agency      = 'N';
         if(form.agency.checked)
             agency              = 'Y';
+        making_banners = 'N';
+        if(form.making_banners.checked)
+            making_banners      = 'Y';
         corporate_name          = form.corporate_name.value;
         address                 = form.address.value;
         
@@ -28,7 +31,7 @@ function handleSubmit(form) {
         if(errors > 0){
 
         } else{
-            const requestURL = window.location.protocol+'//'+locat+'api/advertisers/auth_advertiser_add_new.php?auth_api='+authApi+'&agency='+agency+'&corporate_name='+corporate_name+'&address='+address;
+            const requestURL = window.location.protocol+'//'+locat+'api/advertisers/auth_advertiser_add_new.php?auth_api='+authApi+'&agency='+agency+'&making_banners='+making_banners+'&corporate_name='+corporate_name+'&address='+address;
             console.log(requestURL);
             const request = new XMLHttpRequest();
             request.onreadystatechange = function() {
@@ -36,7 +39,7 @@ function handleSubmit(form) {
                    // Typical action to be performed when the document is ready:
                    obj = JSON.parse(request.responseText);
                    form.btnSave.innerHTML = "Save";
-                   console.log('Status: '+obj.status);
+                   //console.log('Status: '+obj.status);
                    window.location.href = '?pr=Li9wYWdlcy9hZHZlcnRpc2Vycy90a3AvaW5kZXgucGhw';
                 }
                 else{
@@ -194,6 +197,7 @@ function handleViewOnLoad(aid) {
         //alert(requestURL);
         const request   = new XMLHttpRequest();
         agency          = 'Direct';
+        impressions     = 'no'; 
         position        = '*****';
         request.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {
@@ -201,12 +205,15 @@ function handleViewOnLoad(aid) {
                 obj = JSON.parse(request.responseText);
                 if(obj[0].is_agency == 'Y')
                     agency = 'Agency';
+                if(obj[0].making_banners == 'Y')
+                    impressions     = 'yes';
                 phone_number = obj[0].phone_number.replace(" ","");
                 if((obj[0].phone_prefix!='') && (obj[0].phone_prefix!='0'))
                     phone_number = obj[0].phone_prefix+obj[0].phone_number.replace(" ","");
                 document.getElementById('advertiser_name').innerHTML                    = obj[0].corporate_name;
                 document.getElementById('group').innerHTML                              = agency;
                 document.getElementById('card-address').innerHTML                       = obj[0].address;
+                document.getElementById('impressions').innerHTML                        = impressions;
 
                 xhtml = '';
                 for(i=0;i < obj.length; i++){

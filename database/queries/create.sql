@@ -146,6 +146,7 @@ CREATE TABLE IF NOT EXISTS advertisers (
 id VARCHAR(40) PRIMARY KEY NOT NULL,
 corporate_name VARCHAR(40) NOT NULL UNIQUE,
 address	TEXT NOT NULL,
+making_banners ENUM('N','Y') NOT NULL,
 is_agency ENUM('N','Y') NOT NULL,
 is_active ENUM('N','Y') NOT NULL,
 created_at DATETIME NOT NULL,
@@ -183,6 +184,7 @@ updated_at DATETIME NOT NULL
 # INSERTING DATAS IN PRODUCTS TABLE
 INSERT INTO products (id,NAME,DESCRIPTION,is_digital,is_active,created_at,updated_at) 
 VALUES 
+((UUID()),'Banner','Banner','Y','Y',NOW(),NOW()),
 ((UUID()),'Banner IAB','Banner IAB','Y','Y',NOW(),NOW()),
 ((UUID()),'Retargeting','Retargeting','Y','Y',NOW(),NOW()),
 ((UUID()),'Native Ads','Native Ads','Y','Y',NOW(),NOW()),
@@ -245,9 +247,13 @@ created_at DATETIME NOT NULL,
 updated_at DATETIME NOT NULL
 );
 
+
+INSERT INTO proposalsxproducts (id, `proposal_id`,`product_id`,`salemodel_id`,`provider_id`,`state`,`price_int`,`currency`,`quantity`,`is_active`,`created_at`,`updated_at`) VALUES (UUID(), '896693aa-cffd-11ed-8d8c-008cfa5abdac','6d0ee56b-0177-11ee-983e-008cfa5abdac','a479be22-0177-11ee-983e-008cfa5abdac','cfeba179-a349-11ed-9584-008cfa5abdac','All',65000,'MXN',1,'Y',now(),now()) ;
+
 # INSERTING DATAS IN SALEMODELS TABLE
 INSERT INTO salemodels (id,NAME,DESCRIPTION,is_digital,is_active,created_at,updated_at) 
 VALUES 
+((UUID()),'Newsletter','Newsletter','Y','Y',NOW(),NOW()),
 ((UUID()),'CPM','CPM','Y','Y',NOW(),NOW()),
 ((UUID()),'CPC','CPC','Y','Y',NOW(),NOW()),
 ((UUID()),'CPA/CPS','CPA/CPS','Y','Y',NOW(),NOW()),
@@ -428,6 +434,19 @@ created_at DATETIME NOT NULL,
 updated_at DATETIME NOT NULL,
 INDEX name_key_index (name_key)
 );
+
+ALTER TABLE billboards
+ADD COLUMN county VARCHAR(50) AFTER state;
+
+ALTER TABLE billboards
+ADD COLUMN colony VARCHAR(50) AFTER state;
+
+ALTER TABLE billboards
+ADD COLUMN city VARCHAR(50) AFTER state;
+
+ALTER TABLE `billboards` 
+CHANGE `name_key` `name_key` VARCHAR(50) NOT NULL; 
+
 
 # ADDING FK PROVIDER
 ALTER TABLE `billboards`
@@ -754,7 +773,17 @@ VALUES
 INSERT INTO translates 
 (id, code_str, text_eng, text_esp, text_ptbr, is_active, created_at, updated_at)
 VALUES
-(UUID(), 'is_taxable', 'is taxable', 'taxable', 'com taxas', 'Y', NOW(), NOW());
+(UUID(), 'is_taxable', 'is taxable', 'taxable', 'com taxas', 'Y', NOW(), NOW()),
+(UUID(), 'corporate_name', 'corporate name', 'nombre corporativo', 'Razão Social', 'Y', NOW(), NOW()),
+(UUID(), 'is_agency', 'is agency', 'es agencia', 'é agência', 'Y', NOW(), NOW()),
+(UUID(), 'making_banners', 'making banners', 'hace impressiones', 'faz impressões', 'Y', NOW(), NOW());
+
+INSERT INTO translates 
+(id, code_str, text_eng, text_esp, text_ptbr, is_active, created_at, updated_at)
+VALUES
+(UUID(), 'address', 'address', 'dirección', 'endereço', 'Y', NOW(), NOW());
+
+
 
 
 # FILES

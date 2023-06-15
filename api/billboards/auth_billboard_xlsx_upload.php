@@ -29,7 +29,7 @@ $imageFileType  = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
 $fileSize       = $_FILES["billboard_file"]["size"];
 
 if($imageFileType != 'xlsx'){
-    $message    .= "\n- Sorry, Only CSV file is allowed";
+    $message    .= "\n- Sorry, Only XLSX file is allowed";
     $uploadOk   = 0;
 }
 
@@ -43,7 +43,7 @@ if ($uploadOk > 0) {
         if ( $xlsx = Shuchkin\SimpleXLSX::parse( $target_file ) ) {
             $header_values = $rows = [];
 
-            foreach ($xlsx->rows(1) as $k => $r) {
+            foreach ($xlsx->rows(0) as $k => $r) {
                 if ($k === 0) {
                     $header_values = $r;
                     continue;
@@ -81,33 +81,44 @@ if ($uploadOk > 0) {
 
                 $salemodelID    = 'NULL';
                 $rssalemodelID = $DB->getDataSingle($sqlSaleModels);
-                if(strtolower(trim($rssalemodelID["name"])) == strtolower(trim($cleanTipo))){
+                if(strtolower(str_replace('"','',str_replace(' ','',$rssalemodelID["name"]))) == strtolower(str_replace('"','',str_replace(' ','',$cleanTipo)))){
                     $salemodelID    = "'".$rssalemodelID["id"]."'";
                 } else {
                     if(($rssalemodelID["name"] == '') || (is_null($rssalemodelID["name"]))){
                         $insertNewSaleModel = "INSERT INTO salemodels (id, name, description, is_digital, is_active, created_at, updated_at) VALUES (UUID(),'".$cleanTipo."','".$cleanTipo."','N','Y',now(),now())";
                         $rs_insertNewSaleModel = $DB->executeInstruction($insertNewSaleModel);
-                        $message .= $insertNewSaleModel . ' |SSS| ';
+                        //$message .= $insertNewSaleModel . ' |SSS| ';
                         $salemodelID = "'".$DB->getDataSingle($sqlSaleModels)["id"]."'";
                     }
                 }
                 $viewPointID    = 'NULL';
                 $rsviewpointID = $DB->getDataSingle($sqlViewPoints);
                 //echo $rsviewpointID["name"] . " -------- " . $rows[$i]['Vista'] . "<BR/>";
-                if(strtolower(trim($rsviewpointID["name"])) == strtolower(trim($cleanVista))){
+                if(strtolower(str_replace('"','',str_replace(' ','',$rsviewpointID["name"]))) == strtolower(str_replace('"','',str_replace(' ','',$cleanVista)))){
                     $viewPointID    = "'".$rsviewpointID["id"]."'";
+                }else{
+                    if(($rsviewpointID["name"] == '') || (is_null($rsviewpointID["name"]))){
+                        $insertNewViewPoint = "INSERT INTO viewpoints (id, name, is_active, created_at, updated_at) VALUES (UUID(),'".$cleanVista."','Y',now(),now())";
+                        $rs_insertNewViewPoint = $DB->executeInstruction($insertNewViewPoint);
+                        //$message .= $insertNewViewPoint . ' |VVV| ';
+                        $viewPointID = "'".$DB->getDataSingle($sqlViewPoints)["id"]."'";
+                    } 
+                    else { echo "ERROR: ".$sqlViewPoints . " <BR/> Name: ".$rsviewpointID["name"]."<BR/> COMPAT: ". strtolower(str_replace('"','',str_replace(' ','',$rsviewpointID["name"]))) . " && " .strtolower(str_replace('"','',str_replace(' ','',$cleanVista))); }
                 }
+
                 $providerID    = 'NULL';
                 $rsproviderID = $DB->getDataSingle($sqlProviders);
-                if(strtolower(trim($rsproviderID["name"])) == strtolower(trim($cleanProvider))){
+                $numProviders = $DB->numRows($sqlProviders);
+                if(str_replace('í','i',str_replace('á','a',strtolower(str_replace(' ','',$rsproviderID["name"])))) == str_replace('í','i',str_replace('á','a',strtolower(str_replace(' ','',$cleanProvider))))){
                     $providerID     = "'".$rsproviderID["id"]."'";
                 } else {
-                    if(($rsproviderID["name"] == '') || (is_null($rsproviderID["name"]))){
+                    if(($numProviders == '0')){ // || ($rsproviderID["name"] == '') || (is_null($rsproviderID["name"]))
                         $insertNewProvider = "INSERT INTO providers (id, name, is_active, created_at, updated_at) VALUES (UUID(),'".$cleanProvider."','Y',now(),now())";
                         $rs_insertNewProvider = $DB->executeInstruction($insertNewProvider);
                         //$message .= $insertNewProvider . ' |PPP| ';
                         $providerID = "'".$DB->getDataSingle($sqlProviders)["id"]."'";
-                    }
+                    } 
+                    else {echo "ERROR: ".$sqlProviders . " <BR/> Name: ".$rsproviderID["name"]."<BR/> NUM: ". $numProviders . " <BR/> COMPAT: ". str_replace('í','i',str_replace('á','a',strtolower(str_replace(' ','',$rsproviderID["name"])))) . " && " .str_replace('í','i',str_replace('á','a',strtolower(str_replace(' ','',$cleanProvider))));}
                 }
 
                 $iluminated = 'N';
@@ -120,10 +131,11 @@ if ($uploadOk > 0) {
                 $width      = intval(floatval($rows[$i]['Base'])*100);
                 $height     = intval(floatval($rows[$i]['Alto'])*100);
                 $price_int  = floatval(str_replace(",",".",str_replace("$","",$rows[$i]['Tarifa Publicada']))) * 100;
-                $cost_int   = floatval(str_replace(",",".",str_replace("$","",$rows[$i]['Renta']))) * 100;
+//                $cost_int   = floatval(str_replace(",",".",str_replace("$","",$rows[$i]['Renta']))) * 100;
+                $cost_int   = floatval(str_replace(",",".",str_replace("$","",$rows[$i]['Costo']))) * 100;
 
 
-                $insertNewBillboard = "INSERT INTO billboards (id,name_key,address,state,category,coordenates,latitud,longitud,price_int,cost_int,width,height,photo,provider_id,salemodel_id,viewpoint_id,is_iluminated, is_digital, is_active, created_at, updated_at) VALUES (UUID(),'".$rows[$i]['Clave']."','".$rows[$i]['Dirección']."','".$rows[$i]['Estado ']."','".$rows[$i]['Categoría (NSE)']."','".$rows[$i]['Coordenadas']."','".$rows[$i]['Latitud']."','".$rows[$i]['Longitud']."',$price_int,$cost_int,$width,$height,'".$cleanClave.".jpg.jpg',$providerID,$salemodelID,$viewPointID,'$iluminated','N','Y',now(),now())";
+                $insertNewBillboard = "INSERT INTO billboards (id,name_key,address,state,county,city,colony,category,coordenates,latitud,longitud,price_int,cost_int,width,height,photo,provider_id,salemodel_id,viewpoint_id,is_iluminated, is_digital, is_active, created_at, updated_at) VALUES (UUID(),'".$rows[$i]['Clave']."','".$rows[$i]['Dirección']."','".$rows[$i]['Estado ']."','".$rows[$i]['Alcaldía / Municipio']."','".$rows[$i]['Ciudad ']."','".$rows[$i]['Colonia']."','".$rows[$i]['Categoría (NSE)']."','".$rows[$i]['Coordenadas']."','".$rows[$i]['Latitud']."','".$rows[$i]['Longitud']."',$price_int,$cost_int,$width,$height,'".$cleanClave.".jpg.jpg',$providerID,$salemodelID,$viewPointID,'$iluminated','N','Y',now(),now())";
 
                 $rs_insertNewBillboard = $DB->executeInstruction($insertNewBillboard);
 

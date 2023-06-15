@@ -23,22 +23,22 @@ if(array_key_exists('username',$_POST))
 
 <div class='form-<?=strtolower($moduleName)?>-container'>
     <div class="form-container">
-        <div class="form-header">New <?=$moduleName?></div>
+        <div class="form-header"><?=Ucfirst(translateText('new'));?> <?=Ucfirst(translateText(strtolower($moduleName)));?></div>
         <form name='<?=strtolower($moduleName)?>' method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
             <div class="inputs-form-container">
                 <div class="form-row">
                     <div class="col custom-control custom-switch" style="text-align:right;">
                         <input type="checkbox" class="custom-control-input" id="customSwitch1" name="agency">
-                        <label class="custom-control-label" for="customSwitch1">Is Agency</label>
+                        <label class="custom-control-label" for="customSwitch1"><?=Ucfirst(translateText('is_agency'));?></label>
                     </div>
                 </div>
                 <div class="form-row">
                     <div class="col">
-                        <label for="corporate_name">Corporate name</label>
+                        <label for="corporate_name"><?=Ucfirst(translateText('corporate_name'));?></label>
                         <input
                         required
                         name ='corporate_name' 
-                        placeholder='Corporate name'
+                        placeholder='<?=Ucfirst(translateText('corporate_name'));?>'
                         title = 'corporate_name'
                         value='<?=$advertiser?>'
                         class="form-control" 
@@ -50,14 +50,21 @@ if(array_key_exists('username',$_POST))
                             Please type the Corporate name
                         </div>
                     </div>
+                    <div class="col custom-control custom-switch" style="text-align:right; vertical-align:middle;">
+                        <br/>
+                        <input type="checkbox" class="custom-control-input" id="making-banners" name="making_banners">
+                        <label class="custom-control-label" for="making-banners"><?=Ucfirst(translateText('making_banners'));?></label>
+                    </div>
                 </div>
                 <div class="form-row">
+                </div>    
+                <div class="form-row">
                     <div class="col">
-                        <label for="address">Address</label>
+                        <label for="address"><?=Ucfirst(translateText('address'));?></label>
                         <textarea
                         required
                         name ='address' 
-                        placeholder='99, Address - City - Country - Postal Code'
+                        placeholder='99, <?=Ucfirst(translateText('address'));?> - City - Country - Postal Code'
                         title = 'address'
                         value=''
                         class="form-control"  
@@ -71,7 +78,7 @@ if(array_key_exists('username',$_POST))
                 
             </div>
             <div class="inputs-button-container">
-                <button class="button" name="btnSave" type="button" onClick="handleSubmit(<?=strtolower($moduleName)?>)" >Save</button>
+                <button class="button" name="btnSave" type="button" onClick="handleSubmit(<?=strtolower($moduleName)?>)" ><?=Ucfirst(translateText('save'));?></button>
             </div>
         </form>
       <?php

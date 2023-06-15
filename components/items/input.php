@@ -16,7 +16,7 @@ function inputSelect($table,$title,$where,$order,$selected){
     }
 
     $fullUrl .= 'api/'.$table_plural.'/auth_'.$table.'_view.php?auth_api='.$authApi.'&order='.$order.'&where='.$where.'&selected='.$selected.'&groupby='.$groupby.'&allRows=1';
-    //return $fullUrl;
+    return $fullUrl;
     $homepage = file_get_contents($fullUrl);
     $obj = json_decode($homepage);
     //return $obj;
@@ -223,7 +223,7 @@ function inputDropDownStyle($table,$where,$order,$selectedDescription,$selectedV
                 $id = $obj->data[$i]->uuid_full;
                 $name = $obj->data[$i]->name;
                 break;
-        }
+        } 
         if(($selectedValue == 0) || ($selectedValue == '') || (!isset($selectedValue))){         
             if($i==0){
                 $button     .= '<button class="btn btn-secondary dropdown-toggle" type="button" id="'.$table.'DropdownMenuButton" name="'.$table.'DropdownMenuButton" value="'.$id.'" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">'.$selectedDescription;

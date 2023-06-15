@@ -558,14 +558,18 @@ function handleListEditOnLoad(ppid) {
                                 '<div class="col-sm-2 line-list-'+obj['data'][i].billboard_id+' '+deletedbillboard+'">'+(parseFloat(obj['data'][i].billboard_width)/100).toFixed(1)+' x '+(parseFloat(obj['data'][i].billboard_height)/100).toFixed(1)+'</div>' +
                                 '<div class="col-sm-1 line-list-'+obj['data'][i].billboard_id+' '+deletedbillboard+'">'+obj['data'][i].billboard_viewpoint_name+'</div>' +
                                 '<div class="col-sm-3 line-list-'+obj['data'][i].billboard_id+' '+deletedbillboard+'">'+formatter.format(obj['data'][i].billboard_cost)+' / <span id="price-'+obj['data'][i].billboard_id+'">'+formatter.format(obj['data'][i].billboard_price)+'</span></div>' +
-                                '<div class="input-group col-sm-3" id="rate-delete-'+obj['data'][i].billboard_id+'">';
+                                '<a href="javascript:void(0);" onclick="calculatorFee(\''+obj['data'][i].proposalproduct_id+'\',\''+obj['data'][i].billboard_id+'\','+obj['data'][i].billboard_cost_int+',\''+obj['data'][i].billboard_name+'\');">'+
+                                '<span class="material-icons" style="font-size:1.5rem; color:black;" title="Calculadora para fee de '+obj['data'][i].billboard_salemodel_name+' '+obj['data'][i].billboard_name+'">price_change</span>'+
+                                '</a>'+
+                            '<div class="input-group col-sm-2" id="rate-delete-'+obj['data'][i].billboard_id+'">';
                                 if(deletedbillboard == '') {
                                     //html += '<label for="fee-'+obj[i].billboard_id+'">Fee rate</label>' +
                                     html += '<input name="fee-'+obj['data'][i].billboard_id+'" id="fee-'+obj['data'][i].billboard_id+'" placeholder="% Fee" title="Percent (%) fee" aria-label="Percent (%) fee" value="30" class="form-control" style="height:1.5rem !important; width:3.5rem !important;" type="percent" maxlength="2" autocomplete="fee" />'+
                                     '<div class="input-group-append" style="height:1.5rem !important; width:3.5rem !important;"><span class="input-group-text">% ' +
                                     '<a href="javascript:void(0);" onclick="executeFeeOnPrice(\''+obj['data'][i].proposalproduct_id+'\',\''+obj['data'][i].billboard_id+'\','+obj['data'][i].billboard_cost_int+',\''+obj['data'][i].billboard_name+'\');">'+
                                     '<span class="material-icons" style="font-size:1.5rem; color:black;" title="Calcula Fee para '+obj['data'][i].billboard_salemodel_name+' '+obj['data'][i].billboard_name+'">calculate</span>'+
-                                    '</a></span></div>';
+                                    '</a>'+
+                                    '</span></div>';
                                 }
                                 html += '</div>' + 
                                 '<div class="col-sm-1" id="button-delete-'+obj['data'][i].billboard_id+'">';
@@ -1194,5 +1198,59 @@ function executeFeeOnPrice(proposalproduct_id,billboard_id,price_int,name){
         request.open('GET', requestURL);
         //request.responseType = 'json';
         request.send();
+    }
+}
+
+
+function calculatorFee(proposalproduct_id,billboard_id,price_int,name){
+    authApi     = csrf_token;
+    
+    locat       = window.location.hostname;
+    if(locat.slice(-1) != '/')
+        locat += '/';
+    
+    var formatter = new Intl.NumberFormat(lang, {
+        style: 'currency',
+        currency: xcurrency,
+        //maximumSignificantDigits: 2,
+
+        // These options are needed to round to whole numbers if that's what you want.
+        //minimumFractionDigits: 2, // (this suffices for whole numbers, but will print 2500.10 as $2,500.1)
+        //maximumFractionDigits: 0, // (causes 2500.99 to be printed as $2,501)
+    });
+    price = parseInt(price_int) / 100;
+
+
+    let new_price = prompt("nuevo monto", price);
+
+    if (new_price > 0) {
+
+        document.getElementById('fee-'+billboard_id).value = 100-((price / new_price) * 100);
+        feeInput = document.getElementById('fee-'+billboard_id).value;
+        newPrice = price/((100 - parseFloat(feeInput))/100);
+        newPrice_int = parseInt(newPrice * 100);
+        filters     = '&npc='+newPrice_int+'&pbid='+billboard_id+'&pppid='+proposalproduct_id;
+
+        if(confirm('Confirma el cambio de '+feeInput.value+'% ('+(formatter.format(price))+' para '+formatter.format(newPrice)+') en '+name)){
+            const requestURL = window.location.protocol+'//'+locat+'api/proposals/auth_proposalproduct_change_price.php?auth_api='+authApi+filters;
+            console.log(requestURL);
+            const request = new XMLHttpRequest();
+            request.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    // Typical action to be performed when the document is ready:
+                    //console.log(request.responseText);
+                    obj = JSON.parse(request.responseText);
+                    if(obj.response == 'OK'){
+                        
+                        priceSPAM   = document.getElementById('price-'+billboard_id);
+                        priceSPAM.innerText=formatter.format(newPrice);
+                    }
+                    
+                }
+            };
+            request.open('GET', requestURL);
+            //request.responseType = 'json';
+            request.send();
+        }
     }
 }

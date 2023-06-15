@@ -6,9 +6,22 @@
     max-width: 5rem;
 }
 
+
+.nav-gnog{
+
+    color:#FFF;
+}
+
+.nav-gnog-submenu{
+
+    color:#2774AB;
+}
+
+
 .menu-text{
     text-align: center;
     display:block;
+    font-weight: bold;
 }
 
 .submenu-option{
