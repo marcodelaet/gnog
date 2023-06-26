@@ -280,7 +280,7 @@ function handleViewOnLoad(ppid) {
 
     } else{
         const requestURL = window.location.protocol+'//'+locat+'api/proposals/auth_proposal_get.php?auth_api='+authApi+filters;
-        console.log('xsjoe: \n'+requestURL);
+        // console.log('xsjoe: \n'+requestURL);
         const request   = new XMLHttpRequest();
         position        = '*****';
         request.onreadystatechange = function() {
@@ -356,7 +356,7 @@ function handleViewProductsOnLoad(ppid,pppid) {
 
     } else{
         const requestURL = window.location.protocol+'//'+locat+'api/proposals/auth_proposal_get.php?auth_api='+authApi+filters;
-        console.log('xsjoe: \n'+requestURL);
+        //console.log('xsjoe: \n'+requestURL);
         const request   = new XMLHttpRequest();
         position        = '*****';
         request.onreadystatechange = function() {

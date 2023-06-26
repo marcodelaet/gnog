@@ -16,7 +16,7 @@ function inputSelect($table,$title,$where,$order,$selected){
     }
 
     $fullUrl .= 'api/'.$table_plural.'/auth_'.$table.'_view.php?auth_api='.$authApi.'&order='.$order.'&where='.$where.'&selected='.$selected.'&groupby='.$groupby.'&allRows=1';
-    return $fullUrl;
+    //return $fullUrl;
     $homepage = file_get_contents($fullUrl);
     $obj = json_decode($homepage);
     //return $obj;

@@ -153,6 +153,10 @@ created_at DATETIME NOT NULL,
 updated_at DATETIME NOT NULL
 );
 
+ALTER TABLE advertisers
+ADD COLUMN making_banners ENUM('N','Y') NOT NULL AFTER address;
+
+
 # CONTACTS
 CREATE TABLE IF NOT EXISTS contacts (
 id VARCHAR(40) PRIMARY KEY NOT NULL,
@@ -353,7 +357,6 @@ updated_at DATETIME NOT NULL
 
 ALTER TABLE proposals
 ADD COLUMN tax_percent_int TINYINT  AFTER is_taxable;
-
 
 ALTER TABLE proposals
 ADD COLUMN office_id VARCHAR(40) AFTER status_id;
@@ -937,6 +940,7 @@ CREATE VIEW view_advertisers AS (
 	ct.contact_id,
 	adv.corporate_name,
 	adv.address,
+	adv.making_banners,
 	ct.contact_name,
 	ct.contact_surname,
 	ct.contact_email,
@@ -949,7 +953,7 @@ CREATE VIEW view_advertisers AS (
 	adv.is_agency,
 	adv.is_active,
 	CONCAT((adv.id),adv.corporate_name,ct.contact_name,ct.contact_surname,ct.contact_email,'+',ct.phone_international_code,ct.phone_number) AS search
-	FROM 
+	FROM
 	advertisers adv
 	LEFT JOIN view_advertisercontacts ct ON ct.contact_client_id = adv.id
 );
@@ -1001,6 +1005,9 @@ CREATE VIEW view_billboards AS
 	b.category as category,
 	b.address as address,
 	b.state as state,
+	b.county as county,
+	b.city as city,
+	b.colony as colony,
 	b.height / 100 as height,
 	b.width / 100 as width,
 	b.coordenates as coordenates,
@@ -1200,6 +1207,8 @@ CREATE VIEW view_proposals AS (
 	(
 		((((ppp.price_int * ppp.quantity) / c.rate) * ceur.rate) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1)) / 100
 	) END AS amount_per_month_EUR,
+	adv.making_banners as making_banners_adv,
+	age.making_banners as making_banners_age,
 	pps.is_taxable,
 	pps.tax_percent_int,
 	pps.is_pixel,
