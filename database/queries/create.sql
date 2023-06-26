@@ -146,11 +146,16 @@ CREATE TABLE IF NOT EXISTS advertisers (
 id VARCHAR(40) PRIMARY KEY NOT NULL,
 corporate_name VARCHAR(40) NOT NULL UNIQUE,
 address	TEXT NOT NULL,
+making_banners ENUM('N','Y') NOT NULL,
 is_agency ENUM('N','Y') NOT NULL,
 is_active ENUM('N','Y') NOT NULL,
 created_at DATETIME NOT NULL,
 updated_at DATETIME NOT NULL
 );
+
+ALTER TABLE advertisers
+ADD COLUMN making_banners ENUM('N','Y') NOT NULL AFTER address;
+
 
 # CONTACTS
 CREATE TABLE IF NOT EXISTS contacts (
@@ -183,6 +188,7 @@ updated_at DATETIME NOT NULL
 # INSERTING DATAS IN PRODUCTS TABLE
 INSERT INTO products (id,NAME,DESCRIPTION,is_digital,is_active,created_at,updated_at) 
 VALUES 
+((UUID()),'Banner','Banner','Y','Y',NOW(),NOW()),
 ((UUID()),'Banner IAB','Banner IAB','Y','Y',NOW(),NOW()),
 ((UUID()),'Retargeting','Retargeting','Y','Y',NOW(),NOW()),
 ((UUID()),'Native Ads','Native Ads','Y','Y',NOW(),NOW()),
@@ -245,9 +251,13 @@ created_at DATETIME NOT NULL,
 updated_at DATETIME NOT NULL
 );
 
+
+INSERT INTO proposalsxproducts (id, `proposal_id`,`product_id`,`salemodel_id`,`provider_id`,`state`,`price_int`,`currency`,`quantity`,`is_active`,`created_at`,`updated_at`) VALUES (UUID(), '896693aa-cffd-11ed-8d8c-008cfa5abdac','6d0ee56b-0177-11ee-983e-008cfa5abdac','a479be22-0177-11ee-983e-008cfa5abdac','cfeba179-a349-11ed-9584-008cfa5abdac','All',65000,'MXN',1,'Y',now(),now()) ;
+
 # INSERTING DATAS IN SALEMODELS TABLE
 INSERT INTO salemodels (id,NAME,DESCRIPTION,is_digital,is_active,created_at,updated_at) 
 VALUES 
+((UUID()),'Newsletter','Newsletter','Y','Y',NOW(),NOW()),
 ((UUID()),'CPM','CPM','Y','Y',NOW(),NOW()),
 ((UUID()),'CPC','CPC','Y','Y',NOW(),NOW()),
 ((UUID()),'CPA/CPS','CPA/CPS','Y','Y',NOW(),NOW()),
@@ -338,11 +348,15 @@ offer_name VARCHAR(40) NOT NULL,
 DESCRIPTION TEXT NOT NULL,
 start_date DATETIME NOT NULL,
 stop_date DATETIME NOT NULL,
-is_pixel  ENUM('N','Y') NOT NULL,
+is_taxable ENUM('N','Y') NOT NULL,
+is_pixel ENUM('N','Y') NOT NULL,
 is_active ENUM('N','Y') NOT NULL,
 created_at DATETIME NOT NULL,
 updated_at DATETIME NOT NULL
 );
+
+ALTER TABLE proposals
+ADD COLUMN tax_percent_int TINYINT  AFTER is_taxable;
 
 ALTER TABLE proposals
 ADD COLUMN office_id VARCHAR(40) AFTER status_id;
@@ -423,6 +437,19 @@ created_at DATETIME NOT NULL,
 updated_at DATETIME NOT NULL,
 INDEX name_key_index (name_key)
 );
+
+ALTER TABLE billboards
+ADD COLUMN county VARCHAR(50) AFTER state;
+
+ALTER TABLE billboards
+ADD COLUMN colony VARCHAR(50) AFTER state;
+
+ALTER TABLE billboards
+ADD COLUMN city VARCHAR(50) AFTER state;
+
+ALTER TABLE `billboards` 
+CHANGE `name_key` `name_key` VARCHAR(50) NOT NULL; 
+
 
 # ADDING FK PROVIDER
 ALTER TABLE `billboards`
@@ -746,7 +773,21 @@ INSERT INTO translates
 VALUES
 (UUID(), '0_proposals', 'Providers is not working in anyone proposal', 'Proveedor no estás trabajando en ninguna propuesta', 'Provedor não está trabalhando em nenhuma proposta', 'Y', NOW(), NOW());
 
- 
+INSERT INTO translates 
+(id, code_str, text_eng, text_esp, text_ptbr, is_active, created_at, updated_at)
+VALUES
+(UUID(), 'is_taxable', 'is taxable', 'taxable', 'com taxas', 'Y', NOW(), NOW()),
+(UUID(), 'corporate_name', 'corporate name', 'nombre corporativo', 'Razão Social', 'Y', NOW(), NOW()),
+(UUID(), 'is_agency', 'is agency', 'es agencia', 'é agência', 'Y', NOW(), NOW()),
+(UUID(), 'making_banners', 'making banners', 'hace impressiones', 'faz impressões', 'Y', NOW(), NOW());
+
+INSERT INTO translates 
+(id, code_str, text_eng, text_esp, text_ptbr, is_active, created_at, updated_at)
+VALUES
+(UUID(), 'address', 'address', 'dirección', 'endereço', 'Y', NOW(), NOW());
+
+
+
 
 # FILES
 CREATE TABLE IF NOT EXISTS files (
@@ -899,6 +940,7 @@ CREATE VIEW view_advertisers AS (
 	ct.contact_id,
 	adv.corporate_name,
 	adv.address,
+	adv.making_banners,
 	ct.contact_name,
 	ct.contact_surname,
 	ct.contact_email,
@@ -911,7 +953,7 @@ CREATE VIEW view_advertisers AS (
 	adv.is_agency,
 	adv.is_active,
 	CONCAT((adv.id),adv.corporate_name,ct.contact_name,ct.contact_surname,ct.contact_email,'+',ct.phone_international_code,ct.phone_number) AS search
-	FROM 
+	FROM
 	advertisers adv
 	LEFT JOIN view_advertisercontacts ct ON ct.contact_client_id = adv.id
 );
@@ -963,6 +1005,9 @@ CREATE VIEW view_billboards AS
 	b.category as category,
 	b.address as address,
 	b.state as state,
+	b.county as county,
+	b.city as city,
+	b.colony as colony,
 	b.height / 100 as height,
 	b.width / 100 as width,
 	b.coordenates as coordenates,
@@ -1000,6 +1045,7 @@ CREATE VIEW view_proposals AS (
 	(ppp.product_id) AS product_id,
 	pd.name AS product_name,
 	(ppp.salemodel_id) AS salemodel_id,
+	pd.is_digital,
 	sm.name AS salemodel_name,
 	(ppp.provider_id) AS provider_id,
 	pv.name AS provider_name,
@@ -1161,6 +1207,10 @@ CREATE VIEW view_proposals AS (
 	(
 		((((ppp.price_int * ppp.quantity) / c.rate) * ceur.rate) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1)) / 100
 	) END AS amount_per_month_EUR,
+	adv.making_banners as making_banners_adv,
+	age.making_banners as making_banners_age,
+	pps.is_taxable,
+	pps.tax_percent_int,
 	pps.is_pixel,
 	pps.is_active,
 	b.id as billboard_id,

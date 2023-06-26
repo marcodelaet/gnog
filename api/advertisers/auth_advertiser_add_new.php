@@ -21,23 +21,30 @@ if(array_key_exists('auth_api',$_REQUEST)){
         if($_REQUEST['agency']!=='')
             $agency         = $_REQUEST['agency'];
     }
+    $making_banners         = 'Y';
+    if(array_key_exists('making_banners',$_REQUEST)){
+        if($_REQUEST['making_banners']!=='')
+            $making_banners = $_REQUEST['making_banners'];
+    }
     $corporate_name         = $_REQUEST['corporate_name'];
     $address                = $_REQUEST['address'];
 
     $module     = "advertisers";
-    $columns    = "id,is_agency,corporate_name,address,is_active,created_at,updated_at";
-    $values     = "(UUID()),'$agency','$corporate_name','$address','Y',now(),now()";
+    $columns    = "id,is_agency,making_banners,corporate_name,address,is_active,created_at,updated_at";
+    $values     = "(UUID()),'$agency','$making_banners','$corporate_name','$address','Y',now(),now()";
 
     // Query creation
     $sql = "INSERT INTO $module ($columns) VALUES ($values)";
+
+    
     // INSERT data
     $rs = $DB->executeInstruction($sql);
 
   
 
     // Response JSON 
+    header('Content-type: application/json');
     if($rs){
-        header('Content-type: application/json');
         echo json_encode(['status' => 'OK']);
     }
 }

@@ -33,6 +33,11 @@ if(array_key_exists('auth_api',$_REQUEST)){
     $start_date     = $_POST['start_date'];
     $stop_date      = $_POST['stop_date'];
     $status_id      = $_POST['status_id'];
+    
+    $tax_percent    = '0';
+    if(($_POST['tax_percent'] != '') && ($_POST['tax_percent'] > '0') )
+        $tax_percent    = $_POST['tax_percent'];
+
    /* $pixel_original = $_POST['pixel'];
 
     $pixel = "N";
@@ -40,10 +45,11 @@ if(array_key_exists('auth_api',$_REQUEST)){
         $pixel = "Y";
     }*/
 
-    $pixel = $_POST['pixel_option'];
+    $pixel      = $_POST['pixel_option'];
+    $taxable    = $_POST['taxable_option'];
     
-    $columns    = 'id,user_id,status_id,offer_name,advertiser_id,agency_id,contact_id,office_id,description,start_date,stop_date,is_pixel,is_active,created_at, updated_at';
-    $values     = "(UUID()),('$user_id'),$status_id,'$name',('$client_id'),$agency_id,('$contact_id'),'$office_id','$description','$start_date','$stop_date','$pixel','Y',now(),now()";
+    $columns    = 'id,user_id,status_id,offer_name,advertiser_id,agency_id,contact_id,office_id,description,start_date,stop_date,tax_percent_int,is_taxable,is_pixel,is_active,created_at, updated_at';
+    $values     = "(UUID()),('$user_id'),$status_id,'$name',('$client_id'),$agency_id,('$contact_id'),'$office_id','$description','$start_date','$stop_date',$tax_percent,'$taxable','$pixel','Y',now(),now()";
     $table      = "proposals";
 
     // Query creation

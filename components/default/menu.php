@@ -17,7 +17,7 @@ if(array_key_exists('tk',$_COOKIE) && (array_key_exists('uuid',$_COOKIE)))
     <ul class="navbar-nav">
       <li class="nav-item" id="nav-item-dashboard">
         <a class="nav-link" title="<?=translateText('dashboard');?>" href="?pr=<?=base64_encode('./pages/dashboard/index.php')?>">
-          <div class="menu-option">
+          <div class="menu-option nav-gnog">
             <div class="menu-icon">
               <span class="material-icons-outlined" style="font-size:4rem;">dashboard</span>
             </div>
@@ -29,7 +29,7 @@ if(array_key_exists('tk',$_COOKIE) && (array_key_exists('uuid',$_COOKIE)))
       </li>
       <li class="nav-item" id="nav-item-proposals">
         <a class="nav-link" title="<?=translateText('proposals');?>" href="?pr=<?=base64_encode('./pages/proposals/index.php')?>">
-          <div class="menu-option">
+          <div class="menu-option nav-gnog">
             <div class="menu-icon">
               <span class="material-icons"  style="font-size:4rem;">price_check</span>
             </div>
@@ -41,7 +41,7 @@ if(array_key_exists('tk',$_COOKIE) && (array_key_exists('uuid',$_COOKIE)))
       </li>
       <li class="nav-item" id="nav-item-providers">
         <a class="nav-link" title="<?=translateText('providers');?>" href="?pr=<?=base64_encode('./pages/providers/index.php')?>">
-          <div class="menu-option">
+          <div class="menu-option nav-gnog">
             <div class="menu-icon">
               <span class="material-icons"  style="font-size:4rem;">store</span>
             </div>
@@ -53,7 +53,7 @@ if(array_key_exists('tk',$_COOKIE) && (array_key_exists('uuid',$_COOKIE)))
       </li>
       <li class="nav-item dropdown" id="nav-item-advertisers">
         <a class="nav-link" title="<?=translateText('advertisers');?>" href="?pr=<?=base64_encode('./pages/advertisers/index.php')?>">
-          <div class="menu-option">
+          <div class="menu-option nav-gnog">
             <div class="menu-icon">
               <span class="material-icons"  style="font-size:4rem;">business</span>
             </div>
@@ -65,7 +65,7 @@ if(array_key_exists('tk',$_COOKIE) && (array_key_exists('uuid',$_COOKIE)))
       </li>
       <li class="nav-item dropdown" id="nav-item-invoices">
         <a class="nav-link" title="<?=translateText('invoices');?>" href="?pr=<?=base64_encode('./pages/financial/invoices/index.php')?>">
-          <div class="menu-option">
+          <div class="menu-option nav-gnog">
             <div class="menu-icon">
               <span class="material-icons"  style="font-size:4rem;">request_quote</span>
             </div>
@@ -77,7 +77,7 @@ if(array_key_exists('tk',$_COOKIE) && (array_key_exists('uuid',$_COOKIE)))
       </li>
       <li class="nav-item dropdown" id="nav-item-users">
         <a class="nav-link dropdown-toggle" title="<?=translateText('user_settings');?>" href="?pr=<?=base64_encode('./pages/users/index.php')?>" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          <div class="menu-option">
+          <div class="menu-option nav-gnog">
             <div class="menu-icon">
               <span class="material-icons"  style="font-size:4rem;">settings</span>
             </div>
@@ -88,7 +88,7 @@ if(array_key_exists('tk',$_COOKIE) && (array_key_exists('uuid',$_COOKIE)))
         </a>
         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink" >
           <a class="dropdown-item" id="nav-item-billboards-list" title="List of <?=translateText('billboard');?>" href="?pr=<?=base64_encode('./pages/billboards/index.php')?>" >
-            <div class="submenu-option">
+            <div class="submenu-option nav-gnog-submenu">
               <div class="submenu-icon">
                 <span class="material-icons"  style="font-size:4rem;">indeterminate_check_box</span>
               </div>
@@ -108,7 +108,7 @@ if(array_key_exists('tk',$_COOKIE) && (array_key_exists('uuid',$_COOKIE)))
             </div> 
           </a>  -->
           <a class="dropdown-item" id="nav-item-users-list" title="<?=translateText('users');?>" href="?pr=<?=base64_encode('./pages/users/index.php')?>" >
-            <div class="submenu-option">
+            <div class="submenu-option nav-gnog-submenu">
               <div class="submenu-icon">
                 <span class="material-icons"  style="font-size:4rem;">people</span>
               </div>
@@ -118,7 +118,7 @@ if(array_key_exists('tk',$_COOKIE) && (array_key_exists('uuid',$_COOKIE)))
             </div> 
           </a>
           <a class="dropdown-item" title="<?=translateText('logout');?>" href="?pr=<?=base64_encode('./pages/users/logout/index.php')?>">
-            <div class="submenu-option">
+            <div class="submenu-option nav-gnog-submenu">
               <div class="submenu-icon">
                 <span class="material-icons"  style="font-size:4rem;">logout</span><br/>
               </div>

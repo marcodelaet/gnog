@@ -36,7 +36,7 @@
             </div>
 
         <div class="inputs-button-container">
-            <Button class="button" type="button" onClick="window.location='?pr=<?=base64_encode('./pages/'.strtolower($moduleName).'s/index.php')?>'" >Back to <?=$moduleName?>s</Button>
+            <Button class="button" type="button" onClick="window.location='?pr=<?=base64_encode('./pages/'.strtolower($moduleName).'s/index.php')?>'" >Back to <?=translateText($moduleName.'s');?></Button>
         </div>
     </div>
 </div>

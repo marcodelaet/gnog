@@ -19,7 +19,7 @@ if(array_key_exists('auth_api',$_REQUEST)){
     $group          = 'admin';
 
     // setting query
-    $columns        = "UUID,is_proposalbillboard_active,proposalproduct_id,product_id,product_name,salemodel_id,salemodel_name,provider_id,provider_name,user_id,username,client_id,client_name,agency_id,agency_name,status_id,status_name,status_percent,offer_name,description,start_date,stop_date,currency_c,billboard_state,billboard_name,billboard_height,billboard_width,state,billboard_state,billboard_cost,billboard_cost_int,billboard_price,billboard_price_int,billboard_id, billboard_provider_name,billboard_salemodel_name,billboard_viewpoint_name,amount,quantity,is_active";
+    $columns        = "UUID,is_digital,is_proposalbillboard_active,proposalproduct_id,is_taxable,tax_percent_int,product_id,product_name,salemodel_id,salemodel_name,provider_id,provider_name,user_id,username,client_id,client_name,agency_id,agency_name,status_id,status_name,status_percent,offer_name,description,start_date,stop_date,currency_c,billboard_state,billboard_name,billboard_height,billboard_width,state,billboard_state,billboard_cost,billboard_cost_int,billboard_price,billboard_price_int,billboard_id, billboard_provider_name,billboard_salemodel_name,billboard_viewpoint_name,amount,quantity,is_active";
     $tableOrView    = "view_proposals";
 
     // filters
@@ -47,6 +47,16 @@ if(array_key_exists('auth_api',$_REQUEST)){
             $filters        .= " uuid = '$uuid'";
         }
     }
+
+    if(array_key_exists('pppid',$_REQUEST)){
+        if($_REQUEST['pppid']!==''){
+            if($filters != '')
+                $filters .= " AND ";
+            $pppid         = $_REQUEST['pppid'];
+            $filters        .= " proposalproduct_id = '$pppid'";
+        }
+    }
+
 
     if(array_key_exists('name',$_REQUEST)){
         if($_REQUEST['name']!==''){
@@ -88,7 +98,7 @@ if(array_key_exists('auth_api',$_REQUEST)){
     // Response JSON 
     if($rs){
         header('Content-type: application/json');
-        echo json_encode(['data'=>$rs, $sql]);
+        echo json_encode(['data'=>$rs]);
     }
 }
 

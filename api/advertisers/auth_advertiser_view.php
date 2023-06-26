@@ -23,7 +23,7 @@ if(array_key_exists('auth_api',$_REQUEST)){
         }
     }
 
-    $columns = " left(uuid,13)as uuid, uuid as uuid_full, $addColumn corporate_name, address, concat(contact_name,' ',contact_surname,' (', contact_email,')') as contact, contact_name, contact_surname, contact_email, contact_position, phone_international_code, phone_prefix, phone_number, is_agency, is_active, concat('+',phone_international_code,phone_number) as phone";
+    $columns = " left(uuid,13)as uuid, uuid as uuid_full, making_banners, $addColumn corporate_name, address, concat(contact_name,' ',contact_surname,' (', contact_email,')') as contact, contact_name, contact_surname, contact_email, contact_position, phone_international_code, phone_prefix, phone_number, is_agency, is_active, concat('+',phone_international_code,phone_number) as phone";
     $tableOrView    = "view_advertisers";
     $orderBy        = " ORDER BY corporate_name";
     $groupBy        = "";
@@ -76,9 +76,11 @@ if(array_key_exists('auth_api',$_REQUEST)){
   
 
     // Response JSON 
+    header('Content-type: application/json');
     if($rs){
-        header('Content-type: application/json');
         echo json_encode($rs);
+    } else {
+        echo json_encode($sql);
     }
 }
 

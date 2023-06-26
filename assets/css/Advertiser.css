@@ -90,6 +90,11 @@
     color: #647487;
 }
 
+.impressions {
+    display: block;
+    font-size: 0.78rem;
+}
+
 #advertiser-card {
     max-width: 30rem;
     min-width: 30rem;

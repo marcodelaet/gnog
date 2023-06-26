@@ -99,17 +99,27 @@ function handleListOnLoad(uid,status,month,year,search,currency) {
                             //maximumFractionDigits: 0, // (causes 2500.99 to be printed as $2,501)
                         });
                         color_status = '#d60b0e';
-                        if(obj[i].status_percent == '100')
+                        color_letter = '#CCCCFF';
+                        if(obj[i].status_percent == '100'){
                             color_status = '#298c3d';
-                        if(obj[i].status_percent == '90')
+                            color_letter = '#CCCCFF';
+                        }
+                        if(obj[i].status_percent == '90'){
                             color_status = '#03fc84';
-                        if(obj[i].status_percent == '75')
+                            color_letter = '#000000';
+                        }
+                        if(obj[i].status_percent == '75'){
                             color_status = '#77fc03';
-                        if(obj[i].status_percent == '50')
+                            color_letter = '#000000';
+                        }
+                        if(obj[i].status_percent == '50'){
                             color_status = '#ebfc03';
-                        if(obj[i].status_percent == '25')
+                            color_letter = '#CCCCFF';
+                        }
+                        if(obj[i].status_percent == '25'){
                             color_status = '#fc3d03';
-                            
+                            color_letter = '#CCCCFF';
+                        }
 
                         agency = '';
                         if(typeof(obj[i].agency_name) === 'string')
@@ -122,7 +132,7 @@ function handleListOnLoad(uid,status,month,year,search,currency) {
                         start_date  = new Date(obj[i].start_date);
                         stop_date   = new Date(obj[i].stop_date);
                         lastCurrency = obj[i].currency;
-                        html += '<tr><td>'+obj[i].offer_name+'</td><td nowrap>'+obj[i].client_name+agency+'</td><td nowrap>'+obj[i].username+'</td><td nowrap><spam style="display:none;" class="currency-line" id="currency-'+(i)+'">'+obj[i].currency+'</spam><spam class="amount-line" id="amount-'+(i)+'">'+formatter.format(amount)+'</spam></td><td nowrap><spam class="amount-month-line" id="amount-month-'+(i)+'">'+formatter.format(amount_month)+'</spam></td><td style="text-align:center;"><span id="status_'+obj[i].UUID+'" class="material-icons" title="'+obj[i].status_percent+'% '+obj[i].status_name+'" style="color:'+color_status+'">thermostat</span></td><td nowrap style="text-align:center;">';
+                        html += '<tr><td>'+obj[i].offer_name+'</td><td nowrap>'+obj[i].client_name+agency+'</td><td nowrap>'+obj[i].username+'</td><td nowrap><spam style="display:none;" class="currency-line" id="currency-'+(i)+'">'+obj[i].currency+'</spam><spam class="amount-line" id="amount-'+(i)+'">'+formatter.format(amount)+'</spam></td><td nowrap><spam class="amount-month-line" id="amount-month-'+(i)+'">'+formatter.format(amount_month)+'</spam></td><td style="text-align:center;"><span id="status_'+obj[i].UUID+'" class="material-icons" title="'+obj[i].status_percent+'% '+translateText(obj[i].status_name,localStorage.getItem('ulang'))+'" style="color:'+color_status+'">thermostat</span><BR><SPAN class="status-description" style="background-color:'+color_status+'; color:'+color_letter+'">&nbsp;&nbsp;'+obj[i].status_percent+'% '+translateText(obj[i].status_name,localStorage.getItem('ulang'))+'&nbsp;&nbsp;</SPAN></td><td nowrap style="text-align:center;">';
                         // information card
                         html += '<a href="?pr=Li9wYWdlcy9wcm9wb3NhbHMvaW5mby5waHA=&ppid='+obj[i].UUID+'"><span class="material-icons" style="font-size:1.5rem; color:black;" title="Information Card '+obj[i].offer_name+'">info</span></a>';
 

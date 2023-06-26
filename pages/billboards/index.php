@@ -17,7 +17,7 @@ $mobile     = null;
         
         <div class="inputs-filter-container">
             <div class="form-row">
-                <div class="input-group col-sm-10">
+                <div class="input-group col-sm-11">
                     &nbsp;
                 </div>
                 <!--<div class="input-group col-sm-1 button-with-title" style="margin-bottom:1rem;">
@@ -55,6 +55,7 @@ $mobile     = null;
                 <tr>
                     <th scope="col"><?=translateText('provider');?></th>
                     <th scope="col"><?=translateText('key');?></th>
+                    <th scope="col"><!--<?=translateText('address');?>--></th>
                     <th scope="col"><?=translateText('viewpoint');?></th>
                     <th scope="col"><?=translateText('dimensions');?></th>
                     <th scope="col">&nbsp;</th> <!-- tipo -->

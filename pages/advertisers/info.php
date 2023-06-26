@@ -17,6 +17,7 @@
             <div class="<?=strtolower($moduleName)?>-main" >
                 <spam id="<?=strtolower($moduleName)?>_name"><?=$moduleName?></spam>
                 <spam class="<?=strtolower($moduleName)?>-group" id="group"></spam>
+                <spam class="impressions">&nbsp;</spam>
             </div>
         </div>
     </div>

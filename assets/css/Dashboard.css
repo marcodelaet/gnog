@@ -24,6 +24,17 @@
     text-align:right;
     color: #707070;
 }
+
+td{
+    vertical-align: middle !important;
+}
+
+.status-description{
+    font-weight: bold;
+    font-size: 0.8rem;
+
+}
+
 @media screen and (min-width : 1895px) {
     .dashboard-container {
         float: right;

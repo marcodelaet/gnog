@@ -14,14 +14,19 @@ function handleSubmit(form) {
         authApi     = csrf_token;
         message     = '';
 
-        pixel      = 'N';
+        pixel       = 'N';
         if(form.pixel.checked)
-            pixel               = 'Y';
+            pixel   = 'Y';
+
+        taxable     = 'N';
+        if(form.taxable.checked)
+            taxable = 'Y';
 
         var formData = new FormData(form);
         formData.append('auth_api',authApi);
         formData.append('office_id',form.officeDropdownMenuButton.value);
         formData.append('pixel_option',pixel);
+        formData.append('taxable_option',taxable);
 
         total                   = form.total.value;
         status_id               = form.status_id.value;
@@ -103,6 +108,70 @@ function handleSubmit(form) {
         alert('Please, fill all required fields (*)');
 }
 
+function handleSubmitProvider(form){
+    if (form.total.value !== '0,00') {
+        errors      = 0;
+        authApi     = csrf_token;
+        message     = '';
+
+        total       = form.total.value;
+
+        product     = document.getElementById('productID').value;
+        saleModel   = document.getElementById('salemodelID').value;
+        proposal_id = document.getElementById('proposalID').value;
+        referrer    = document.getElementById('referrer').value;
+        state       = document.getElementById('stateSel').value;
+        currency    = document.getElementById('currency').value;
+
+        objPrice        = document.getElementsByName('price[]');    
+        objQuantity     = document.getElementsByName('quantity[]');
+        objProviderId   = document.getElementsByName('provider_id[]');
+        
+        if(errors > 0){
+            alert(message);
+        } else{
+            virg            = '';
+            product_id      = '';
+            salemodel_id    = '';
+            price           = '';
+            quantity        = '';
+            provider_id     = '';
+            state_id        = '';
+
+            for(i=0; i < objProviderId.length;i++){
+                if(i>0)
+                    virg = ',';
+
+                xprice  = '0';
+                if((objPrice[i].value != '') || (objPrice[i].value >= 0)){
+                    axPrice = objPrice[i].value.split(",");
+                    for(j=0;j < axPrice.length;j++){
+                        apPrice     = axPrice[j].split(".");
+                        for(k=0;k < apPrice.length;k++){
+                            xprice      += apPrice[k];
+                        }
+                    }    
+                } 
+                product_id      += virg + product;
+                salemodel_id    += virg + saleModel;
+                price           += virg + xprice;
+                xquantity       = 1;
+                if((objQuantity[i].value != '') || (objQuantity[i].value > 0))
+                    xquantity = objQuantity[i].value;
+                quantity        += virg + xquantity;
+                provider_id     += virg + objProviderId[i].value;
+                //if(objState[i].value)
+                state_id        += virg + state;
+            }
+            addProduct('['+product_id+']','['+salemodel_id+']','['+price+']',currency,'['+quantity+']','['+provider_id+']',proposal_id,'['+state_id+']');
+
+            form.btnSave.innerHTML = "Save";
+            window.location.href = '?pr=Li9wYWdlcy9wcm9wb3NhbHMvZm9ybWVkaXQucGhw&ppid='+proposal_id;
+        }
+    } else
+        alert('Please, fill all required fields (*)');
+}
+
 function handleEditSubmit(tid,form) {
     if (form.name.value !== '' && form.address.value !== '' && form.main_contact_email.value !== '' || product_id != '0' || salemodel_id != '0') {
         //form.submit();
@@ -113,7 +182,7 @@ function handleEditSubmit(tid,form) {
         sett     = '&tid='+tid;
         xname          = form.name.value;
         if(xname !== ''){
-            sett     += '&name='+name;
+            sett     += '&name='+xname;
         }
         address                 = form.address.value;
         if(address !== ''){
@@ -211,7 +280,7 @@ function handleViewOnLoad(ppid) {
 
     } else{
         const requestURL = window.location.protocol+'//'+locat+'api/proposals/auth_proposal_get.php?auth_api='+authApi+filters;
-        console.log(requestURL);
+        // console.log('xsjoe: \n'+requestURL);
         const request   = new XMLHttpRequest();
         position        = '*****';
         request.onreadystatechange = function() {
@@ -254,7 +323,7 @@ function handleViewOnLoad(ppid) {
                 document.getElementById('description').innerHTML            = obj['data'][0].description;
                 document.getElementById('dates').innerHTML                  = "("+ formattedStartDate+" - "+formattedStopDate+")";
                 //document.getElementById('statusDropdownMenuButton').innerHTML            = '<spam class="material-icons icon-data" id="card-status-icon" style="color:'+color_status+'">thermostat</spam>' + obj[0].status_name + ' ('+ obj[0].status_percent+'%)';
-                document.getElementById('statusDropdownMenuButton').value = obj['data'][0].status_id; 
+                document.getElementById('statusDropdownMenuButton').value   = obj['data'][0].status_id; 
                 document.getElementById('statusDropdownMenuButton').innerHTML = '<spam class="material-icons icon-data" id="card-status-icon" style="color:'+color_status+'">thermostat</spam>' + translateText(obj['data'][0].status_name,localStorage.getItem('ulang')) + ' ('+ obj['data'][0].status_percent+'%)';
                 // products list for statement
                 for(var i=0;i<obj['data'].length;i++){
@@ -270,6 +339,97 @@ function handleViewOnLoad(ppid) {
         //request.responseType = 'json';
         request.send();
     }
+}
+
+function handleViewProductsOnLoad(ppid,pppid) {
+    errors      = 0;
+    //alert('ok');
+    authApi     = csrf_token;
+    locat       = window.location.hostname;
+
+    filters     = '&ppid='+ppid+'&pppid='+pppid;
+
+    if(locat.slice(-1) != '/')
+        locat += '/';
+
+    if(errors > 0){
+
+    } else{
+        const requestURL = window.location.protocol+'//'+locat+'api/proposals/auth_proposal_get.php?auth_api='+authApi+filters;
+        //console.log('xsjoe: \n'+requestURL);
+        const request   = new XMLHttpRequest();
+        position        = '*****';
+        request.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                obj = JSON.parse(request.responseText);
+                xcurrency = obj['data'][0].currency_c;
+                // Create our number formatter.
+                var formatter = new Intl.NumberFormat(lang, {
+                    style: 'currency',
+                    currency: xcurrency,
+                    //maximumSignificantDigits: 2,
+
+                    // These options are needed to round to whole numbers if that's what you want.
+                    //minimumFractionDigits: 2, // (this suffices for whole numbers, but will print 2500.10 as $2,500.1)
+                    //maximumFractionDigits: 0, // (causes 2500.99 to be printed as $2,501)
+                });
+                if(obj['data'][0].main_contact_position!='')
+                    position = obj['data'][0].main_contact_position;
+                client = obj['data'][0].client_name;
+                if(obj['data'][0].agency_name != null)
+                    client += ' / ' + obj['data'][0].agency_name;
+
+                xxhtml                = '';
+                color_status = '#d60b0e';
+                if(obj['data'][0].status_percent == '100')
+                    color_status = '#298c3d';
+                if(obj['data'][0].status_percent == '90')
+                    color_status = '#03fc84';
+                if(obj['data'][0].status_percent == '75')
+                    color_status = '#77fc03';
+                if(obj['data'][0].status_percent == '50')
+                    color_status = '#ebfc03';
+                if(obj['data'][0].status_percent == '25')
+                    color_status = '#fc3d03';
+
+
+                is_digital_color    = "#298c3d";
+                is_digital_text     = 'check';
+                if(obj['data'][0].is_digital != 'Y'){
+                    is_digital_color    = "#d60b0e";
+                    is_digital_text     = 'cancel';
+                }
+                
+                startDate           = new Date(obj['data'][0].start_date);
+                formattedStartDate  = startDate.getDate()+"/"+(parseInt(startDate.getMonth())+1)+"/"+startDate.getFullYear();
+                stopDate            = new Date(obj['data'][0].stop_date);
+                formattedStopDate   = stopDate.getDate()+"/"+(parseInt(stopDate.getMonth())+1)+"/"+stopDate.getFullYear();
+                document.getElementById('is-digital').style         = 'color:'+is_digital_color;
+                document.getElementById('is-digital').innerText     = is_digital_text; 
+                document.getElementById('proposal-name').innerHTML  = obj['data'][0].offer_name;
+                document.getElementById('currency').value           = xcurrency;
+                document.getElementById('productID').value          = obj['data'][0].product_id;
+                document.getElementById('salemodelID').value        = obj['data'][0].salemodel_id;
+                document.getElementById('proposalID').value        = obj['data'][0].UUID
+                document.getElementById('stateSel').value           = obj['data'][0].state;
+                document.getElementById('proposal-product-state').innerText = obj['data'][0].state;
+                for(var i=0;i<obj['data'].length;i++){
+                    xxhtml += '<spam class="product-line">'+obj['data'][0].product_name + ' / ' + obj['data'][0].salemodel_name+'</spam><br />';
+                }
+                document.getElementById('proposal-product-name').innerHTML          = xxhtml;                
+            }
+            else{
+                //form.btnSave.innerHTML = "Searching...";
+            }
+        };
+        request.open('GET', requestURL);
+        //request.responseType = 'json';
+        request.send();
+    }
+}
+
+function changeStatus(newStatus){
+
 }
 
 function handleListEditOnLoad(ppid) {
@@ -348,9 +508,9 @@ function handleListEditOnLoad(ppid) {
                             //'<div class="col-sm-2">Rate % All</div>' +
                             if(aBillboards.indexOf(obj['data'][i].salemodel_name) != -1){
                             //if(obj[i].billboard_salemodel_name != null){
-                                html += '<div class="col-sm-2"><a title="'+ucfirst(translateText('choose',localStorage.getItem('ulang')))+' '+obj['data'][i].salemodel_name+' '+translateText('on_map',localStorage.getItem('ulang'))+'" href="?pr=Li9wYWdlcy9tYXBzL2luZGV4LnBocA==&smid='+obj['data'][i].salemodel_id+'&ppid='+ppid+'&pppid='+obj['data'][i].proposalproduct_id+'&state='+obj['data'][i].state+'"><span class="material-icons" style="font-size:1.2rem;">map</span></a></div>';
+                                html += '<div class="col-sm-2" style="text-align:center; white-space: nowrap;"><a title="'+ucfirst(translateText('choose',localStorage.getItem('ulang')))+' '+obj['data'][i].salemodel_name+' '+translateText('on_map',localStorage.getItem('ulang'))+'" href="?pr=Li9wYWdlcy9tYXBzL2luZGV4LnBocA==&smid='+obj['data'][i].salemodel_id+'&ppid='+ppid+'&pppid='+obj['data'][i].proposalproduct_id+'&state='+obj['data'][i].state+'"><span class="material-icons" style="font-size:1.2rem;">map</span><br/><span style="font-size:0.8rem">'+ucfirst(translateText('choose',localStorage.getItem('ulang')))+' '+obj['data'][i].salemodel_name+' '+translateText('on_map',localStorage.getItem('ulang'))+'</span></a></div>';
                             } else {
-                                html += '<div class="col-sm-2"><a title="'+ucfirst(translateText('add+',localStorage.getItem('ulang')))+' '+translateText('provider',localStorage.getItem('ulang'))+'" href="?pr=xxxxxxx&smid='+obj['data'][i].salemodel_id+'&ppid='+ppid+'&pppid='+obj['data'][i].proposalproduct_id+'&state='+obj['data'][i].state+'"><span class="material-icons" style="font-size:1.2rem;">add_business</span></a></div>';
+                                html += '<div class="col-sm-2" style="text-align:center; white-space: nowrap;"><a title="'+ucfirst(translateText('add+',localStorage.getItem('ulang')))+' '+translateText('provider',localStorage.getItem('ulang'))+'" href="?pr=Li9wYWdlcy9wcm9wb3NhbHMvYWRkL3Byb2R1Y3QvcHJvdmlkZXIvZm9ybWFkZC5waHA=&smid='+obj['data'][i].salemodel_id+'&ppid='+ppid+'&pppid='+obj['data'][i].proposalproduct_id+'&state='+obj['data'][i].state+'"><span class="material-icons" style="font-size:1.2rem;">add_business</span> <br/><span style="font-size:0.8rem">'+ucfirst(translateText('add+',localStorage.getItem('ulang')))+' '+translateText('provider',localStorage.getItem('ulang'))+'</span></a></div>';
                             }
                             html += '</div>';
                         //}    
@@ -398,14 +558,18 @@ function handleListEditOnLoad(ppid) {
                                 '<div class="col-sm-2 line-list-'+obj['data'][i].billboard_id+' '+deletedbillboard+'">'+(parseFloat(obj['data'][i].billboard_width)/100).toFixed(1)+' x '+(parseFloat(obj['data'][i].billboard_height)/100).toFixed(1)+'</div>' +
                                 '<div class="col-sm-1 line-list-'+obj['data'][i].billboard_id+' '+deletedbillboard+'">'+obj['data'][i].billboard_viewpoint_name+'</div>' +
                                 '<div class="col-sm-3 line-list-'+obj['data'][i].billboard_id+' '+deletedbillboard+'">'+formatter.format(obj['data'][i].billboard_cost)+' / <span id="price-'+obj['data'][i].billboard_id+'">'+formatter.format(obj['data'][i].billboard_price)+'</span></div>' +
-                                '<div class="input-group col-sm-3" id="rate-delete-'+obj['data'][i].billboard_id+'">';
+                                '<a href="javascript:void(0);" onclick="calculatorFee(\''+obj['data'][i].proposalproduct_id+'\',\''+obj['data'][i].billboard_id+'\','+obj['data'][i].billboard_cost_int+',\''+obj['data'][i].billboard_name+'\');">'+
+                                '<span class="material-icons" style="font-size:1.5rem; color:black;" title="Calculadora para fee de '+obj['data'][i].billboard_salemodel_name+' '+obj['data'][i].billboard_name+'">price_change</span>'+
+                                '</a>'+ 
+                            '<div class="input-group col-sm-2" id="rate-delete-'+obj['data'][i].billboard_id+'">';
                                 if(deletedbillboard == '') {
                                     //html += '<label for="fee-'+obj[i].billboard_id+'">Fee rate</label>' +
                                     html += '<input name="fee-'+obj['data'][i].billboard_id+'" id="fee-'+obj['data'][i].billboard_id+'" placeholder="% Fee" title="Percent (%) fee" aria-label="Percent (%) fee" value="30" class="form-control" style="height:1.5rem !important; width:3.5rem !important;" type="percent" maxlength="2" autocomplete="fee" />'+
                                     '<div class="input-group-append" style="height:1.5rem !important; width:3.5rem !important;"><span class="input-group-text">% ' +
                                     '<a href="javascript:void(0);" onclick="executeFeeOnPrice(\''+obj['data'][i].proposalproduct_id+'\',\''+obj['data'][i].billboard_id+'\','+obj['data'][i].billboard_cost_int+',\''+obj['data'][i].billboard_name+'\');">'+
                                     '<span class="material-icons" style="font-size:1.5rem; color:black;" title="Calcula Fee para '+obj['data'][i].billboard_salemodel_name+' '+obj['data'][i].billboard_name+'">calculate</span>'+
-                                    '</a></span></div>';
+                                    '</a>'+
+                                    '</span></div>';
                                 }
                                 html += '</div>' + 
                                 '<div class="col-sm-1" id="button-delete-'+obj['data'][i].billboard_id+'">';
@@ -484,16 +648,27 @@ function handleListOnLoad(search) {
 
 
                         color_status = '#d60b0e';
-                        if(obj[i].status_percent == '100')
+                        color_letter = '#CCCCFF';
+                        if(obj[i].status_percent == '100'){
                             color_status = '#298c3d';
-                        if(obj[i].status_percent == '90')
+                            color_letter = '#CCCCFF';
+                        }
+                        if(obj[i].status_percent == '90'){
                             color_status = '#03fc84';
-                        if(obj[i].status_percent == '75')
+                            color_letter = '#000000';
+                        }
+                        if(obj[i].status_percent == '75'){
                             color_status = '#77fc03';
-                        if(obj[i].status_percent == '50')
+                            color_letter = '#000000';
+                        }
+                        if(obj[i].status_percent == '50'){
                             color_status = '#ebfc03';
-                        if(obj[i].status_percent == '25')
+                            color_letter = '#CCCCFF';
+                        }
+                        if(obj[i].status_percent == '25'){
                             color_status = '#fc3d03';
+                            color_letter = '#CCCCFF';
+                        }
                             
                         agency = '';
                         if(typeof(obj[i].agency_name) === 'string')
@@ -501,7 +676,7 @@ function handleListOnLoad(search) {
                         amount = obj[i].amount;
                         start_date  = new Date(obj[i].start_date);
                         stop_date   = new Date(obj[i].stop_date);
-                        html += '<tr><td>'+obj[i].offer_name+'</td><td nowrap>'+obj[i].client_name+agency+'</td><td nowrap>'+obj[i].username+'</td><td nowrap>'+formatter.format(amount)+'</td><td>'+start_date.toLocaleString(lang).split(" ")[0].replace(",","")+'</td><td>'+stop_date.toLocaleString(lang).split(" ")[0].replace(",","")+'</td><td style="text-align:center;" ><span id="status_'+obj[i].UUID+'" class="material-icons" title="'+obj[i].status_percent+'% '+obj[i].status_name+'" style="color:'+color_status+'">thermostat</span></td><td nowrap style="text-align:center;">';
+                        html += '<tr><td>'+obj[i].offer_name+'</td><td nowrap>'+obj[i].client_name+agency+'</td><td nowrap>'+obj[i].username+'</td><td nowrap>'+formatter.format(amount)+'</td><td>'+start_date.toLocaleString(lang).split(" ")[0].replace(",","")+'</td><td>'+stop_date.toLocaleString(lang).split(" ")[0].replace(",","")+'</td><td style="text-align:center;" ><span id="status_'+obj[i].UUID+'" class="material-icons" title="'+obj[i].status_percent+'% '+translateText(obj[i].status_name,localStorage.getItem('ulang'))+'" style="color:'+color_status+'">thermostat</span><br/><span class="status-description" style="background-color:'+color_status+'; color:'+color_letter+'">&nbsp;&nbsp;'+obj[i].status_percent+'% '+translateText(obj[i].status_name,localStorage.getItem('ulang'))+'&nbsp;&nbsp;</span></td><td nowrap style="text-align:center;">';
                         // information card
                         html += '<a href="?pr=Li9wYWdlcy9wcm9wb3NhbHMvaW5mby5waHA=&ppid='+obj[i].UUID+'"><span class="material-icons" style="font-size:1.5rem; color:black;" title="Information Card '+obj[i].offer_name+'">info</span></a>';
 
@@ -592,6 +767,52 @@ function handleRemove(ppid,status){
     request.open('GET', requestURL);
     //request.responseType = 'json';
     request.send();
+}
+
+function calcAmountTotalOnProvider(form,index){
+    currency    = document.getElementsByName('currency');
+    xcurrency   = currency[0].value;
+    var formatter = new Intl.NumberFormat(lang, {
+        style: 'currency',
+        currency: xcurrency,
+        //maximumSignificantDigits: 2,
+
+        // These options are needed to round to whole numbers if that's what you want.
+        //minimumFractionDigits: 2, // (this suffices for whole numbers, but will print 2500.10 as $2,500.1)
+        //maximumFractionDigits: 0, // (causes 2500.99 to be printed as $2,501)
+    });
+    price       = document.getElementsByName('price[]');
+    xprice      = price[index].value;
+    quantity    = document.getElementsByName('quantity[]');
+    xquantity   = quantity[index].value;
+    if(xprice > '0' && xquantity > '0'){
+        amount = document.getElementsByName('amount[]');
+        amount[index].value   = formatter.format(parseFloat(transformToInt(xprice)) * parseInt(xquantity));
+
+        total = 0;
+        for(i=0;i < amount.length; i++){
+            xaAmount        = amount[i].value.split(" ");
+            if(xaAmount.length <= 1){
+                xaAmount        = amount[i].value.split("$");
+            }
+            aAmountValue1   = xaAmount[1];
+            //alert("value: "+ amount[i].value + "\n\nxaAmount: " + xaAmount + "\n0: " + xaAmount[0] + "\n1: " + xaAmount[1])
+            axAmountS       = aAmountValue1.split(",");
+            xVAmount        = '';
+            for(j=0;j < axAmountS.length; j++){
+                xVAmount        += axAmountS[j];
+            }
+            axAmountFinal   = xVAmount.split(".");
+            xVAmountFinal   = '';
+            for(k=0;k < axAmountFinal.length; k++){
+                xVAmountFinal    += axAmountFinal[k];
+            }
+            realAmount  = (parseInt(xVAmountFinal) * 1) / 100;
+            total = (parseFloat(total) * 1)+ (parseFloat(realAmount) * 1);
+            //alert(total);
+        }
+        form.total.value = formatter.format(total);
+    }
 }
 
 function calcAmountTotal(form,index){
@@ -747,7 +968,7 @@ function addProduct(product_id,salemodel_id,price,currency,quantity,provider_id,
 
     } else{
         const requestURLAdd = window.location.protocol+'//'+locat+'api/products/auth_product_add_new.php';
-        //console.log(requestURLAdd + "\n?"+querystring);
+        console.log(requestURLAdd + "\n?"+querystring);
         const requestAdd = new XMLHttpRequest();
         requestAdd.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {
@@ -977,5 +1198,59 @@ function executeFeeOnPrice(proposalproduct_id,billboard_id,price_int,name){
         request.open('GET', requestURL);
         //request.responseType = 'json';
         request.send();
+    }
+}
+
+
+function calculatorFee(proposalproduct_id,billboard_id,price_int,name){
+    authApi     = csrf_token;
+    
+    locat       = window.location.hostname;
+    if(locat.slice(-1) != '/')
+        locat += '/';
+    
+    var formatter = new Intl.NumberFormat(lang, {
+        style: 'currency',
+        currency: xcurrency,
+        //maximumSignificantDigits: 2,
+
+        // These options are needed to round to whole numbers if that's what you want.
+        //minimumFractionDigits: 2, // (this suffices for whole numbers, but will print 2500.10 as $2,500.1)
+        //maximumFractionDigits: 0, // (causes 2500.99 to be printed as $2,501)
+    });
+    price = parseInt(price_int) / 100;
+
+
+    let new_price = prompt("nuevo monto", price);
+
+    if (new_price > 0) {
+
+        document.getElementById('fee-'+billboard_id).value = 100-((price / new_price) * 100);
+        feeInput = document.getElementById('fee-'+billboard_id).value;
+        newPrice = price/((100 - parseFloat(feeInput))/100);
+        newPrice_int = parseInt(newPrice * 100);
+        filters     = '&npc='+newPrice_int+'&pbid='+billboard_id+'&pppid='+proposalproduct_id;
+
+        if(confirm('Confirma el cambio de '+feeInput.value+'% ('+(formatter.format(price))+' para '+formatter.format(newPrice)+') en '+name)){
+            const requestURL = window.location.protocol+'//'+locat+'api/proposals/auth_proposalproduct_change_price.php?auth_api='+authApi+filters;
+            console.log(requestURL);
+            const request = new XMLHttpRequest();
+            request.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    // Typical action to be performed when the document is ready:
+                    //console.log(request.responseText);
+                    obj = JSON.parse(request.responseText);
+                    if(obj.response == 'OK'){
+                        
+                        priceSPAM   = document.getElementById('price-'+billboard_id);
+                        priceSPAM.innerText=formatter.format(newPrice);
+                    }
+                    
+                }
+            };
+            request.open('GET', requestURL);
+            //request.responseType = 'json';
+            request.send();
+        }
     }
 }
