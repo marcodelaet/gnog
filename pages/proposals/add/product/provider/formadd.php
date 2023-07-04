@@ -143,6 +143,9 @@ $moduleName = 'Proposal';
                 <input type="hidden" name="productID" id="productID" />
                 <input type="hidden" name="salemodelID" id="salemodelID" />
                 <input type="hidden" name="stateSel" id="stateSel" />
+                <input type="hidden" name="citySel" id="citySel" />
+                <input type="hidden" name="countySel" id="countySel" />
+                <input type="hidden" name="colonySel" id="colonySel" />
                 <input type="hidden" name="proposalID" id="proposalID" />
                 <input type="hidden" name="referrer" id="referrer" value="<?=$_REQUEST['pr']?>" />
                 <button class="button" name="btnSave" type="button" onClick="handleSubmitProvider(<?=strtolower($moduleName)?>)" ><?=translateText('save');?></button>

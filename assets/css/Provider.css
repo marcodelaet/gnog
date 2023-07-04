@@ -98,6 +98,13 @@
     font-size:0.9rem;
 }
 
+.download-pdf-file{
+    display: flex;
+    vertical-align: middle;
+    font-size:0.7rem;
+
+}
+
 .card-user{
     display: flex;
 
@@ -140,6 +147,7 @@
     font-size: 0.78rem;
     color: #647487;
 }
+
 
 #provider-card {
     max-width: 30rem;

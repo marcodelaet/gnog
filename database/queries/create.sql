@@ -302,7 +302,8 @@ VALUES
 ((UUID()),'Espejo','Espejo','N','Y',NOW(),NOW()),
 ((UUID()),'Espejo en baños','Espejo en baños','N','Y',NOW(),NOW()),
 ((UUID()),'Activacion Gym','Activacion Gym','N','Y',NOW(),NOW()),
-((UUID()),'Pantallas','Pantallas','N','Y',NOW(),NOW());
+((UUID()),'Pantallas','Pantallas','N','Y',NOW(),NOW()),
+((UUID()),'Producción','Producción','N','Y',NOW(),NOW());
 
 # PROVIDERS
 CREATE TABLE IF NOT EXISTS providers (
@@ -417,7 +418,7 @@ CREATE TABLE IF NOT EXISTS billboards (
 id VARCHAR(40) PRIMARY KEY NOT NULL,
 name_key VARCHAR(20) UNIQUE NOT NULL,
 address TEXT,
-state VARCHAR(20),
+state VARCHAR(60),
 category VARCHAR(30) NOT NULL,
 coordenates VARCHAR(40) NOT NULL,
 latitud VARCHAR(40) NOT NULL,
@@ -439,13 +440,26 @@ INDEX name_key_index (name_key)
 );
 
 ALTER TABLE billboards
-ADD COLUMN county VARCHAR(50) AFTER state;
+ADD COLUMN county VARCHAR(60) AFTER state;
 
 ALTER TABLE billboards
-ADD COLUMN colony VARCHAR(50) AFTER state;
+ADD COLUMN colony VARCHAR(60) AFTER state;
 
 ALTER TABLE billboards
-ADD COLUMN city VARCHAR(50) AFTER state;
+ADD COLUMN city VARCHAR(60) AFTER state;
+
+ALTER TABLE billboards 
+CHANGE state state VARCHAR(60), 
+CHANGE colony colony VARCHAR(60), 
+CHANGE city city VARCHAR(60), 
+CHANGE county county VARCHAR(60);
+
+
+ALTER TABLE proposalsxproducts  
+CHANGE state state VARCHAR(60), 
+CHANGE colony colony VARCHAR(60), 
+CHANGE city city VARCHAR(60), 
+CHANGE county county VARCHAR(60);
 
 ALTER TABLE `billboards` 
 CHANGE `name_key` `name_key` VARCHAR(50) NOT NULL; 
@@ -500,7 +514,7 @@ proposal_id VARCHAR(40),
 product_id VARCHAR(40),
 salemodel_id VARCHAR(40),
 provider_id VARCHAR(40),
-state VARCHAR(50),
+state VARCHAR(60),
 price_int BIGINT,
 currency VARCHAR(3) NOT NULL,
 quantity INTEGER,
@@ -508,6 +522,23 @@ is_active ENUM('N','Y') NOT NULL,
 created_at DATETIME NOT NULL,
 updated_at DATETIME NOT NULL
 );
+
+#ADDING FIELD county
+ALTER TABLE proposalsxproducts
+	ADD column county VARCHAR(60) AFTER state;
+
+#ADDING FIELD city
+ALTER TABLE proposalsxproducts
+	ADD column city VARCHAR(60) AFTER state;
+
+#ADDING FIELD colony
+ALTER TABLE proposalsxproducts
+	ADD column colony VARCHAR(60) AFTER state;
+
+#ADDING FIELD production_cost_int
+ALTER TABLE proposalsxproducts
+	ADD column production_cost_int INTEGER AFTER price_int;
+
 
 # ADDING FK PPPROPOSAL
 ALTER TABLE `proposalsxproducts`
@@ -786,7 +817,18 @@ INSERT INTO translates
 VALUES
 (UUID(), 'address', 'address', 'dirección', 'endereço', 'Y', NOW(), NOW());
 
+INSERT INTO translates 
+(id, code_str, text_eng, text_esp, text_ptbr, is_active, created_at, updated_at)
+VALUES
+(UUID(), 'contact', 'contact', 'contacto', 'contato', 'Y', NOW(), NOW()),
+(UUID(), 'city', 'city', 'ciudad', 'cidade', 'Y', NOW(), NOW()),
+(UUID(), 'county', 'county', 'alcaldía / municipio', 'município', 'Y', NOW(), NOW()),
+(UUID(), 'colony', 'colony', 'colonia', 'colonia', 'Y', NOW(), NOW());
 
+INSERT INTO translates 
+(id, code_str, text_eng, text_esp, text_ptbr, is_active, created_at, updated_at)
+VALUES
+(UUID(), 'all_places', 'all', 'todo', 'tudo', 'Y', NOW(), NOW());
 
 
 # FILES
@@ -1050,6 +1092,9 @@ CREATE VIEW view_proposals AS (
 	(ppp.provider_id) AS provider_id,
 	pv.name AS provider_name,
     ppp.state AS state,
+	ppp.city AS city,
+    ppp.county AS county,
+    ppp.colony AS colony,
 	o.name AS office_name,
 	o.icon_flag AS office_icon_flag,
 	(pps.user_id) AS user_id,
@@ -1207,8 +1252,16 @@ CREATE VIEW view_proposals AS (
 	(
 		((((ppp.price_int * ppp.quantity) / c.rate) * ceur.rate) / (TIMESTAMPDIFF(MONTH, start_date, stop_date) + 1)) / 100
 	) END AS amount_per_month_EUR,
-	adv.making_banners as making_banners_adv,
-	age.making_banners as making_banners_age,
+	CASE 
+	WHEN (agency_id is not null and agency_id <> '') THEN 
+	( 
+		age.making_banners 
+	) ELSE 
+	( 
+		adv.making_banners 
+	) END AS making_banners,
+	ppp.production_cost_int,
+	(ppp.production_cost_int / 100) as production_cost, 
 	pps.is_taxable,
 	pps.tax_percent_int,
 	pps.is_pixel,
@@ -1223,6 +1276,9 @@ CREATE VIEW view_proposals AS (
 	(b.cost_int / 100) as billboard_cost,
 	b.cost_int as billboard_cost_int,
 	b.state as billboard_state,
+	b.city as billboard_city,
+	b.county as billboard_county,
+	b.colony as billboard_colony,
 	(pb.price_int / 100) as billboard_price,
 	pb.price_int as billboard_price_int,
 	pb.is_active as is_proposalbillboard_active,

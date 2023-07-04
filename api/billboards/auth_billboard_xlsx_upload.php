@@ -66,8 +66,8 @@ if ($uploadOk > 0) {
 
             // cleaning address fields on Excel
             $cleanState     = $rows[$i]['Estado '];
-            $cleanCounty    = $rows[$i]['Alcaldía / Municipio'];
             $cleanCity      = $rows[$i]['Ciudad '];
+            $cleanCounty    = $rows[$i]['Alcaldía / Municipio'];
             $cleanColony    = $rows[$i]['Colonia'];
             if(isset($rsbillboardID["name_key"])){
                 if($rsbillboardID["name_key"] != $claveInExcel){
@@ -160,8 +160,9 @@ if ($uploadOk > 0) {
                         // provider changes - ao que tudo indica, nunca a mesma chave pertencerá a outro provedor
                     } 
                     // check changes on new fields (state,county,city,colony / '".$rows[$i]['Estado ']."','".$rows[$i]['Alcaldía / Municipio']."','".$rows[$i]['Ciudad ']."','".$rows[$i]['Colonia']."')
-                    if((strtolower(str_replace('"','',str_replace(' ','',$rsbillboardID["state"]))) == strtolower(str_replace('"','',str_replace(' ','',$cleanState)))) || (strtolower(str_replace('"','',str_replace(' ','',$rsbillboardID["county"]))) == strtolower(str_replace('"','',str_replace(' ','',$cleanCounty)))) || (strtolower(str_replace('"','',str_replace(' ','',$rsbillboardID["city"]))) == strtolower(str_replace('"','',str_replace(' ','',$cleanCity)))) || (strtolower(str_replace('"','',str_replace(' ','',$rsbillboardID["colony"]))) == strtolower(str_replace('"','',str_replace(' ','',$cleanColony))))){
+                    if((strtolower(str_replace('"','',str_replace(' ','',$rsbillboardID["state"]))) != strtolower(str_replace('"','',str_replace(' ','',$cleanState)))) || (strtolower(str_replace('"','',str_replace(' ','',$rsbillboardID["county"]))) != strtolower(str_replace('"','',str_replace(' ','',$cleanCounty)))) || (strtolower(str_replace('"','',str_replace(' ','',$rsbillboardID["city"]))) != strtolower(str_replace('"','',str_replace(' ','',$cleanCity)))) || (strtolower(str_replace('"','',str_replace(' ','',$rsbillboardID["colony"]))) != strtolower(str_replace('"','',str_replace(' ','',$cleanColony))))){
                         $updateBillboard = "UPDATE billboards SET state = '$cleanState',county = '$cleanCounty',city = '$cleanCity',colony = '$cleanColony' WHERE name_key = '". $rsbillboardID["name_key"]."'";
+                        $execUpdateLocal = $DB->executeInstruction($updateBillboard);
                     }
                 }
             }

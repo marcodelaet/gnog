@@ -34,7 +34,8 @@
 }
 
 .list-billboards-row {
-    margin-top: 0.4rem;    
+    margin-top: 0.4rem;  
+    overflow: auto;  
 }
 
 .list-billboards-container {

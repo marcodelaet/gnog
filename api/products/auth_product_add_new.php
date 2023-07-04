@@ -22,6 +22,9 @@ if(array_key_exists('auth_api',$_REQUEST)){
     $price          = str_replace("[","",str_replace("]","",$_REQUEST['price'])); 
     $currency       = $_REQUEST['currency'];
     $state_id       = str_replace("[","",str_replace("]","",$_REQUEST['state'])); 
+    $city_id        = str_replace("[","",str_replace("]","",$_REQUEST['city'])); 
+    $county_id      = str_replace("[","",str_replace("]","",$_REQUEST['county'])); 
+    $colony_id      = str_replace("[","",str_replace("]","",$_REQUEST['colony'])); 
     $quantity       = str_replace("[","",str_replace("]","",$_REQUEST['quantity'])); 
     $xprovider      = str_replace("[","",str_replace("]","",$_REQUEST['provider_id']));
     $provider_id    = "null"; 
@@ -34,6 +37,9 @@ if(array_key_exists('auth_api',$_REQUEST)){
     $aQuantity  = explode(",",$quantity);
     $aProvider  = explode(",",$xprovider);
     $aState     = explode(",",$state_id);
+    $aCity      = explode(",",$city_id);
+    $aCounty    = explode(",",$county_id);
+    $aColony    = explode(",",$colony_id);
 
     $lastIndex  = 0;
     $response   = "ERROR"; 
@@ -53,7 +59,7 @@ if(array_key_exists('auth_api',$_REQUEST)){
         }
 
         // Query creation
-        $sql = "INSERT INTO proposalsxproducts (id,product_id,proposal_id,salemodel_id,provider_id,state,price_int,currency,quantity,is_active,created_at,updated_at) VALUES ((UUID()),('".$aProducts[$i]."'),('$proposal_id'),('".$aSalemodel[$i]."'),$provider_id,'$aState[$i]',$xprice,'$currency',$xquantity,'Y',now(),now())";
+        $sql = "INSERT INTO proposalsxproducts (id,product_id,proposal_id,salemodel_id,provider_id,state,city,county,colony,price_int,currency,quantity,is_active,created_at,updated_at) VALUES ((UUID()),('".$aProducts[$i]."'),('$proposal_id'),('".$aSalemodel[$i]."'),$provider_id,'$aState[$i]','$aCity[$i]','$aCounty[$i]','$aColony[$i]',$xprice,'$currency',$xquantity,'Y',now(),now())";
         //echo "<BR/>".$sql;
         // INSERT data
         $rs = $DB->executeInstruction($sql);
@@ -63,7 +69,7 @@ if(array_key_exists('auth_api',$_REQUEST)){
             $lastIndex  = $i;
             $response   = "OK";
                 
-        } else { $response = "ERROR - SQL: ". $sql;}
+        } else { $response = "ERROR";}
     } 
     header('Content-type: application/json');
     echo json_encode(["lastIndex" => $i,"status" => $response]);

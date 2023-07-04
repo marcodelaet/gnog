@@ -20,6 +20,7 @@ if(array_key_exists('auth_api',$_REQUEST)){
 
     // setting query
     $columns        = "CASE WHEN billboard_provider_name IS NULL THEN '0' ELSE COUNT(UUID) END AS numRows, salemodel_name, state";
+//    $columns        = "COUNT(UUID) AS numRows, salemodel_name, state, city, county, colony";
     $tableOrView    = "view_proposals";
 
     // filters
