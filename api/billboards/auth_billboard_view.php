@@ -1,4 +1,7 @@
 <?php
+ini_set('error_reporting', E_ALL);
+ini_set('display_errors', true);
+
 //REQUIRE GLOBAL conf
 require_once('../../database/.config');
 
@@ -26,7 +29,15 @@ if(array_key_exists('auth_api',$_REQUEST)){
 
     $offSet         = 0;
     $numberOfRegistries = 100;
-    $columns        = "left(uuid,13) as uuid, uuid as uuid_full, name, category, address, state, height, width, coordenates, latitud, longitud, price_int, cost_int, price, cost, is_iluminated, is_digital, provider_id, provider_name, salemodel_name, viewpoint_name, photo, is_active";
+    $columns        = "left(uuid,13) as uuid, uuid as uuid_full, name, category, address, state, city, county, colony, height, width, coordenates, latitud, longitud, price_int, cost_int, price, cost, is_iluminated, is_digital, provider_id, provider_name, salemodel_name, viewpoint_name, photo, is_active";
+    if(array_key_exists('fcn',$_REQUEST)){
+        if($_REQUEST['fcn'] == 'selectInDropDown'){
+            $name = 'name';
+            if(array_key_exists('nameField',$_REQUEST))
+                $name = $_REQUEST['nameField']; 
+            $columns        = 'uuid as id, '.$name.' as name';
+        }
+    }
     $tableOrView    = "view_billboards";
     $orderBy        = "order by name";
 
@@ -127,7 +138,7 @@ if(array_key_exists('auth_api',$_REQUEST)){
         if($rs){
             echo json_encode(["response" => "OK","data" => $rs, "rows" => $rsNumRows[0]['total'], "pages" => "$totalPages"]);
         } else {
-            echo json_encode(["response" => "ERROR","data" => "$sqlPaged"]);
+            echo json_encode(["response" => "ERROR"]);
         }  
     } else {
         echo json_encode(["response" => "ZERO_RETURN", "rows" => $rsNumRows[0]['total'], "pages" => "0"]);

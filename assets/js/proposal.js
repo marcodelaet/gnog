@@ -1,4 +1,10 @@
 lang        = 'es-MX';
+if(localStorage.getItem('ulang') == 'ptbr')
+    lang    = 'pt-BR';
+if(localStorage.getItem('ulang') == 'eng')
+    lang    = 'en-US';
+
+
 module      = 'proposal';
 start_index = 0;
 document.getElementById('nav-item-proposals').setAttribute('class',document.getElementById('nav-item-proposals').getAttribute('class').replace(' active','') + ' active');
@@ -36,6 +42,9 @@ function handleSubmit(form) {
         objSaleModel    = document.getElementsByName('salemodel_id[]');
         objPrice        = document.getElementsByName('price[]');
         objState        = document.getElementsByName('state_id[]');
+        objCity         = document.getElementsByName('city_id[]');
+        objCounty       = document.getElementsByName('county_id[]');
+        objColony       = document.getElementsByName('colony_id[]');
     
         objQuantity     = document.getElementsByName('quantity[]');
         objProviderId   = document.getElementsByName('provider_id[]');
@@ -64,6 +73,9 @@ function handleSubmit(form) {
                     quantity        = '';
                     provider_id     = '';
                     state_id        = '';
+                    city_id         = '';
+                    county_id       = '';
+                    colony_id       = '';
 
                     for(i=0; i < objProduct.length;i++)
                     {
@@ -90,8 +102,11 @@ function handleSubmit(form) {
                         provider_id     += virg + objProviderId[i].value;
                         //if(objState[i].value)
                         state_id        += virg + objState[i].value;
+                        city_id         += virg + objCity[i].value;
+                        county_id       += virg + objCounty[i].value;
+                        colony_id       += virg + objColony[i].value;
                     }
-                    addProduct('['+product_id+']','['+salemodel_id+']','['+price+']',currency,'['+quantity+']','['+provider_id+']',proposal_id,'['+state_id+']');
+                    addProduct('['+product_id+']','['+salemodel_id+']','['+price+']',currency,'['+quantity+']','['+provider_id+']',proposal_id,'['+state_id+']','['+city_id+']','['+county_id+']','['+colony_id+']');
 
                     form.btnSave.innerHTML = "Save";
                     window.location.href = '?pr=Li9wYWdlcy9wcm9wb3NhbHMvdGtwL2luZGV4LnBocA==';
@@ -121,6 +136,9 @@ function handleSubmitProvider(form){
         proposal_id = document.getElementById('proposalID').value;
         referrer    = document.getElementById('referrer').value;
         state       = document.getElementById('stateSel').value;
+        city        = document.getElementById('citySel').value;
+        county      = document.getElementById('countySel').value;
+        colony      = document.getElementById('colonySel').value;
         currency    = document.getElementById('currency').value;
 
         objPrice        = document.getElementsByName('price[]');    
@@ -137,6 +155,9 @@ function handleSubmitProvider(form){
             quantity        = '';
             provider_id     = '';
             state_id        = '';
+            city_id         = '';
+            county_id       = '';
+            colony_id       = '';
 
             for(i=0; i < objProviderId.length;i++){
                 if(i>0)
@@ -162,8 +183,12 @@ function handleSubmitProvider(form){
                 provider_id     += virg + objProviderId[i].value;
                 //if(objState[i].value)
                 state_id        += virg + state;
+                city_id         += virg + city;
+                county_id       += virg + county;
+                colony_id       += virg + colony;
+
             }
-            addProduct('['+product_id+']','['+salemodel_id+']','['+price+']',currency,'['+quantity+']','['+provider_id+']',proposal_id,'['+state_id+']');
+            addProduct('['+product_id+']','['+salemodel_id+']','['+price+']',currency,'['+quantity+']','['+provider_id+']',proposal_id,'['+state_id+']','['+city_id+']','['+county_id+']','['+colony_id+']');
 
             form.btnSave.innerHTML = "Save";
             window.location.href = '?pr=Li9wYWdlcy9wcm9wb3NhbHMvZm9ybWVkaXQucGhw&ppid='+proposal_id;
@@ -410,8 +435,11 @@ function handleViewProductsOnLoad(ppid,pppid) {
                 document.getElementById('currency').value           = xcurrency;
                 document.getElementById('productID').value          = obj['data'][0].product_id;
                 document.getElementById('salemodelID').value        = obj['data'][0].salemodel_id;
-                document.getElementById('proposalID').value        = obj['data'][0].UUID
+                document.getElementById('proposalID').value         = obj['data'][0].UUID;
                 document.getElementById('stateSel').value           = obj['data'][0].state;
+                document.getElementById('citySel').value            = obj['data'][0].city;
+                document.getElementById('countySel').value          = obj['data'][0].county;
+                document.getElementById('colonySel').value          = obj['data'][0].colony;
                 document.getElementById('proposal-product-state').innerText = obj['data'][0].state;
                 for(var i=0;i<obj['data'].length;i++){
                     xxhtml += '<spam class="product-line">'+obj['data'][0].product_name + ' / ' + obj['data'][0].salemodel_name+'</spam><br />';
@@ -447,7 +475,7 @@ function handleListEditOnLoad(ppid) {
 
     } else{
         const requestURL = window.location.protocol+'//'+locat+'api/proposals/auth_proposal_get.php?auth_api='+authApi+filters+orderby;
-        console.log(requestURL);
+        console.log('mapaaaa- '+requestURL);
         const request = new XMLHttpRequest();
         request.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {
@@ -466,15 +494,18 @@ function handleListEditOnLoad(ppid) {
                 });
 
                 advertiser_name = obj['data'][0].client_name;
-                if(obj['data'][0].agency_name != '')
-                    advertiser_name += " / " + obj['data'][0].agency_name; 
+                agency_name     = obj['data'][0].agency_name;
+                
+                if( (agency_name != '') && (agency_name != null)){
+                    advertiser_name += " / " + agency_name;
+                }
                 document.getElementById('offer-name').innerText  = obj['data'][0].offer_name;
                 document.getElementById('advertiser-name').innerText  = advertiser_name;
-
+                xcurrency = obj['data'][0].currency_c;
                 // Create our number formatter.
                 var formatter = new Intl.NumberFormat('pt-BR', {
                     style: 'currency',
-                    currency: 'MXN', // believing every currency will be MXN
+                    currency: xcurrency, // believing every currency will be MXN
                     //maximumSignificantDigits: 2,
 
                     // These options are needed to round to whole numbers if that's what you want.
@@ -508,9 +539,9 @@ function handleListEditOnLoad(ppid) {
                             //'<div class="col-sm-2">Rate % All</div>' +
                             if(aBillboards.indexOf(obj['data'][i].salemodel_name) != -1){
                             //if(obj[i].billboard_salemodel_name != null){
-                                html += '<div class="col-sm-2" style="text-align:center; white-space: nowrap;"><a title="'+ucfirst(translateText('choose',localStorage.getItem('ulang')))+' '+obj['data'][i].salemodel_name+' '+translateText('on_map',localStorage.getItem('ulang'))+'" href="?pr=Li9wYWdlcy9tYXBzL2luZGV4LnBocA==&smid='+obj['data'][i].salemodel_id+'&ppid='+ppid+'&pppid='+obj['data'][i].proposalproduct_id+'&state='+obj['data'][i].state+'"><span class="material-icons" style="font-size:1.2rem;">map</span><br/><span style="font-size:0.8rem">'+ucfirst(translateText('choose',localStorage.getItem('ulang')))+' '+obj['data'][i].salemodel_name+' '+translateText('on_map',localStorage.getItem('ulang'))+'</span></a></div>';
+                                html += '<div class="col-sm-2" style="text-align:center; white-space: nowrap;"><a title="'+ucfirst(translateText('choose',localStorage.getItem('ulang')))+' '+obj['data'][i].salemodel_name+' '+translateText('on_map',localStorage.getItem('ulang'))+'" href="?pr=Li9wYWdlcy9tYXBzL2luZGV4LnBocA==&smid='+obj['data'][i].salemodel_id+'&ppid='+ppid+'&pppid='+obj['data'][i].proposalproduct_id+'&state='+obj['data'][i].state+'&city='+obj['data'][i].city+'&county='+obj['data'][i].county+'&colony='+obj['data'][i].colony+'"><span class="material-icons" style="font-size:1.2rem;">map</span><br/><span style="font-size:0.8rem">'+ucfirst(translateText('choose',localStorage.getItem('ulang')))+' '+obj['data'][i].salemodel_name+' '+translateText('on_map',localStorage.getItem('ulang'))+'</span></a></div>';
                             } else {
-                                html += '<div class="col-sm-2" style="text-align:center; white-space: nowrap;"><a title="'+ucfirst(translateText('add+',localStorage.getItem('ulang')))+' '+translateText('provider',localStorage.getItem('ulang'))+'" href="?pr=Li9wYWdlcy9wcm9wb3NhbHMvYWRkL3Byb2R1Y3QvcHJvdmlkZXIvZm9ybWFkZC5waHA=&smid='+obj['data'][i].salemodel_id+'&ppid='+ppid+'&pppid='+obj['data'][i].proposalproduct_id+'&state='+obj['data'][i].state+'"><span class="material-icons" style="font-size:1.2rem;">add_business</span> <br/><span style="font-size:0.8rem">'+ucfirst(translateText('add+',localStorage.getItem('ulang')))+' '+translateText('provider',localStorage.getItem('ulang'))+'</span></a></div>';
+                                html += '<div class="col-sm-2" style="text-align:center; white-space: nowrap;"><a title="'+ucfirst(translateText('add+',localStorage.getItem('ulang')))+' '+translateText('provider',localStorage.getItem('ulang'))+'" href="?pr=Li9wYWdlcy9wcm9wb3NhbHMvYWRkL3Byb2R1Y3QvcHJvdmlkZXIvZm9ybWFkZC5waHA=&smid='+obj['data'][i].salemodel_id+'&ppid='+ppid+'&pppid='+obj['data'][i].proposalproduct_id+'&state='+obj['data'][i].state+'&city='+obj['data'][i].city+'&county='+obj['data'][i].county+'&colony='+obj['data'][i].colony+'"><span class="material-icons" style="font-size:1.2rem;">add_business</span> <br/><span style="font-size:0.8rem">'+ucfirst(translateText('add+',localStorage.getItem('ulang')))+' '+translateText('provider',localStorage.getItem('ulang'))+'</span></a></div>';
                             }
                             html += '</div>';
                         //}    
@@ -551,34 +582,45 @@ function handleListEditOnLoad(ppid) {
                         if(provider != providerOld){
                             aProviders.push(obj['data'][i].provider_id);
                         }
+                        $impression_cost_line = '';
+
+                        if(obj['data'][i].making_banners == 'N'){
+                            /*$impression_cost_line = '<a href="javascript:void(0);" onclick="addBannerCost(\''+obj['data'][i].proposalproduct_id+'\',\''+obj['data'][i].billboard_id+'\',\''+obj['data'][i].billboard_name+'\',\''+xcurrency+'\');">'+
+                            '<span class="material-icons" style="font-size:1.5rem; color:black;" title="Informe de Costo para producción de '+obj['data'][i].billboard_salemodel_name+' '+obj['data'][i].billboard_name+'">receipt_long</span>'+
+                            '</a>';*/
+                            
+                        }
                         html += '<div class="row list-billboards-row">' +
                         '<div class="col list-billboards-container">' +
                             '<div class="row" >' +
                                 '<div class="col-sm-2 line-list-'+obj['data'][i].billboard_id+' '+deletedbillboard+'">'+obj['data'][i].billboard_name+'</div>' +
                                 '<div class="col-sm-2 line-list-'+obj['data'][i].billboard_id+' '+deletedbillboard+'">'+(parseFloat(obj['data'][i].billboard_width)/100).toFixed(1)+' x '+(parseFloat(obj['data'][i].billboard_height)/100).toFixed(1)+'</div>' +
                                 '<div class="col-sm-1 line-list-'+obj['data'][i].billboard_id+' '+deletedbillboard+'">'+obj['data'][i].billboard_viewpoint_name+'</div>' +
-                                '<div class="col-sm-3 line-list-'+obj['data'][i].billboard_id+' '+deletedbillboard+'">'+formatter.format(obj['data'][i].billboard_cost)+' / <span id="price-'+obj['data'][i].billboard_id+'">'+formatter.format(obj['data'][i].billboard_price)+'</span></div>' +
-                                '<a href="javascript:void(0);" onclick="calculatorFee(\''+obj['data'][i].proposalproduct_id+'\',\''+obj['data'][i].billboard_id+'\','+obj['data'][i].billboard_cost_int+',\''+obj['data'][i].billboard_name+'\');">'+
-                                '<span class="material-icons" style="font-size:1.5rem; color:black;" title="Calculadora para fee de '+obj['data'][i].billboard_salemodel_name+' '+obj['data'][i].billboard_name+'">price_change</span>'+
-                                '</a>'+ 
-                            '<div class="input-group col-sm-2" id="rate-delete-'+obj['data'][i].billboard_id+'">';
+                                '<div class="col-sm-3 line-list-'+obj['data'][i].billboard_id+' '+deletedbillboard+'">'+formatter.format(obj['data'][i].billboard_cost)+' / <span id="price-'+obj['data'][i].billboard_id+'">'+formatter.format(obj['data'][i].billboard_price)+'</span>' +//' / <span id="cost-'+obj['data'][i].billboard_id+'">'+formatter.format(obj['data'][i].production_cost)+'</span>' +
+                                '</div>'+ 
+                            '<div class="input-group col-sm-3" id="rate-delete-'+obj['data'][i].billboard_id+'">';
                                 if(deletedbillboard == '') {
                                     //html += '<label for="fee-'+obj[i].billboard_id+'">Fee rate</label>' +
-                                    html += '<input name="fee-'+obj['data'][i].billboard_id+'" id="fee-'+obj['data'][i].billboard_id+'" placeholder="% Fee" title="Percent (%) fee" aria-label="Percent (%) fee" value="30" class="form-control" style="height:1.5rem !important; width:3.5rem !important;" type="percent" maxlength="2" autocomplete="fee" />'+
+                                    html += $impression_cost_line + 
+                                    '<a href="javascript:void(0);" onclick="calculatorFee(\''+obj['data'][i].proposalproduct_id+'\',\''+obj['data'][i].billboard_id+'\','+obj['data'][i].billboard_cost_int+',\''+obj['data'][i].billboard_name+'\',\''+xcurrency+'\');">'+
+                                    '<span class="material-icons" style="font-size:1.5rem; color:black;" title="Informe de costo del fee de '+obj['data'][i].billboard_salemodel_name+' '+obj['data'][i].billboard_name+'">price_change</span>'+
+                                    '</a>'+
+                                    '<input name="fee-'+obj['data'][i].billboard_id+'" id="fee-'+obj['data'][i].billboard_id+'" placeholder="% Fee" title="Percent (%) fee" aria-label="Percent (%) fee" value="30" class="form-control" style="height:1.5rem !important; width:3.5rem !important;" type="percent" maxlength="2" autocomplete="fee" />'+
                                     '<div class="input-group-append" style="height:1.5rem !important; width:3.5rem !important;"><span class="input-group-text">% ' +
-                                    '<a href="javascript:void(0);" onclick="executeFeeOnPrice(\''+obj['data'][i].proposalproduct_id+'\',\''+obj['data'][i].billboard_id+'\','+obj['data'][i].billboard_cost_int+',\''+obj['data'][i].billboard_name+'\');">'+
+                                    '<a href="javascript:void(0);" onclick="executeFeeOnPrice(\''+obj['data'][i].proposalproduct_id+'\',\''+obj['data'][i].billboard_id+'\','+obj['data'][i].billboard_cost_int+',\''+obj['data'][i].billboard_name+'\',\''+xcurrency+'\');">'+
                                     '<span class="material-icons" style="font-size:1.5rem; color:black;" title="Calcula Fee para '+obj['data'][i].billboard_salemodel_name+' '+obj['data'][i].billboard_name+'">calculate</span>'+
                                     '</a>'+
                                     '</span></div>';
                                 }
-                                html += '</div>' + 
-                                '<div class="col-sm-1" id="button-delete-'+obj['data'][i].billboard_id+'">';
+                                html += '</div>';// + 
+                                //'<div class="col-sm-1" id="button-delete-'+obj['data'][i].billboard_id+'">';
 
-                        if(deletedbillboard == '')
-                            html += '<a href="javascript:void(0);" onclick="if(confirm(\'Confirma quitar '+obj['data'][i].salemodel_name+' clave '+obj['data'][i].billboard_name+' en la lista del estado de '+obj['data'][i].state+'?\')){handleRemoveFromList(\''+obj['data'][i].proposalproduct_id+'\',\''+obj['data'][i].billboard_id+'\');}">'+
-                            '<span class="material-icons" style="font-size:1.5rem; color:black;" title="Remove '+obj['data'][i].billboard_salemodel_name+' '+obj['data'][i].billboard_name+' from list">delete</span></a>';
+                        if(deletedbillboard == ''){
+                            html += '<div class="col-sm-1" id="button-delete-'+obj['data'][i].billboard_id+'">'+
+                            '<a href="javascript:void(0);" onclick="if(confirm(\'Confirma quitar '+obj['data'][i].salemodel_name+' clave '+obj['data'][i].billboard_name+' en la lista del estado de '+obj['data'][i].state+'?\')){handleRemoveFromList(\''+obj['data'][i].proposalproduct_id+'\',\''+obj['data'][i].billboard_id+'\');}">'+
+                            '<span class="material-icons" style="font-size:1.5rem; color:black;" title="Remove '+obj['data'][i].billboard_salemodel_name+' '+obj['data'][i].billboard_name+' from list">delete</span></a></div>';
+                        }
                         html += '</div>' +
-                        '</div>' +
                         '</div>' +
                         '</div>';    
                     }
@@ -887,11 +929,11 @@ function newProductForm(copy,destination,items){
     
     //document.getElementById(destination).after(divRow);
     start_index++;
-    document.getElementById(destination).innerHTML += (document.getElementById(copy).innerHTML.replace('proposal,0','proposal,'+start_index).replace('proposal,0','proposal,'+start_index).replace('product_0','product_'+start_index).replace('state_0','state_'+start_index).replace('price_0','price_'+start_index).replace('amount_0','amount_'+start_index).replace('DropdownMenuButton_0','DropdownMenuButton_'+start_index));
+    document.getElementById(destination).innerHTML += (document.getElementById(copy).innerHTML.replace('proposal,0','proposal,'+start_index).replace('proposal,0','proposal,'+start_index).replace('product_0','product_'+start_index).replace('state_0','state_'+start_index).replace('price_0','price_'+start_index).replace('amount_0','amount_'+start_index).replace('DropdownMenuButton_0','DropdownMenuButton_'+start_index).replace(",'0');",",'"+start_index+"');").replace('div-selectcolony_0','div-selectcolony_'+start_index).replace('div-selectcounty_0','div-selectcounty_'+start_index).replace('div-selectcity_0','div-selectcity_'+start_index).replace('div-selectState_0','div-selectState_'+start_index));
 
     for(iteration=0; iteration <= items; iteration++){
         //alert(items + ' - '+ iteration)
-        document.getElementById(destination).innerHTML = document.getElementById(destination).innerHTML.replace('Value_0','Value_'+start_index).replace('Name_0','Name_'+start_index).replace('Id_0','Id_'+start_index).replace('DropdownMenuButton_0','DropdownMenuButton_'+start_index);
+        document.getElementById(destination).innerHTML = document.getElementById(destination).innerHTML.replace('Value_0','Value_'+start_index).replace('Name_0','Name_'+start_index).replace('Id_0','Id_'+start_index).replace('DropdownMenuButton_0','DropdownMenuButton_'+start_index).replace(",'0');",",'"+start_index+"');");
     }
     htmlRemoveButton = '<div class="form-row" id="btnRemove_'+start_index+'" >';
     htmlRemoveButton += '<div class="col" style="text-align:right;">';
@@ -950,7 +992,7 @@ function getId(table,where){
     }
 }
 
-function addProduct(product_id,salemodel_id,price,currency,quantity,provider_id,proposal_id,state){
+function addProduct(product_id,salemodel_id,price,currency,quantity,provider_id,proposal_id,state,city,county,colony){
     errors      = 0;
     authApi     = csrf_token;
     locat       = window.location.hostname;
@@ -958,7 +1000,7 @@ function addProduct(product_id,salemodel_id,price,currency,quantity,provider_id,
     // filters     = '&tid='+tid
     //fields  = "product_id,salemodel_id,price,currency,quantity,provider_id,proposal_id";
     //values  = "'"+product_id+"','"+salemodel_id+"',"+price+",'"+currency+"',"+quantity+",'"+provider_id+"','"+proposal_id+"'";
-    querystring = 'auth_api='+authApi+"&product_id="+product_id+"&salemodel_id="+salemodel_id+"&price="+price+"&currency="+currency+"&quantity="+quantity+"&provider_id="+provider_id+"&proposal_id="+proposal_id+"&state="+state
+    querystring = 'auth_api='+authApi+"&product_id="+product_id+"&salemodel_id="+salemodel_id+"&price="+price+"&currency="+currency+"&quantity="+quantity+"&provider_id="+provider_id+"&proposal_id="+proposal_id+"&state="+state+"&city="+city+"&county="+county+"&colony="+colony;
 
 
     if(locat.slice(-1) != '/')
@@ -989,6 +1031,81 @@ function addProduct(product_id,salemodel_id,price,currency,quantity,provider_id,
     }
 }
 
+function listSelectedFiltersDropDownStyle(findInColumn,findString,bringColumn,table,index){
+    errors      = 0;
+    authApi     = csrf_token;
+    locat       = window.location.hostname;
+    submodule   = table;
+    uxlang  = localStorage.getItem('ulang'); 
+
+    filters = '';
+    if( (findInColumn != '') && (findString != '')){
+        filters = '&where='+findInColumn+'|||'+findString;
+    }
+
+    nextColumn = 'city';
+    switch (bringColumn) {
+    case 'city':
+        nextColumn = 'county';
+        break;
+    case 'county':
+        nextColumn = 'colony';
+        break;
+    }
+
+    groupby = '&groupby='+bringColumn;
+    orderby = '&orderby='+bringColumn;
+    label   = translateText(bringColumn,uxlang);
+
+    onchangestr = '';
+    if(bringColumn != 'colony')
+        onchangestr = "onmouseleave=\"if(document.getElementById('"+bringColumn+"Value_"+index+"').innerText != '"+label+"') { listSelectedFiltersDropDownStyle('"+bringColumn+"',document.getElementById('"+bringColumn+"Value_"+index+"').innerText,'"+nextColumn+"','"+table+"','"+index+"'); }\"";
+    if(locat.slice(-1) != '/')
+        locat += '/';
+
+    if(errors > 0){
+
+    } else{
+        tableList   = document.getElementById('div-select'+bringColumn+'_'+index);
+        const requestURL = window.location.protocol+'//'+locat+'api/'+submodule+'s/auth_'+submodule+'_view.php?auth_api='+authApi+filters+groupby+orderby+'&nameField='+bringColumn+'&fcn=selectInDropDown&allRows=1';
+        //console.log(requestURL);
+        const request = new XMLHttpRequest();
+        request.onreadystatechange = function() {
+            html        = '';
+            html       += '<div class="dropdown" style="margin-top:1.2rem">';
+            html       += '<button class="btn btn-primary dropdown-toggle" type="button" id="'+bringColumn+'DropdownMenuButton_'+index+'" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" >'; 
+            html       += '<span class="caret" id="'+bringColumn+'Value_'+index+'">'+label+'</span>';
+            html       += '</button>';
+            html       += '<ul class="dropdown-menu" aria-labelledby="'+bringColumn+'DropdownMenuButton">';
+           // html       += '<input class="'+bringColumn+'Name[]" name="'+bringColumn+'Name" id="'+bringColumn+'Name_'+index+'" type="text" placeholder="Search..">';
+            if (this.readyState == 4 && this.status == 200) {
+                // Typical action to be performed when the document is ready:
+                obj = JSON.parse(request.responseText);
+                if( (obj.response != 'error') && (obj.response != 'ZERO_RETURN')){
+                    html += '<li><a class="dropdown-item" href="#'+bringColumn+'DropdownMenuButton_'+index+'" onclick="document.getElementById(\''+bringColumn+'Value_'+index+'\').innerText=\''+label+'\'; document.getElementById(\''+bringColumn+'Id_'+index+'\').value=\'All\'; document.getElementById(\''+bringColumn+'Name_'+index+'\').value=\'All\'; " '+onchangestr+' >'+label+'</a></li>';
+                    for(var i=0;i < obj['data'].length; i++){
+                        html += '<li><a class="dropdown-item" href="#'+bringColumn+'DropdownMenuButton_'+index+'" onclick="document.getElementById(\''+bringColumn+'Value_'+index+'\').innerText=\''+obj['data'][i].name+'\'; document.getElementById(\''+bringColumn+'Id_'+index+'\').value=\''+obj['data'][i].name+'\'; document.getElementById(\''+bringColumn+'Name_'+index+'\').value=\''+obj['data'][i].name+'\'; " '+onchangestr+' >'+obj['data'][i].name+'</a></li>';
+                    }
+                }
+                else {
+                    html    = '';
+                }
+                tableList.innerHTML = html;
+            }
+            else{
+                html += '<li><a class="dropdown-item" href="#'+bringColumn+'DropdownMenuButton_'+index+'" onclick="document.getElementById(\''+bringColumn+'Value_'+index+'\').innerText=\'Cargando...\'; document.getElementById(\''+bringColumn+'Id_'+index+'\').value=\'0\'; document.getElementById(\''+bringColumn+'Name_'+index+'\').value=\'cargando...\'; " '+onchangestr+' >Cargando...</a></li>';
+                tableList.innerHTML = html;
+                //form.btnSave.innerHTML = "Searching...";
+            }
+            html += '</ul></div>';
+        };
+        request.open('GET', requestURL);
+        //request.responseType = 'json';
+        request.send();
+    } 
+}
+
+
 function listAdvertiserContacts(aid){
     errors      = 0;
     authApi     = csrf_token;
@@ -1008,7 +1125,8 @@ function listAdvertiserContacts(aid){
         //console.log(requestURL);
         const request = new XMLHttpRequest();
         request.onreadystatechange = function() {
-            html    = '<label for="contact_id">Contact</label>';
+            labelContact = translateText('contact',localStorage.getItem('ulang'));
+            html    = '<label for="contact_id">'+labelContact[0].toUpperCase() + labelContact.slice(1);+'</label>';
             html   += '<spam id="scontact">'
             html   += '<SELECT name="contact_id" title="contact_id" class="form-control" autocomplete="contact_id">';
             if (this.readyState == 4 && this.status == 200) {
@@ -1156,7 +1274,7 @@ function refilterSaleModel(typeInt){
     }
 }
 
-function executeFeeOnPrice(proposalproduct_id,billboard_id,price_int,name){
+function executeFeeOnPrice(proposalproduct_id,billboard_id,price_int,name,xxcurrency){
     authApi     = csrf_token;
     
     locat       = window.location.hostname;
@@ -1165,7 +1283,7 @@ function executeFeeOnPrice(proposalproduct_id,billboard_id,price_int,name){
     
     var formatter = new Intl.NumberFormat(lang, {
         style: 'currency',
-        currency: xcurrency,
+        currency: xxcurrency,
         //maximumSignificantDigits: 2,
 
         // These options are needed to round to whole numbers if that's what you want.
@@ -1201,8 +1319,7 @@ function executeFeeOnPrice(proposalproduct_id,billboard_id,price_int,name){
     }
 }
 
-
-function calculatorFee(proposalproduct_id,billboard_id,price_int,name){
+function addBannerCost(proposalproduct_id,billboard_id,name,xxcurrency){
     authApi     = csrf_token;
     
     locat       = window.location.hostname;
@@ -1211,7 +1328,57 @@ function calculatorFee(proposalproduct_id,billboard_id,price_int,name){
     
     var formatter = new Intl.NumberFormat(lang, {
         style: 'currency',
-        currency: xcurrency,
+        currency: xxcurrency,
+        //maximumSignificantDigits: 2,
+
+        // These options are needed to round to whole numbers if that's what you want.
+        //minimumFractionDigits: 2, // (this suffices for whole numbers, but will print 2500.10 as $2,500.1)
+        //maximumFractionDigits: 0, // (causes 2500.99 to be printed as $2,501)
+    });
+
+    cost = 0;
+    let new_cost = prompt("Costo de producción", cost);
+
+    if (new_cost > 0) {
+
+        newCost_int = parseInt(new_cost * 100);
+        filters     = '&cst='+newCost_int+'&pbid='+billboard_id+'&pppid='+proposalproduct_id;
+
+        if(confirm('Confirma el costo de '+(formatter.format(new_cost))+' en '+name)){
+            const requestURL = window.location.protocol+'//'+locat+'api/proposals/auth_proposalproduct_add_cost.php?auth_api='+authApi+filters;
+            console.log(requestURL);
+            const request = new XMLHttpRequest();
+            request.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    // Typical action to be performed when the document is ready:
+                    //console.log(request.responseText);
+                    obj = JSON.parse(request.responseText);
+                    if(obj.response == 'OK'){
+                        
+                        priceSPAM   = document.getElementById('cost-'+billboard_id);
+                        priceSPAM.innerText=formatter.format(new_cost);
+                    }
+                    
+                }
+            };
+            request.open('GET', requestURL);
+            //request.responseType = 'json';
+            request.send();
+        }
+    }
+}
+
+
+function calculatorFee(proposalproduct_id,billboard_id,price_int,name,xxcurrency){
+    authApi     = csrf_token;
+    
+    locat       = window.location.hostname;
+    if(locat.slice(-1) != '/')
+        locat += '/';
+    
+    var formatter = new Intl.NumberFormat(lang, {
+        style: 'currency',
+        currency: xxcurrency,
         //maximumSignificantDigits: 2,
 
         // These options are needed to round to whole numbers if that's what you want.

@@ -61,6 +61,15 @@
                 <spam id="card-phone">+5255999999</spam>
             </div>
         </div>
+        <div class="spaces">&nbsp;</div>
+        <div class="download-pdf-file">
+            <spam class="material-icons icon-data">picture_as_pdf</spam>
+            <a href="/public/providers_1.2_202306-es.pdf" target="_blank"><spam class="pdf-file-es">Plataforma de Facturas - Manual (en Español)</spam></a>
+        </div>
+        <div class="download-pdf-file">
+            <spam class="material-icons icon-data">picture_as_pdf</spam>
+            <a href="/public/providers_1.2_202306-ptBR.pdf" target="_blank"><spam class="pdf-file-ptBR">Plataforma de Faturas - Manual (em Portugues Brasil)</spam></a>
+        </div>
         <div class="inputs-button-container">
             <Button class="button" type="button" onClick="window.location='?pr=<?=base64_encode('./pages/'.strtolower($moduleName).'s/index.php')?>'" >Back to <?=$moduleName?>s</Button>
         </div>

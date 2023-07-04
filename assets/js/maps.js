@@ -60,7 +60,7 @@ function searchLocation(){
 }
   //alert('lat:'+latit+'\nlong:'+longit);
 // Initialize and add the map
-function theMap(salemodel_id, state, pppid) {
+function theMap(salemodel_id, state, city, county, colony, pppid) {
     errors      = 0;
     authApi     = csrf_token;
     locat       = window.location.hostname;
@@ -83,12 +83,42 @@ function theMap(salemodel_id, state, pppid) {
 
     if(typeof state == 'undefined')
       state  = '';
-    if(state !== ''){
+    if((state !== '') && (state !== 'All')){
         if(filters == '')
             filters = '&where=';
         else
             filters += '***';
         filters     += 'state|||'+state;
+    }
+
+    if(typeof city == 'undefined')
+        city  = '';
+    if((city !== '') && (city !== 'All')){
+        if(filters == '')
+            filters = '&where=';
+        else
+            filters += '***';
+        filters     += 'city|||'+city;
+    }
+
+    if(typeof county == 'undefined')
+        county  = '';
+    if((county !== '') && (county !== 'All')){
+        if(filters == '')
+            filters = '&where=';
+        else
+            filters += '***';
+        filters     += 'county|||'+county;
+    }
+
+    if(typeof colony == 'undefined')
+        colony  = '';
+    if((colony !== '') && (colony !== 'All')){
+        if(filters == '')
+            filters = '&where=';
+        else
+            filters += '***';
+        filters     += 'colony|||'+colony;
     }
 
     order       = '&orderby=coordenates';
@@ -100,7 +130,7 @@ function theMap(salemodel_id, state, pppid) {
       
     } else{
         const requestURL = window.location.protocol+'//'+locat+'api/billboards/auth_billboard_view.php?auth_api='+authApi+'&allRows=1'+xpppid+filters+order;
-        console.log(requestURL);
+        console.log('mapaaaa+++ '+requestURL);
           
         const request   = new XMLHttpRequest();
         request.onreadystatechange = function() {

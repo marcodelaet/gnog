@@ -92,17 +92,11 @@ if('1' == '2'){
                         maxlength="40"
                         autocomplete="provider_name"
                         />
-                        <div class="invalid-feedback">
-                            Please type the Offer name
-                        </div>
                     </div>
                     <div class="col-2" >&nbsp;</div>
                     <div class="col-2" >
                         <label for="officeDropdownMenuButton"><?=translateText('gnog_office');?></label>
                             <?=inputDropDownStyle('office','','orderby','Mexico',$mexico_id)?>
-                            <div class="invalid-feedback">
-                                Please choose the Office
-                            </div>
                     </div>
                 </div>
                 <div class="row">&nbsp;</div>
@@ -190,15 +184,25 @@ if('1' == '2'){
                         </div>
                         <div id="product-section">
                             <div id="product_0">
-                                <div class="form-row" id="div-selectState">
+                                <div class="form-row">
                                     <div class="col">
                                         &nbsp;
                                     </div>
-                                    <div class="col-2">
-                                        <input class="stateId" name="state_id[]" id="stateId_0" type="hidden" value="All">
+                                    <input class="stateId" name="state_id[]" id="stateId_0" type="hidden" value="All">
+                                    <input class="cityId" name="city_id[]" id="cityId_0" type="hidden" value="All">
+                                    <input class="countyId" name="county_id[]" id="countyId_0" type="hidden" value="All">
+                                    <input class="colonyId" name="colony_id[]" id="colonyId_0" type="hidden" value="All">
+                                    <div class="col-2" id="div-selectState_0">
                                         <?=inputDropDownSearchStyle('state','state','is_active|||Y','state','tete')?>
                                     </div>
+                                    <!-- 
+                                        onchange="if(agency_id.value == '0') { listAdvertiserContacts(this.value) }"
+                                    -->
+                                    <div class="col-2" id="div-selectcity_0"></div>
+                                    <div class="col-2" id="div-selectcounty_0"></div>
+                                    <div class="col-2" id="div-selectcolony_0"></div>
                                 </div>
+                                <br/>
                                 <div class="form-row">
                                     <div class="col" id="div-selectProduct">
                                         <label for="product_id[]"><?=translateText('product');?></label>
@@ -293,7 +297,7 @@ if('1' == '2'){
                         </div>
                         <div class="form-row" >
                             <div class="col" style="text-align:right;">
-                                <button class="btn-primary material-icons-outlined" type="button" onclick="newProductForm('product-section','product-new',32);">add_circle_outline</button>
+                                <button class="btn-primary material-icons-outlined" type="button" onclick="newProductForm('product-section','product-new',100);">add_circle_outline</button>
                             </div>
                         </div>
                         <div id="product-new">

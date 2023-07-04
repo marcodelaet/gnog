@@ -247,6 +247,8 @@ function inputDropDownSearchStyle($table,$title,$where,$order,$selected){
     $url = $_SERVER['HTTP_HOST'];
     $groupby    = '0';
     $field      = $table;
+    $find       = $field;
+    $bring      = null;
     if(substr($url,-1,1) != '/')
         $url .= '/';
     
@@ -254,6 +256,24 @@ function inputDropDownSearchStyle($table,$title,$where,$order,$selected){
         $table  = 'billboard';
         $field  = 'state';
         $groupby= '&groupby=state';
+        $bring  = 'city';
+    }
+    if($table == 'city'){
+        $table  = 'billboard';
+        $field  = 'city';
+        $groupby= '&groupby=city';
+        $bring  = 'county';
+    }
+    if($table == 'county'){
+        $table  = 'billboard';
+        $field  = 'county';
+        $groupby= '&groupby=county';
+        $bring  = 'colony';
+    }
+    if($table == 'colony'){
+        $table  = 'billboard';
+        $field  = 'colony';
+        $groupby= '&groupby=colony';
     }
     $fullUrl    = $protocol . $url;
     $authApi    = 'fsdf9ejfineuf3nf93493nf';
@@ -277,6 +297,11 @@ function inputDropDownSearchStyle($table,$title,$where,$order,$selected){
         $obj            = $obj->data;
         
     }
+
+    $onchange = '';
+    if(!is_null($bring))
+        $onchange = "onmouseleave=\"if(document.getElementById('".$field."Value_0').innerText != '".translateText($title)."') { listSelectedFiltersDropDownStyle('$find',document.getElementById('".$field."Value_0').innerText,'$bring','$table','0'); }\"";
+
     $html        = '';
     $html       .= '<div class="dropdown" style="margin-top:1.2rem">';
     $html       .= '<button class="btn btn-primary dropdown-toggle" type="button" id="'.$field.'DropdownMenuButton_0" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" >'; 
@@ -285,8 +310,8 @@ function inputDropDownSearchStyle($table,$title,$where,$order,$selected){
     $html       .= '<ul class="dropdown-menu" aria-labelledby="'.$field.'DropdownMenuButton">';
     $html       .= '<input class="'.$field.'Name[]" name="'.$field.'Name" id="'.$field.'Name_0" type="text" placeholder="Search..">';
     for($i=0;$i < $numberOfRows; $i++){
-        $className      = "";
-        $markingSelect  = ''; 
+       // $className      = "";
+       // $markingSelect  = ''; 
         $icon           = '';
 
         switch($table){
@@ -334,7 +359,7 @@ function inputDropDownSearchStyle($table,$title,$where,$order,$selected){
         /*if($id == $selected)
              = 'selected';    */ 
              //$html .=  '\'++++\'++++\'';
-        $html .= '<li><a class="dropdown-item" href="#'.$field.'DropdownMenuButton_0" onclick="document.getElementById(\''.$field.'Value_0\').innerText=\''.$name.'\'; document.getElementById(\''.$field.'Id_0\').value=\''.$id.'\'; document.getElementById(\''.$field.'Name_0\').value=\''.$name.'\'; ">'.$icon.' '.$name.'</a></li>';
+        $html .= '<li><a class="dropdown-item" href="#'.$field.'DropdownMenuButton_0" onclick="document.getElementById(\''.$field.'Value_0\').innerText=\''.$name.'\'; document.getElementById(\''.$field.'Id_0\').value=\''.$id.'\'; document.getElementById(\''.$field.'Name_0\').value=\''.$name.'\'; " '.$onchange.' >'.$icon.' '.$name.'</a></li>';
     }
     $html .= '</ul></div>';
     return $html;

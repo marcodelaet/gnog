@@ -21,12 +21,12 @@ require_once('./assets/lib/translation.php');
 <?php
 require_once('./components/header.main.php');
 ?>
-  <body <?php if($_REQUEST['pr'] == base64_encode('./pages/maps/index.php')) { ?> onload="theMap('<?=$_REQUEST['smid']?>','<?=$_REQUEST['state']?>','<?=$_REQUEST['pppid']?>');" <?php } ?>>
+  <body <?php if($_REQUEST['pr'] == base64_encode('./pages/maps/index.php')) { ?> onload="theMap('<?=$_REQUEST['smid']?>','<?=$_REQUEST['state']?>','<?=$_REQUEST['city']?>','<?=$_REQUEST['county']?>','<?=$_REQUEST['colony']?>','<?=$_REQUEST['pppid']?>');" <?php } ?>>
     <noscript>You need to enable JavaScript to run this app.</noscript>
 <?php      if($LOCALSERVER == 'local') {
 ?>
 <div id="develop-area">
-      DEVELOP AREA   -   DEVELOP AREA   -   DEVELOP AREA   -   DEVELOP AREA   -   DEVELOP AREA   -   DEVELOP AREA   -   DEVELOP AREA   -   DEVELOP AREA   -   DEVELOP AREA     
+      DEVELOP AREA   -   DEVELOP AREA   -   DEVELOP AREA   -   DEVELOP AREA   -   DEVELOP AREA  -   DEVELOP AREA   
     </div>
 <?php  
 } else {
