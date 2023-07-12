@@ -1,7 +1,16 @@
+ulang = localStorage.getItem('ulang');
+
+xlang        = 'es-MX';
+if(ulang == 'ptbr')
+    xlang    = 'pt-BR';
+if(ulang == 'eng')
+    xlang    = 'en-US';
+
 document.getElementById('nav-item-users').setAttribute('class',document.getElementById('nav-item-users').getAttribute('class').replace(' active','') + ' active');
 var csrf_token = $('meta[name="csrf-token"]').attr('content');
 module  = 'billboard';
-//alert(csrf_token);
+
+xcurrency = 'MXN';
 
 function handleSubmit(form) {
     if (form.name.value !== '' && form.address.value !== '' && form.main_contact_email.value !== '' || product_id != '0' || salemodel_id != '0') {
@@ -111,66 +120,57 @@ function handleSubmitXLSX(form){
         alert('Please, fill all required fields (*)');
 }
 
-function handleEditSubmit(tid,form) {
-    if (form.name.value !== '' && form.address.value !== '' && form.main_contact_email.value !== '' || product_id != '0' || salemodel_id != '0') {
+function handleEditSubmit(bid,form) {
+    price   = form.price.value;
+    cost    = form.cost.value;
+    if (price != '0' && cost != '0') {
         //form.submit();
    
         errors      = 0;
         authApi     = csrf_token;
         
-        sett     = '&tid='+tid;
-        xname          = form.name.value;
-        if(xname !== ''){
-            sett     += '&name='+xname;
+        sett     = '&bid='+bid;
+
+        price_int       = price.replace('MX','').replace('$','').replace(' ','').replace('US','').replace('BRL','').replace('R$','').replace('USD','').replace('MXN','');
+        cost_int        = cost.replace('MX','').replace('$','').replace(' ','').replace('US','').replace('BRL','').replace('R$','').replace('USD','').replace('MXN','');
+
+        // PRICE ***************************
+        decimalPoint    = price_int.substr(-3,1);
+        millePoint      = '.';
+        if(decimalPoint == '.'){
+            millePoint      = ',';
         }
-        address                 = form.address.value;
-        if(address !== ''){
-            sett     += '&address='+address;
+        IntegerValue        = '';
+        decimalValue        = price_int.split(decimalPoint)[1];
+        arrayIntegerValue   = price_int.split(decimalPoint)[0].split(millePoint);
+        for(m=0;m<arrayIntegerValue.length; m++){
+            IntegerValue += arrayIntegerValue[m];
         }
-        webpage_url             = form.webpage_url.value;
-        if(webpage_url !== ''){
-            sett     += '&webpage_url='+webpage_url;
+        if(parseInt(decimalValue) > 0){
+            IntegerValue = IntegerValue + decimalValue;
+        } else {
+            IntegerValue = IntegerValue + '00';
         }
-        main_contact_name       = form.main_contact_name.value;
-        if(main_contact_name !== ''){
-            sett     += '&main_contact_name='+main_contact_name;
+        price_int = IntegerValue.replace(' ','');
+
+        // COST ***************************
+        decimalPoint    = cost_int.substr(-3,1);
+        millePoint      = '.';
+        if(decimalPoint == '.'){
+            millePoint      = ',';
         }
-        main_contact_surname    = form.main_contact_surname.value;
-        if(main_contact_surname !== ''){
-            sett     += '&main_contact_surname='+main_contact_surname;
+        IntegerValue        = '';
+        decimalValue        = cost_int.split(decimalPoint)[1];
+        arrayIntegerValue   = cost_int.split(decimalPoint)[0].split(millePoint);
+        for(m=0;m<arrayIntegerValue.length; m++){
+            IntegerValue += arrayIntegerValue[m];
         }
-        main_contact_email      = form.main_contact_email.value;
-        if(main_contact_email !== ''){
-            sett     += '&main_contact_email='+main_contact_email;
+        if(parseInt(decimalValue) > 0){
+            IntegerValue = IntegerValue + decimalValue;
+        } else {
+            IntegerValue = IntegerValue + '00';
         }
-        /*phone_ddi  = form.mobile_ddi.value;
-        if(phone_ddi !== ''){
-            sett     += '&phone_ddi='+phone_ddi.replace(' ','');
-        }*/
-        phone                   = form.phone.value;
-        if(phone !== ''){
-            sett     += '&phone='+phone.replace(" ","");
-        }
-        main_contact_position   = form.main_contact_position.value;
-        if(main_contact_position !== ''){
-            sett     += '&main_contact_position='+main_contact_position;
-        }
-        product_id                   = form.product_id.value;
-        if(product_id !== ''){
-            sett     += '&product_id='+product_id.replace(" ","");
-        }
-        salemodel_id                   = form.salemodel_id.value;
-        if(salemodel_id !== ''){
-            sett     += '&salemodel_id='+salemodel_id.replace(" ","");
-        }
-        product_price                   = form.product_price.value;
-        if(product_price !== ''){
-            sett     += '&product_price='+product_price.replace(" ","");
-        }
-        currency                   = form.currency.value;
-        if(currency !== ''){
-            sett     += '&currency='+currency.replace(" ","");
-        }
+        cost_int = IntegerValue.replace(' ','');
 
         //console.log(sett);
         //alert('pausa');
@@ -178,27 +178,38 @@ function handleEditSubmit(tid,form) {
         if(locat.slice(-1) != '/')
             locat += '/';
 
-        if(errors > 0){
-           
-        } else{
-            const requestURL = window.location.protocol+'//'+locat+'api/billboards/auth_billboard_edit.php?auth_api='+authApi+sett;
-            console.log(requestURL);
-            const request = new XMLHttpRequest();
-            request.onreadystatechange = function() {
-                if (this.readyState == 4 && this.status == 200) {
-                   // Typical action to be performed when the document is ready:
-                   obj = JSON.parse(request.responseText);
-                   form.btnSave.innerHTML = "Save";
-                   window.location.href = '?pr=Li9wYWdlcy9wcm92aWRlcnMvdGtwZWRpdC9pbmRleC5waHA=';
-                   //alert('Status: '+obj.status);
-                }
-                else{
-                    form.btnSave.innerHTML = "Saving...";
-                }
-            };
-            request.open('GET', requestURL);
-            //request.responseType = 'json';
-            request.send();
+        if((parseInt(price_int) > 0) && (parseInt(cost_int) > 0)){
+            if(parseInt(price_int) > 0){
+                sett     += '&price_int='+price_int;
+            }
+            if(parseInt(cost_int) > 0){
+                sett     += '&cost_int='+cost_int;
+            }
+            
+            //errors = 1;
+            if(errors > 0){
+            
+            } else{
+                const requestURL = window.location.protocol+'//'+locat+'api/billboards/auth_billboard_edit.php?auth_api='+authApi+sett.replace(' ','').replace(' ','');
+                console.log(requestURL);
+                const request = new XMLHttpRequest();
+                request.onreadystatechange = function() {
+                    if (this.readyState == 4 && this.status == 200) {
+                    // Typical action to be performed when the document is ready:
+                    obj = JSON.parse(request.responseText);
+                    form.btnSave.innerHTML = "Save";
+                    window.location.href = '?pr=Li9wYWdlcy9iaWxsYm9hcmRzL2luZGV4LnBocA==';
+                    //alert('Status: '+obj.status);
+                    }
+                    else{
+                        form.btnSave.innerHTML = "Saving...";
+                    }
+                };
+                request.open('GET', requestURL);
+                //request.responseType = 'json';
+                request.send();
+            }
+
         }
     } else
         alert('Please, fill all required fields (*)');
@@ -255,12 +266,12 @@ function handleViewOnLoad(bid) {
     }
 }
 
-function handleOnLoad(tid,form) {
+function handleOnLoad(bid,form) {
     errors      = 0;
     authApi     = csrf_token;
     locat       = window.location.hostname;
 
-    filters     = '&tid='+tid;
+    filters     = '&bid='+bid;
   
     if(locat.slice(-1) != '/')
         locat += '/';
@@ -269,17 +280,19 @@ function handleOnLoad(tid,form) {
 
     } else{
         const requestURL = window.location.protocol+'//'+locat+'api/billboards/auth_billboard_get.php?auth_api='+authApi+filters;
-        //alert(requestURL);
+        //console.log('trekkk - '+requestURL);
         const request = new XMLHttpRequest();
         request.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {
                 
-                obj = JSON.parse(request.responseText);
+                obj         = JSON.parse(request.responseText);
+                //xcurrency   = 'BRL';
+                //xlang        = 'en-US';
 
                     // Create our number formatter.
-                    var formatter = new Intl.NumberFormat('pt-BR', {
+                    var formatter = new Intl.NumberFormat(xlang, {
                         //style: 'currency',
-                        //currency: obj[0].currency,
+                        //currency: xcurrency,
                         //maximumSignificantDigits: 2,
 
                         // These options are needed to round to whole numbers if that's what you want.
@@ -287,19 +300,20 @@ function handleOnLoad(tid,form) {
                         //maximumFractionDigits: 0, // (causes 2500.99 to be printed as $2,501)
                     });
 
-                form.name.value                     = obj[0].name;
-                form.address.value                  = obj[0].address;
-                form.webpage_url.value              = obj[0].webpage_url;
-                form.main_contact_name.value        = obj[0].main_contact_name;
-                form.main_contact_surname.value     = obj[0].main_contact_surname;
-                form.main_contact_email.value       = obj[0].main_contact_email;
-                //form.phone_ddi.value              = obj[0].phone_international_code.replace(" ","");
-                form.phone.value                    = obj[0].phone_number.replace(" ","");
-                form.main_contact_position.value    = obj[0].main_contact_position;
-                form.product_price.value            = formatter.format(obj[0].product_price);
-                form.product_id.value               = obj[0].product_id;
-                form.salemodel_id.value             = obj[0].salemodel_id;
-                form.currency.value                 = obj[0].currency;
+                form.name_key.value                 = obj.data[0].name;
+                form.address.value                  = obj.data[0].address;
+                form.category.value                 = obj.data[0].category;
+                form.coordenates.value              = obj.data[0].coordenates;
+                form.salemodel.value                = obj.data[0].salemodel_name;
+                form.viewpoint.value                = obj.data[0].viewpoint_name;
+                xiluminated                         = translateText('is_iluminated',ulang);
+                if(obj.data[0].is_iluminated == 'N')
+                    xiluminated                     = translateText('is_not_iluminated',ulang);
+                form.iluminated.value               = xiluminated.charAt(0).toUpperCase() + xiluminated.substring(1);
+                form.dimensions.value               = parseInt(obj.data[0].height) + 'x' + parseInt(obj.data[0].width);
+                form.provider.value                 = obj.data[0].provider_name;
+                form.price.value                    = formatter.format(obj.data[0].price/100);
+                form.cost.value                     = formatter.format(obj.data[0].cost/100);
             }
             else{
                 //form.btnSave.innerHTML = "Searching...";
@@ -370,13 +384,10 @@ function handleListOnLoad(search,page) {
                     html += '<a onclick=\'window.open("./pages/billboards/info.php?bid='+obj['data'][i].uuid_full+'","billboard-'+obj['data'][i].uuid_full+'","height=510.2,width=652,resizable=0,scrollbars=0,status=0,titlebar=0,toolbar=0,location=0,menubar=0")\'><span class="material-icons" style="font-size:1.5rem; color:black;" title="Information Card - '+obj['data'][i].salemodel_name+' '+obj['data'][i].name+'">info</span></a>';
 
                     // Edit form
-                    html += '<a href="?pr=Li9wYWdlcy9iaWxsYm9hcmRzL2luZm8ucGhw&bid='+obj['data'][i].uuid_full+'"><span class="material-icons" style="font-size:1.5rem; color:black;" title="Edit - '+obj['data'][i].salemodel_name+' '+obj['data'][i].name+'">edit</span></a>';
+                    html += '<a href="?pr=Li9wYWdlcy9iaWxsYm9hcmRzL2Zvcm1lZGl0LnBocA==&bid='+obj['data'][i].uuid_full+'"><span class="material-icons" style="font-size:1.5rem; color:black;" title="Edit - '+obj['data'][i].salemodel_name+' '+obj['data'][i].name+'">edit</span></a>';
 
                     // Remove 
                     html += '<a href="javascript:void(0)" onclick="handleRemove(\''+obj['data'][i].uuid_full+'\',\''+obj['data'][i].is_active+'\')"><span class="material-icons" style="font-size:1.5rem; color:black;" title="Remove - '+obj['data'][i].salemodel_name+' '+obj['data'][i].name+'">delete</span></a>';
-
-                    // Add Contact
-                    //html += '<a href="?pr=Li9wYWdlcy9hZHZlcnRpc2Vycy9jb250YWN0cy9mb3JtLnBocA==&md=billboard&tid='+obj['data'][i].uuid_full+'"><span class="material-icons" style="font-size:1.5rem; color:black;" title="Add a contact to '+module + ' '+obj['data'][i].name+'">contact_mail</span></a>';
 
                     html += '</td></tr>';
                 }

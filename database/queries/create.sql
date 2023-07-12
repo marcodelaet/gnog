@@ -305,6 +305,7 @@ VALUES
 ((UUID()),'Pantallas','Pantallas','N','Y',NOW(),NOW()),
 ((UUID()),'Producción','Producción','N','Y',NOW(),NOW());
 
+
 # PROVIDERS
 CREATE TABLE IF NOT EXISTS providers (
 id VARCHAR(40) PRIMARY KEY NOT NULL,
@@ -829,6 +830,32 @@ INSERT INTO translates
 (id, code_str, text_eng, text_esp, text_ptbr, is_active, created_at, updated_at)
 VALUES
 (UUID(), 'all_places', 'all', 'todo', 'tudo', 'Y', NOW(), NOW());
+
+
+INSERT INTO translates 
+(id, code_str, text_eng, text_esp, text_ptbr, is_active, created_at, updated_at)
+VALUES
+(UUID(), 'edit', 'edit', 'editar', 'editar', 'Y', NOW(), NOW());
+
+INSERT INTO translates 
+(id, code_str, text_eng, text_esp, text_ptbr, is_active, created_at, updated_at)
+VALUES
+(UUID(), 'category', 'category', 'categoria', 'categoria', 'Y', NOW(), NOW()),
+(UUID(), 'coordenates', 'coordenates', 'coordenadas', 'coordenadas', 'Y', NOW(), NOW()),
+(UUID(), 'is_iluminated', 'is iluminated', 'es iluminado', 'é iluminado', 'Y', NOW(), NOW()),
+(UUID(), 'webpage', 'webpage (URL)', 'liga (URL)', 'link (URL)', 'Y', NOW(), NOW());
+
+INSERT INTO translates 
+(id, code_str, text_eng, text_esp, text_ptbr, is_active, created_at, updated_at)
+VALUES
+(UUID(), 'price', 'price', 'precio', 'preço', 'Y', NOW(), NOW()),
+(UUID(), 'cost', 'cost', 'costo', 'custo', 'Y', NOW(), NOW());
+
+INSERT INTO translates 
+(id, code_str, text_eng, text_esp, text_ptbr, is_active, created_at, updated_at)
+VALUES
+(UUID(), 'is_not_iluminated', 'is not iluminated', 'no hay iluminación', 'sem iluminação', 'Y', NOW(), NOW());
+
 
 
 # FILES

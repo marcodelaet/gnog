@@ -1,6 +1,7 @@
 <?php
 $moduleName = 'Billboard';
-$tid        = $_REQUEST['tid'];
+$bid        = $_REQUEST['bid'];
+
 ?>
 <link rel="stylesheet" href="<?=$dir?>./assets/css/<?=$moduleName?>.css">
 <link rel="stylesheet" href="<?=$dir?>./assets/css/Inputs.css">
@@ -10,232 +11,197 @@ $tid        = $_REQUEST['tid'];
 
 <div class='form-<?=strtolower($moduleName)?>-container'>
     <div class="form-container">
-        <div class="form-header">Edit <?=$moduleName?></div>
+        <div class="form-header"><?=ucfirst(translateText('edit'));?> <?=ucfirst(translateText(strtolower($moduleName)))?></div>
+        <br/>
         <form name='<?=strtolower($moduleName)?>' method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
             <div class="inputs-form-container">
                 <div class="form-row">
                     <div class="col">
-                        <label for="name">Name</label>
+                        <label for="name_key"><?=ucfirst(translateText('key'));?></label>
                         <input
                         required
-                        name ='name' 
-                        placeholder='Name'
-                        title = 'name'
+                        name ='name_key' 
+                        placeholder='<?=ucfirst(translateText('key'));?>'
+                        title = '<?=ucfirst(translateText('key'));?>'
                         value=''
                         class="form-control" 
                         type="text" 
-                        maxlength="40"
-                        autocomplete="provider_name"
+                        maxlength="50"
+                        autocomplete="name_key"
+                        readonly
+                        disabled
                         />
-                        <div class="invalid-feedback">
-                            Please type the Corporate name
-                        </div>
-                    </div>
-                </div>
-                <div class="form-row">
-                    <label for="name">Webpage</label>
-                    <div class="input-group mb-3">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text" id="basic-addon3">https://example.com/</span>
-                        </div>
-                        <input
-                        required
-                        name ='webpage_url' 
-                        placeholder='Type the URL here'
-                        title = 'webpage_url'
-                        value=''
-                        class="form-control" 
-                        type="text" 
-                        maxlength="200"
-                        autocomplete="webpage_url"
-                        />
-                        <div class="invalid-feedback">
-                            Please type the Corporate name
-                        </div>
                     </div>
                 </div>
                 <div class="form-row">
                     <div class="col">
-                        <label for="address">Address</label>
+                        <label for="address"><?=ucfirst(translateText('address'));?></label>
                         <textarea
                         required
                         name ='address' 
                         placeholder='99, Address - City - Country - Postal Code'
-                        title = 'address'
+                        title = '<?=ucfirst(translateText('address'));?>'
                         value=''
                         class="form-control"  
                         autocomplete="address"
+                        readonly
+                        disabled
                         ></textarea>
-                        <div class="invalid-feedback">
-                            Please type the Address of the <?=$moduleName?>
-                        </div>
                     </div>
                 </div>
-                <div class="form-row main-contact-section">
+                <div class="form-row">
                     <div class="col">
-                        <div class="form-row" >
-                            <div class="col main-contact-header">
-                                Main Contact
-                            </div>
-                        </div>
-                        <div class="form-row" >
-                            <div class="col">
-                                <label for="main_contact_name">Contact Name</label>
-                                <input
-                                required
-                                name ='main_contact_name' 
-                                placeholder='Name of main contact'
-                                title = 'Name of main contact'
-                                value=''
-                                class="form-control" 
-                                type="name" 
-                                />
-                                <div class="invalid-feedback">
-                                    Please type the name of main contact.
-                                </div>
-                            </div>
-                            <div class="col">
-                                <label for="main_contact_surname">Last name</label>
-                                <input
-                                required
-                                name ='main_contact_surname' 
-                                placeholder='Last name of main contact'
-                                title = 'Last name of main contact'
-                                value=''
-                                class="form-control" 
-                                type="surname" 
-                                />
-                                <div class="invalid-feedback">
-                                    Please type the last name of main contact.
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-row" >
-                            <div class="col">
-                                <label for="main_contact_email">E-mail</label>
-                                <input
-                                required
-                                name ='main_contact_email' 
-                                placeholder='name@server.com'
-                                title = 'E-mail'
-                                value=''
-                                class="form-control" 
-                                type="email" 
-                                />
-                                <div class="invalid-feedback">
-                                    Please type a valid email.
-                                </div>
-                            </div>
-                            <div class="col">
-                                <label for="phone">Phone N&ordm;</label><br/>
-                                <input
-                                id='phone'
-                                name ='phone' 
-                                placeholder="Area Code + Number"
-                                title = 'Phone N&ordm;'
-                                value=''
-                                class="form-control" 
-                                type="tel" 
-                                maxlength="12"
-                                pattern="[0-9]{3}-[0-9]{2}-[0-9]{3}"
-                                autocomplete="phone"
-                                />
-                                <div class="invalid-feedback">
-                                    Please type a valid phone number.
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-row" >
-                            <div class="col">
-                                <label for="main_contact_position">Position</label>
-                                <input
-                                required
-                                name ='main_contact_position' 
-                                placeholder='Position of the main contact'
-                                title = 'Position'
-                                value=''
-                                class="form-control" 
-                                type="position" 
-                                />
-                                <div class="invalid-feedback">
-                                    Please type the position / role of the main contact.
-                                </div>
-                            </div>
-                        </div>
+                        <label for="category"><?=ucfirst(translateText('category'));?></label>
+                        <input
+                        required
+                        name ='category' 
+                        placeholder='<?=ucfirst(translateText('category'));?>'
+                        title = '<?=ucfirst(translateText('category'));?>'
+                        value=''
+                        class="form-control" 
+                        type="text" 
+                        maxlength="30"
+                        autocomplete="category"
+                        readonly
+                        disabled
+                        />
+                    </div>
+                    <div class="col">
+                        <label for="coordenates"><?=ucfirst(translateText('coordenates'));?></label>
+                        <input
+                        required
+                        name ='coordenates' 
+                        placeholder='<?=ucfirst(translateText('coordenates'));?>'
+                        title = '<?=ucfirst(translateText('coordenates'));?>'
+                        value=''
+                        class="form-control" 
+                        type="text" 
+                        maxlength="40"
+                        autocomplete="coordenates"
+                        readonly
+                        disabled
+                        />
                     </div>
                 </div>
-                <div class="form-row product-section">
+                <div class="form-row">
                     <div class="col">
-                        <div class="form-row" >
-                            <div class="col product-header">
-                                Product
-                            </div>
-                        </div>
-                        <div class="form-row" >
-                            <div class="col">
-                                <label for="product_id">Product</label>
-                                <spam id="sproduct">
-                                    <select name="product_id" id="selectproduct" title="product_id" class="form-control" autocomplete="product_id" required>
-                                        <?=inputSelect('product','Product','','name','');?>
-                                    </select>
-                                </spam>
-
-                                
-                                <div class="invalid-feedback">
-                                    Please choose a product for the Provider.
-                                </div>
-                            </div>
-                            <div class="col">
-                                <label for="product_price">Product Price</label>
-                                <input
-                                required
-                                name ='product_price' 
-                                placeholder='0,00'
-                                title = 'Product Price'
-                                value=''
-                                class="form-control" 
-                                type="currency" 
-                                autocomplete="price"
-                                />
-                                <div class="invalid-feedback">
-                                    Please type the price for each product.
-                                </div>
-                            </div>
-                            <div class="col-2">
-                                <label for="currency">&nbsp;</label>
-                                <select
-                                required
-                                name ='currency' 
-                                title = 'Currency'
-                                class="form-control"
-                                autocomplete="currency">
-                                    <option value="MXN">MXN</option>
-                                    <option value="USD">USD</option>
-                                    <option value="BRL">BRL</option>
-                                </select>
-                                <div class="invalid-feedback">
-                                    Please type the price for each product.
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-row" >
-                            <div class="col">
-                                <label for="salemodel_id">Sale Model</label>
-                                <spam id="ssalemodel">
-                                    <select name="salemodel_id" id="selectsalemodel" title="salemodel_id" class="form-control" autocomplete="salemodel_id" required>
-                                        <?=inputSelect('salemodel','Sale model','','name','')?>
-                                    </select>
-                                </spam>
-                                <div class="invalid-feedback">
-                                    Please choose a sale model.
-                                </div>
-                            </div>
-                        </div>
+                        <label for="salemodel"><?=ucfirst(translateText('sale_model'));?></label>
+                        <input
+                        required
+                        name ='salemodel' 
+                        placeholder='<?=ucfirst(translateText('sale_model'));?>'
+                        title = '<?=ucfirst(translateText('sale_model'));?>'
+                        value=''
+                        class="form-control" 
+                        type="text" 
+                        maxlength="40"
+                        autocomplete="salemodel"
+                        readonly
+                        disabled
+                        />
+                    </div>
+                    <div class="col">
+                        <label for="viewpoint"><?=ucfirst(translateText('viewpoint'));?></label>
+                        <input
+                        required
+                        name ='viewpoint' 
+                        placeholder='<?=ucfirst(translateText('viewpoint'));?>'
+                        title = '<?=ucfirst(translateText('viewpoint'));?>'
+                        value=''
+                        class="form-control" 
+                        type="text" 
+                        maxlength="40"
+                        autocomplete="viewpoint"
+                        readonly
+                        disabled
+                        />
+                    </div>
+                    <div class="col">
+                        <label for="iluminated">&nbsp;</label>
+                        <input
+                        required
+                        name ='iluminated' 
+                        placeholder='<?=ucfirst(translateText('is_iluminated'));?>'
+                        title = '<?=ucfirst(translateText('is_iluminated'));?>'
+                        value=''
+                        class="form-control" 
+                        type="text" 
+                        maxlength="40"
+                        autocomplete="iluminated"
+                        readonly
+                        disabled
+                        />
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="col">
+                        <label for="dimensions"><?=ucfirst(translateText('dimensions'));?></label>
+                        <input
+                        required
+                        name ='dimensions' 
+                        placeholder='<?=ucfirst(translateText('dimensions'));?>'
+                        title = '<?=ucfirst(translateText('dimensions'));?>'
+                        value=''
+                        class="form-control" 
+                        type="text" 
+                        maxlength="40"
+                        autocomplete="dimensions"
+                        readonly
+                        disabled
+                        />
+                    </div>
+                    <div class="col">
+                        <label for="provider"><?=ucfirst(translateText('provider'));?></label>
+                        <input
+                        required
+                        name ='provider' 
+                        placeholder='<?=ucfirst(translateText('provider'));?>'
+                        title = '<?=ucfirst(translateText('provider'));?>'
+                        value=''
+                        class="form-control" 
+                        type="text" 
+                        maxlength="40"
+                        autocomplete="provider"
+                        readonly
+                        disabled
+                        />
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="col">
+                        <label for="cost"><?=ucfirst(translateText('cost'));?></label>
+                        <input
+                        required
+                        name ='cost' 
+                        placeholder='<?=ucfirst(translateText('cost'));?>'
+                        title = '<?=ucfirst(translateText('cost'));?>'
+                        value=''
+                        class="form-control" 
+                        type="currency" 
+                        onkeypress="$(this).mask('#.###.##0,00', {reverse: true});"
+                        maxlength="40"
+                        autocomplete="cost"
+                        />
+                    </div>
+                    <div class="col">
+                        <label for="price"><?=ucfirst(translateText('price'));?></label>
+                        <input
+                        required
+                        name ='price' 
+                        placeholder='<?=ucfirst(translateText('price'));?>'
+                        title = '<?=ucfirst(translateText('price'));?>'
+                        value=''
+                        class="form-control" 
+                        type="currency" 
+                        onkeypress="$(this).mask('#.###.##0,00', {reverse: true});"
+                        maxlength="40"
+                        autocomplete="price"
+                        />
                     </div>
                 </div>
             </div>
             <div class="inputs-button-container">
-                <button class="button" name="btnSave" type="button" onClick="handleEditSubmit('<?=$tid?>',<?=strtolower($moduleName)?>)" >Save</button>
+                <button class="button" name="btnSave" type="button" onClick="handleEditSubmit('<?=$bid?>',<?=strtolower($moduleName)?>)" ><?=ucfirst(translateText('save'));?></button>
             </div>
         </form>
       <?php
@@ -252,8 +218,8 @@ $tid        = $_REQUEST['tid'];
  ?>
 
 
-<?php if(array_key_exists('tid',$_REQUEST)){ ?>
+<?php if(array_key_exists('bid',$_REQUEST)){ ?>
 <script>
-    handleOnLoad("<?=$tid?>",<?=strtolower($moduleName)?>)
+    handleOnLoad("<?=$bid?>",<?=strtolower($moduleName)?>)
 </script>
 <?php } ?>

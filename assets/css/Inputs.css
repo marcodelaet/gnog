@@ -5,10 +5,10 @@
     text-shadow:  0.188rem 0.188rem 0.313rem #999;
 }
 
-/*label{
-    margin-top:1rem;
+.form-row{
+    margin-top:0.7rem;
 }
-*/
+
 .inputs-container {
     align-content: center;
     align-items: center;
