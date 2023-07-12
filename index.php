@@ -2,6 +2,8 @@
 session_start();
 require_once __DIR__ . '/vendor/autoload.php';
 
+$d1 = 1;
+$d2 = 1;
 
 
 //ini_set('error_reporting', E_ALL);
@@ -20,10 +22,14 @@ require_once('./assets/lib/translation.php');
 <html lang="en">
 <?php
 require_once('./components/header.main.php');
+
 ?>
   <body <?php if($_REQUEST['pr'] == base64_encode('./pages/maps/index.php')) { ?> onload="theMap('<?=$_REQUEST['smid']?>','<?=$_REQUEST['state']?>','<?=$_REQUEST['city']?>','<?=$_REQUEST['county']?>','<?=$_REQUEST['colony']?>','<?=$_REQUEST['pppid']?>');" <?php } ?>>
     <noscript>You need to enable JavaScript to run this app.</noscript>
-<?php      if($LOCALSERVER == 'local') {
+<?php
+
+
+if($LOCALSERVER == 'local') {
 ?>
 <div id="develop-area">
       DEVELOP AREA   -   DEVELOP AREA   -   DEVELOP AREA   -   DEVELOP AREA   -   DEVELOP AREA  -   DEVELOP AREA   
@@ -50,7 +56,7 @@ require_once('./components/footer.main.php');
 
 
 //echo '?pr='.base64_encode('./pages/users/login/formedit.php').'&tid=98eb8c5c-eebb-11ed-9ed2-008cfa5abdac';
-//echo '?pr='.base64_encode('./pages/proposals/add/product/provider/formadd.php');
+//echo '?pr='.base64_encode('./pages/billboards/formedit.php');
 ?>
       </div>
    </body>
