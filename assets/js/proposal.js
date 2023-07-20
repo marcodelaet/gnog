@@ -354,6 +354,10 @@ function handleViewOnLoad(ppid) {
                 for(var i=0;i<obj['data'].length;i++){
                     xxhtml += '<spam class="product-line">'+obj['data'][i].quantity + ' x ' + obj['data'][i].product_name + ' / ' + obj['data'][i].salemodel_name+' - '+formatter.format(obj['data'][i].amount)+'</spam><br />';
                 }
+                classStatus = document.getElementsByClassName('dropdown-item status'); 
+                for(var cs=0; cs < classStatus.length; cs++){
+                    classStatus[cs].setAttribute('onclick',classStatus[cs].getAttribute('onclick').replace(",'');",",'"+obj['data'][0].status_id+"');"));
+                }
                 document.getElementById('products-list').innerHTML          = xxhtml;                
             }
             else{
@@ -705,7 +709,7 @@ function handleListOnLoad(search) {
                         }
                         if(obj[i].status_percent == '50'){
                             color_status = '#ebfc03';
-                            color_letter = '#CCCCFF';
+                            color_letter = '#6666FF';
                         }
                         if(obj[i].status_percent == '25'){
                             color_status = '#fc3d03';
@@ -1400,7 +1404,7 @@ function calculatorFee(proposalproduct_id,billboard_id,price_int,name,xxcurrency
 
         if(confirm('Confirma el cambio de '+feeInput.value+'% ('+(formatter.format(price))+' para '+formatter.format(newPrice)+') en '+name)){
             const requestURL = window.location.protocol+'//'+locat+'api/proposals/auth_proposalproduct_change_price.php?auth_api='+authApi+filters;
-            console.log(requestURL);
+            //console.log(requestURL);
             const request = new XMLHttpRequest();
             request.onreadystatechange = function() {
                 if (this.readyState == 4 && this.status == 200) {
@@ -1420,4 +1424,57 @@ function calculatorFee(proposalproduct_id,billboard_id,price_int,name,xxcurrency
             request.send();
         }
     }
+}
+
+function changeStatus(proposalId,newStatus,oldStatus){
+    authApi     = csrf_token;
+
+    if(newStatus != oldStatus){
+        msg = '';
+        if(oldStatus == 1){
+            msg = 'No es posible cambiar propuestas perdidas!';
+            
+        }
+
+        if(oldStatus == 6){
+            msg = 'No es posible cambiar propuestas ya aprobadas!';
+        }
+        if(msg != ''){
+            alert(msg);
+            return false;
+        }
+    }
+
+    locat       = window.location.hostname;
+    if(locat.slice(-1) != '/')
+        locat += '/';
+
+
+    let uid = localStorage.getItem('uuid');
+    filters = '&uid='+uid+'&ppid='+proposalId;
+    
+    if(newStatus != oldStatus){
+        filters += '&newStatus='+newStatus+'&oldStatus='+oldStatus;
+        const requestURL = window.location.protocol+'//'+locat+'api/proposals/auth_proposal_changeStatus.php?auth_api='+authApi+filters;   
+        console.log(requestURL);
+        const request = new XMLHttpRequest();
+        request.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                // Typical action to be performed when the document is ready:
+                //console.log(request.responseText);
+                obj = JSON.parse(request.responseText);
+                if(obj.response == 'OK'){
+                    // cambiar la información en vivo con el nuevo status. Si el status es 100% o 0%, no permitir más cambios
+
+
+                }
+                
+            }
+        };
+        request.open('GET', requestURL);
+        //request.responseType = 'json';
+        request.send();
+    }
+    
+    
 }

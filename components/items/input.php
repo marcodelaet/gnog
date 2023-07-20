@@ -171,6 +171,7 @@ function inputDropDownStyle($table,$where,$order,$selectedDescription,$selectedV
     $fullUrl .= 'api/'.$table_plural.'/auth_'.$table.'_view.php?auth_api='.$authApi.'&order='.$order.'&where='.$where;
     //return $fullUrl;
     $homepage = file_get_contents($fullUrl);
+    $onchangeFunction = '';
     $obj = json_decode($homepage);
     $html       = '';
     $button     = '';
@@ -199,6 +200,7 @@ function inputDropDownStyle($table,$where,$order,$selectedDescription,$selectedV
                 $icon = '<spam class="material-icons icon-data" id="card-status-icon" style="color:'.$color_status.'">thermostat</spam>';
                 $id = $obj->data[$i]->uuid_full;
                 $name = translateText($obj->data[$i]->simple_name) . ' ('.$obj->data[$i]->percent.'%)';
+                $onchangeFunction = 'changeStatus(document.getElementById(\'ppid\').value,\''.$id.'\',\''.$selectedValue.'\'); ';
                 break;
             case  'office':
                 $id = $obj->data[$i]->uuid_full;
@@ -235,7 +237,7 @@ function inputDropDownStyle($table,$where,$order,$selectedDescription,$selectedV
                 $button     .= '</button>';
             }
         }    
-        $html .= '<a class="dropdown-item" href="javascript:void(0);" onclick="document.getElementById(\''.$table.'DropdownMenuButton\').value = \''.$id.'\'; document.getElementById(\''.$table.'DropdownMenuButton\').innerHTML = \''.$name.'\'" >'.$icon.' '.$name.'</a>';
+        $html .= '<a class="dropdown-item '.$table.'" href="javascript:void(0);"  onclick="'.$onchangeFunction.'document.getElementById(\''.$table.'DropdownMenuButton\').value = \''.$id.'\'; document.getElementById(\''.$table.'DropdownMenuButton\').innerHTML = \''.$name.'\'" >'.$icon.' '.$name.'</a>';
     }
     $htmlFull = $divInitIn.$button.$divInitFin.$html.'</div></div>';
     return $htmlFull;
