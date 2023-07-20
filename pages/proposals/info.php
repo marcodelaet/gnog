@@ -31,11 +31,12 @@
         </div>
         <div class="margin-space">&nbsp;</div>
         <div class="<?=strtolower($moduleName)?>-data">
-        
+         
         <?=inputDropDownStyle('status','','percent','','')?>
             </div>
 
         <div class="inputs-button-container">
+            <input type="hidden" id='ppid' name="ppid" value="<?=$_REQUEST['ppid']?>"/>
             <Button class="button" type="button" onClick="window.location='?pr=<?=base64_encode('./pages/'.strtolower($moduleName).'s/index.php')?>'" >Back to <?=translateText($moduleName.'s');?></Button>
         </div>
     </div>
