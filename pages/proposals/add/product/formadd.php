@@ -29,30 +29,32 @@ if(array_key_exists('ppid',$_REQUEST)){
 
 <div class='form-<?=strtolower($moduleName)?>-container'>
     <div class="form-container">
-        <div class="form-header"><?=translateText('add');?> <?=translateText('product');?> -> <?=translateText(strtolower($moduleName))?></div>
+        <div class="form-header">
+            <?=translateText('add');?> <?=translateText('product');?> -> <?=translateText(strtolower($moduleName))?>
+            <div class="row">&nbsp;</div>
+            <spam id="offer-name">Offer </spam>
+            <spam id="advertiser-name">Cliente / Agencia</spam>
+        </div>
         <form name='<?=strtolower($moduleName)?>' method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
             <div class="inputs-form-container">
-                <div class="form-row" >
-                    <div class="col">
-                        <spam id="offer-name">Offer </spam>
-                        <spam id="advertiser-name">Cliente / Agencia</spam>
-                    </div>
-                </div>
                 <div class="row">&nbsp;</div>
                 <div class="form-row">
                     <div class="col-8">
                         <spam id="offer-name"></spam>
                     </div>
                 </div>
-                <div class="row">&nbsp;</div>
                 <div class="form-row">
                     <div class="col">
-                        <?=translateText('start_date');?>
-                        <spam id="start-date"></spam>
+                        <?=translateText('start_date');?>:
+                        <spam class="inputs-input" id="start-date"></spam>
                     </div>
                     <div class="col">
-                        <?=translateText('stop_date');?>
-                        <spam id="stop-date"></spam>
+                        <?=translateText('stop_date');?>:
+                        <spam class="inputs-input" id="stop-date"></spam>
+                    </div>
+                    <div class="col-2">
+                        <?=translateText('currency');?>:
+                        <spam class="inputs-input" id="info-currency"></spam>
                     </div>
                 </div>
                 <div class="form-row main-contact-section">
@@ -60,10 +62,6 @@ if(array_key_exists('ppid',$_REQUEST)){
                         <div class="form-row"  style="margin-top:2rem;">
                             <div class="col main-contact-header" style="font-weight: bolder; text-decoration:underline overline; font-size:1.2rem;">
                                 <?=translateText('products');?>
-                            </div>
-                            <div class="col-2">
-                                <label for="currency"><?=translateText('currency');?></label>
-                                <spam id="info-currency"></spam>
                             </div>
                         </div>
                         <div>
