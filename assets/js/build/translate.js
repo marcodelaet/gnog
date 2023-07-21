@@ -1,3 +1,17 @@
+langTransl  = localStorage.getItem('ulang');
+localLang   = 'en';
+switch(langTransl){
+    case 'ptbr':
+        localLang   = 'pt';
+        break;
+    case 'esp':
+        localLang   = 'es';
+        break;
+    
+}
+//setting user language to the HTML 
+document.getElementsByTagName('html')[0].setAttribute('lang',localLang);
+
 function translateText(code,toLanguage){
     errors      = 0;
     authApi     = csrf_token;

@@ -13,6 +13,85 @@ var csrf_token = $('meta[name="csrf-token"]').attr('content');
 xcurrency = 'MXN';
 proposal_id = '';
 
+function handleSubmitAddProduct(form,proposalId){
+    //form.submit();
+    errors      = 0;
+    authApi     = csrf_token;
+    message     = '';
+
+    var formData = new FormData(form);
+    formData.append('auth_api',authApi);
+
+    total                   = form.total.value;
+
+    currency        = document.getElementById('currency').value;
+    objProduct      = document.getElementsByName('product_id[]');
+    objSaleModel    = document.getElementsByName('salemodel_id[]');
+    objPrice        = document.getElementsByName('price[]');
+    objState        = document.getElementsByName('state_id[]');
+    objCity         = document.getElementsByName('city_id[]');
+    objCounty       = document.getElementsByName('county_id[]');
+    objColony       = document.getElementsByName('colony_id[]');
+
+    objQuantity     = document.getElementsByName('quantity[]');
+    objProviderId   = document.getElementsByName('provider_id[]');
+
+    locat       = window.location.hostname;
+    if(locat.slice(-1) != '/')
+        locat += '/';
+
+    if(errors > 0){
+        alert(message);
+    } else {
+
+        proposal_id = proposalId;
+        virg            = '';
+        product_id      = '';
+        salemodel_id    = '';
+        price           = '';
+        quantity        = '';
+        provider_id     = '';
+        state_id        = '';
+        city_id         = '';
+        county_id       = '';
+        colony_id       = '';
+
+        for(i=0; i < objProduct.length;i++)
+        {
+            if(i>0)
+                virg = ',';
+
+            xprice  = '0';
+            if((objPrice[i].value != '') || (objPrice[i].value >= 0)){
+                axPrice = objPrice[i].value.split(",");
+                for(j=0;j < axPrice.length;j++){
+                    apPrice     = axPrice[j].split(".");
+                    for(k=0;k < apPrice.length;k++){
+                        xprice      += apPrice[k];
+                    }
+                }    
+            } 
+            product_id      += virg + objProduct[i].value;
+            salemodel_id    += virg + objSaleModel[i].value;
+            price           += virg + xprice;
+            xquantity       = 1;
+            if((objQuantity[i].value != '') || (objQuantity[i].value > 0))
+                xquantity = objQuantity[i].value;
+            quantity        += virg + xquantity;
+            provider_id     += virg + objProviderId[i].value;
+            //if(objState[i].value)
+            state_id        += virg + objState[i].value;
+            city_id         += virg + objCity[i].value;
+            county_id       += virg + objCounty[i].value;
+            colony_id       += virg + objColony[i].value;
+        }
+        addProduct('['+product_id+']','['+salemodel_id+']','['+price+']',currency,'['+quantity+']','['+provider_id+']',proposal_id,'['+state_id+']','['+city_id+']','['+county_id+']','['+colony_id+']');
+
+        form.btnSave.innerHTML = "Save";
+        window.location.href = '?pr=Li9wYWdlcy9wcm9wb3NhbHMvZm9ybWVkaXQucGhw&ppid='+proposalId;
+    }
+}
+
 function handleSubmit(form) {
     if (form.name.value !== '' && form.client_id.value !== '' && form.start_date.value !== '' || form.client_id.value !== '0' || form.agency_id.value !== '0' || form.total.value !== '0,00' || form.status_id.value !== '0') {
         //form.submit();
@@ -268,7 +347,7 @@ function handleEditSubmit(tid,form) {
            
         } else{
             const requestURL = window.location.protocol+'//'+locat+'api/proposals/auth_proposal_edit.php?auth_api='+authApi+sett;
-            console.log(requestURL);
+            //console.log(requestURL);
             const request = new XMLHttpRequest();
             request.onreadystatechange = function() {
                 if (this.readyState == 4 && this.status == 200) {
@@ -460,8 +539,63 @@ function handleViewProductsOnLoad(ppid,pppid) {
     }
 }
 
-function changeStatus(newStatus){
+function handleListAddProductOnLoad(ppid){
+    errors      = 0;
+    authApi     = csrf_token;
+    locat       = window.location.hostname;
 
+    filters     = '&ppid='+ppid;
+    orderby     = '&orderby=is_proposalbillboard_active DESC,concat(product_name,salemodel_name),provider_name ASC,state ASC,billboard_name';
+  
+    if(locat.slice(-1) != '/')
+        locat += '/';
+
+    if(errors > 0){
+
+    } else{
+        const requestURL = window.location.protocol+'//'+locat+'api/proposals/auth_proposal_get.php?auth_api='+authApi+filters+orderby;
+        //console.log('mapaaaa- '+requestURL);
+        const request = new XMLHttpRequest();
+        request.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                
+                obj = JSON.parse(request.responseText);
+
+                advertiser_name = obj['data'][0].client_name;
+                agency_name     = obj['data'][0].agency_name;
+                
+                if( (agency_name != '') && (agency_name != null)){
+                    advertiser_name += " / " + agency_name;
+                }
+                const startDate = new Date(obj['data'][0].start_date);
+                const stopDate  = new Date(obj['data'][0].stop_date);
+
+                document.getElementById('start-date').innerText         = startDate.toLocaleDateString(lang);
+                document.getElementById('stop-date').innerText          = stopDate.toLocaleDateString(lang);
+                document.getElementById('offer-name').innerText         = obj['data'][0].offer_name;
+                document.getElementById('advertiser-name').innerText    = advertiser_name;
+                document.getElementById('info-currency').innerText      = obj['data'][0].currency_c;
+                document.getElementById('currency').value               = obj['data'][0].currency_c;
+                xcurrency = obj['data'][0].currency_c;
+                // Create our number formatter.
+                var formatter = new Intl.NumberFormat(lang, {
+                    style: 'currency',
+                    currency: xcurrency, // believing every currency will be MXN
+                    //maximumSignificantDigits: 2,
+
+                    // These options are needed to round to whole numbers if that's what you want.
+                    //minimumFractionDigits: 2, // (this suffices for whole numbers, but will print 2500.10 as $2,500.1)
+                    //maximumFractionDigits: 0, // (causes 2500.99 to be printed as $2,501)
+                });
+            }
+            else {
+                //form.btnSave.innerHTML = "Searching...";
+            }
+        };
+        request.open('GET', requestURL);
+        //request.responseType = 'json';
+        request.send();
+    }
 }
 
 function handleListEditOnLoad(ppid) {
@@ -479,7 +613,7 @@ function handleListEditOnLoad(ppid) {
 
     } else{
         const requestURL = window.location.protocol+'//'+locat+'api/proposals/auth_proposal_get.php?auth_api='+authApi+filters+orderby;
-        console.log('mapaaaa- '+requestURL);
+        //console.log('mapaaaa- '+requestURL);
         const request = new XMLHttpRequest();
         request.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {
@@ -507,7 +641,7 @@ function handleListEditOnLoad(ppid) {
                 document.getElementById('advertiser-name').innerText  = advertiser_name;
                 xcurrency = obj['data'][0].currency_c;
                 // Create our number formatter.
-                var formatter = new Intl.NumberFormat('pt-BR', {
+                var formatter = new Intl.NumberFormat(lang, {
                     style: 'currency',
                     currency: xcurrency, // believing every currency will be MXN
                     //maximumSignificantDigits: 2,
@@ -516,7 +650,6 @@ function handleListEditOnLoad(ppid) {
                     //minimumFractionDigits: 2, // (this suffices for whole numbers, but will print 2500.10 as $2,500.1)
                     //maximumFractionDigits: 0, // (causes 2500.99 to be printed as $2,501)
                 });
-
 
                 productOld      = 0;
                 providerOld     = 0;
@@ -664,7 +797,7 @@ function handleListOnLoad(search) {
     } else{
         tableList   = document.getElementById('listProposals');
         const requestURL = window.location.protocol+'//'+locat+'api/proposals/auth_proposal_list.php?auth_api='+authApi+filters;
-        console.log(requestURL);
+        //console.log(requestURL);
         const request = new XMLHttpRequest();
         request.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {
@@ -768,7 +901,7 @@ function handleRemoveFromList(proposalproduct_id,billboard_id){
     request.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
             // Typical action to be performed when the document is ready:
-            console.log(request.responseText);
+            //console.log(request.responseText);
             obj = JSON.parse(request.responseText);
             if(obj.response == 'OK'){
                 arrayLineList = document.getElementsByClassName('line-list-'+billboard_id);
@@ -1014,7 +1147,7 @@ function addProduct(product_id,salemodel_id,price,currency,quantity,provider_id,
 
     } else{
         const requestURLAdd = window.location.protocol+'//'+locat+'api/products/auth_product_add_new.php';
-        console.log(requestURLAdd + "\n?"+querystring);
+        //console.log(requestURLAdd + "\n?"+querystring);
         const requestAdd = new XMLHttpRequest();
         requestAdd.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {
@@ -1300,9 +1433,9 @@ function executeFeeOnPrice(proposalproduct_id,billboard_id,price_int,name,xxcurr
     newPrice_int = parseInt(newPrice * 100);
     filters     = '&npc='+newPrice_int+'&pbid='+billboard_id+'&pppid='+proposalproduct_id;
 
-    if(confirm('Confirma el cambio de '+feeInput.value+'% ('+(formatter.format(price))+' para '+formatter.format(newPrice)+') en '+name)){
+    if(confirm('Confirma el cambio de '+feeInput.value+'% ('+(formatter.format(price))+' para '+formatter.format(newPrice)+') en '+name)){  //traduzir
         const requestURL = window.location.protocol+'//'+locat+'api/proposals/auth_proposalproduct_change_price.php?auth_api='+authApi+filters;
-        console.log(requestURL);
+        //console.log(requestURL);
         const request = new XMLHttpRequest();
         request.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {
@@ -1341,16 +1474,16 @@ function addBannerCost(proposalproduct_id,billboard_id,name,xxcurrency){
     });
 
     cost = 0;
-    let new_cost = prompt("Costo de producción", cost);
+    let new_cost = prompt("Costo de producción", cost);  //traduzir
 
     if (new_cost > 0) {
 
         newCost_int = parseInt(new_cost * 100);
         filters     = '&cst='+newCost_int+'&pbid='+billboard_id+'&pppid='+proposalproduct_id;
 
-        if(confirm('Confirma el costo de '+(formatter.format(new_cost))+' en '+name)){
+        if(confirm('Confirma el costo de '+(formatter.format(new_cost))+' en '+name)){  //traduzir
             const requestURL = window.location.protocol+'//'+locat+'api/proposals/auth_proposalproduct_add_cost.php?auth_api='+authApi+filters;
-            console.log(requestURL);
+            //console.log(requestURL);
             const request = new XMLHttpRequest();
             request.onreadystatechange = function() {
                 if (this.readyState == 4 && this.status == 200) {
@@ -1392,7 +1525,7 @@ function calculatorFee(proposalproduct_id,billboard_id,price_int,name,xxcurrency
     price = parseInt(price_int) / 100;
 
 
-    let new_price = prompt("nuevo monto", price);
+    let new_price = prompt("nuevo monto", price);  //traduzir
 
     if (new_price > 0) {
 
@@ -1402,7 +1535,7 @@ function calculatorFee(proposalproduct_id,billboard_id,price_int,name,xxcurrency
         newPrice_int = parseInt(newPrice * 100);
         filters     = '&npc='+newPrice_int+'&pbid='+billboard_id+'&pppid='+proposalproduct_id;
 
-        if(confirm('Confirma el cambio de '+feeInput.value+'% ('+(formatter.format(price))+' para '+formatter.format(newPrice)+') en '+name)){
+        if(confirm('Confirma el cambio de '+feeInput.value+'% ('+(formatter.format(price))+' para '+formatter.format(newPrice)+') en '+name)){  //traduzir
             const requestURL = window.location.protocol+'//'+locat+'api/proposals/auth_proposalproduct_change_price.php?auth_api='+authApi+filters;
             //console.log(requestURL);
             const request = new XMLHttpRequest();
@@ -1432,12 +1565,12 @@ function changeStatus(proposalId,newStatus,oldStatus){
     if(newStatus != oldStatus){
         msg = '';
         if(oldStatus == 1){
-            msg = 'No es posible cambiar propuestas perdidas!';
+            msg = 'No es posible cambiar propuestas perdidas!'; //traduzir
             
         }
 
         if(oldStatus == 6){
-            msg = 'No es posible cambiar propuestas ya aprobadas!';
+            msg = 'No es posible cambiar propuestas ya aprobadas!';  //traduzir
         }
         if(msg != ''){
             alert(msg);
@@ -1456,7 +1589,7 @@ function changeStatus(proposalId,newStatus,oldStatus){
     if(newStatus != oldStatus){
         filters += '&newStatus='+newStatus+'&oldStatus='+oldStatus;
         const requestURL = window.location.protocol+'//'+locat+'api/proposals/auth_proposal_changeStatus.php?auth_api='+authApi+filters;   
-        console.log(requestURL);
+        //console.log(requestURL);
         const request = new XMLHttpRequest();
         request.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {

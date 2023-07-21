@@ -240,6 +240,7 @@ VALUES
 ('Verbal approval',90,'Verbal approval','Y',NOW(),NOW()),
 ('Approved',100,'Approved','Y',NOW(),NOW());
 
+
 #SALE MODELS
 CREATE TABLE IF NOT EXISTS salemodels (
 id VARCHAR(40) PRIMARY KEY NOT NULL,
@@ -640,8 +641,8 @@ VALUES
 (UUID(), 'lost', 'Lost', 'Perdido', 'Perdido', 'Y', NOW(), NOW()),
 (UUID(), 'sent', 'Sent', 'Enviada', 'Enviada', 'Y', NOW(), NOW()),
 (UUID(), 'in_negociation', 'In negociation', 'en negociación', 'Em negociação', 'Y', NOW(), NOW()),
-(UUID(), 'advanced_negociation', 'Advanced negociation', 'Negociación avanzada', 'Negociação Avançada', 'Y', NOW(), NOW()),
-(UUID(), 'verbal_approval', 'Verbal approval', 'Aprobación verbal', 'Aprovação verbal', 'Y', NOW(), NOW()),
+(UUID(), 'advanced negociation', 'Advanced negociation', 'Negociación avanzada', 'Negociação Avançada', 'Y', NOW(), NOW()),
+(UUID(), 'verbal approval', 'Verbal approval', 'Aprobación verbal', 'Aprovação verbal', 'Y', NOW(), NOW()),
 (UUID(), 'approved', 'Approved', 'Aprobado', 'Aprovado', 'Y', NOW(), NOW()),
 (UUID(), 'executive', 'Executive', 'Ejecutivo', 'Executivo', 'Y', NOW(), NOW()),
 (UUID(), 'january', 'January', 'Enero', 'Janeiro', 'Y', NOW(), NOW()),

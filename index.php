@@ -19,7 +19,7 @@ require_once('./components/items/input.php');
 require_once('./assets/lib/translation.php');
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <?php
 require_once('./components/header.main.php');
 
