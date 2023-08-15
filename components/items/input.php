@@ -1,4 +1,7 @@
 <?php
+ini_set('error_reporting', E_ALL);
+ini_set('display_errors', true);
+
 function inputSelect($table,$title,$where,$order,$selected){
     $authApi    = $_COOKIE['tk'];
     $protocol = strtolower(substr($_SERVER["SERVER_PROTOCOL"],0,strpos( $_SERVER["SERVER_PROTOCOL"],'/'))).'://';
@@ -245,8 +248,8 @@ function inputDropDownStyle($table,$where,$order,$selectedDescription,$selectedV
 
 function inputDropDownSearchStyle($table,$title,$where,$order,$selected){
     $authApi    = $_COOKIE['tk'];
-    $protocol = strtolower(substr($_SERVER["SERVER_PROTOCOL"],0,strpos( $_SERVER["SERVER_PROTOCOL"],'/'))).'://';
-    $url = $_SERVER['HTTP_HOST'];
+    $protocol   = strtolower(substr($_SERVER["SERVER_PROTOCOL"],0,strpos( $_SERVER["SERVER_PROTOCOL"],'/'))).'://';
+    $url        = $_SERVER['HTTP_HOST'];
     $groupby    = '0';
     $field      = $table;
     $find       = $field;
@@ -276,6 +279,17 @@ function inputDropDownSearchStyle($table,$title,$where,$order,$selected){
         $table  = 'billboard';
         $field  = 'colony';
         $groupby= '&groupby=colony';
+    }
+    if($table == 'product'){
+        $table  = 'product';
+        $field  = 'name';
+        $groupby= '';
+        $bring  = 'salemodel';
+    }
+    if($table == 'salemodel'){
+        $table  = 'salemodel';
+        $field  = 'name';
+        $groupby= '';
     }
     $fullUrl    = $protocol . $url;
     $authApi    = 'fsdf9ejfineuf3nf93493nf';
@@ -348,8 +362,6 @@ function inputDropDownSearchStyle($table,$title,$where,$order,$selected){
                 $name = $obj[$i]->id;
                 break;
             case 'billboard':
-                if(!is_null($obj[$i]->orderby))
-                    $className = " class='bold' ";
                 $id = $obj[$i]->$field;
                 $name = $obj[$i]->$field;
                 break;

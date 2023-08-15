@@ -1,4 +1,7 @@
 <?php
+ini_set('error_reporting', E_ALL);
+ini_set('display_errors', true);
+
 //REQUIRE GLOBAL conf
 require_once('../../database/.config');
 
@@ -16,7 +19,7 @@ if(array_key_exists('auth_api',$_REQUEST)){
     //if($localStorage == $_REQUEST['auth_api']){}
 
     // setting query
-    $columns = "(id) as uuid_full, name, description, is_active";
+    $columns = "(id) as uuid_full, code, name, description, is_active";
     $tableOrView    = "products";
     $orderBy        = "order by name";
   
@@ -29,14 +32,37 @@ if(array_key_exists('auth_api',$_REQUEST)){
         }
     }
     
-    if(array_key_exists('where',$_REQUEST)){
-        if($_REQUEST['where']!==''){
-            $jocker         = $_REQUEST['where'];
-            $filters        .= "AND $jocker";
+
+    if(array_key_exists('where',$_GET)){
+        if($_GET['where']!==''){
+            if($filters != '')
+                $filters .= " AND ( ";
+                
+            $multiWhere = explode("*|*",$_GET['where']);
+           // echo $multiWhere;
+            for($m=0; $m< count($multiWhere); $m++){
+                $wherers    = explode("***",$multiWhere[$m]);
+                if($m > 0)
+                    $filters .= " ) OR ( ";
+                for($i=0; $i< count($wherers); $i++){
+                    if($filters != '')
+                        $filters .= " AND ";
+                    else
+                        $filters .= " ( ";
+                    $jocker         = explode("|||",$wherers[$i]);
+                    $filters        .= " $jocker[0]='$jocker[1]'";
+                }
+            }
+            $filters .= " ) ";
         }
     }
 
-    $filters = "WHERE is_active='Y' ".$filters;
+
+    $filtered= "WHERE is_active='Y'"; 
+    if($filters != '')
+        $filters = "$filtered AND ( $filters )";
+
+    
     
 
 
