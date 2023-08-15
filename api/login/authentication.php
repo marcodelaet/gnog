@@ -68,10 +68,10 @@ if($rs){
         // Return Token to save on local Storage (JS)
         echo json_encode($rs);
     } else
-        echo '{"status":"error"}';
+        echo '{"status":"error","returning":"'.$numRows.' Rows"}';
 }
 else {
-    echo '{"status":"error"}';
+    echo '{"status":"error","returning":"script Error"}';
 }
 
 //close connection

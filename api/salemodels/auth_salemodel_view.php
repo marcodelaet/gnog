@@ -1,4 +1,7 @@
 <?php
+
+ini_set('error_reporting', E_ALL);
+ini_set('display_errors', true);
 //REQUIRE GLOBAL conf
 require_once('../../database/.config');
 
@@ -16,9 +19,10 @@ if(array_key_exists('auth_api',$_REQUEST)){
     //if($localStorage == $_REQUEST['auth_api']){}
 
     // setting query
-    $columns = "(id) as uuid_full, name, description, is_active";
-    $tableOrView    = "salemodels";
-    $orderBy        = "order by name";
+    
+    $columns        = "(sm.id) as uuid_full, (pd.id) as product_id, pd.code, pd.name as product_name, sm.name, sm.description, sm.is_active";
+    $tableOrView    = "products pd RIGHT JOIN salemodels sm ON pd.code in (sm.product_ids_rel)";
+    $orderBy        = "order by sm.name";
 
     // filters
     $filters                = '';
@@ -28,22 +32,82 @@ if(array_key_exists('auth_api',$_REQUEST)){
             $filters        .= "AND search like '%$jocker%'";
         }
     }
-    
-    if(array_key_exists('where',$_REQUEST)){
-        if($_REQUEST['where']!==''){
-            $jocker         = $_REQUEST['where'];
-            $filters        .= "AND $jocker";
+
+    if(array_key_exists('digyn',$_GET)){
+        $_GET['where'] = 'is_digital|||'.$_GET['digyn'].'***'.$_GET['where'];
+    }
+
+    $tableNick  = '';
+    if(array_key_exists('where',$_GET)){
+        if($_GET['where']!==''){
+            if($filters != '')
+                $filters .= " AND ( ";
+
+            $multiWhere = explode("*|*",$_GET['where']);
+           // echo $multiWhere;
+            for($m=0; $m< count($multiWhere); $m++){
+                $wherers    = explode("***",$multiWhere[$m]);
+                if($m > 0)
+                    $filters .= " ) OR ( ";
+                for($i=0; $i< count($wherers); $i++){
+                    $jocker         = explode("|||",$wherers[$i]);
+                    $tableNick = 'sm';
+                    $filtered = '';
+                    if($jocker[0] == 'is_digital'){
+                        if(strpos($tableOrView,' JOIN') > 0){
+                            $tableNick = 'sm.';
+                        }
+                        $filters        .= " $tableNick$jocker[0]='$jocker[1]'";
+                    }
+                   // echo substr($filters,-7,7)."<BR/>";
+                    if(($filters != '') && ((substr($filters,-8,8) != " ) OR ( ") && (substr($filters,-5,5) != " AND ")) && (substr($filters,-7,7) != " AND ( ")){
+                        $filtered = " ";
+                        if(($i==0) && (count($wherers)>1)){
+                            $filtered = " AND (( ";
+                        }
+                        $filters .= $filtered;// . "COUNT: ". count($wherers) ." i: $i / m: $m";
+                    }
+                   /* else{
+                        if($m>0)
+                            $filters .= " ( ";
+                    }*/
+
+                    if($jocker[0] == 'product_id'){
+                        if(strpos($tableOrView,' JOIN') > 0){
+                            $tableNick = 'pd.';
+                        }
+                        $jocker[0] = 'id';
+                    }
+                    if($jocker[1] == 'null'){
+                        $filters        .= " $tableNick$jocker[0] IS NULL";
+                    } else {
+                        if($jocker[0] != 'is_digital'){
+                            $filters        .= " $tableNick$jocker[0]='$jocker[1]'";
+                        }
+                    }
+                }
+            }
+            //echo '<br/><br/>CCCC: ' . count(explode("***",$multiWhere[0]));
+            if(count(explode("***",$multiWhere[0]))>1){
+                $filters .= " ) )";
+            }
         }
     }
-    
-    $filters = "WHERE is_active='Y' ".$filters;
+
+    $filtered= "WHERE is_active='Y'"; 
+    if(strpos($tableOrView,' JOIN') > 0){
+        $filtered= "WHERE sm.is_active='Y'"; 
+    }
+    if($filters != '')
+        $filters = "$filtered AND $filters";
+
     
 
 
     // Query creation
     $sql = "SELECT $columns FROM $tableOrView $filters $orderBy";
     // LIST data
-    //echo $sql;
+    //echo "<BR/>".$sql."<BR/>";
     $rs = $DB->getData($sql);
     $numRows = $DB->numRows($sql);
 

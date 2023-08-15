@@ -188,7 +188,7 @@ function handleSubmit(form) {
                     addProduct('['+product_id+']','['+salemodel_id+']','['+price+']',currency,'['+quantity+']','['+provider_id+']',proposal_id,'['+state_id+']','['+city_id+']','['+county_id+']','['+colony_id+']');
 
                     form.btnSave.innerHTML = "Save";
-                    window.location.href = '?pr=Li9wYWdlcy9wcm9wb3NhbHMvdGtwL2luZGV4LnBocA==';
+                    window.location.href = '?pr=Li9wYWdlcy9wcm9wb3NhbHMvZm9ybWVkaXQucGhw&ppid='+proposal_id;
                 }
                 else{
                     form.btnSave.innerHTML = "Saving...";
@@ -1316,18 +1316,18 @@ function refilterProductsType(typeInt){
     filters     = "&digyn=Y";
     if(typeInt == '0')
         filters     = "&digyn=N";
-
+        
     if(errors > 0){
 
     } else{
-        productList   = document.getElementById('div-selectProduct');
+        productList   = document.getElementById('div-selectproduct_0');
         const requestURL = window.location.protocol+'//'+locat+'api/'+submodule+'s/auth_'+submodule+'_list.php?auth_api='+authApi+filters;
         //console.log(requestURL);
         const request = new XMLHttpRequest();
         request.onreadystatechange = function() {
             html    = '<label for="product_id[]">Product</label>';
             html   += '<spam id="sproduct">'
-            html   += '<SELECT name="product_id[]" title="product_id" class="form-control" autocomplete="product_id"  required>';
+            html   += '<SELECT name="product_id[]" onchange="refilterSaleModel('+typeInt+',this.value)" title="product_id" class="form-control" autocomplete="product_id"  required>';
             if (this.readyState == 4 && this.status == 200) {
                 // Typical action to be performed when the document is ready:
                 obj = JSON.parse(request.responseText);
@@ -1355,10 +1355,10 @@ function refilterProductsType(typeInt){
         //request.responseType = 'json';
         request.send();
     }
-    refilterSaleModel(typeInt);
+    //refilterSaleModel(typeInt);
 }
 
-function refilterSaleModel(typeInt){
+function refilterSaleModel(typeInt,productCode){
     errors      = 0;
     authApi     = csrf_token;
     locat       = window.location.hostname;
@@ -1371,11 +1371,16 @@ function refilterSaleModel(typeInt){
     if(typeInt == '0')
         filters     = "&digyn=N";
 
+    if(productCode){
+        filters     += "&where=product_id|||"+productCode+"*|*product_id|||null";
+
+    }
+
     if(errors > 0){
 
     } else{
-        salemodelList   = document.getElementById('div-selectSaleModel');
-        const requestURL = window.location.protocol+'//'+locat+'api/'+submodule+'s/auth_'+submodule+'_list.php?auth_api='+authApi+filters;
+        salemodelList   = document.getElementById('div-selectsalemodel_0');
+        const requestURL = window.location.protocol+'//'+locat+'api/'+submodule+'s/auth_'+submodule+'_view.php?auth_api='+authApi+filters;
         //console.log(requestURL);
         const request = new XMLHttpRequest();
         request.onreadystatechange = function() {
@@ -1387,8 +1392,8 @@ function refilterSaleModel(typeInt){
                 obj = JSON.parse(request.responseText);
                 if( (obj.response != 'error') && (obj.response != 'ZERO_RETURN')){
                     html += '<OPTION value="0"/>Please, select Sale Model';
-                    for(var i=0;i < obj.length; i++){
-                        html += '<OPTION value="'+obj[i].uuid_full+'"/>'+obj[i].name;
+                    for(var i=0;i < obj['data'].length; i++){
+                        html += '<OPTION value="'+obj['data'][i].uuid_full+'"/>'+obj['data'][i].name;
                     }
                     html    += '</SELECT>';
                     html    += '</spam>';

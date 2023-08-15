@@ -177,6 +177,7 @@ updated_at DATETIME NOT NULL
 # PRODUCTS
 CREATE TABLE IF NOT EXISTS products (
 id VARCHAR(40) PRIMARY KEY NOT NULL,
+code INT AUTO_INCREMENT UNIQUE KEY NOT NULL,
 name VARCHAR(40) NOT NULL,
 description TEXT,
 is_digital ENUM('N','Y') NOT NULL,
@@ -244,6 +245,7 @@ VALUES
 #SALE MODELS
 CREATE TABLE IF NOT EXISTS salemodels (
 id VARCHAR(40) PRIMARY KEY NOT NULL,
+product_ids_rel VARCHAR(20),
 NAME VARCHAR(40) NOT NULL,
 DESCRIPTION TEXT,
 is_digital ENUM('N','Y') NOT NULL,
@@ -305,6 +307,78 @@ VALUES
 ((UUID()),'Activacion Gym','Activacion Gym','N','Y',NOW(),NOW()),
 ((UUID()),'Pantallas','Pantallas','N','Y',NOW(),NOW()),
 ((UUID()),'Producción','Producción','N','Y',NOW(),NOW());
+
+
+INSERT INTO salemodels (id,NAME,DESCRIPTION,is_digital,is_active,created_at,updated_at)  VALUES ((UUID()),'1/4 DE PAGINA','1/4 DE PAGINA','N','Y',NOW(),NOW());
+INSERT INTO salemodels (id,NAME,DESCRIPTION,is_digital,is_active,created_at,updated_at)  VALUES ((UUID()),'2DA Y 3RA PAGINA DE FORROS ','2DA Y 3RA PAGINA DE FORROS ','N','Y',NOW(),NOW());
+INSERT INTO salemodels (id,NAME,DESCRIPTION,is_digital,is_active,created_at,updated_at)  VALUES ((UUID()),'CINTILLO ','CINTILLO ','N','Y',NOW(),NOW());
+INSERT INTO salemodels (id,NAME,DESCRIPTION,is_digital,is_active,created_at,updated_at)  VALUES ((UUID()),'ESQUELA ','ESQUELA ','N','Y',NOW(),NOW());
+INSERT INTO salemodels (id,NAME,DESCRIPTION,is_digital,is_active,created_at,updated_at)  VALUES ((UUID()),'MEDIA PAGINA','MEDIA PAGINA','N','Y',NOW(),NOW());
+INSERT INTO salemodels (id,NAME,DESCRIPTION,is_digital,is_active,created_at,updated_at)  VALUES ((UUID()),'PAGINA CENTRAL ','PAGINA CENTRAL ','N','Y',NOW(),NOW());
+INSERT INTO salemodels (id,NAME,DESCRIPTION,is_digital,is_active,created_at,updated_at)  VALUES ((UUID()),'ROBA PAGINA','ROBA PAGINA','N','Y',NOW(),NOW());
+INSERT INTO salemodels (id,NAME,DESCRIPTION,is_digital,is_active,created_at,updated_at)  VALUES ((UUID()),'10 seconds Spot','10 seconds Spot','N','Y',NOW(),NOW());
+INSERT INTO salemodels (id,NAME,DESCRIPTION,is_digital,is_active,created_at,updated_at)  VALUES ((UUID()),'MENCION ','MENCION ','N','Y',NOW(),NOW());
+INSERT INTO salemodels (id,NAME,DESCRIPTION,is_digital,is_active,created_at,updated_at)  VALUES ((UUID()),'ACCIONES VIRTUALES ','ACCIONES VIRTUALES ','N','Y',NOW(),NOW());
+INSERT INTO salemodels (id,NAME,DESCRIPTION,is_digital,is_active,created_at,updated_at)  VALUES ((UUID()),'ACCIONES ESPECIALES ','ACCIONES ESPECIALES ','N','Y',NOW(),NOW());
+INSERT INTO salemodels (id,NAME,DESCRIPTION,is_digital,is_active,created_at,updated_at)  VALUES ((UUID()),'CAPSULA','CAPSULA','N','Y',NOW(),NOW());
+INSERT INTO salemodels (id,NAME,DESCRIPTION,is_digital,is_active,created_at,updated_at)  VALUES ((UUID()),'PATROCINIO ','PATROCINIO ','N','Y',NOW(),NOW());
+INSERT INTO salemodels (id,NAME,DESCRIPTION,is_digital,is_active,created_at,updated_at)  VALUES ((UUID()),'SECCIONES ','SECCIONES ','N','Y',NOW(),NOW());
+INSERT INTO salemodels (id,NAME,DESCRIPTION,is_digital,is_active,created_at,updated_at)  VALUES ((UUID()),'SPOT','SPOT','N','Y',NOW(),NOW());
+INSERT INTO salemodels (id,NAME,DESCRIPTION,is_digital,is_active,created_at,updated_at)  VALUES ((UUID()),'ESPEJO INTERACTIVO','ESPEJO INTERACTIVO','N','Y',NOW(),NOW());
+INSERT INTO salemodels (id,NAME,DESCRIPTION,is_digital,is_active,created_at,updated_at)  VALUES ((UUID()),'Pantalla Digital','Pantalla Digital','N','Y',NOW(),NOW());
+INSERT INTO salemodels (id,NAME,DESCRIPTION,is_digital,is_active,created_at,updated_at)  VALUES ((UUID()),'VITRAL ','VITRAL ','N','Y',NOW(),NOW());
+INSERT INTO salemodels (id,NAME,DESCRIPTION,is_digital,is_active,created_at,updated_at)  VALUES ((UUID()),'KIOSCO','KIOSCO','N','Y',NOW(),NOW());
+INSERT INTO salemodels (id,NAME,DESCRIPTION,is_digital,is_active,created_at,updated_at)  VALUES ((UUID()),'MUPIS','MUPIS','N','Y',NOW(),NOW());
+INSERT INTO salemodels (id,NAME,DESCRIPTION,is_digital,is_active,created_at,updated_at)  VALUES ((UUID()),'Valla Digital','Valla Digital','N','Y',NOW(),NOW());
+
+UPDATE salemodels SET product_ids_rel='27,28' WHERE LOWER(name) = LOWER('ACTIVACION');
+UPDATE salemodels SET product_ids_rel='24,26' WHERE LOWER(name) = LOWER('CINTILLO ');
+UPDATE salemodels SET product_ids_rel='25,26' WHERE LOWER(name) = LOWER('MENCION ');
+UPDATE salemodels SET product_ids_rel='27,28,29' WHERE LOWER(name) = LOWER('MURO ');
+UPDATE salemodels SET product_ids_rel='27,28,29' WHERE LOWER(name) = LOWER('Pantalla Digital');
+UPDATE salemodels SET product_ids_rel='25,26' WHERE LOWER(name) = LOWER('PATROCINIO ');
+UPDATE salemodels SET product_ids_rel='24' WHERE LOWER(name) = LOWER('1/4 DE PAGINA');
+UPDATE salemodels SET product_ids_rel='25' WHERE LOWER(name) = LOWER('10 seconds Spot');
+UPDATE salemodels SET product_ids_rel='25' WHERE LOWER(name) = LOWER('20 seconds Spot');
+UPDATE salemodels SET product_ids_rel='24' WHERE LOWER(name) = LOWER('2DA Y 3RA PAGINA DE FORROS ');
+UPDATE salemodels SET product_ids_rel='25' WHERE LOWER(name) = LOWER('30 seconds Spot');
+UPDATE salemodels SET product_ids_rel='26' WHERE LOWER(name) = LOWER('ACCIOENES VIRTUALES ');
+UPDATE salemodels SET product_ids_rel='26' WHERE LOWER(name) = LOWER('ACCIONES ESPECIALES ');
+UPDATE salemodels SET product_ids_rel='29' WHERE LOWER(name) = LOWER('ACTIVACION EN CALLE ');
+UPDATE salemodels SET product_ids_rel='24' WHERE LOWER(name) = LOWER('BACK COVER');
+UPDATE salemodels SET product_ids_rel='29' WHERE LOWER(name) = LOWER('BAJO PUENTE');
+UPDATE salemodels SET product_ids_rel='27' WHERE LOWER(name) = LOWER('BANNER CAMINADORA ');
+UPDATE salemodels SET product_ids_rel='26' WHERE LOWER(name) = LOWER('CAPSULA');
+UPDATE salemodels SET product_ids_rel='29' WHERE LOWER(name) = LOWER('CARTELERA');
+UPDATE salemodels SET product_ids_rel='29' WHERE LOWER(name) = LOWER('CARTELERA DIGITAL ');
+UPDATE salemodels SET product_ids_rel='24' WHERE LOWER(name) = LOWER('DOUBLE PAGE');
+UPDATE salemodels SET product_ids_rel='27' WHERE LOWER(name) = LOWER('ESPEJO EN BAÑOS ');
+UPDATE salemodels SET product_ids_rel='27' WHERE LOWER(name) = LOWER('ESPEJO INTERACTIVO');
+UPDATE salemodels SET product_ids_rel='24' WHERE LOWER(name) = LOWER('ESQUELA ');
+UPDATE salemodels SET product_ids_rel='24' WHERE LOWER(name) = LOWER('FRONT PAGE');
+UPDATE salemodels SET product_ids_rel='29' WHERE LOWER(name) = LOWER('KIOSCO');
+UPDATE salemodels SET product_ids_rel='28' WHERE LOWER(name) = LOWER('MALL RACK');
+UPDATE salemodels SET product_ids_rel='28' WHERE LOWER(name) = LOWER('MAMPARA');
+UPDATE salemodels SET product_ids_rel='24' WHERE LOWER(name) = LOWER('MEDIA PAGINA');
+UPDATE salemodels SET product_ids_rel='29' WHERE LOWER(name) = LOWER('MUPIS');
+UPDATE salemodels SET product_ids_rel='24' WHERE LOWER(name) = LOWER('PAGINA CENTRAL ');
+UPDATE salemodels SET product_ids_rel='27' WHERE LOWER(name) = LOWER('PANTALLAS');
+UPDATE salemodels SET product_ids_rel='28' WHERE LOWER(name) = LOWER('PENDONES');
+UPDATE salemodels SET product_ids_rel='28' WHERE LOWER(name) = LOWER('PLUMA ESTACIONAMIENTO ');
+UPDATE salemodels SET product_ids_rel='29' WHERE LOWER(name) = LOWER('PUBLIANDANTES ');
+UPDATE salemodels SET product_ids_rel='29' WHERE LOWER(name) = LOWER('PUBLICIDAD EN BAR');
+UPDATE salemodels SET product_ids_rel='29' WHERE LOWER(name) = LOWER('RESTAURANTES ');
+UPDATE salemodels SET product_ids_rel='24' WHERE LOWER(name) = LOWER('ROBA PAGINA');
+UPDATE salemodels SET product_ids_rel='26' WHERE LOWER(name) = LOWER('ROBA PANTALLA ');
+UPDATE salemodels SET product_ids_rel='26' WHERE LOWER(name) = LOWER('SECCIONES ');
+UPDATE salemodels SET product_ids_rel='24' WHERE LOWER(name) = LOWER('SIMPLE PAGE');
+UPDATE salemodels SET product_ids_rel='26' WHERE LOWER(name) = LOWER('SPOT');
+UPDATE salemodels SET product_ids_rel='29' WHERE LOWER(name) = LOWER('Valla Digital');
+UPDATE salemodels SET product_ids_rel='29' WHERE LOWER(name) = LOWER('VALLAS FIJAS ');
+UPDATE salemodels SET product_ids_rel='29' WHERE LOWER(name) = LOWER('VALLAS MOVILES ');
+UPDATE salemodels SET product_ids_rel='28' WHERE LOWER(name) = LOWER('VITRAL ');
+UPDATE salemodels SET product_ids_rel='28' WHERE LOWER(name) = LOWER('VITRAL ESCALERA ');
+
 
 
 # PROVIDERS
@@ -683,6 +757,11 @@ INSERT INTO translates
 (id, code_str, text_eng, text_esp, text_ptbr, is_active, created_at, updated_at)
 VALUES
 (UUID(), 'add', 'New', 'Añadir', 'Adicionar', 'Y', NOW(), NOW());
+
+INSERT INTO translates 
+(id, code_str, text_eng, text_esp, text_ptbr, is_active, created_at, updated_at)
+VALUES
+(UUID(), 'continue', 'continue', 'continuar', 'continuar', 'Y', NOW(), NOW());
 
 
 INSERT INTO translates 

@@ -19,7 +19,8 @@ function handleLogin(form) {
             // Typical action to be performed when the document is ready:
             obj = JSON.parse(request.responseText);
             if(obj.status === 'error'){
-                alert('username or password incorrect!');
+                var returning=obj.returning;
+                alert('username or password incorrect!\nError Code: '+returning);
                 form.password.value = '';
             }
             else{

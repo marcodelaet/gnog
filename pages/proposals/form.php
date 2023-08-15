@@ -1,4 +1,8 @@
 <?php
+// ini_set('error_reporting', E_ALL);
+// ini_set('display_errors', true);
+
+
 $moduleName = 'Proposal';
 
 $mexico_id = '57b71c86-b204-11ed-997f-008cfa5abdac';
@@ -204,27 +208,21 @@ if('1' == '2'){
                                 </div>
                                 <br/>
                                 <div class="form-row">
-                                    <div class="col" id="div-selectProduct">
+                                    <div class="col-2" id="div-selectproduct_0">
                                         <label for="product_id[]"><?=translateText('product');?></label>
                                         <spam id="sproduct">
-                                            <select name="product_id[]" title="product_id" class="form-control" autocomplete="product_id" required>
-                                                <?=inputSelect('product','Product','is_digital="N"','name','')?>
+                                            <select name="product_id[]" id="selectproduct_0" title="product_id" class="form-control" autocomplete="product_id" onchange="refilterSaleModel(document.getElementById('digital_product').value,this.value)" required>
+                                                <?=inputSelect('product',translateText('product'),'is_digital|||N','name','')?>
                                             </select>
                                         </spam>
-                                        <div class="invalid-feedback">
-                                            Please choose a Product option.
-                                        </div>
                                     </div>
-                                    <div class="col" id="div-selectSaleModel">
+                                    <div class="col" id="div-selectsalemodel_0">
                                         <label for="salemodel_id[]"><?=translateText('sale_model');?></label>
                                         <spam id="ssalemodel">
                                             <select name="salemodel_id[]" title="salemodel_id" class="form-control" autocomplete="salemodel_id" >
-                                                <?=inputSelect('salemodel','Sale model','is_digital="N"','name','')?>
+                                                <?=inputSelect('salemodel',translateText('sale_model'),'is_digital|||N','name','')?>
                                             </select>
                                         </spam>
-                                        <div class="invalid-feedback">
-                                            Please choose a Sale model option.
-                                        </div>
                                     </div>
                                 </div>
                                 <div class="form-row" >
@@ -333,7 +331,7 @@ if('1' == '2'){
                 </div>
             </div>
             <div class="inputs-button-container">
-                <button class="button" name="btnSave" type="button" onClick="handleSubmit(<?=strtolower($moduleName)?>)" ><?=translateText('save');?></button>
+                <button class="button" name="btnSave" type="button" onClick="handleSubmit(<?=strtolower($moduleName)?>)" ><?=ucfirst(translateText('continue'));?></button>
             </div>
         </form>
       <?php

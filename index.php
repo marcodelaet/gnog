@@ -25,6 +25,10 @@ require_once('./components/header.main.php');
 
 ?>
   <body <?php if($_REQUEST['pr'] == base64_encode('./pages/maps/index.php')) { ?> onload="theMap('<?=$_REQUEST['smid']?>','<?=$_REQUEST['state']?>','<?=$_REQUEST['city']?>','<?=$_REQUEST['county']?>','<?=$_REQUEST['colony']?>','<?=$_REQUEST['pppid']?>');" <?php } ?>>
+    <!-- Google Tag Manager (noscript) -->
+      <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WJV6X9VN"
+      height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
     <noscript>You need to enable JavaScript to run this app.</noscript>
 <?php
 
