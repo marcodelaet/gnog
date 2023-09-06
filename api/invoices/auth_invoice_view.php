@@ -25,8 +25,8 @@ if(array_key_exists('auth_api',$_REQUEST)){
     }
 
     $offSet         = 0;
-    $numberOfRegistries = 500;
-    $columns        = "invoice_id, provider_id, provider_name, invoice_number, invoice_amount_int, invoice_amount, invoice_amount_paid_int, invoice_amount_paid, invoice_amount_currency, DATE_FORMAT(invoice_last_payment_date, '%Y/%m/%d') as invoice_last_payment_date, invoice_month, invoice_year, order_number, invoice_status, DATE_FORMAT(invoice_updated_at, '%Y/%m/%d') as invoice_updated_at, file_location, file_name, file_type, user_email, offer_name, product_name, salemodel_name";
+    $numberOfRegistries = 25;
+    $columns        = "invoice_id, provider_id, provider_name, invoice_number, invoice_amount_int, invoice_amount, invoice_amount_paid_int, invoice_amount_paid, invoice_amount_currency, DATE_FORMAT(invoice_last_payment_date, '%Y/%m/%d') as invoice_last_payment_date, invoice_month, invoice_year, order_number, invoice_status, DATE_FORMAT(invoice_updated_at, '%Y/%m/%d') as invoice_updated_at, file_location, file_name, file_type, user_email, offer_name, product_name, salemodel_name, CONCAT(product_name,salemodel_name,offer_name,invoice_status,invoice_number,provider_name) as search";
     $tableOrView    = "view_invoices_files";
     $orderBy        = "ORDER BY concat(invoice_year,invoice_month) DESC";
     
@@ -98,11 +98,15 @@ if(array_key_exists('auth_api',$_REQUEST)){
 
     // Response JSON
     header('Content-type: application/json'); 
-    if($rs){
-        echo json_encode(["result" => "OK","data" => $rs, "rows" => "$rsNumRows"]);
-    }
-    else {
-        echo json_encode(["result" => "ERROR"]);
+    if($rsNumRows > 0){
+        $totalPages  = intval($rsNumRows / $numberOfRegistries)+1;
+        if($rs){
+            echo json_encode(["response" => "OK","data" => $rs, "rows" => $rsNumRows, "pages" => "$totalPages"]);
+        } else {
+            echo json_encode(["response" => "ERROR"]);
+        }  
+    } else {
+        echo json_encode(["response" => "ZERO_RETURN", "rows" => $rsNumRows, "pages" => "0"]);
     }
 }
 
