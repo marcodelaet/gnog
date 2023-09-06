@@ -308,6 +308,7 @@ VALUES
 ((UUID()),'Pantallas','Pantallas','N','Y',NOW(),NOW()),
 ((UUID()),'Producción','Producción','N','Y',NOW(),NOW());
 
+SELECT * FROM `salemodels` WHERE is_digital = 'N' AND is_active = 'Y';
 
 INSERT INTO salemodels (id,NAME,DESCRIPTION,is_digital,is_active,created_at,updated_at)  VALUES ((UUID()),'1/4 DE PAGINA','1/4 DE PAGINA','N','Y',NOW(),NOW());
 INSERT INTO salemodels (id,NAME,DESCRIPTION,is_digital,is_active,created_at,updated_at)  VALUES ((UUID()),'2DA Y 3RA PAGINA DE FORROS ','2DA Y 3RA PAGINA DE FORROS ','N','Y',NOW(),NOW());
@@ -331,54 +332,68 @@ INSERT INTO salemodels (id,NAME,DESCRIPTION,is_digital,is_active,created_at,upda
 INSERT INTO salemodels (id,NAME,DESCRIPTION,is_digital,is_active,created_at,updated_at)  VALUES ((UUID()),'MUPIS','MUPIS','N','Y',NOW(),NOW());
 INSERT INTO salemodels (id,NAME,DESCRIPTION,is_digital,is_active,created_at,updated_at)  VALUES ((UUID()),'Valla Digital','Valla Digital','N','Y',NOW(),NOW());
 
-UPDATE salemodels SET product_ids_rel='27,28' WHERE LOWER(name) = LOWER('ACTIVACION');
-UPDATE salemodels SET product_ids_rel='24,26' WHERE LOWER(name) = LOWER('CINTILLO ');
-UPDATE salemodels SET product_ids_rel='25,26' WHERE LOWER(name) = LOWER('MENCION ');
-UPDATE salemodels SET product_ids_rel='27,28,29' WHERE LOWER(name) = LOWER('MURO ');
-UPDATE salemodels SET product_ids_rel='27,28,29' WHERE LOWER(name) = LOWER('Pantalla Digital');
-UPDATE salemodels SET product_ids_rel='25,26' WHERE LOWER(name) = LOWER('PATROCINIO ');
-UPDATE salemodels SET product_ids_rel='24' WHERE LOWER(name) = LOWER('1/4 DE PAGINA');
-UPDATE salemodels SET product_ids_rel='25' WHERE LOWER(name) = LOWER('10 seconds Spot');
-UPDATE salemodels SET product_ids_rel='25' WHERE LOWER(name) = LOWER('20 seconds Spot');
-UPDATE salemodels SET product_ids_rel='24' WHERE LOWER(name) = LOWER('2DA Y 3RA PAGINA DE FORROS ');
-UPDATE salemodels SET product_ids_rel='25' WHERE LOWER(name) = LOWER('30 seconds Spot');
-UPDATE salemodels SET product_ids_rel='26' WHERE LOWER(name) = LOWER('ACCIOENES VIRTUALES ');
-UPDATE salemodels SET product_ids_rel='26' WHERE LOWER(name) = LOWER('ACCIONES ESPECIALES ');
-UPDATE salemodels SET product_ids_rel='29' WHERE LOWER(name) = LOWER('ACTIVACION EN CALLE ');
-UPDATE salemodels SET product_ids_rel='24' WHERE LOWER(name) = LOWER('BACK COVER');
-UPDATE salemodels SET product_ids_rel='29' WHERE LOWER(name) = LOWER('BAJO PUENTE');
-UPDATE salemodels SET product_ids_rel='27' WHERE LOWER(name) = LOWER('BANNER CAMINADORA ');
-UPDATE salemodels SET product_ids_rel='26' WHERE LOWER(name) = LOWER('CAPSULA');
-UPDATE salemodels SET product_ids_rel='29' WHERE LOWER(name) = LOWER('CARTELERA');
-UPDATE salemodels SET product_ids_rel='29' WHERE LOWER(name) = LOWER('CARTELERA DIGITAL ');
-UPDATE salemodels SET product_ids_rel='24' WHERE LOWER(name) = LOWER('DOUBLE PAGE');
-UPDATE salemodels SET product_ids_rel='27' WHERE LOWER(name) = LOWER('ESPEJO EN BAÑOS ');
-UPDATE salemodels SET product_ids_rel='27' WHERE LOWER(name) = LOWER('ESPEJO INTERACTIVO');
-UPDATE salemodels SET product_ids_rel='24' WHERE LOWER(name) = LOWER('ESQUELA ');
-UPDATE salemodels SET product_ids_rel='24' WHERE LOWER(name) = LOWER('FRONT PAGE');
-UPDATE salemodels SET product_ids_rel='29' WHERE LOWER(name) = LOWER('KIOSCO');
-UPDATE salemodels SET product_ids_rel='28' WHERE LOWER(name) = LOWER('MALL RACK');
-UPDATE salemodels SET product_ids_rel='28' WHERE LOWER(name) = LOWER('MAMPARA');
-UPDATE salemodels SET product_ids_rel='24' WHERE LOWER(name) = LOWER('MEDIA PAGINA');
-UPDATE salemodels SET product_ids_rel='29' WHERE LOWER(name) = LOWER('MUPIS');
-UPDATE salemodels SET product_ids_rel='24' WHERE LOWER(name) = LOWER('PAGINA CENTRAL ');
-UPDATE salemodels SET product_ids_rel='27' WHERE LOWER(name) = LOWER('PANTALLAS');
-UPDATE salemodels SET product_ids_rel='28' WHERE LOWER(name) = LOWER('PENDONES');
-UPDATE salemodels SET product_ids_rel='28' WHERE LOWER(name) = LOWER('PLUMA ESTACIONAMIENTO ');
-UPDATE salemodels SET product_ids_rel='29' WHERE LOWER(name) = LOWER('PUBLIANDANTES ');
-UPDATE salemodels SET product_ids_rel='29' WHERE LOWER(name) = LOWER('PUBLICIDAD EN BAR');
-UPDATE salemodels SET product_ids_rel='29' WHERE LOWER(name) = LOWER('RESTAURANTES ');
-UPDATE salemodels SET product_ids_rel='24' WHERE LOWER(name) = LOWER('ROBA PAGINA');
-UPDATE salemodels SET product_ids_rel='26' WHERE LOWER(name) = LOWER('ROBA PANTALLA ');
-UPDATE salemodels SET product_ids_rel='26' WHERE LOWER(name) = LOWER('SECCIONES ');
-UPDATE salemodels SET product_ids_rel='24' WHERE LOWER(name) = LOWER('SIMPLE PAGE');
-UPDATE salemodels SET product_ids_rel='26' WHERE LOWER(name) = LOWER('SPOT');
-UPDATE salemodels SET product_ids_rel='29' WHERE LOWER(name) = LOWER('Valla Digital');
-UPDATE salemodels SET product_ids_rel='29' WHERE LOWER(name) = LOWER('VALLAS FIJAS ');
-UPDATE salemodels SET product_ids_rel='29' WHERE LOWER(name) = LOWER('VALLAS MOVILES ');
-UPDATE salemodels SET product_ids_rel='28' WHERE LOWER(name) = LOWER('VITRAL ');
-UPDATE salemodels SET product_ids_rel='28' WHERE LOWER(name) = LOWER('VITRAL ESCALERA ');
+UPDATE salemodels SET is_digital='N', product_ids_rel='24' WHERE LOWER(name) = LOWER('1/4 DE PAGINA');
+UPDATE salemodels SET is_digital='N', product_ids_rel='25' WHERE LOWER(name) = LOWER('10 SECONDS SPOT');
+UPDATE salemodels SET is_digital='N', product_ids_rel='25' WHERE LOWER(name) = LOWER('20 SECONDS SPOT');
+UPDATE salemodels SET is_digital='N', product_ids_rel='24' WHERE LOWER(name) = LOWER('2DA Y 3RA PAGINA DE FORROS ');
+UPDATE salemodels SET is_digital='N', product_ids_rel='25' WHERE LOWER(name) = LOWER('30 SECONDS SPOT');
+UPDATE salemodels SET is_digital='N', product_ids_rel='26' WHERE LOWER(name) = LOWER('ACCIONES ESPECIALES ');
+UPDATE salemodels SET is_digital='N', product_ids_rel='26' WHERE LOWER(name) = LOWER('ACCIONES VIRTUALES ');
+UPDATE salemodels SET is_digital='N', product_ids_rel='27,28' WHERE LOWER(name) = LOWER('ACTIVACION ');
+UPDATE salemodels SET is_digital='N', product_ids_rel='29' WHERE LOWER(name) = LOWER('ACTIVACION EN CALLE ');
+UPDATE salemodels SET is_digital='N', product_ids_rel='29' WHERE LOWER(name) = LOWER('ARCO');
+UPDATE salemodels SET is_digital='N', product_ids_rel='24' WHERE LOWER(name) = LOWER('BACK COVER');
+UPDATE salemodels SET is_digital='N', product_ids_rel='29' WHERE LOWER(name) = LOWER('BAJO PUENTE');
+UPDATE salemodels SET is_digital='N', product_ids_rel='27' WHERE LOWER(name) = LOWER('BANNER CAMINADORA ');
+UPDATE salemodels SET is_digital='N', product_ids_rel='26' WHERE LOWER(name) = LOWER('CAPSULA');
+UPDATE salemodels SET is_digital='N', product_ids_rel='29' WHERE LOWER(name) = LOWER('CARTELERA');
+UPDATE salemodels SET is_digital='N', product_ids_rel='29' WHERE LOWER(name) = LOWER('CASETA');
+UPDATE salemodels SET is_digital='N', product_ids_rel='24,26' WHERE LOWER(name) = LOWER('CINTILLO ');
+UPDATE salemodels SET is_digital='N', product_ids_rel='29' WHERE LOWER(name) = LOWER('COLUMNA');
+UPDATE salemodels SET is_digital='N', product_ids_rel='24' WHERE LOWER(name) = LOWER('DOUBLE PAGE');
+UPDATE salemodels SET is_digital='N', product_ids_rel='27' WHERE LOWER(name) = LOWER('ESPEJO EN BAÑOS ');
+UPDATE salemodels SET is_digital='N', product_ids_rel='27' WHERE LOWER(name) = LOWER('ESPEJO INTERACTIVO');
+UPDATE salemodels SET is_digital='N', product_ids_rel='24' WHERE LOWER(name) = LOWER('ESQUELA ');
+UPDATE salemodels SET is_digital='N', product_ids_rel='29' WHERE LOWER(name) = LOWER('ESTRUCTURA');
+UPDATE salemodels SET is_digital='N', product_ids_rel='29' WHERE LOWER(name) = LOWER('ESTRUCTURA DE PISO');
+UPDATE salemodels SET is_digital='N', product_ids_rel='24' WHERE LOWER(name) = LOWER('FRONT PAGE');
+UPDATE salemodels SET is_digital='N', product_ids_rel='28' WHERE LOWER(name) = LOWER('MALL RACK');
+UPDATE salemodels SET is_digital='N', product_ids_rel='28' WHERE LOWER(name) = LOWER('MAMPARA');
+UPDATE salemodels SET is_digital='N', product_ids_rel='24' WHERE LOWER(name) = LOWER('MEDIA PAGINA');
+UPDATE salemodels SET is_digital='N', product_ids_rel='25,26' WHERE LOWER(name) = LOWER('MENCION ');
+INSERT INTO salemodels (id,product_ids_rel,NAME,DESCRIPTION,is_digital,is_active,created_at,updated_at)  VALUES ((UUID()),' 29','MULTIFUNCIONAL','MULTIFUNCIONAL','N','Y',NOW(),NOW());
+UPDATE salemodels SET is_digital='N', product_ids_rel='29' WHERE LOWER(name) = LOWER('MUPI');
+UPDATE salemodels SET is_digital='N', product_ids_rel='27,28,29' WHERE LOWER(name) = LOWER('MURO ');
+UPDATE salemodels SET is_digital='N', product_ids_rel='24' WHERE LOWER(name) = LOWER('PAGINA CENTRAL ');
+UPDATE salemodels SET is_digital='N', product_ids_rel='27,29' WHERE LOWER(name) = LOWER('PANTALLA');
+UPDATE salemodels SET is_digital='N', product_ids_rel='29' WHERE LOWER(name) = LOWER('PARABUS');
+UPDATE salemodels SET is_digital='N', product_ids_rel='25,26' WHERE LOWER(name) = LOWER('PATROCINIO ');
+UPDATE salemodels SET is_digital='N', product_ids_rel='28' WHERE LOWER(name) = LOWER('PENDONES');
+UPDATE salemodels SET is_digital='N', product_ids_rel='28' WHERE LOWER(name) = LOWER('PLUMA ESTACIONAMIENTO ');
+UPDATE salemodels SET is_digital='N', product_ids_rel='29' WHERE LOWER(name) = LOWER('PUBLIANDANTES ');
+UPDATE salemodels SET is_digital='N', product_ids_rel='29' WHERE LOWER(name) = LOWER('PUBLICIDAD EN BAR');
+UPDATE salemodels SET is_digital='N', product_ids_rel='29' WHERE LOWER(name) = LOWER('PUENTE');
+UPDATE salemodels SET is_digital='N', product_ids_rel='29' WHERE LOWER(name) = LOWER('PUENTE PEATONAL');
+UPDATE salemodels SET is_digital='N', product_ids_rel='29' WHERE LOWER(name) = LOWER('PUENTE VEHICULAR');
+UPDATE salemodels SET is_digital='N', product_ids_rel='29' WHERE LOWER(name) = LOWER('RELOJ DIGITAL');
+UPDATE salemodels SET is_digital='N', product_ids_rel='29' WHERE LOWER(name) = LOWER('RESTAURANTES ');
+UPDATE salemodels SET is_digital='N', product_ids_rel='24' WHERE LOWER(name) = LOWER('ROBA PAGINA');
+INSERT INTO salemodels (id,product_ids_rel,NAME,DESCRIPTION,is_digital,is_active,created_at,updated_at)  VALUES ((UUID()),' 26','ROBA PANTALLA ','ROBA PANTALLA ','N','Y',NOW(),NOW());
+UPDATE salemodels SET is_digital='N', product_ids_rel='26' WHERE LOWER(name) = LOWER('SECCIONES ');
+UPDATE salemodels SET is_digital='N', product_ids_rel='24' WHERE LOWER(name) = LOWER('SIMPLE PAGE');
+UPDATE salemodels SET is_digital='N', product_ids_rel='26' WHERE LOWER(name) = LOWER('SPOT');
+INSERT INTO salemodels (id,product_ids_rel,NAME,DESCRIPTION,is_digital,is_active,created_at,updated_at)  VALUES ((UUID()),' 29','UNIPOLAR','UNIPOLAR','N','Y',NOW(),NOW());
+UPDATE salemodels SET is_digital='N', product_ids_rel='29' WHERE LOWER(name) = LOWER('VALLA ');
+UPDATE salemodels SET is_digital='N', product_ids_rel='29' WHERE LOWER(name) = LOWER('VALLA DIGITAL ');
+UPDATE salemodels SET name='VALLA MOVIL',description='VALLA MOVIL', is_digital='N', product_ids_rel='29' WHERE LOWER(name) = LOWER('Vallas Moviles ');
+UPDATE salemodels SET is_digital='N', product_ids_rel='28' WHERE LOWER(name) = LOWER('VITRAL ');
+UPDATE salemodels SET is_digital='N', product_ids_rel='28' WHERE LOWER(name) = LOWER('VITRAL ESCALERA ');
 
+UPDATE salemodels SET is_active = 'N' WHERE (is_digital = 'N' AND (product_ids_rel ='' OR product_ids_rel IS NULL)) AND name <> 'Producción';
+
+SELECT p.name as Producto, sm.name as `Modelo de venta`, sm.product_ids_rel as codigos FROM products p RIGHT JOIN salemodels sm ON p.code IN (sm.product_ids_rel) WHERE sm.is_digital = 'N' AND sm.is_active = 'Y' ORDER BY p.name, sm.name LIMIT 500
+
+INSERT INTO productxsalemodels (id, product_id, salemodel_id, is_digital, is_active, created_at, updated_at) VALUES (id,'b896f4b6-cd6c-11ec-a3eb-008cfa5abdac','1/4 DE PAGINA','N','Y', now(), now())
 
 
 # PROVIDERS
@@ -391,6 +406,95 @@ is_active ENUM('N','Y') NOT NULL,
 created_at DATETIME NOT NULL,
 updated_at DATETIME NOT NULL
 );
+
+# PRODUCTXSALEMODELS
+CREATE TABLE IF NOT EXISTS productxsalemodels (
+id VARCHAR(40) PRIMARY KEY NOT NULL,
+product_id VARCHAR(40) NOT NULL,
+salemodel_id VARCHAR(40) NOT NULL,
+is_active ENUM('N','Y') NOT NULL,
+created_at DATETIME NOT NULL,
+updated_at DATETIME NOT NULL
+);
+
+# ADDING FK product
+ALTER TABLE productxsalemodels
+    ADD CONSTRAINT FKproductID 
+	FOREIGN KEY (product_id)
+    REFERENCES products(id);
+
+# ADDING FK salemodel
+ALTER TABLE productxsalemodels
+    ADD CONSTRAINT FKsalemodelID 
+	FOREIGN KEY (salemodel_id)
+    REFERENCES salemodels(id);
+
+SELECT CONCAT("INSERT INTO productxsalemodels (id, product_id, salemodel_id,  is_active, created_at, updated_at) VALUES (UUID(),'",p.id,"','",sm.id,"','Y', now(), now());") as sqlProdSale FROM salemodels sm JOIN products p WHERE p.code='24' AND (TRIM(LOWER(sm.name))) = (TRIM(LOWER('1/4 DE PAGINA')));
+SELECT CONCAT("INSERT INTO productxsalemodels (id, product_id, salemodel_id,  is_active, created_at, updated_at) VALUES (UUID(),'",p.id,"','",sm.id,"','Y', now(), now());") as sqlProdSale FROM salemodels sm JOIN products p WHERE p.code='25' AND (TRIM(LOWER(sm.name))) = (TRIM(LOWER('10 SECONDS SPOT')));
+SELECT CONCAT("INSERT INTO productxsalemodels (id, product_id, salemodel_id,  is_active, created_at, updated_at) VALUES (UUID(),'",p.id,"','",sm.id,"','Y', now(), now());") as sqlProdSale FROM salemodels sm JOIN products p WHERE p.code='25' AND (TRIM(LOWER(sm.name))) = (TRIM(LOWER('20 SECONDS SPOT')));
+SELECT CONCAT("INSERT INTO productxsalemodels (id, product_id, salemodel_id,  is_active, created_at, updated_at) VALUES (UUID(),'",p.id,"','",sm.id,"','Y', now(), now());") as sqlProdSale FROM salemodels sm JOIN products p WHERE p.code='24' AND (TRIM(LOWER(sm.name))) = (TRIM(LOWER('2DA Y 3RA PAGINA DE FORROS ')));
+SELECT CONCAT("INSERT INTO productxsalemodels (id, product_id, salemodel_id,  is_active, created_at, updated_at) VALUES (UUID(),'",p.id,"','",sm.id,"','Y', now(), now());") as sqlProdSale FROM salemodels sm JOIN products p WHERE p.code='25' AND (TRIM(LOWER(sm.name))) = (TRIM(LOWER('30 SECONDS SPOT')));
+SELECT CONCAT("INSERT INTO productxsalemodels (id, product_id, salemodel_id,  is_active, created_at, updated_at) VALUES (UUID(),'",p.id,"','",sm.id,"','Y', now(), now());") as sqlProdSale FROM salemodels sm JOIN products p WHERE p.code='26' AND (TRIM(LOWER(sm.name))) = (TRIM(LOWER('ACCIONES ESPECIALES ')));
+SELECT CONCAT("INSERT INTO productxsalemodels (id, product_id, salemodel_id,  is_active, created_at, updated_at) VALUES (UUID(),'",p.id,"','",sm.id,"','Y', now(), now());") as sqlProdSale FROM salemodels sm JOIN products p WHERE p.code='26' AND (TRIM(LOWER(sm.name))) = (TRIM(LOWER('ACCIONES VIRTUALES ')));
+SELECT CONCAT("INSERT INTO productxsalemodels (id, product_id, salemodel_id,  is_active, created_at, updated_at) VALUES (UUID(),'",p.id,"','",sm.id,"','Y', now(), now());") as sqlProdSale FROM salemodels sm JOIN products p WHERE p.code='27' AND (TRIM(LOWER(sm.name))) = (TRIM(LOWER('ACTIVACION ')));
+SELECT CONCAT("INSERT INTO productxsalemodels (id, product_id, salemodel_id,  is_active, created_at, updated_at) VALUES (UUID(),'",p.id,"','",sm.id,"','Y', now(), now());") as sqlProdSale FROM salemodels sm JOIN products p WHERE p.code='28' AND (TRIM(LOWER(sm.name))) = (TRIM(LOWER('ACTIVACION ')));
+SELECT CONCAT("INSERT INTO productxsalemodels (id, product_id, salemodel_id,  is_active, created_at, updated_at) VALUES (UUID(),'",p.id,"','",sm.id,"','Y', now(), now());") as sqlProdSale FROM salemodels sm JOIN products p WHERE p.code='29' AND (TRIM(LOWER(sm.name))) = (TRIM(LOWER('ACTIVACION EN CALLE ')));
+SELECT CONCAT("INSERT INTO productxsalemodels (id, product_id, salemodel_id,  is_active, created_at, updated_at) VALUES (UUID(),'",p.id,"','",sm.id,"','Y', now(), now());") as sqlProdSale FROM salemodels sm JOIN products p WHERE p.code='29' AND (TRIM(LOWER(sm.name))) = (TRIM(LOWER('ARCO')));
+SELECT CONCAT("INSERT INTO productxsalemodels (id, product_id, salemodel_id,  is_active, created_at, updated_at) VALUES (UUID(),'",p.id,"','",sm.id,"','Y', now(), now());") as sqlProdSale FROM salemodels sm JOIN products p WHERE p.code='24' AND (TRIM(LOWER(sm.name))) = (TRIM(LOWER('BACK COVER')));
+SELECT CONCAT("INSERT INTO productxsalemodels (id, product_id, salemodel_id,  is_active, created_at, updated_at) VALUES (UUID(),'",p.id,"','",sm.id,"','Y', now(), now());") as sqlProdSale FROM salemodels sm JOIN products p WHERE p.code='29' AND (TRIM(LOWER(sm.name))) = (TRIM(LOWER('BAJO PUENTE')));
+SELECT CONCAT("INSERT INTO productxsalemodels (id, product_id, salemodel_id,  is_active, created_at, updated_at) VALUES (UUID(),'",p.id,"','",sm.id,"','Y', now(), now());") as sqlProdSale FROM salemodels sm JOIN products p WHERE p.code='27' AND (TRIM(LOWER(sm.name))) = (TRIM(LOWER('BANNER CAMINADORA ')));
+SELECT CONCAT("INSERT INTO productxsalemodels (id, product_id, salemodel_id,  is_active, created_at, updated_at) VALUES (UUID(),'",p.id,"','",sm.id,"','Y', now(), now());") as sqlProdSale FROM salemodels sm JOIN products p WHERE p.code='26' AND (TRIM(LOWER(sm.name))) = (TRIM(LOWER('CAPSULA')));
+SELECT CONCAT("INSERT INTO productxsalemodels (id, product_id, salemodel_id,  is_active, created_at, updated_at) VALUES (UUID(),'",p.id,"','",sm.id,"','Y', now(), now());") as sqlProdSale FROM salemodels sm JOIN products p WHERE p.code='29' AND (TRIM(LOWER(sm.name))) = (TRIM(LOWER('CARTELERA')));
+SELECT CONCAT("INSERT INTO productxsalemodels (id, product_id, salemodel_id,  is_active, created_at, updated_at) VALUES (UUID(),'",p.id,"','",sm.id,"','Y', now(), now());") as sqlProdSale FROM salemodels sm JOIN products p WHERE p.code='29' AND (TRIM(LOWER(sm.name))) = (TRIM(LOWER('CASETA')));
+SELECT CONCAT("INSERT INTO productxsalemodels (id, product_id, salemodel_id,  is_active, created_at, updated_at) VALUES (UUID(),'",p.id,"','",sm.id,"','Y', now(), now());") as sqlProdSale FROM salemodels sm JOIN products p WHERE p.code='24' AND (TRIM(LOWER(sm.name))) = (TRIM(LOWER('CINTILLO ')));
+SELECT CONCAT("INSERT INTO productxsalemodels (id, product_id, salemodel_id,  is_active, created_at, updated_at) VALUES (UUID(),'",p.id,"','",sm.id,"','Y', now(), now());") as sqlProdSale FROM salemodels sm JOIN products p WHERE p.code='26' AND (TRIM(LOWER(sm.name))) = (TRIM(LOWER('CINTILLO ')));
+SELECT CONCAT("INSERT INTO productxsalemodels (id, product_id, salemodel_id,  is_active, created_at, updated_at) VALUES (UUID(),'",p.id,"','",sm.id,"','Y', now(), now());") as sqlProdSale FROM salemodels sm JOIN products p WHERE p.code='29' AND (TRIM(LOWER(sm.name))) = (TRIM(LOWER('COLUMNA')));
+SELECT CONCAT("INSERT INTO productxsalemodels (id, product_id, salemodel_id,  is_active, created_at, updated_at) VALUES (UUID(),'",p.id,"','",sm.id,"','Y', now(), now());") as sqlProdSale FROM salemodels sm JOIN products p WHERE p.code='24' AND (TRIM(LOWER(sm.name))) = (TRIM(LOWER('DOUBLE PAGE')));
+SELECT CONCAT("INSERT INTO productxsalemodels (id, product_id, salemodel_id,  is_active, created_at, updated_at) VALUES (UUID(),'",p.id,"','",sm.id,"','Y', now(), now());") as sqlProdSale FROM salemodels sm JOIN products p WHERE p.code='27' AND (TRIM(LOWER(sm.name))) = (TRIM(LOWER('ESPEJO EN BAÑOS ')));
+SELECT CONCAT("INSERT INTO productxsalemodels (id, product_id, salemodel_id,  is_active, created_at, updated_at) VALUES (UUID(),'",p.id,"','",sm.id,"','Y', now(), now());") as sqlProdSale FROM salemodels sm JOIN products p WHERE p.code='27' AND (TRIM(LOWER(sm.name))) = (TRIM(LOWER('ESPEJO INTERACTIVO')));
+SELECT CONCAT("INSERT INTO productxsalemodels (id, product_id, salemodel_id,  is_active, created_at, updated_at) VALUES (UUID(),'",p.id,"','",sm.id,"','Y', now(), now());") as sqlProdSale FROM salemodels sm JOIN products p WHERE p.code='24' AND (TRIM(LOWER(sm.name))) = (TRIM(LOWER('ESQUELA ')));
+#INSERT INTO salemodels (id,product_ids_rel,NAME,DESCRIPTION,is_active,created_at,updated_at)  VALUES ((UUID()),' 29','ESTRUCTURA','ESTRUCTURA','Y',NOW(),NOW());
+SELECT CONCAT("INSERT INTO productxsalemodels (id, product_id, salemodel_id,  is_active, created_at, updated_at) VALUES (UUID(),'",p.id,"','",sm.id,"','Y', now(), now());") as sqlProdSale FROM salemodels sm JOIN products p WHERE p.code='29' AND (TRIM(LOWER(sm.name))) = (TRIM(LOWER('ESTRUCTURA')));
+#INSERT INTO salemodels (id,product_ids_rel,NAME,DESCRIPTION,is_active,created_at,updated_at)  VALUES ((UUID()),' 29','ESTRUCTURA DE PISO','ESTRUCTURA DE PISO','Y',NOW(),NOW());
+SELECT CONCAT("INSERT INTO productxsalemodels (id, product_id, salemodel_id,  is_active, created_at, updated_at) VALUES (UUID(),'",p.id,"','",sm.id,"','Y', now(), now());") as sqlProdSale FROM salemodels sm JOIN products p WHERE p.code='29' AND (TRIM(LOWER(sm.name))) = (TRIM(LOWER('ESTRUCTURA DE PISO')));
+SELECT CONCAT("INSERT INTO productxsalemodels (id, product_id, salemodel_id,  is_active, created_at, updated_at) VALUES (UUID(),'",p.id,"','",sm.id,"','Y', now(), now());") as sqlProdSale FROM salemodels sm JOIN products p WHERE p.code='24' AND (TRIM(LOWER(sm.name))) = (TRIM(LOWER('FRONT PAGE')));
+SELECT CONCAT("INSERT INTO productxsalemodels (id, product_id, salemodel_id,  is_active, created_at, updated_at) VALUES (UUID(),'",p.id,"','",sm.id,"','Y', now(), now());") as sqlProdSale FROM salemodels sm JOIN products p WHERE p.code='28' AND (TRIM(LOWER(sm.name))) = (TRIM(LOWER('MALL RACK')));
+SELECT CONCAT("INSERT INTO productxsalemodels (id, product_id, salemodel_id,  is_active, created_at, updated_at) VALUES (UUID(),'",p.id,"','",sm.id,"','Y', now(), now());") as sqlProdSale FROM salemodels sm JOIN products p WHERE p.code='28' AND (TRIM(LOWER(sm.name))) = (TRIM(LOWER('MAMPARA')));
+SELECT CONCAT("INSERT INTO productxsalemodels (id, product_id, salemodel_id,  is_active, created_at, updated_at) VALUES (UUID(),'",p.id,"','",sm.id,"','Y', now(), now());") as sqlProdSale FROM salemodels sm JOIN products p WHERE p.code='24' AND (TRIM(LOWER(sm.name))) = (TRIM(LOWER('MEDIA PAGINA')));
+SELECT CONCAT("INSERT INTO productxsalemodels (id, product_id, salemodel_id,  is_active, created_at, updated_at) VALUES (UUID(),'",p.id,"','",sm.id,"','Y', now(), now());") as sqlProdSale FROM salemodels sm JOIN products p WHERE p.code='25' AND (TRIM(LOWER(sm.name))) = (TRIM(LOWER('MENCION ')));
+SELECT CONCAT("INSERT INTO productxsalemodels (id, product_id, salemodel_id,  is_active, created_at, updated_at) VALUES (UUID(),'",p.id,"','",sm.id,"','Y', now(), now());") as sqlProdSale FROM salemodels sm JOIN products p WHERE p.code='26' AND (TRIM(LOWER(sm.name))) = (TRIM(LOWER('MENCION ')));
+SELECT CONCAT("INSERT INTO productxsalemodels (id, product_id, salemodel_id,  is_active, created_at, updated_at) VALUES (UUID(),'",p.id,"','",sm.id,"','Y', now(), now());") as sqlProdSale FROM salemodels sm JOIN products p WHERE p.code='29' AND (TRIM(LOWER(sm.name))) = (TRIM(LOWER('MULTIFUNCIONAL')));
+SELECT CONCAT("INSERT INTO productxsalemodels (id, product_id, salemodel_id,  is_active, created_at, updated_at) VALUES (UUID(),'",p.id,"','",sm.id,"','Y', now(), now());") as sqlProdSale FROM salemodels sm JOIN products p WHERE p.code='29' AND (TRIM(LOWER(sm.name))) = (TRIM(LOWER('MUPI')));
+SELECT CONCAT("INSERT INTO productxsalemodels (id, product_id, salemodel_id,  is_active, created_at, updated_at) VALUES (UUID(),'",p.id,"','",sm.id,"','Y', now(), now());") as sqlProdSale FROM salemodels sm JOIN products p WHERE p.code='27' AND (TRIM(LOWER(sm.name))) = (TRIM(LOWER('MURO ')));
+SELECT CONCAT("INSERT INTO productxsalemodels (id, product_id, salemodel_id,  is_active, created_at, updated_at) VALUES (UUID(),'",p.id,"','",sm.id,"','Y', now(), now());") as sqlProdSale FROM salemodels sm JOIN products p WHERE p.code='28' AND (TRIM(LOWER(sm.name))) = (TRIM(LOWER('MURO ')));
+SELECT CONCAT("INSERT INTO productxsalemodels (id, product_id, salemodel_id,  is_active, created_at, updated_at) VALUES (UUID(),'",p.id,"','",sm.id,"','Y', now(), now());") as sqlProdSale FROM salemodels sm JOIN products p WHERE p.code='29' AND (TRIM(LOWER(sm.name))) = (TRIM(LOWER('MURO ')));
+SELECT CONCAT("INSERT INTO productxsalemodels (id, product_id, salemodel_id,  is_active, created_at, updated_at) VALUES (UUID(),'",p.id,"','",sm.id,"','Y', now(), now());") as sqlProdSale FROM salemodels sm JOIN products p WHERE p.code='24' AND (TRIM(LOWER(sm.name))) = (TRIM(LOWER('PAGINA CENTRAL ')));
+SELECT CONCAT("INSERT INTO productxsalemodels (id, product_id, salemodel_id,  is_active, created_at, updated_at) VALUES (UUID(),'",p.id,"','",sm.id,"','Y', now(), now());") as sqlProdSale FROM salemodels sm JOIN products p WHERE p.code='27' AND (TRIM(LOWER(sm.name))) = (TRIM(LOWER('PANTALLA')));
+SELECT CONCAT("INSERT INTO productxsalemodels (id, product_id, salemodel_id,  is_active, created_at, updated_at) VALUES (UUID(),'",p.id,"','",sm.id,"','Y', now(), now());") as sqlProdSale FROM salemodels sm JOIN products p WHERE p.code='29' AND (TRIM(LOWER(sm.name))) = (TRIM(LOWER('PANTALLA')));
+SELECT CONCAT("INSERT INTO productxsalemodels (id, product_id, salemodel_id,  is_active, created_at, updated_at) VALUES (UUID(),'",p.id,"','",sm.id,"','Y', now(), now());") as sqlProdSale FROM salemodels sm JOIN products p WHERE p.code='29' AND (TRIM(LOWER(sm.name))) = (TRIM(LOWER('PARABUS')));
+SELECT CONCAT("INSERT INTO productxsalemodels (id, product_id, salemodel_id,  is_active, created_at, updated_at) VALUES (UUID(),'",p.id,"','",sm.id,"','Y', now(), now());") as sqlProdSale FROM salemodels sm JOIN products p WHERE p.code='25' AND (TRIM(LOWER(sm.name))) = (TRIM(LOWER('PATROCINIO ')));
+SELECT CONCAT("INSERT INTO productxsalemodels (id, product_id, salemodel_id,  is_active, created_at, updated_at) VALUES (UUID(),'",p.id,"','",sm.id,"','Y', now(), now());") as sqlProdSale FROM salemodels sm JOIN products p WHERE p.code='26' AND (TRIM(LOWER(sm.name))) = (TRIM(LOWER('PATROCINIO ')));
+SELECT CONCAT("INSERT INTO productxsalemodels (id, product_id, salemodel_id,  is_active, created_at, updated_at) VALUES (UUID(),'",p.id,"','",sm.id,"','Y', now(), now());") as sqlProdSale FROM salemodels sm JOIN products p WHERE p.code='28' AND (TRIM(LOWER(sm.name))) = (TRIM(LOWER('PENDONES')));
+SELECT CONCAT("INSERT INTO productxsalemodels (id, product_id, salemodel_id,  is_active, created_at, updated_at) VALUES (UUID(),'",p.id,"','",sm.id,"','Y', now(), now());") as sqlProdSale FROM salemodels sm JOIN products p WHERE p.code='28' AND (TRIM(LOWER(sm.name))) = (TRIM(LOWER('PLUMA ESTACIONAMIENTO ')));
+SELECT CONCAT("INSERT INTO productxsalemodels (id, product_id, salemodel_id,  is_active, created_at, updated_at) VALUES (UUID(),'",p.id,"','",sm.id,"','Y', now(), now());") as sqlProdSale FROM salemodels sm JOIN products p WHERE p.code='29' AND (TRIM(LOWER(sm.name))) = (TRIM(LOWER('PUBLIANDANTES ')));
+SELECT CONCAT("INSERT INTO productxsalemodels (id, product_id, salemodel_id,  is_active, created_at, updated_at) VALUES (UUID(),'",p.id,"','",sm.id,"','Y', now(), now());") as sqlProdSale FROM salemodels sm JOIN products p WHERE p.code='29' AND (TRIM(LOWER(sm.name))) = (TRIM(LOWER('PUBLICIDAD EN BAR')));
+#INSERT INTO salemodels (id,product_ids_rel,NAME,DESCRIPTION,is_active,created_at,updated_at)  VALUES ((UUID()),' 29','PUENTE','PUENTE','Y',NOW(),NOW());
+SELECT CONCAT("INSERT INTO productxsalemodels (id, product_id, salemodel_id,  is_active, created_at, updated_at) VALUES (UUID(),'",p.id,"','",sm.id,"','Y', now(), now());") as sqlProdSale FROM salemodels sm JOIN products p WHERE p.code='29' AND (TRIM(LOWER(sm.name))) = (TRIM(LOWER('PUENTE')));
+SELECT CONCAT("INSERT INTO productxsalemodels (id, product_id, salemodel_id,  is_active, created_at, updated_at) VALUES (UUID(),'",p.id,"','",sm.id,"','Y', now(), now());") as sqlProdSale FROM salemodels sm JOIN products p WHERE p.code='29' AND (TRIM(LOWER(sm.name))) = (TRIM(LOWER('PUENTE PEATONAL')));
+SELECT CONCAT("INSERT INTO productxsalemodels (id, product_id, salemodel_id,  is_active, created_at, updated_at) VALUES (UUID(),'",p.id,"','",sm.id,"','Y', now(), now());") as sqlProdSale FROM salemodels sm JOIN products p WHERE p.code='29' AND (TRIM(LOWER(sm.name))) = (TRIM(LOWER('PUENTE VEHICULAR')));
+SELECT CONCAT("INSERT INTO productxsalemodels (id, product_id, salemodel_id,  is_active, created_at, updated_at) VALUES (UUID(),'",p.id,"','",sm.id,"','Y', now(), now());") as sqlProdSale FROM salemodels sm JOIN products p WHERE p.code='29' AND (TRIM(LOWER(sm.name))) = (TRIM(LOWER('RELOJ DIGITAL')));
+SELECT CONCAT("INSERT INTO productxsalemodels (id, product_id, salemodel_id,  is_active, created_at, updated_at) VALUES (UUID(),'",p.id,"','",sm.id,"','Y', now(), now());") as sqlProdSale FROM salemodels sm JOIN products p WHERE p.code='29' AND (TRIM(LOWER(sm.name))) = (TRIM(LOWER('RESTAURANTES ')));
+SELECT CONCAT("INSERT INTO productxsalemodels (id, product_id, salemodel_id,  is_active, created_at, updated_at) VALUES (UUID(),'",p.id,"','",sm.id,"','Y', now(), now());") as sqlProdSale FROM salemodels sm JOIN products p WHERE p.code='24' AND (TRIM(LOWER(sm.name))) = (TRIM(LOWER('ROBA PAGINA')));
+SELECT CONCAT("INSERT INTO productxsalemodels (id, product_id, salemodel_id,  is_active, created_at, updated_at) VALUES (UUID(),'",p.id,"','",sm.id,"','Y', now(), now());") as sqlProdSale FROM salemodels sm JOIN products p WHERE p.code='26' AND (TRIM(LOWER(sm.name))) = (TRIM(LOWER('ROBA PANTALLA ')));
+SELECT CONCAT("INSERT INTO productxsalemodels (id, product_id, salemodel_id,  is_active, created_at, updated_at) VALUES (UUID(),'",p.id,"','",sm.id,"','Y', now(), now());") as sqlProdSale FROM salemodels sm JOIN products p WHERE p.code='26' AND (TRIM(LOWER(sm.name))) = (TRIM(LOWER('SECCIONES ')));
+SELECT CONCAT("INSERT INTO productxsalemodels (id, product_id, salemodel_id,  is_active, created_at, updated_at) VALUES (UUID(),'",p.id,"','",sm.id,"','Y', now(), now());") as sqlProdSale FROM salemodels sm JOIN products p WHERE p.code='24' AND (TRIM(LOWER(sm.name))) = (TRIM(LOWER('SIMPLE PAGE')));
+SELECT CONCAT("INSERT INTO productxsalemodels (id, product_id, salemodel_id,  is_active, created_at, updated_at) VALUES (UUID(),'",p.id,"','",sm.id,"','Y', now(), now());") as sqlProdSale FROM salemodels sm JOIN products p WHERE p.code='26' AND (TRIM(LOWER(sm.name))) = (TRIM(LOWER('SPOT')));
+SELECT CONCAT("INSERT INTO productxsalemodels (id, product_id, salemodel_id,  is_active, created_at, updated_at) VALUES (UUID(),'",p.id,"','",sm.id,"','Y', now(), now());") as sqlProdSale FROM salemodels sm JOIN products p WHERE p.code='29' AND (TRIM(LOWER(sm.name))) = (TRIM(LOWER('UNIPOLAR')));
+SELECT CONCAT("INSERT INTO productxsalemodels (id, product_id, salemodel_id,  is_active, created_at, updated_at) VALUES (UUID(),'",p.id,"','",sm.id,"','Y', now(), now());") as sqlProdSale FROM salemodels sm JOIN products p WHERE p.code='29' AND (TRIM(LOWER(sm.name))) = (TRIM(LOWER('VALLA ')));
+SELECT CONCAT("INSERT INTO productxsalemodels (id, product_id, salemodel_id,  is_active, created_at, updated_at) VALUES (UUID(),'",p.id,"','",sm.id,"','Y', now(), now());") as sqlProdSale FROM salemodels sm JOIN products p WHERE p.code='29' AND (TRIM(LOWER(sm.name))) = (TRIM(LOWER('VALLA DIGITAL ')));
+SELECT CONCAT("INSERT INTO productxsalemodels (id, product_id, salemodel_id,  is_active, created_at, updated_at) VALUES (UUID(),'",p.id,"','",sm.id,"','Y', now(), now());") as sqlProdSale FROM salemodels sm JOIN products p WHERE p.code='29' AND (TRIM(LOWER(sm.name))) = (TRIM(LOWER('VALLA MOVIL ')));
+SELECT CONCAT("INSERT INTO productxsalemodels (id, product_id, salemodel_id,  is_active, created_at, updated_at) VALUES (UUID(),'",p.id,"','",sm.id,"','Y', now(), now());") as sqlProdSale FROM salemodels sm JOIN products p WHERE p.code='28' AND (TRIM(LOWER(sm.name))) = (TRIM(LOWER('VITRAL ')));
+SELECT CONCAT("INSERT INTO productxsalemodels (id, product_id, salemodel_id,  is_active, created_at, updated_at) VALUES (UUID(),'",p.id,"','",sm.id,"','Y', now(), now());") as sqlProdSale FROM salemodels sm JOIN products p WHERE p.code='28' AND (TRIM(LOWER(sm.name))) = (TRIM(LOWER('VITRAL ESCALERA ')));
 
 
 # PROVIDERSXPRODUCT

@@ -1384,7 +1384,7 @@ function refilterSaleModel(typeInt,productCode){
         //console.log(requestURL);
         const request = new XMLHttpRequest();
         request.onreadystatechange = function() {
-            html    = '<label for="salemodel_id[]">Sale Model</label>';
+            html    = '<label for="salemodel_id[]">' + ucfirst(translateText('salemodel',localStorage.getItem('ulang'))) + '</label>';
             html   += '<spam id="ssalemodel">'
             html   += '<SELECT name="salemodel_id[]" title="salemodel_id" class="form-control" autocomplete="salemodel_id" required>';
             if (this.readyState == 4 && this.status == 200) {
