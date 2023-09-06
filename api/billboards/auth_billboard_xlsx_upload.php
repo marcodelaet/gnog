@@ -58,7 +58,7 @@ if ($uploadOk > 0) {
         for($i=0;$i < count($rows);$i++){
             $cleanClave = str_replace("\n","",str_replace("\r","",$rows[$i]['Clave']));
             // CHECKING DUPLICATION
-            $sqlbillboards  = "SELECT name_key,state,county,city,colony,provider_id FROM billboards WHERE LOWER(name_key) = LOWER('".$cleanClave."')";
+            $sqlbillboards  = "SELECT name_key,state,county,city,colony,provider_id,salemodel_id FROM billboards WHERE LOWER(name_key) = LOWER('".$cleanClave."')";
             // Executing Query 
             $rsbillboardID = $DB->getDataSingle($sqlbillboards);
 
@@ -70,63 +70,63 @@ if ($uploadOk > 0) {
             $cleanCounty    = $rows[$i]['Alcaldía / Municipio'];
             $cleanColony    = $rows[$i]['Colonia'];
             if(isset($rsbillboardID["name_key"])){
+                // Cleaning names
+                $cleanProvider  = str_replace("\n","",str_replace("\r","",$rows[$i]['Proveedor']));
+                $cleanVista     = str_replace("\n","",str_replace("\r","",$rows[$i]['Vista']));
+                //$cleanTipo      = str_replace("\n","",str_replace("\r","",$rows[$i]['Tipo']));
+                $cleanTipo      = str_replace("\n","",str_replace("\r","",$rows[$i]['Categoria']));
+                
+                // Queries getting IDs
+                $sqlSaleModels  = "SELECT id, name FROM salemodels WHERE LOWER(name) = LOWER('".$cleanTipo."')";
+                $sqlViewPoints  = "SELECT id, name FROM viewpoints WHERE REPLACE(LOWER(name),' ','') = REPLACE(LOWER('".$cleanVista."'),' ','')";
+                $sqlProviders   = "SELECT id, name FROM providers WHERE REPLACE(LOWER(name),' ','') LIKE REPLACE(LOWER('".$cleanProvider."'),' ','')";
+
+                //echo $sqlProviders . "\n";
+
+                //$message .= ' PPPP ' . $sqlProviders . ' SSSS ' . $sqlSaleModels . ' VVVV ' . $sqlViewPoints;
+
+                $salemodelID    = 'NULL';
+                $rssalemodelID = $DB->getDataSingle($sqlSaleModels);
+                if(strtolower(str_replace('"','',str_replace(' ','',$rssalemodelID["name"]))) == strtolower(str_replace('"','',str_replace(' ','',$cleanTipo)))){
+                    $salemodelID    = "'".$rssalemodelID["id"]."'";
+                } else {
+                    if(($rssalemodelID["name"] == '') || (is_null($rssalemodelID["name"]))){
+                        $insertNewSaleModel = "INSERT INTO salemodels (id, name, description, is_digital, is_active, created_at, updated_at) VALUES (UUID(),'".$cleanTipo."','".$cleanTipo."','N','Y',now(),now())";
+                        $rs_insertNewSaleModel = $DB->executeInstruction($insertNewSaleModel);
+                        //$message .= $insertNewSaleModel . ' |SSS| ';
+                        $salemodelID = "'".$DB->getDataSingle($sqlSaleModels)["id"]."'";
+                    }
+                }
+                $viewPointID    = 'NULL';
+                $rsviewpointID = $DB->getDataSingle($sqlViewPoints);
+                //echo $rsviewpointID["name"] . " -------- " . $rows[$i]['Vista'] . "<BR/>";
+                if(strtolower(str_replace('"','',str_replace(' ','',$rsviewpointID["name"]))) == strtolower(str_replace('"','',str_replace(' ','',$cleanVista)))){
+                    $viewPointID    = "'".$rsviewpointID["id"]."'";
+                }else{
+                    if(($rsviewpointID["name"] == '') || (is_null($rsviewpointID["name"]))){
+                        $insertNewViewPoint = "INSERT INTO viewpoints (id, name, is_active, created_at, updated_at) VALUES (UUID(),'".$cleanVista."','Y',now(),now())";
+                        $rs_insertNewViewPoint = $DB->executeInstruction($insertNewViewPoint);
+                        //$message .= $insertNewViewPoint . ' |VVV| ';
+                        $viewPointID = "'".$DB->getDataSingle($sqlViewPoints)["id"]."'";
+                    } 
+                    else { echo "ERROR: ".$sqlViewPoints . " <BR/> Name: ".$rsviewpointID["name"]."<BR/> COMPAT: ". strtolower(str_replace('"','',str_replace(' ','',$rsviewpointID["name"]))) . " && " .strtolower(str_replace('"','',str_replace(' ','',$cleanVista))); }
+                }
+
+                $providerID    = 'NULL';
+                $rsproviderID = $DB->getDataSingle($sqlProviders);
+                $numProviders = $DB->numRows($sqlProviders);
+                if(str_replace('í','i',str_replace('á','a',strtolower(str_replace(' ','',$rsproviderID["name"])))) == str_replace('í','i',str_replace('á','a',strtolower(str_replace(' ','',$cleanProvider))))){
+                    $providerID     = "'".$rsproviderID["id"]."'";
+                } else {
+                    if(($numProviders == '0')){ // || ($rsproviderID["name"] == '') || (is_null($rsproviderID["name"]))
+                        $insertNewProvider = "INSERT INTO providers (id, name, is_active, created_at, updated_at) VALUES (UUID(),'".$cleanProvider."','Y',now(),now())";
+                        $rs_insertNewProvider = $DB->executeInstruction($insertNewProvider);
+                        //$message .= $insertNewProvider . ' |PPP| ';
+                        $providerID = "'".$DB->getDataSingle($sqlProviders)["id"]."'";
+                    } 
+                    else {echo "ERROR: ".$sqlProviders . " <BR/> Name: ".$rsproviderID["name"]."<BR/> NUM: ". $numProviders . " <BR/> COMPAT: ". str_replace('í','i',str_replace('á','a',strtolower(str_replace(' ','',$rsproviderID["name"])))) . " && " .str_replace('í','i',str_replace('á','a',strtolower(str_replace(' ','',$cleanProvider))));}
+                }
                 if($rsbillboardID["name_key"] != $claveInExcel){
-                    // Cleaning names
-                    $cleanProvider  = str_replace("\n","",str_replace("\r","",$rows[$i]['Proveedor']));
-                    $cleanVista     = str_replace("\n","",str_replace("\r","",$rows[$i]['Vista']));
-                    $cleanTipo      = str_replace("\n","",str_replace("\r","",$rows[$i]['Tipo']));
-                    
-                    // Queries getting IDs
-                    $sqlSaleModels  = "SELECT id, name FROM salemodels WHERE LOWER(name) = LOWER('".$cleanTipo."')";
-                    $sqlViewPoints  = "SELECT id, name FROM viewpoints WHERE REPLACE(LOWER(name),' ','') = REPLACE(LOWER('".$cleanVista."'),' ','')";
-                    $sqlProviders   = "SELECT id, name FROM providers WHERE REPLACE(LOWER(name),' ','') LIKE REPLACE(LOWER('".$cleanProvider."'),' ','')";
-
-                    //echo $sqlProviders . "\n";
-
-                    //$message .= ' PPPP ' . $sqlProviders . ' SSSS ' . $sqlSaleModels . ' VVVV ' . $sqlViewPoints;
-
-                    $salemodelID    = 'NULL';
-                    $rssalemodelID = $DB->getDataSingle($sqlSaleModels);
-                    if(strtolower(str_replace('"','',str_replace(' ','',$rssalemodelID["name"]))) == strtolower(str_replace('"','',str_replace(' ','',$cleanTipo)))){
-                        $salemodelID    = "'".$rssalemodelID["id"]."'";
-                    } else {
-                        if(($rssalemodelID["name"] == '') || (is_null($rssalemodelID["name"]))){
-                            $insertNewSaleModel = "INSERT INTO salemodels (id, name, description, is_digital, is_active, created_at, updated_at) VALUES (UUID(),'".$cleanTipo."','".$cleanTipo."','N','Y',now(),now())";
-                            $rs_insertNewSaleModel = $DB->executeInstruction($insertNewSaleModel);
-                            //$message .= $insertNewSaleModel . ' |SSS| ';
-                            $salemodelID = "'".$DB->getDataSingle($sqlSaleModels)["id"]."'";
-                        }
-                    }
-                    $viewPointID    = 'NULL';
-                    $rsviewpointID = $DB->getDataSingle($sqlViewPoints);
-                    //echo $rsviewpointID["name"] . " -------- " . $rows[$i]['Vista'] . "<BR/>";
-                    if(strtolower(str_replace('"','',str_replace(' ','',$rsviewpointID["name"]))) == strtolower(str_replace('"','',str_replace(' ','',$cleanVista)))){
-                        $viewPointID    = "'".$rsviewpointID["id"]."'";
-                    }else{
-                        if(($rsviewpointID["name"] == '') || (is_null($rsviewpointID["name"]))){
-                            $insertNewViewPoint = "INSERT INTO viewpoints (id, name, is_active, created_at, updated_at) VALUES (UUID(),'".$cleanVista."','Y',now(),now())";
-                            $rs_insertNewViewPoint = $DB->executeInstruction($insertNewViewPoint);
-                            //$message .= $insertNewViewPoint . ' |VVV| ';
-                            $viewPointID = "'".$DB->getDataSingle($sqlViewPoints)["id"]."'";
-                        } 
-                        else { echo "ERROR: ".$sqlViewPoints . " <BR/> Name: ".$rsviewpointID["name"]."<BR/> COMPAT: ". strtolower(str_replace('"','',str_replace(' ','',$rsviewpointID["name"]))) . " && " .strtolower(str_replace('"','',str_replace(' ','',$cleanVista))); }
-                    }
-
-                    $providerID    = 'NULL';
-                    $rsproviderID = $DB->getDataSingle($sqlProviders);
-                    $numProviders = $DB->numRows($sqlProviders);
-                    if(str_replace('í','i',str_replace('á','a',strtolower(str_replace(' ','',$rsproviderID["name"])))) == str_replace('í','i',str_replace('á','a',strtolower(str_replace(' ','',$cleanProvider))))){
-                        $providerID     = "'".$rsproviderID["id"]."'";
-                    } else {
-                        if(($numProviders == '0')){ // || ($rsproviderID["name"] == '') || (is_null($rsproviderID["name"]))
-                            $insertNewProvider = "INSERT INTO providers (id, name, is_active, created_at, updated_at) VALUES (UUID(),'".$cleanProvider."','Y',now(),now())";
-                            $rs_insertNewProvider = $DB->executeInstruction($insertNewProvider);
-                            //$message .= $insertNewProvider . ' |PPP| ';
-                            $providerID = "'".$DB->getDataSingle($sqlProviders)["id"]."'";
-                        } 
-                        else {echo "ERROR: ".$sqlProviders . " <BR/> Name: ".$rsproviderID["name"]."<BR/> NUM: ". $numProviders . " <BR/> COMPAT: ". str_replace('í','i',str_replace('á','a',strtolower(str_replace(' ','',$rsproviderID["name"])))) . " && " .str_replace('í','i',str_replace('á','a',strtolower(str_replace(' ','',$cleanProvider))));}
-                    }
-
                     $iluminated = 'N';
                     if($rows[$i]['Iluminación'] == 'Si')
                         $iluminated = 'Y';
@@ -163,6 +163,11 @@ if ($uploadOk > 0) {
                     if((strtolower(str_replace('"','',str_replace(' ','',$rsbillboardID["state"]))) != strtolower(str_replace('"','',str_replace(' ','',$cleanState)))) || (strtolower(str_replace('"','',str_replace(' ','',$rsbillboardID["county"]))) != strtolower(str_replace('"','',str_replace(' ','',$cleanCounty)))) || (strtolower(str_replace('"','',str_replace(' ','',$rsbillboardID["city"]))) != strtolower(str_replace('"','',str_replace(' ','',$cleanCity)))) || (strtolower(str_replace('"','',str_replace(' ','',$rsbillboardID["colony"]))) != strtolower(str_replace('"','',str_replace(' ','',$cleanColony))))){
                         $updateBillboard = "UPDATE billboards SET state = '$cleanState',county = '$cleanCounty',city = '$cleanCity',colony = '$cleanColony' WHERE name_key = '". $rsbillboardID["name_key"]."'";
                         $execUpdateLocal = $DB->executeInstruction($updateBillboard);
+                    }
+                    // check changes on SaleModel ID
+                    if($rsbillboardID["salemodel_id"] != str_replace("'","",$salemodelID)){
+                        $updateBillboard = "UPDATE billboards SET salemodel_id=$salemodelID WHERE name_key = '". $rsbillboardID["name_key"]."'";
+                        $execUpdateSaleModel = $DB->executeInstruction($updateBillboard);
                     }
                 }
             }

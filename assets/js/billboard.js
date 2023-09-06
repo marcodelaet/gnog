@@ -73,7 +73,7 @@ function handleSubmitXLSX(form){
 
         file        = form.billboard_file;
         var formData = new FormData(form);
-        //formData.append("billboard_file", fileInputElement.billboard_file);
+//        formData.append("billboard_file", file);
         
         locat       = window.location.hostname;
         if(locat.slice(-1) != '/')

@@ -21,7 +21,7 @@ if(array_key_exists('auth_api',$_REQUEST)){
     // setting query
     
     $columns        = "(sm.id) as uuid_full, (pd.id) as product_id, pd.code, pd.name as product_name, sm.name, sm.description, sm.is_active";
-    $tableOrView    = "products pd RIGHT JOIN salemodels sm ON pd.code in (sm.product_ids_rel)";
+    $tableOrView    = " products pd JOIN productxsalemodels psm ON psm.product_id = pd.id JOIN salemodels sm ON psm.salemodel_id = sm.id";
     $orderBy        = "order by sm.name";
 
     // filters
