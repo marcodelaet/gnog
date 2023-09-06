@@ -124,24 +124,24 @@ if(array_key_exists('auth_api',$_REQUEST)){
     }
 
     // Query creation
-    $sqlNumRows = "SELECT count(*) as total FROM $tableOrView $filters";
+    $sql = "SELECT $columns FROM $tableOrView $filters";
     $sqlPaged = "SELECT $columns FROM $tableOrView $filters $groupBy $orderBy $limit";
     // LIST data
     //echo $sqlPaged;
     
     $rs = $DB->getData($sqlPaged);
-    $rsNumRows = $DB->getData($sqlNumRows);
+    $rsNumRows = $DB->numRows($sql);
     // Response JSON
     header('Content-type: application/json');
-    if($rsNumRows[0]['total'] > 0){
-        $totalPages  = intval($rsNumRows[0]['total'] / $numberOfRegistries)+1;
+    if($rsNumRows > 0){
+        $totalPages  = intval($rsNumRows / $numberOfRegistries)+1;
         if($rs){
-            echo json_encode(["response" => "OK","data" => $rs, "rows" => $rsNumRows[0]['total'], "pages" => "$totalPages"]);
+            echo json_encode(["response" => "OK","data" => $rs, "rows" => $rsNumRows, "pages" => "$totalPages"]);
         } else {
             echo json_encode(["response" => "ERROR"]);
         }  
     } else {
-        echo json_encode(["response" => "ZERO_RETURN", "rows" => $rsNumRows[0]['total'], "pages" => "0"]);
+        echo json_encode(["response" => "ZERO_RETURN", "rows" => $rsNumRows, "pages" => "0"]);
     }
 }
 

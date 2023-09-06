@@ -415,7 +415,7 @@ function handleOnLoad(tid,form) {
     }
 }
 
-function handleListOnLoad(search) {
+function handleListOnLoad(search,page) {
     errors      = 0;
     authApi     = csrf_token;
     locat       = window.location.hostname;
@@ -432,6 +432,14 @@ function handleListOnLoad(search) {
         filters     += '&search='+search;
     }
 
+    pages       = '';
+    if(typeof page == 'undefined')
+        page  = '1';
+    if(page !== '1'){
+        pages     = '&p='+(parseInt(page)-1);
+    }
+
+
     if(locat.slice(-1) != '/')
         locat += '/';
 
@@ -439,7 +447,7 @@ function handleListOnLoad(search) {
 
     } else{
         tableList   = document.getElementById('listInvoices');
-        const requestURL = window.location.protocol+'//'+locat+'api/invoices/auth_invoice_view.php?auth_api='+authApi+filters+groupby+addColumn;
+        const requestURL = window.location.protocol+'//'+locat+'api/invoices/auth_invoice_view.php?auth_api='+authApi+filters+groupby+addColumn+pages;
         console.log(requestURL);
         const request = new XMLHttpRequest();
         request.onreadystatechange = function() {
@@ -532,6 +540,11 @@ function handleListOnLoad(search) {
                     }
                 } 
                 tableList.innerHTML = html;
+                pagesController(page,obj['pages']);
+                if(parseInt(page) > parseInt(obj['pages'])){
+                    page        = 1;
+                    filter.goto.value = 1;
+                }
             }
             else{
                 html = '<tr><td colspan="11"><div style="margin-left:45%; margin-right:45%;" class="spinner-border" style="text-align:center;" role="status">';
@@ -547,6 +560,37 @@ function handleListOnLoad(search) {
     }
     // window.location.href = '?pr=Li9wYWdlcy91c2Vycy9saXN0LnBocA==';
 }
+
+function pagesController(actualpage,totalpages){
+    document.getElementById('btn_firstpage').disabled=false;
+    document.getElementById('btn_beforepage').disabled=false;
+    document.getElementById('btn_nextpage').disabled=false;
+    document.getElementById('btn_lastpage').disabled=false;
+
+    if(parseInt(filter.goto.value) <= 1){ 
+        document.getElementById('btn_firstpage').disabled=true;
+        document.getElementById('btn_beforepage').disabled=true;
+    }
+    if(parseInt(filter.goto.value) >= totalpages){ 
+        document.getElementById('btn_nextpage').disabled=true;
+        document.getElementById('btn_lastpage').disabled=true;
+    }
+
+    filter.totalpages.value = totalpages;
+    document.getElementById('text-totalpages').innerText = totalpages;
+
+}
+
+function gotoLast(){
+    totalpages = filter.totalpages.value;
+    if(parseInt(filter.goto.value) <= totalpages){
+        handleListOnLoad(filter.search.value,totalpages); 
+        filter.goto.value = totalpages;
+    }else{
+        document.getElementById('btn_lastpage').disabled=true;
+    }
+}
+
 
 /**************************************************
  * changing invoice status
