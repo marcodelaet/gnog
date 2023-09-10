@@ -218,7 +218,9 @@ VALUES
 ((UUID()),'TV','TV','N','Y',NOW(),NOW()),
 ((UUID()),'GYM','GYM','N','Y',NOW(),NOW()),
 ((UUID()),'CENTROS COMERCIALES','CENTROS COMERCIALES','N','Y',NOW(),NOW()),
-((UUID()),'OOH','OOH','N','Y',NOW(),NOW());
+((UUID()),'OOH','OOH','N','Y',NOW(),NOW()),
+((UUID()),'Programmatic','Programmatic','Y','Y',NOW(),NOW());
+
 
 #STATUSES
 CREATE TABLE IF NOT EXISTS statuses (
