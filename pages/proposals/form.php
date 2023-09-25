@@ -181,7 +181,7 @@ if('1' == '2'){
                         <div>
                             <div class="form-row">
                                 <div class="col custom-control custom-switch" style="text-align:right;">
-                                    <input type="checkbox" class="custom-control-input" value="0" onchange="refilterProductsType(this.value);" id="digital_product" name="digital_product">
+                                    <input type="checkbox" class="custom-control-input" value="0" onchange="refilterProductsType(this.value,'0');" id="digital_product" name="digital_product">
                                     <label class="custom-control-label" for="digital_product"><?=translateText('digital_product');?></label>
                                 </div>
                             </div>
@@ -211,26 +211,28 @@ if('1' == '2'){
                                     <div class="col-2" id="div-selectproduct_0">
                                         <label for="product_id[]"><?=translateText('product');?></label>
                                         <spam id="sproduct">
-                                            <select name="product_id[]" id="selectproduct_0" title="product_id" class="form-control" autocomplete="product_id" onchange="refilterSaleModel(document.getElementById('digital_product').value,this.value)" required>
+                                            <select name="product_id[]" id="selectproduct_0" title="product_id" class="form-control" autocomplete="product_id" onchange="refilterSaleModel(document.getElementById('digital_product').value,this.value,this.id.split('_')[1]); checkOOHSelection(this[this.selectedIndex].innerText,this.id.split('_')[1])" required>
                                                 <?=inputSelect('product',translateText('product'),'is_digital|||N','name','')?>
                                             </select>
                                         </spam>
                                     </div>
-                                    <div class="col" id="div-selectsalemodel_0">
+                                    <div class="col" id="div-selectsalemodel_0" >
                                         <label for="salemodel_id[]"><?=translateText('sale_model');?></label>
                                         <spam id="ssalemodel">
-                                            <select name="salemodel_id[]" title="salemodel_id" class="form-control" autocomplete="salemodel_id" >
+                                            <select name="salemodel_id[]" id="selectsalemodel_0" title="salemodel_id" class="form-control" autocomplete="salemodel_id" >
                                                 <?=inputSelect('salemodel',translateText('sale_model'),'is_digital|||N','name','')?>
                                             </select>
                                         </spam>
                                     </div>
+                                    <div class="col" id="div-oohkeys_0" style="display: none">
+                                    </div>
                                 </div>
                                 <div class="form-row" >
-                                    <div class="col">
+                                    <div class="col" id='div-price_0'>
                                         <label for="price[]"><?=translateText('unit_price');?></label><br/>
                                         <input
                                         required
-                                        onkeypress="$(this).mask('#.###.##0,00', {reverse: true});"
+                                        onkeypress="$(this).mask('#'+thousands+'###'+thousands+'##0'+cents+'00', {reverse: true});"
                                         onblur="calcAmountTotal(<?=strtolower($moduleName)?>,0)"
                                         id='price_0'
                                         name ='price[]' 
@@ -246,11 +248,12 @@ if('1' == '2'){
                                             Please type a valid phone number.
                                         </div>
                                     </div>
-                                    <div class="col">
+                                    <div class="col" id='div-quantity_0'>
                                         <label for="quantity[]"><?=translateText('quantity');?></label>
                                         <input
                                         required
                                         onblur="calcAmountTotal(<?=strtolower($moduleName)?>,0)"
+                                        id='quantity_0'
                                         name ='quantity[]' 
                                         placeholder='<?=translateText('quantity');?>'
                                         title = '<?=translateText('quantity');?>'
@@ -277,7 +280,7 @@ if('1' == '2'){
                                         class="form-control"
                                         />
                                     </div>
-                                    <div class="col">
+                                    <div class="col" id="div-provider_0">
                                         <label for="provider_id[]"><?=translateText('provider');?></label>
                                         <spam id="sprovider">
                                             <select name="provider_id[]" title="provider_id" class="form-control">

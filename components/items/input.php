@@ -60,7 +60,10 @@ function inputSelect($table,$title,$where,$order,$selected){
                 break;
         }
         if($id == $selected)
-            $markingSelect = 'selected';    
+            $markingSelect = 'selected';
+        // adding a new option to products when OOH
+        if(($name == 'OOH') && ($table == 'product'))
+            $html .= '<option '.$className.' value="'.$id.'" '.$markingSelect.' >'.$name.' ('.translateText('no_keys').')</option>';
         $html .= '<option '.$className.' value="'.$id.'" '.$markingSelect.' >'.$name.'</option>';
     }
     return $html;

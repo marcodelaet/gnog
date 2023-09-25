@@ -21,7 +21,7 @@ if(array_key_exists('auth_api',$_REQUEST)){
     // setting query
     
     $columns        = "(sm.id) as uuid_full, (pd.id) as product_id, pd.code, pd.name as product_name, sm.name, sm.description, sm.is_active";
-    $tableOrView    = " products pd JOIN productxsalemodels psm ON psm.product_id = pd.id JOIN salemodels sm ON psm.salemodel_id = sm.id";
+    $tableOrView    = " products pd JOIN productxsalemodels psm ON psm.product_id = pd.id RIGHT JOIN salemodels sm ON psm.salemodel_id = sm.id";
     $orderBy        = "order by sm.name";
 
     // filters
@@ -116,7 +116,7 @@ if(array_key_exists('auth_api',$_REQUEST)){
     if($rs){
         echo json_encode(['response'=>'OK','data'=>$rs,'numRows'=>$numRows]);
     } else {
-        echo json_encode(['response'=>'ERROR']);
+        echo json_encode(['response'=>'ERROR','SQL'=>$sql]);
     }
 }
 
