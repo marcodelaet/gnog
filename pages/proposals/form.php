@@ -181,7 +181,7 @@ if('1' == '2'){
                         <div>
                             <div class="form-row">
                                 <div class="col custom-control custom-switch" style="text-align:right;">
-                                    <input type="checkbox" class="custom-control-input" value="0" onchange="refilterProductsType(this.value,this.id.split('_')[1]);" id="digital_product" name="digital_product">
+                                    <input type="checkbox" class="custom-control-input" value="0" onchange="refilterProductsType(this.value,'0');" id="digital_product" name="digital_product">
                                     <label class="custom-control-label" for="digital_product"><?=translateText('digital_product');?></label>
                                 </div>
                             </div>
@@ -228,11 +228,11 @@ if('1' == '2'){
                                     </div>
                                 </div>
                                 <div class="form-row" >
-                                    <div class="col">
+                                    <div class="col" id='div-price_0'>
                                         <label for="price[]"><?=translateText('unit_price');?></label><br/>
                                         <input
                                         required
-                                        onkeypress="$(this).mask('#.###.##0,00', {reverse: true});"
+                                        onkeypress="$(this).mask('#'+thousands+'###'+thousands+'##0'+cents+'00', {reverse: true});"
                                         onblur="calcAmountTotal(<?=strtolower($moduleName)?>,0)"
                                         id='price_0'
                                         name ='price[]' 
@@ -248,11 +248,12 @@ if('1' == '2'){
                                             Please type a valid phone number.
                                         </div>
                                     </div>
-                                    <div class="col">
+                                    <div class="col" id='div-quantity_0'>
                                         <label for="quantity[]"><?=translateText('quantity');?></label>
                                         <input
                                         required
                                         onblur="calcAmountTotal(<?=strtolower($moduleName)?>,0)"
+                                        id='quantity_0'
                                         name ='quantity[]' 
                                         placeholder='<?=translateText('quantity');?>'
                                         title = '<?=translateText('quantity');?>'

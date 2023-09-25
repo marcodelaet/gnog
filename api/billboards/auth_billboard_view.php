@@ -30,6 +30,10 @@ if(array_key_exists('auth_api',$_REQUEST)){
     $offSet         = 0;
     $numberOfRegistries = 100;
     $columns        = "left(uuid,13) as uuid, uuid as uuid_full, name, category, address, state, city, county, colony, height, width, coordenates, latitud, longitud, price_int, cost_int, price, cost, is_iluminated, is_digital, provider_id, provider_name, salemodel_name, viewpoint_name, photo, is_active, CONCAT(provider_name, salemodel_name, viewpoint_name,name, category,state, city, county, colony) as search";
+    if(array_key_exists('cln',$_REQUEST)){
+        $columns    = $_REQUEST['cln'];
+    }
+    
     if(array_key_exists('fcn',$_REQUEST)){
         if($_REQUEST['fcn'] == 'selectInDropDown'){
             $name = 'name';

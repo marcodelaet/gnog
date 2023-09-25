@@ -397,6 +397,23 @@ SELECT p.name as Producto, sm.name as `Modelo de venta`, sm.product_ids_rel as c
 
 INSERT INTO productxsalemodels (id, product_id, salemodel_id, is_digital, is_active, created_at, updated_at) VALUES (id,'b896f4b6-cd6c-11ec-a3eb-008cfa5abdac','1/4 DE PAGINA','N','Y', now(), now())
 
+INSERT INTO salemodels 
+(id,product_ids_rel,NAME,DESCRIPTION,is_digital,is_active,created_at,updated_at)  
+VALUES ((UUID()),'29','CAMIONES / URVAN','CAMIONES / URVAN','N','Y',NOW(),NOW()),
+((UUID()),'28,29','ACCESORIOS','ACCESORIOS','N','Y',NOW(),NOW());
+
+INSERT INTO salemodels 
+(id,product_ids_rel,NAME,DESCRIPTION,is_digital,is_active,created_at,updated_at)  
+VALUES ((UUID()),'27,28,29','INSTALACIÓN / DESINSTALACIÓN','INSTALACIÓN / DESINSTALACIÓN','N','Y',NOW(),NOW());
+
+
+UPDATE salemodels SET name='Camion Urvan' where name = 'CAMIONES / URVAN';
+
+INSERT INTO salemodels 
+(id,product_ids_rel,NAME,DESCRIPTION,is_digital,is_active,created_at,updated_at)  
+VALUES ((UUID()),'28,29','Camion Integral','Camion Integral','N','Y',NOW(),NOW()),
+((UUID()),'28,29','Camion Medio medallon','Camion Medio medallon','N','Y',NOW(),NOW()),
+((UUID()),'28,29','Camion Medallon Completo','Camion Medallon Completo','N','Y',NOW(),NOW());
 
 # PROVIDERS
 CREATE TABLE IF NOT EXISTS providers (
@@ -497,6 +514,22 @@ SELECT CONCAT("INSERT INTO productxsalemodels (id, product_id, salemodel_id,  is
 SELECT CONCAT("INSERT INTO productxsalemodels (id, product_id, salemodel_id,  is_active, created_at, updated_at) VALUES (UUID(),'",p.id,"','",sm.id,"','Y', now(), now());") as sqlProdSale FROM salemodels sm JOIN products p WHERE p.code='29' AND (TRIM(LOWER(sm.name))) = (TRIM(LOWER('VALLA MOVIL ')));
 SELECT CONCAT("INSERT INTO productxsalemodels (id, product_id, salemodel_id,  is_active, created_at, updated_at) VALUES (UUID(),'",p.id,"','",sm.id,"','Y', now(), now());") as sqlProdSale FROM salemodels sm JOIN products p WHERE p.code='28' AND (TRIM(LOWER(sm.name))) = (TRIM(LOWER('VITRAL ')));
 SELECT CONCAT("INSERT INTO productxsalemodels (id, product_id, salemodel_id,  is_active, created_at, updated_at) VALUES (UUID(),'",p.id,"','",sm.id,"','Y', now(), now());") as sqlProdSale FROM salemodels sm JOIN products p WHERE p.code='28' AND (TRIM(LOWER(sm.name))) = (TRIM(LOWER('VITRAL ESCALERA ')));
+
+SELECT CONCAT("DELETE FROM productxsalemodels WHERE product_id='",p.id,"' AND salemodel_id='",sm.id,"';") as sqlProdSale FROM salemodels sm JOIN products p WHERE p.code='27' AND (TRIM(LOWER(sm.name))) = (TRIM(LOWER('ACCESORIOS')));
+SELECT CONCAT("INSERT INTO productxsalemodels (id, product_id, salemodel_id,  is_active, created_at, updated_at) VALUES (UUID(),'",p.id,"','",sm.id,"','Y', now(), now());") as sqlProdSale FROM salemodels sm JOIN products p WHERE p.code='28' AND (TRIM(LOWER(sm.name))) = (TRIM(LOWER('ACCESORIOS')));
+SELECT CONCAT("INSERT INTO productxsalemodels (id, product_id, salemodel_id,  is_active, created_at, updated_at) VALUES (UUID(),'",p.id,"','",sm.id,"','Y', now(), now());") as sqlProdSale FROM salemodels sm JOIN products p WHERE p.code='29' AND (TRIM(LOWER(sm.name))) = (TRIM(LOWER('ACCESORIOS')));
+SELECT CONCAT("INSERT INTO productxsalemodels (id, product_id, salemodel_id,  is_active, created_at, updated_at) VALUES (UUID(),'",p.id,"','",sm.id,"','Y', now(), now());") as sqlProdSale FROM salemodels sm JOIN products p WHERE p.code='29' AND (TRIM(LOWER(sm.name))) = (TRIM(LOWER('CAMIONES / URVAN')));
+SELECT CONCAT("INSERT INTO productxsalemodels (id, product_id, salemodel_id,  is_active, created_at, updated_at) VALUES (UUID(),'",p.id,"','",sm.id,"','Y', now(), now());") as sqlProdSale FROM salemodels sm JOIN products p WHERE p.code='27' AND (TRIM(LOWER(sm.name))) = (TRIM(LOWER('INSTALACIÓN / DESINSTALACIÓN')));
+SELECT CONCAT("INSERT INTO productxsalemodels (id, product_id, salemodel_id,  is_active, created_at, updated_at) VALUES (UUID(),'",p.id,"','",sm.id,"','Y', now(), now());") as sqlProdSale FROM salemodels sm JOIN products p WHERE p.code='28' AND (TRIM(LOWER(sm.name))) = (TRIM(LOWER('INSTALACIÓN / DESINSTALACIÓN')));
+SELECT CONCAT("INSERT INTO productxsalemodels (id, product_id, salemodel_id,  is_active, created_at, updated_at) VALUES (UUID(),'",p.id,"','",sm.id,"','Y', now(), now());") as sqlProdSale FROM salemodels sm JOIN products p WHERE p.code='29' AND (TRIM(LOWER(sm.name))) = (TRIM(LOWER('INSTALACIÓN / DESINSTALACIÓN')));
+SELECT CONCAT("INSERT INTO productxsalemodels (id, product_id, salemodel_id,  is_active, created_at, updated_at) VALUES (UUID(),'",p.id,"','",sm.id,"','Y', now(), now());") as sqlProdSale FROM salemodels sm JOIN products p WHERE p.code='28' AND (TRIM(LOWER(sm.name))) = (TRIM(LOWER('Camion Integral')));
+SELECT CONCAT("INSERT INTO productxsalemodels (id, product_id, salemodel_id,  is_active, created_at, updated_at) VALUES (UUID(),'",p.id,"','",sm.id,"','Y', now(), now());") as sqlProdSale FROM salemodels sm JOIN products p WHERE p.code='29' AND (TRIM(LOWER(sm.name))) = (TRIM(LOWER('Camion Integral')));
+SELECT CONCAT("INSERT INTO productxsalemodels (id, product_id, salemodel_id,  is_active, created_at, updated_at) VALUES (UUID(),'",p.id,"','",sm.id,"','Y', now(), now());") as sqlProdSale FROM salemodels sm JOIN products p WHERE p.code='28' AND (TRIM(LOWER(sm.name))) = (TRIM(LOWER('Camion Medallon Completo')));
+SELECT CONCAT("INSERT INTO productxsalemodels (id, product_id, salemodel_id,  is_active, created_at, updated_at) VALUES (UUID(),'",p.id,"','",sm.id,"','Y', now(), now());") as sqlProdSale FROM salemodels sm JOIN products p WHERE p.code='29' AND (TRIM(LOWER(sm.name))) = (TRIM(LOWER('Camion Medallon Completo')));
+SELECT CONCAT("INSERT INTO productxsalemodels (id, product_id, salemodel_id,  is_active, created_at, updated_at) VALUES (UUID(),'",p.id,"','",sm.id,"','Y', now(), now());") as sqlProdSale FROM salemodels sm JOIN products p WHERE p.code='28' AND (TRIM(LOWER(sm.name))) = (TRIM(LOWER('Camion Medio medallon')));
+SELECT CONCAT("INSERT INTO productxsalemodels (id, product_id, salemodel_id,  is_active, created_at, updated_at) VALUES (UUID(),'",p.id,"','",sm.id,"','Y', now(), now());") as sqlProdSale FROM salemodels sm JOIN products p WHERE p.code='29' AND (TRIM(LOWER(sm.name))) = (TRIM(LOWER('Camion Medio medallon')));
+
+
 
 
 # PROVIDERSXPRODUCT
@@ -721,6 +754,10 @@ ALTER TABLE proposalsxproducts
 ALTER TABLE proposalsxproducts
 	ADD column production_cost_int INTEGER AFTER price_int;
 
+#ADDING FIELD cost_int
+ALTER TABLE `proposalsxproducts` 
+	ADD `cost_int` BIGINT NULL AFTER `county`; 
+
 
 # ADDING FK PPPROPOSAL
 ALTER TABLE `proposalsxproducts`
@@ -757,6 +794,23 @@ is_active ENUM('N','Y') NOT NULL,
 created_at DATETIME NOT NULL,
 updated_at DATETIME NOT NULL
 );
+
+# ADDING cost_int
+ALTER TABLE `productsxbillboards` ADD `cost_int` BIGINT NULL AFTER `billboard_id`; 
+
+# ADDING FK PROPOSALPRODUCT
+ALTER TABLE productsxbillboards
+    ADD CONSTRAINT fk_proposalproduct_productsxbillboards
+	FOREIGN KEY (proposalproduct_id)
+    REFERENCES proposalsxproducts (id);
+
+# ADDING FK PROPOSALPRODUCT
+ALTER TABLE productsxbillboards
+    ADD CONSTRAINT fk_billboard_productsxbillboards 
+	FOREIGN KEY (billboard_id)
+    REFERENCES billboards (id);
+
+
 
 # MODULES
 CREATE TABLE modules (
@@ -867,6 +921,12 @@ VALUES
 INSERT INTO translates 
 (id, code_str, text_eng, text_esp, text_ptbr, is_active, created_at, updated_at)
 VALUES
+(UUID(), 'no_keys', 'no keys', 'sin claves', 'sem chaves', 'Y', NOW(), NOW());
+
+
+INSERT INTO translates 
+(id, code_str, text_eng, text_esp, text_ptbr, is_active, created_at, updated_at)
+VALUES
 (UUID(), 'continue', 'continue', 'continuar', 'continuar', 'Y', NOW(), NOW());
 
 
@@ -874,6 +934,12 @@ INSERT INTO translates
 (id, code_str, text_eng, text_esp, text_ptbr, is_active, created_at, updated_at)
 VALUES
 (UUID(), 'billboard', 'Billboard', 'Cartelera', 'Painel', 'Y', NOW(), NOW());
+
+INSERT INTO translates 
+(id, code_str, text_eng, text_esp, text_ptbr, is_active, created_at, updated_at)
+VALUES
+(UUID(), 'production', 'Production', 'Producción', 'Produção', 'Y', NOW(), NOW());
+
 
 INSERT INTO translates 
 (id, code_str, text_eng, text_esp, text_ptbr, is_active, created_at, updated_at)

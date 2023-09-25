@@ -4,9 +4,19 @@ if(localStorage.getItem('ulang') == 'ptbr')
 if(localStorage.getItem('ulang') == 'eng')
     lang    = 'en-US';
 
+thousands       = ',';
+if(lang     =='pt-BR')
+    thousands       = '.';
+
+cents           = '.';
+if(thousands== '.'){
+    cents           = ',';
+}
+
 
 module      = 'proposal';
 start_index = 0;
+objGlobal   = '';
 document.getElementById('nav-item-proposals').setAttribute('class',document.getElementById('nav-item-proposals').getAttribute('class').replace(' active','') + ' active');
 var csrf_token = $('meta[name="csrf-token"]').attr('content');
 //alert(csrf_token);
@@ -118,15 +128,56 @@ function handleSubmit(form) {
         currency                = form.currency.value;
 
         objProduct      = document.getElementsByName('product_id[]');
-        objSaleModel    = document.getElementsByName('salemodel_id[]');
-        objPrice        = document.getElementsByName('price[]');
-        objState        = document.getElementsByName('state_id[]');
-        objCity         = document.getElementsByName('city_id[]');
-        objCounty       = document.getElementsByName('county_id[]');
-        objColony       = document.getElementsByName('colony_id[]');
-    
-        objQuantity     = document.getElementsByName('quantity[]');
-        objProviderId   = document.getElementsByName('provider_id[]');
+        objProductValue = [];
+        objSaleModel    = [];
+        objProviderId   = [];
+        objCost         = [];
+        objPrice        = [];
+        objState        = [];
+        objCity         = [];
+        objCounty       = [];
+        objColony       = [];
+        objQuantity     = [];
+        objBillboard    = [];
+        indexed         = 0;
+        for(p=0; p < objProduct.length;p++){
+            if(objProduct[p][objProduct[p].selectedIndex].innerText == 'OOH'){
+                /**************************************
+                 * OOH 
+                 ************************************/
+                qtdBillboard = document.getElementsByName('oohprice_'+p+'[]').length;
+                for(pr=0; pr < qtdBillboard; pr++){
+                    objProductValue.push(document.getElementsByName('product_id[]')[p].value);
+                    objSaleModel.push(document.getElementsByName('oohsalemodel_id[]')[pr].value);
+                    objProviderId.push(document.getElementsByName('oohprovider_id[]')[pr].value);
+                    objState.push(document.getElementsByName('oohstate[]')[pr].value);
+                    objCity.push(document.getElementsByName('oohcity[]')[pr].value);
+                    objCounty.push(document.getElementsByName('oohcounty[]')[pr].value); 
+                    objColony.push(document.getElementsByName('oohcolony[]')[pr].value);
+                    objQuantity.push(1);
+                    objCost.push(document.getElementsByName('oohCost[]')[pr].value);
+                    objPrice.push(document.getElementsByName('oohprice_'+p+'[]')[pr].value);
+                    objBillboard.push(document.getElementsByName('oohbillboard_id[]')[pr].value);
+                    indexed++;    
+                }
+            } else {
+                /**************************************
+                 * ANOTHER PRODUCT
+                 ************************************/
+                objProductValue.push(document.getElementsByName('product_id[]')[p].value);
+                objSaleModel.push(document.getElementsByName('salemodel_id[]')[p].value);
+                objProviderId.push(document.getElementsByName('provider_id[]')[p].value);
+                objState.push(document.getElementsByName('state_id[]')[p].value);
+                objCity.push(document.getElementsByName('city_id[]')[p].value);
+                objCounty.push(document.getElementsByName('county_id[]')[p].value);
+                objColony.push(document.getElementsByName('colony_id[]')[p].value);
+                objQuantity.push(document.getElementsByName('quantity[]')[p].value);
+                objCost.push('0');
+                objPrice.push(document.getElementsByName('price[]')[p].value);
+                objBillboard.push('0');
+                indexed++;
+            }
+        }
 
         locat       = window.location.hostname;
         if(locat.slice(-1) != '/')
@@ -134,7 +185,7 @@ function handleSubmit(form) {
 
         if(errors > 0){
             alert(message);
-        } else{
+        } else {
             const requestURL = window.location.protocol+'//'+locat+'api/proposals/auth_proposal_add_new.php';
             //console.log(requestURL);
             const request = new XMLHttpRequest();
@@ -144,26 +195,38 @@ function handleSubmit(form) {
                     //console.log(request.responseText);                    
                     obj = JSON.parse(request.responseText);
 
-                    proposal_id = obj[0].id;
+                    proposal_id     = obj[0].id;
                     virg            = '';
                     product_id      = '';
                     salemodel_id    = '';
-                    price           = '';
-                    quantity        = '';
                     provider_id     = '';
                     state_id        = '';
                     city_id         = '';
                     county_id       = '';
                     colony_id       = '';
+                    quantity        = '';
+                    cost            = '';
+                    price           = '';
+                    billboard_id    = '';
 
-                    for(i=0; i < objProduct.length;i++)
-                    {
+                    for(i=0; i < objProductValue.length;i++){
                         if(i>0)
                             virg = ',';
 
+                        xcost  = '0';
+                        if((objCost[i] != '') || (objCost[i] >= 0)){
+                            axCost = objCost[i].split(",");
+                            for(j=0;j < axCost.length;j++){
+                                apCost     = axCost[j].split(".");
+                                for(k=0;k < apCost.length;k++){
+                                    xcost      += apCost[k];
+                                }
+                            }    
+                        } 
+
                         xprice  = '0';
-                        if((objPrice[i].value != '') || (objPrice[i].value >= 0)){
-                            axPrice = objPrice[i].value.split(",");
+                        if((objPrice[i] != '') || (objPrice[i] >= 0)){
+                            axPrice = objPrice[i].split(",");
                             for(j=0;j < axPrice.length;j++){
                                 apPrice     = axPrice[j].split(".");
                                 for(k=0;k < apPrice.length;k++){
@@ -171,21 +234,26 @@ function handleSubmit(form) {
                                 }
                             }    
                         } 
-                        product_id      += virg + objProduct[i].value;
-                        salemodel_id    += virg + objSaleModel[i].value;
+
+                        product_id      += virg + objProductValue[i];
+                        salemodel_id    += virg + objSaleModel[i];
+                        cost            += virg + xcost;
                         price           += virg + xprice;
                         xquantity       = 1;
-                        if((objQuantity[i].value != '') || (objQuantity[i].value > 0))
-                            xquantity = objQuantity[i].value;
+                        if((objQuantity[i] != '') || (objQuantity[i] > 0))
+                            xquantity = objQuantity[i];
                         quantity        += virg + xquantity;
-                        provider_id     += virg + objProviderId[i].value;
-                        //if(objState[i].value)
-                        state_id        += virg + objState[i].value;
-                        city_id         += virg + objCity[i].value;
-                        county_id       += virg + objCounty[i].value;
-                        colony_id       += virg + objColony[i].value;
+                        provider_id     += virg + objProviderId[i];
+                        //if(objState[i])
+                        state_id        += virg + objState[i];
+                        city_id         += virg + objCity[i];
+                        county_id       += virg + objCounty[i];
+                        colony_id       += virg + objColony[i];
+                        billboard_id    += virg + objBillboard[i];
                     }
-                    addProduct('['+product_id+']','['+salemodel_id+']','['+price+']',currency,'['+quantity+']','['+provider_id+']',proposal_id,'['+state_id+']','['+city_id+']','['+county_id+']','['+colony_id+']');
+
+                    addProduct('['+product_id+']','['+salemodel_id+']','['+cost+']','['+price+']',currency,'['+quantity+']','['+provider_id+']',proposal_id,'['+state_id+']','['+city_id+']','['+county_id+']','['+colony_id+']','['+billboard_id+']');
+                    // alert('['+product_id+']'+'['+salemodel_id+']'+'['+cost+']'+'['+price+']'+currency+'['+quantity+']'+'['+provider_id+']'+proposal_id+'['+state_id+']'+'['+city_id+']'+'['+county_id+']'+'['+colony_id+']'+'['+billboard_id+']');
 
                     form.btnSave.innerHTML = "Save";
                     window.location.href = '?pr=Li9wYWdlcy9wcm9wb3NhbHMvZm9ybWVkaXQucGhw&ppid='+proposal_id;
@@ -994,40 +1062,110 @@ function calcAmountTotalOnProvider(form,index){
     }
 }
 
-function calcAmountTotal(form,index){
+function calcAmountTotal(form,index,specialid){
     currency    = document.getElementsByName('currency');
     xcurrency   = currency[0].value;
     var formatter = new Intl.NumberFormat(lang, {
-        style: 'currency',
-        currency: xcurrency,
-        //maximumSignificantDigits: 2,
+        //style: 'currency',
+        //currency: xcurrency,
+        //maximumSignificantDigits: 3,
 
         // These options are needed to round to whole numbers if that's what you want.
         //minimumFractionDigits: 2, // (this suffices for whole numbers, but will print 2500.10 as $2,500.1)
         //maximumFractionDigits: 0, // (causes 2500.99 to be printed as $2,501)
     });
-    price       = document.getElementsByName('price[]');
-    xprice      = price[index].value;
-    quantity    = document.getElementsByName('quantity[]');
-    xquantity   = quantity[index].value;
-    if(xprice > '0' && xquantity > '0'){
-        amount = document.getElementsByName('amount[]');
-        amount[index].value   = formatter.format(parseFloat(transformToInt(xprice)) * parseInt(xquantity));
+    xproduction = 0;
+    xprice      = 0;
+    if(typeof(specialid)=='undefined'){
+        price       = document.getElementById('price_'+index);
 
+        xprice=0;
+        if(price){
+            xprice      = price.value;
+        }
+        //alert(price+ ' - ' +xprice+ ' - '+'price_'+index);
+        quantity    = document.getElementById('quantity_'+index);
+        xquantity=1;
+        if(quantity){
+            xquantity   = quantity.value;
+        }
+    } else { 
+        price      = document.getElementsByName('oohprice_'+index+'[]');
+        
+        if(price){
+            for(p=0;p < price.length;p++){
+                if(price[p].value !== ''){
+/*                    if(String(parseFloat(price[p].value)).length <= 3){
+                        price[p].value += '00'; 
+                    }*/
+                    xprice  = parseInt(xprice) + parseInt(transformToInt(price[p].value));
+                }
+            }
+            xprice = formatter.format(xprice);
+        }
+        xquantity=1; 
+        production  = document.getElementsByName('oohproduction_price_'+index+'[]');
+        if(production){
+            for(pr=0;pr < production.length;pr++){
+                if(production[pr].value !== ''){
+                    /*if(String(parseFloat(production[pr].value)).length <= 3){
+                        production[pr].value += '00'; 
+                    }*/
+                    xproduction = parseInt(xproduction) + parseInt(transformToInt(production[pr].value));
+                }                
+               // alert(production[pr].value + '\n'+ String(parseFloat(production[pr].value)).length + '\n' + String(xproduction).length+ '\n' + String(xproduction));
+            }
+            xproduction = formatter.format(xproduction);
+    
+        }
+        //alert(xproduction);
+    }
+    if(xprice > '0' && xquantity > '0'){
+        if((xprice.charAt(xprice.length - 4) == thousands) || (xprice.length <= 3)){
+            xprice += cents+'00';
+        }
+        arrayValue  = xprice.split(cents);
+        xprice      = arrayValue[0] + cents + (arrayValue[1]+'00').substring(0,2);
+
+        if(xproduction > 0){
+            if((xproduction.charAt(xproduction.length - 4) == thousands) || (xproduction.length <= 3)){
+                xproduction += cents+'00';
+            }
+    
+            arrayProd   = xproduction.split(cents);
+            xproduction = arrayProd[0] + cents + (arrayProd[1]+'00').substring(0,2);
+        }
+
+
+        amount = document.getElementsByName('amount[]');
+        formattedAmount = formatter.format(parseFloat(((transformToInt(xprice)) * parseInt(xquantity)) + (transformToInt(xproduction))));
+        if((formattedAmount.charAt(formattedAmount.length - 4) == thousands) || (formattedAmount.length <= 3)){
+            formattedAmount += cents+'00';
+        }
+        arrayValue = formattedAmount.split(cents);
+        formattedAmount = arrayValue[0] + cents + (arrayValue[1]+'00').substring(0,2);
+
+        amount[index].value   = formattedAmount;
+        //alert("price: "+xprice+"\nquantity: "+xquantity+'\nFormattedAmount: '+formattedAmount+'\nLocal Amount: '+amount[index].value);
         total = 0;
         for(i=0;i < amount.length; i++){
             xaAmount        = amount[i].value.split(" ");
             if(xaAmount.length <= 1){
                 xaAmount        = amount[i].value.split("$");
+                if(xaAmount.length <= 1){
+                    aAmountValue1   = xaAmount[0];
+                }else{
+                    aAmountValue1   = xaAmount[1];
+                }
             }
-            aAmountValue1   = xaAmount[1];
+            //aAmountValue1   = xaAmount[1];
             //alert("value: "+ amount[i].value + "\n\nxaAmount: " + xaAmount + "\n0: " + xaAmount[0] + "\n1: " + xaAmount[1])
-            axAmountS       = aAmountValue1.split(",");
+            axAmountS       = aAmountValue1.split(thousands);
             xVAmount        = '';
             for(j=0;j < axAmountS.length; j++){
                 xVAmount        += axAmountS[j];
             }
-            axAmountFinal   = xVAmount.split(".");
+            axAmountFinal   = xVAmount.split(cents);
             xVAmountFinal   = '';
             for(k=0;k < axAmountFinal.length; k++){
                 xVAmountFinal    += axAmountFinal[k];
@@ -1036,25 +1174,40 @@ function calcAmountTotal(form,index){
             total = (parseFloat(total) * 1)+ (parseFloat(realAmount) * 1);
             //alert(total);
         }
-        form.total.value = formatter.format(total);
+        formattedTotal = formatter.format(total);
+        if((formattedTotal.charAt(formattedTotal.length - 4) == thousands) || (formattedTotal.length <= 3)){
+            formattedTotal += cents+'00';
+        }
+        arrayValue = formattedTotal.split(cents);
+        formattedTotal = arrayValue[0] + cents + (arrayValue[1]+'00').substring(0,2);
+
+        form.total.value = formattedTotal;
     }
 }
 
 function transformToInt(value){
-    arrayValue = value.split('.');
-    lenArrayValue = arrayValue.length;
-    stringValue = '';
-    for(i = 0;i < lenArrayValue; i++){
-        stringValue += arrayValue[i];
+    finalValue = 0;
+    if(value > '0')
+    {
+        arrayValue = value.split(thousands);
+        lenArrayValue = arrayValue.length;
+        stringValue = '';
+        for(i = 0;i < lenArrayValue; i++){
+            stringValue += arrayValue[i];
+        }
+    
+        arrayValue = stringValue.split(cents);
+        lenArrayValue = arrayValue.length;
+        stringValue = '';
+        if(lenArrayValue > 0){
+            for(j = 0;j < lenArrayValue; j++){
+                stringValue = arrayValue[0] + ((arrayValue[1]+'00').substring(0,2));
+            }
+                finalValue = parseInt(stringValue) / 100;
+        } else {
+            finalValue = arrayValue[0]+ '00';
+        }
     }
-
-    arrayValue = stringValue.split(',');
-    lenArrayValue = arrayValue.length;
-    stringValue = '';
-    for(j = 0;j < lenArrayValue; j++){
-        stringValue += arrayValue[j];
-    }
-    finalValue = parseInt(stringValue) / 100;
     return finalValue;
 }
 
@@ -1070,7 +1223,7 @@ function newProductForm(copy,destination,items){
 
     for(iteration=0; iteration <= items; iteration++){
         //alert(items + ' - '+ iteration)
-        document.getElementById(destination).innerHTML = document.getElementById(destination).innerHTML.replace('Value_0','Value_'+start_index).replace('Name_0','Name_'+start_index).replace('Id_0','Id_'+start_index).replace('DropdownMenuButton_0','DropdownMenuButton_'+start_index).replace(",'0');",",'"+start_index+"');").replace('product_0','product_'+start_index).replace('salemodel_0','salemodel_'+start_index).replace('provider_0','provider_'+start_index).replace('oohkeys_0','oohkeys_'+start_index);
+        document.getElementById(destination).innerHTML = document.getElementById(destination).innerHTML.replace('Value_0','Value_'+start_index).replace('Name_0','Name_'+start_index).replace('Id_0','Id_'+start_index).replace('DropdownMenuButton_0','DropdownMenuButton_'+start_index).replace(",'0');",",'"+start_index+"');").replace('product_0','product_'+start_index).replace('salemodel_0','salemodel_'+start_index).replace('provider_0','provider_'+start_index).replace('oohproviders_0','oohproviders_'+start_index).replace('oohkeys_0','oohkeys_'+start_index).replace('oohsalemodels_0','oohsalemodels_'+start_index).replace('oohcost_0','oohcost_'+start_index).replace('oohprice_0','oohprice_'+start_index).replace('oohstate_0','oohstate_'+start_index).replace('oohcolony_0','oohcolony_'+start_index).replace('oohcity_0','oohcity_'+start_index).replace('oohcounty_0','oohcounty_'+start_index).replace('div-quantity_0','div-quantity_'+start_index).replace('div-price_0','div-price_'+start_index).replace('quantity_0','quantity_'+start_index).replace('price_0','price_'+start_index);
     }
     htmlRemoveButton = '<div class="form-row" id="btnRemove_'+start_index+'" >';
     htmlRemoveButton += '<div class="col" style="text-align:right;">';
@@ -1129,16 +1282,12 @@ function getId(table,where){
     }
 }
 
-function addProduct(product_id,salemodel_id,price,currency,quantity,provider_id,proposal_id,state,city,county,colony){
+function addProduct(product_id,salemodel_id,cost,price,currency,quantity,provider_id,proposal_id,state,city,county,colony,billboard_id){
     errors      = 0;
     authApi     = csrf_token;
     locat       = window.location.hostname;
 
-    // filters     = '&tid='+tid
-    //fields  = "product_id,salemodel_id,price,currency,quantity,provider_id,proposal_id";
-    //values  = "'"+product_id+"','"+salemodel_id+"',"+price+",'"+currency+"',"+quantity+",'"+provider_id+"','"+proposal_id+"'";
-    querystring = 'auth_api='+authApi+"&product_id="+product_id+"&salemodel_id="+salemodel_id+"&price="+price+"&currency="+currency+"&quantity="+quantity+"&provider_id="+provider_id+"&proposal_id="+proposal_id+"&state="+state+"&city="+city+"&county="+county+"&colony="+colony;
-
+    querystring = 'auth_api='+authApi+"&product_id="+product_id+"&salemodel_id="+salemodel_id+"&billboard_id="+billboard_id+"&cost="+cost+"&price="+price+"&currency="+currency+"&quantity="+quantity+"&provider_id="+provider_id+"&proposal_id="+proposal_id+"&state="+state+"&city="+city+"&county="+county+"&colony="+colony;
 
     if(locat.slice(-1) != '/')
         locat += '/';
@@ -1153,6 +1302,26 @@ function addProduct(product_id,salemodel_id,price,currency,quantity,provider_id,
             if (this.readyState == 4 && this.status == 200) {
                 
                 obj = JSON.parse(requestAdd.responseText);
+                pppid = 0;
+                if(obj.status == 'OK'){
+                    /*
+                    pppid           = obj.pppid;
+                    provider_id     = provider_id.replace('[','').replace(']','');
+                    billboard       = billboard_id.replace('[','').replace(']','');
+                    price           = price.replace('[','').replace(']','');
+
+                    arrayBillboard  = billboard.split(',');
+                    arrayProvider   = provider_id.split(',');
+                    arrayPrice      = price.split(',');
+
+                    for(pk=0;pk < arrayBillboard.length; pk++){
+                        bb_billboard_id = arrayBillboard[pk];
+                        bb_provider_id  = arrayProvider[pk];
+                        bb_price        = arrayPrice[pk];
+                        //if(bb_billboard_id != '0')
+                            //addBillboardOnList(bb_billboard_id, pppid,bb_price,bb_provider_id);
+                    }*/
+                }
                 //console.log(obj);
 //                return false;
             }
@@ -1167,6 +1336,47 @@ function addProduct(product_id,salemodel_id,price,currency,quantity,provider_id,
         requestAdd.send(querystring);
     }
 }
+
+function addBillboardOnList(billboard_id, proposalproduct_id,price,provider_id){
+    if (billboard_id !== '' && proposalproduct_id !== '' && price !== '') {
+    
+        errors      = 0;
+        authApi     = csrf_token;
+        message     = '';
+
+        locat       = window.location.hostname;
+        if(locat.slice(-1) != '/')
+            locat += '/';
+
+        querystring = 'auth_api='+authApi+'&bid='+billboard_id+'&pppid='+proposalproduct_id+'&pc='+price+'&pid='+provider_id;
+
+        if(errors > 0){
+            alert(message);
+        } else {
+            const requestURL = window.location.protocol+'//'+locat+'api/billboards/auth_billboard_add_to_proposal.php';
+            //console.log(requestURL);
+            const request = new XMLHttpRequest();
+            request.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                   // Typical action to be performed when the document is ready:
+                   obj = JSON.parse(request.responseText);
+                   if(obj.response == 'OK'){
+                        // add number of selected billboards to cart
+                   }
+                }
+                else{
+                    //form.btnSave.innerHTML = "Saving...";
+                }
+            };
+            request.open('POST', requestURL, false);
+            //request.responseType = 'json';
+            request.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+            request.send(querystring);
+        }
+    } else
+        alert('Please, fill all required fields (*)');
+}
+
 
 function listSelectedFiltersDropDownStyle(findInColumn,findString,bringColumn,table,index){
     errors      = 0;
@@ -1327,7 +1537,7 @@ function refilterProductsType(typeInt,indexValue){
         request.onreadystatechange = function() {
             html    = '<label for="product_id[]">'+ucfirst(translateText('product',localStorage.getItem('ulang')))+'</label>';
             html   += '<spam id="sproduct">'
-            html   += '<SELECT id="selectproduct_'+indexValue+'" name="product_id[]" onchange="refilterSaleModel('+typeInt+',this.value)" title="product_id" class="form-control" autocomplete="product_id"  required>';
+            html   += '<SELECT id="selectproduct_'+indexValue+'" name="product_id[]" onchange="refilterSaleModel(document.getElementById(\'digital_product\').value,this.value,this.id.split(\'_\')[1]); checkOOHSelection(this[this.selectedIndex].innerText,this.id.split(\'_\')[1]);" title="product_id" class="form-control" autocomplete="product_id"  required>';
             if (this.readyState == 4 && this.status == 200) {
                 // Typical action to be performed when the document is ready:
                 obj = JSON.parse(request.responseText);
@@ -1364,12 +1574,20 @@ function refilterSaleModel(typeInt,productCode,indexValue){
     authApi     = csrf_token;
     locat       = window.location.hostname;
     submodule   = 'salemodel';
-    if(document.getElementById("div-selectsalemodel_"+indexValue).style.display === "none"){
-        document.getElementById("div-oohkeys_"+indexValue).style.display = 'none';
-        document.getElementById("div-provider_"+indexValue).style.display = 'block';
-        document.getElementById("div-selectsalemodel_"+indexValue).style.display = 'block';    
+    
+    salemodelElement = document.getElementById("div-selectsalemodel_"+indexValue);
+    if(salemodelElement){
+        if(document.getElementById("div-selectsalemodel_"+indexValue).style.display === "none"){
+            document.getElementById("div-oohkeys_"+indexValue).style.display = 'none';
+            oohlist = document.getElementById("ooh-list-form-"+indexValue);
+            if(oohlist)
+                oohlist.innerHTML = '';
+            document.getElementById("div-provider_"+indexValue).style.display = 'block';
+            document.getElementById("div-selectsalemodel_"+indexValue).style.display = 'block';
+            document.getElementById("div-price_"+indexValue).style.display = 'block';
+            document.getElementById("div-quantity_"+indexValue).style.display = 'block';
+        }    
     }
-
 
     if(locat.slice(-1) != '/')
         locat += '/';
@@ -1385,41 +1603,44 @@ function refilterSaleModel(typeInt,productCode,indexValue){
 
     if(errors > 0){
 
-    } else{
-        salemodelList   = document.getElementById('div-selectsalemodel_0');
-        const requestURL = window.location.protocol+'//'+locat+'api/'+submodule+'s/auth_'+submodule+'_view.php?auth_api='+authApi+filters;
-        //console.log(requestURL);
-        const request = new XMLHttpRequest();
-        request.onreadystatechange = function() {
-            html    = '<label for="salemodel_id[]">' + ucfirst(translateText('sale_model',localStorage.getItem('ulang'))) + '</label>';
-            html   += '<spam id="ssalemodel">'
-            html   += '<SELECT id="selectsalemodel_'+indexValue+'"  name="salemodel_id[]" title="salemodel_id" class="form-control" autocomplete="salemodel_id" required>';
-            if (this.readyState == 4 && this.status == 200) {
-                // Typical action to be performed when the document is ready:
-                obj = JSON.parse(request.responseText);
-                if( (obj.response != 'error') && (obj.response != 'ZERO_RETURN')){
-                    html += '<OPTION value="0"/>' + translateText('please_select',localStorage.getItem('ulang')) + ' ' + ucfirst(translateText('sale_model',localStorage.getItem('ulang'))) + '';
-                    for(var i=0;i < obj['data'].length; i++){
-                        html += '<OPTION value="'+obj['data'][i].uuid_full+'"/>'+obj['data'][i].name;
+    } else {
+        salemodelList   = document.getElementById('div-selectsalemodel_'+indexValue);
+        
+        if(salemodelList){
+            const requestURL = window.location.protocol+'//'+locat+'api/'+submodule+'s/auth_'+submodule+'_view.php?auth_api='+authApi+filters;
+            //console.log(requestURL);
+            const request = new XMLHttpRequest();
+            request.onreadystatechange = function() {
+                html    = '<label for="salemodel_id[]">' + ucfirst(translateText('sale_model',localStorage.getItem('ulang'))) + '</label>';
+                html   += '<spam id="ssalemodel">'
+                html   += '<SELECT id="selectsalemodel_'+indexValue+'"  name="salemodel_id[]" title="salemodel_id" class="form-control" autocomplete="salemodel_id" required>';
+                if (this.readyState == 4 && this.status == 200) {
+                    // Typical action to be performed when the document is ready:
+                    obj = JSON.parse(request.responseText);
+                    if( (obj.response != 'error') && (obj.response != 'ZERO_RETURN')){
+                        html += '<OPTION value="0"/>' + translateText('please_select',localStorage.getItem('ulang')) + ' ' + ucfirst(translateText('sale_model',localStorage.getItem('ulang'))) + '';
+                        for(var i=0;i < obj['data'].length; i++){
+                            html += '<OPTION value="'+obj['data'][i].uuid_full+'"/>'+obj['data'][i].name;
+                        }
+                        html    += '</SELECT>';
+                        html    += '</spam>';
                     }
-                    html    += '</SELECT>';
-                    html    += '</spam>';
+                    else {
+                        html    = '';
+                    }            
+                    salemodelList.innerHTML = html;
                 }
-                else {
-                    html    = '';
-                }            
-                salemodelList.innerHTML = html;
-            }
-            else{
-                html    += '<OPTION value="0000"/>Loading...';
-                html    += '</SELECT>';
-                salemodelList.innerHTML = html;
-                //form.btnSave.innerHTML = "Searching...";
-            }
-        };
-        request.open('GET', requestURL);
-        //request.responseType = 'json';
-        request.send();
+                else{
+                    html    += '<OPTION value="0000"/>Loading...';
+                    html    += '</SELECT>';
+                    salemodelList.innerHTML = html;
+                    //form.btnSave.innerHTML = "Searching...";
+                }
+            };
+            request.open('GET', requestURL);
+            //request.responseType = 'json';
+            request.send();    
+        }
     }
 }
 
@@ -1427,17 +1648,381 @@ function refilterSaleModel(typeInt,productCode,indexValue){
 function checkOOHSelection(stringValue,indexValue){
     xhtml = "";
     if(stringValue == "OOH"){
-        //xhtml += '<div class="col">';
         xhtml += '<label for="oohkeys[]">'+ucfirst(translateText('key',localStorage.getItem('ulang')))+ '(s) - '+stringValue+'</label><br/>';
-        xhtml += '<TEXTAREA id="oohkeys_'+indexValue+'" name="oohkeys[]" rows="5" placeholder="'+ucfirst(translateText('key',localStorage.getItem('ulang')))+ '(s) - '+stringValue+'" class="form-control" id="oohkeys_0"></TEXTAREA>';
-        //xhtml += '</div>';
+        xhtml += '<TEXTAREA id="oohkeys_'+indexValue+'" name="oohkeys[]" rows="5" placeholder="'+ucfirst(translateText('key',localStorage.getItem('ulang')))+ '(s) - '+stringValue+'" class="form-control" id="oohkeys_0" onblur="getBillboardIds(this.value,'+indexValue+');"></TEXTAREA>';
+        /*
+        xhtml += '<INPUT type="HIDDEN" id="ids-oohkeys_'+indexValue+'" name="ids_oohkeys[]"/>';
+        xhtml += '<INPUT type="HIDDEN" id="ids-oohproviders_'+indexValue+'" name="ids_oohproviders[]"/>';
+        xhtml += '<INPUT type="HIDDEN" id="ids-oohsalemodels_'+indexValue+'" name="ids_oohsalemodels[]"/>';
+        xhtml += '<INPUT type="HIDDEN" id="oohcost_'+indexValue+'" name="oohcost[]"/>';
+        xhtml += '<INPUT type="HIDDEN" id="oohstate_'+indexValue+'" name="oohstate[]"/>';
+        xhtml += '<INPUT type="HIDDEN" id="oohcity_'+indexValue+'" name="oohcity[]"/>';
+        xhtml += '<INPUT type="HIDDEN" id="oohcounty_'+indexValue+'" name="oohcounty[]"/>';*/
         if(document.getElementById("div-oohkeys_"+indexValue).style.display === "none"){
             document.getElementById("div-selectsalemodel_"+indexValue).style.display = 'none';
             document.getElementById("div-provider_"+indexValue).style.display = 'none';
+            document.getElementById("div-price_"+indexValue).style.display = 'none';
+            document.getElementById("div-quantity_"+indexValue).style.display = 'none';
             document.getElementById("div-oohkeys_"+indexValue).style.display = 'block';
+            oohlist = document.getElementById("ooh-list-form-"+indexValue);
+            if(oohlist)
+                oohlist.style.display = 'block';
+
         }
     }
     document.getElementById("div-oohkeys_"+indexValue).innerHTML = xhtml;
+}
+/*<select name="product_id[]" id="selectproduct_0" title="product_id" class="form-control" autocomplete="product_id" onchange="refilterSaleModel(document.getElementById('digital_product').value,this.value,this.id.split('_')[1]); checkOOHSelection(this[this.selectedIndex].innerText,this.id.split('_')[1])" required="" data-gtm-form-interact-field-id="0">
+<select name="product_id[]" id="selectproduct_0" title="product_id" class="form-control" autocomplete="product_id" onchange="document.getElementById('digital_product').value,this.value,this.id.split('_')[1]); checkOOHSelection(this[this.selectedIndex].innerText,this.id.split('_')[1]);" required="">
+*/
+
+function getBillboardIds(oohlist,indexValue){
+    // reseting objGlobal
+    objGlobal   = '';
+    aOOHlist    = oohlist.split(",");
+    xoohlist    = '';
+
+    var formatter = new Intl.NumberFormat(lang, {
+        //style: 'currency',
+        //currency: xcurrency,
+        //maximumSignificantDigits: 2,
+
+        // These options are needed to round to whole numbers if that's what you want.
+        //minimumFractionDigits: 2, // (this suffices for whole numbers, but will print 2500.10 as $2,500.1)
+        //maximumFractionDigits: 0, // (causes 2500.99 to be printed as $2,501)
+    });
+
+    tableDivID  = document.getElementById('ooh-list-form-'+indexValue);
+    // removing all table if exists
+    if(tableDivID){
+        tableDivID.remove();
+    }
+    tableDiv    = document.createElement('table');
+    tableDiv.classList.add('table');
+    tableDiv.classList.add('table-hover');
+    tableDiv.classList.add('table-sm');
+    tableDiv.setAttribute('id','ooh-list-form-'+indexValue);
+    document.getElementById('div-oohkeys_'+indexValue).parentElement.after(tableDiv);
+    captionDiv  = document.createElement('caption');
+    captionText = document.createTextNode("Listado de Medios - OOH");
+    tableDiv.appendChild(captionDiv);
+    captionDiv.appendChild(captionText);
+
+    newThead    = document.createElement('thead');
+    tableDiv.appendChild(newThead);
+    newRow      = document.createElement('tr');
+    newThead.appendChild(newRow);
+
+    // key
+    newHeadCol      = document.createElement('th');
+    newHeadCol.setAttribute('scope','col');
+    keyText         = document.createTextNode(translateText('key',localStorage.getItem('ulang')));
+    newRow.appendChild(newHeadCol);
+    newHeadCol.appendChild(keyText);
+
+    // provider
+    newHeadCol      = document.createElement('th');
+    newHeadCol.setAttribute('scope','col');
+    priceText       = document.createTextNode(translateText('provider',localStorage.getItem('ulang')));
+    newRow.appendChild(newHeadCol);
+    newHeadCol.appendChild(priceText);
+
+    // salemodel
+    newHeadCol      = document.createElement('th');
+    newHeadCol.setAttribute('scope','col');
+    salemodelText   = document.createTextNode(translateText('sale_model',localStorage.getItem('ulang')));
+    newRow.appendChild(newHeadCol);
+    newHeadCol.appendChild(salemodelText);
+
+    // cost
+    newHeadCol      = document.createElement('th');
+    newHeadCol.setAttribute('scope','col');
+    costText        = document.createTextNode(translateText('cost',localStorage.getItem('ulang')));
+    newRow.appendChild(newHeadCol);
+    newHeadCol.appendChild(costText);
+
+    // price
+    newHeadCol      = document.createElement('th');
+    newHeadCol.setAttribute('scope','col');
+    priceText       = document.createTextNode(translateText('price',localStorage.getItem('ulang')));
+    newRow.appendChild(newHeadCol);
+    newHeadCol.appendChild(priceText);
+
+    // production
+    newHeadCol      = document.createElement('th');
+    newHeadCol.setAttribute('scope','col');
+    productionText  = document.createTextNode(translateText('production',localStorage.getItem('ulang')));
+    newRow.appendChild(newHeadCol);
+    newHeadCol.appendChild(productionText);
+
+    // locale
+    newHeadCol      = document.createElement('th');
+    newHeadCol.setAttribute('scope','col');
+    stateText       = document.createTextNode(translateText('state',localStorage.getItem('ulang'))+ ' - ' +translateText('city',localStorage.getItem('ulang'))+ ' - ' +translateText('county',localStorage.getItem('ulang')));
+    newRow.appendChild(newHeadCol);
+    newHeadCol.appendChild(stateText);
+
+    newTbody    = document.createElement('tbody');
+    newThead.after(newTbody);
+
+    for(l=0;l<aOOHlist.length;l++){
+        if(l>0){
+            xoohlist += '\n';
+        }
+        xoohlist += aOOHlist[l];
+    }
+    rows = xoohlist.split("\n");
+    billboard_id    = '';
+    bb_provider_id  = '';
+    bb_salemodel_id = '';
+    cost_int        = '';
+    price_int       = '';
+    state           = '';
+    city            = '';
+    county          = '';
+    colony          = '';
+    totalPrice      = 0;
+
+    for(r=0;r < rows.length;r++){
+    // busca na tabela billboards: billboard_id (id), bb_provider_id (provider_id), bb_salemodel_id (salemodel_id), cost_int, price_int, state, city, county
+        getIdFromTable('billboard','uuid as id,name,provider_id,provider_name,salemodel_id,salemodel_name,cost_int,price_int,state,city,county,colony','name|||'+rows[r]);
+        if(objGlobal.response=='ERROR'){
+            alert(rows[r] + ' no encontrado. No es posible añadir en la lista de OOHs');
+        } else {
+            if(r > 0){
+                billboard_id    += ',';
+                bb_provider_id  += ',';
+                bb_salemodel_id += ',';
+                cost_int        += ',';
+                price_int       += ',';
+                state           += ',';
+                city            += ',';
+                county          += ',';
+                colony          += ',';
+            }
+            billboard_id    += objGlobal.data[0].id;
+            bb_provider_id  += objGlobal.data[0].provider_id;
+            bb_salemodel_id += objGlobal.data[0].salemodel_id;
+            cost_int        += objGlobal.data[0].cost_int;
+            price_int       += objGlobal.data[0].price_int;
+            state           += objGlobal.data[0].state;
+            city            += objGlobal.data[0].city;
+            county          += objGlobal.data[0].county;
+            colony          += objGlobal.data[0].colony;
+
+            newRow          = document.createElement('tr');
+            newTbody.appendChild(newRow);
+
+            // key
+            newCol          = document.createElement('td');
+            keyText         = document.createTextNode(objGlobal.data[0].name);
+            newRow.appendChild(newCol);
+            newCol.appendChild(keyText);
+
+            // provider
+            newCol          = document.createElement('td');
+            providerText   = document.createTextNode(objGlobal.data[0].provider_name);
+            newRow.appendChild(newCol);
+            newCol.appendChild(providerText);
+
+            // salemodel
+            newCol          = document.createElement('td');
+            salemodelText   = document.createTextNode(objGlobal.data[0].salemodel_name);
+            newRow.appendChild(newCol);
+            newCol.appendChild(salemodelText);
+
+            // cost
+            newCol          = document.createElement('td');
+            newInput        = document.createElement('input');
+            costValue       = formatter.format((parseInt(objGlobal.data[0].cost_int)/100));
+            // including ,00 when don´t having it on the value
+            if((costValue.charAt(costValue.length - 4) == thousands) || (costValue.length <= 3)){
+                costValue += cents+'00';
+            }
+            newInput.classList.add('form-control');
+            newInput.setAttribute('id','cost-'+indexValue+'-'+objGlobal.data[0].id);
+            newInput.setAttribute('name','oohCost[]');
+            newInput.setAttribute('type','currency');
+            newInput.setAttribute('maxlength','20');
+            newInput.setAttribute('autocomplete','cost');
+            newInput.setAttribute('placeholder','999,99');
+            newInput.setAttribute('value',costValue);
+            newInput.setAttribute('title',translateText('cost',localStorage.getItem('ulang')));
+            newInput.setAttribute('onkeypress',"$(this).mask('#"+thousands+"###"+thousands+"##0"+cents+"00', {reverse: true});");
+            newRow.appendChild(newCol);
+            newCol.appendChild(newInput);
+
+            // price
+            newCol          = document.createElement('td');
+            newInput        = document.createElement('input');
+            priceValue      = formatter.format((parseInt(objGlobal.data[0].price_int)/100));
+            // including ,00 when don´t having it on the value
+            if((priceValue.charAt(priceValue.length - 4) == thousands) || (priceValue.length <= 3)){
+                priceValue += cents+'00';
+            }
+            newInput.classList.add('form-control');
+            newInput.setAttribute('id','price-'+indexValue+'-'+objGlobal.data[0].id);
+            newInput.setAttribute('name','oohprice_'+indexValue+'[]');
+            newInput.setAttribute('type','currency');
+            newInput.setAttribute('maxlength','20');
+            newInput.setAttribute('autocomplete','production');
+            newInput.setAttribute('placeholder','999,99');
+            newInput.setAttribute('value',priceValue);
+            newInput.setAttribute('title',translateText('unit_price',localStorage.getItem('ulang')));
+            newInput.setAttribute('onkeypress',"$(this).mask('#"+thousands+"###"+thousands+"##0"+cents+"00', {reverse: true});");
+            newInput.setAttribute('onblur',"calcAmountTotal(proposal,"+indexValue+",'"+objGlobal.data[0].id+"')");
+            newRow.appendChild(newCol);
+            newCol.appendChild(newInput);
+
+            // impression / production
+            newCol          = document.createElement('td');
+            newInput        = document.createElement('input');
+            newInput.classList.add('form-control');
+            newInput.setAttribute('id','production-price-'+indexValue+'-'+objGlobal.data[0].id);
+            newInput.setAttribute('name','oohproduction_price_'+indexValue+'[]');
+            newInput.setAttribute('type','currency');
+            newInput.setAttribute('maxlength','20');
+            newInput.setAttribute('autocomplete','production-price');
+            newInput.setAttribute('placeholder','9'+thousands+'999'+cents+'99');
+            newInput.setAttribute('title',translateText('production',localStorage.getItem('ulang')));
+            newInput.setAttribute('onkeypress',"$(this).mask('#"+thousands+"###"+thousands+"##0"+cents+"00', {reverse: true});");
+            newInput.setAttribute('onblur',"calcAmountTotal(proposal,"+indexValue+",'"+objGlobal.data[0].id+"')");
+            newRow.appendChild(newCol);
+            newCol.appendChild(newInput);
+
+            // locale
+            newCol          = document.createElement('td');
+            stateText       = document.createTextNode(objGlobal.data[0].state + ' - ' + objGlobal.data[0].city + ' - ' + objGlobal.data[0].county);
+            newRow.appendChild(newCol);
+            newCol.appendChild(stateText);
+
+            //total Price
+            totalPrice += parseInt(objGlobal.data[0].price_int)/100;
+
+            /********************************** 
+             * HIDDEN INPUT AREA  
+             ******************************** */ 
+
+            // billboard_id
+            newCol          = document.createElement('td');
+            newInput        = document.createElement('input');
+            newInput.setAttribute('name','oohbillboard_id[]');
+            newInput.setAttribute('type','hidden');
+            newInput.setAttribute('value',objGlobal.data[0].id);
+            newRow.appendChild(newCol);
+            newCol.appendChild(newInput);
+
+            // salemodel_id
+            newInput        = document.createElement('input');
+            newInput.setAttribute('name','oohsalemodel_id[]');
+            newInput.setAttribute('type','hidden');
+            newInput.setAttribute('value',objGlobal.data[0].salemodel_id);
+            newRow.appendChild(newCol);
+            newCol.appendChild(newInput);
+
+            // provider_id
+            newInput        = document.createElement('input');
+            newInput.setAttribute('name','oohprovider_id[]');
+            newInput.setAttribute('type','hidden');
+            newInput.setAttribute('value',objGlobal.data[0].provider_id);
+            newRow.appendChild(newCol);
+            newCol.appendChild(newInput);
+
+            // state
+            newInput        = document.createElement('input');
+            newInput.setAttribute('name','oohstate[]');
+            newInput.setAttribute('type','hidden');
+            newInput.setAttribute('value',objGlobal.data[0].state);
+            newRow.appendChild(newCol);
+            newCol.appendChild(newInput);
+
+            // city
+            newInput        = document.createElement('input');
+            newInput.setAttribute('name','oohcity[]');
+            newInput.setAttribute('type','hidden');
+            newInput.setAttribute('value',objGlobal.data[0].city);
+            newRow.appendChild(newCol);
+            newCol.appendChild(newInput);
+
+            // county
+            newInput        = document.createElement('input');
+            newInput.setAttribute('name','oohcounty[]');
+            newInput.setAttribute('type','hidden');
+            newInput.setAttribute('value',objGlobal.data[0].county);
+            newRow.appendChild(newCol);
+            newCol.appendChild(newInput);
+
+            // colony
+            newInput        = document.createElement('input');
+            newInput.setAttribute('name','oohcolony[]');
+            newInput.setAttribute('type','hidden');
+            newInput.setAttribute('value',objGlobal.data[0].colony);
+            newRow.appendChild(newCol);
+            newCol.appendChild(newInput);
+        }   
+    }
+    totalPrice = formatter.format(totalPrice);
+    if((totalPrice.charAt(totalPrice.length - 4) == thousands) || (totalPrice.length <= 3)){
+        totalPrice += cents+'00';
+    }
+/*
+    document.getElementById('ids-oohkeys_'+indexValue).value = billboard_id;
+    document.getElementById('ids-oohproviders_'+indexValue).value = bb_provider_id;
+    document.getElementById('ids-oohsalemodels_'+indexValue).value = bb_salemodel_id;
+    document.getElementById('oohcost_'+indexValue).value = cost_int;
+    document.getElementById('oohstate_'+indexValue).value = state;
+    document.getElementById('oohcity_'+indexValue).value = city;
+    document.getElementById('oohcounty_'+indexValue).value = county;*/
+    document.getElementById('amount_'+indexValue).value = totalPrice;
+}
+
+function getIdFromTable(table,bringColumns,searchValue){
+    errors      = 0;
+    authApi     = csrf_token;
+    locat       = window.location.hostname;
+
+    if(searchValue == 'name|||'){return false; } else {
+        // filters     = '&tid='+tid;
+        xfilters    = '';
+        filters     = '';
+        if(typeof(searchValue)!='undefined'){
+            filters += "&where="+searchValue;
+        }
+
+        cols = '';
+        if(typeof(bringColumns) != 'undefined'){
+            cols    = '&cln='+bringColumns;
+        }
+
+        if(locat.slice(-1) != '/')
+            locat += '/';
+
+        if(errors > 0){
+
+        } else{
+            const requestURLGet = window.location.protocol+'//'+locat+'api/'+table+'s/auth_'+table+'_get.php?auth_api='+authApi+filters+cols;
+            //alert(requestURLGet);
+            console.log(requestURLGet);
+            const requestGet = new XMLHttpRequest();
+            requestGet.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    
+                    objGlobal = JSON.parse(requestGet.responseText);
+                    //alert(objGet.data[0].id);
+                    //alert(getResponseText);
+                    //proposal_id = objGet[0].UUID;
+                    //callback(objGlobal);
+                    //return objGET;
+                }
+                else{
+                    //form.btnSave.innerHTML = "Searching...";
+                }
+            };
+            requestGet.open('GET', requestURLGet,false);
+            //request.responseType = 'json';
+            requestGet.send();
+        }
+    } 
 }
 
 function executeFeeOnPrice(proposalproduct_id,billboard_id,price_int,name,xxcurrency){
