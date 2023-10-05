@@ -406,6 +406,8 @@ INSERT INTO salemodels
 (id,product_ids_rel,NAME,DESCRIPTION,is_digital,is_active,created_at,updated_at)  
 VALUES ((UUID()),'27,28,29','INSTALACIÓN / DESINSTALACIÓN','INSTALACIÓN / DESINSTALACIÓN','N','Y',NOW(),NOW());
 
+INSERT INTO salemodels (id,product_ids_rel,NAME,DESCRIPTION,is_digital,is_active,created_at,updated_at) 
+VALUES ((UUID()),'','Programmatic','Programmatic','Y','Y',NOW(),NOW()); 
 
 UPDATE salemodels SET name='Camion Urvan' where name = 'CAMIONES / URVAN';
 

@@ -158,11 +158,12 @@ function handleSubmitAddProduct(form,proposalId){
 }
 
 function handleSubmit(form) {
-    if (form.name.value !== '' && form.client_id.value !== '' && form.start_date.value !== '' || form.client_id.value !== '0' || form.agency_id.value !== '0' || form.total.value !== '0,00' || form.status_id.value !== '0') {
+    errors      = 0;
+    authApi     = csrf_token;
+    message     = '';
+    if (((form.name.value !== '' && form.client_id.value !== '0') || (form.client_id.value !== '0' && form.agency_id.value !== '0')) && (form.start_date.value !== '' && form.total.value !== '0'+cents+'00' && form.status_id.value !== '0') ) {
         //form.submit();
-        errors      = 0;
-        authApi     = csrf_token;
-        message     = '';
+
 
         pixel       = 'N';
         if(form.pixel.checked)
@@ -171,6 +172,11 @@ function handleSubmit(form) {
         taxable     = 'N';
         if(form.taxable.checked)
             taxable = 'Y';
+
+        if(form.contains(form.contact_id) !== true){
+            errors++;
+            message     = 'No hay contactos del cliente / agencia en la propuesta';
+        }
 
         var formData = new FormData(form);
         formData.append('auth_api',authApi);
