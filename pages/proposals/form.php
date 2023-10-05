@@ -228,6 +228,23 @@ if('1' == '2'){
                                     </div>
                                 </div>
                                 <div class="form-row" >
+                                    <div class="col" id='div-cost_0'>
+                                        <label for="cost[]"><?=translateText('cost');?></label><br/>
+                                        <input
+                                        required
+                                        onkeypress="$(this).mask('#'+thousands+'###'+thousands+'##0'+cents+'00', {reverse: true});"
+                                        onblur="calcAmountTotal(<?=strtolower($moduleName)?>,0)"
+                                        id='cost_0'
+                                        name ='cost[]' 
+                                        placeholder="999,99"
+                                        title = '<?=translateText('cost');?>'
+                                        value=''
+                                        class="form-control" 
+                                        type="currency" 
+                                        maxlength="20"
+                                        autocomplete="cost"
+                                        />
+                                    </div>
                                     <div class="col" id='div-price_0'>
                                         <label for="price[]"><?=translateText('unit_price');?></label><br/>
                                         <input
