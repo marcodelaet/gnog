@@ -35,6 +35,7 @@ if(array_key_exists('auth_api',$_REQUEST)){
 
     if(array_key_exists('where',$_GET)){
         if($_GET['where']!==''){
+            //echo '<BR/> where: ' . $_GET['where'];
             if($filters != '')
                 $filters .= " AND ( ";
                 
@@ -50,7 +51,9 @@ if(array_key_exists('auth_api',$_REQUEST)){
                     else
                         $filters .= " ( ";
                     $jocker         = explode("|||",$wherers[$i]);
-                    $filters        .= " $jocker[0]='$jocker[1]'";
+                    if(count($jocker) > 1){
+                        $filters        .= " $jocker[0]='$jocker[1]'";
+                    }
                 }
             }
             $filters .= " ) ";

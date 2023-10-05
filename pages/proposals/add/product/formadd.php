@@ -94,29 +94,48 @@ if(array_key_exists('ppid',$_REQUEST)){
                                 </div>
                                 <br/>
                                 <div class="form-row">
-                                    <div class="col" id="div-selectProduct">
+                                    <div class="col" id="div-selectproduct_0">
                                         <label for="product_id[]"><?=translateText('product');?></label>
                                         <spam id="sproduct">
-                                            <select name="product_id[]" title="product_id" class="form-control" autocomplete="product_id" required>
-                                                <?=inputSelect('product','Product','is_digital="N"','name','')?>
+                                            <select name="product_id[]" id="selectproduct_0" title="product_id" class="form-control" autocomplete="product_id" onchange="refilterSaleModel(document.getElementById('digital_product').value,this.value,this.id.split('_')[1]); checkOOHSelection(this[this.selectedIndex].innerText,this.id.split('_')[1])" required>
+                                                <?=inputSelect('product',translateText('product'),'is_digital|||N','name','')?>
                                             </select>
                                         </spam>
                                     </div>
-                                    <div class="col" id="div-selectSaleModel">
+                                    <div class="col" id="div-selectsalemodel_0" >
                                         <label for="salemodel_id[]"><?=translateText('sale_model');?></label>
                                         <spam id="ssalemodel">
-                                            <select name="salemodel_id[]" title="salemodel_id" class="form-control" autocomplete="salemodel_id" >
-                                                <?=inputSelect('salemodel','Sale model','is_digital="N"','name','')?>
+                                            <select name="salemodel_id[]" id="selectsalemodel_0" title="salemodel_id" class="form-control" autocomplete="salemodel_id" >
+                                                <?=inputSelect('salemodel',translateText('sale_model'),'is_digital|||N','name','')?>
                                             </select>
                                         </spam>
+                                    </div>
+                                    <div class="col" id="div-oohkeys_0" style="display: none">
                                     </div>
                                 </div>
                                 <div class="form-row" >
-                                    <div class="col">
+                                  <div class="col" id='div-cost_0'>
+                                        <label for="cost[]"><?=translateText('cost');?></label><br/>
+                                        <input
+                                        required
+                                        onkeypress="$(this).mask('#'+thousands+'###'+thousands+'##0'+cents+'00', {reverse: true});"
+                                        onblur="calcAmountTotal(<?=strtolower($moduleName)?>,0)"
+                                        id='cost_0'
+                                        name ='cost[]' 
+                                        placeholder="999,99"
+                                        title = '<?=translateText('cost');?>'
+                                        value=''
+                                        class="form-control" 
+                                        type="currency" 
+                                        maxlength="20"
+                                        autocomplete="cost"
+                                        />
+                                    </div>
+                                    <div class="col" id='div-price_0'>
                                         <label for="price[]"><?=translateText('unit_price');?></label><br/>
                                         <input
                                         required
-                                        onkeypress="$(this).mask('#.###.##0,00', {reverse: true});"
+                                        onkeypress="$(this).mask('#'+thousands+'###'+thousands+'##0'+cents+'00', {reverse: true});"
                                         onblur="calcAmountTotal(<?=strtolower($moduleName)?>,0)"
                                         id='price_0'
                                         name ='price[]' 
@@ -128,12 +147,16 @@ if(array_key_exists('ppid',$_REQUEST)){
                                         maxlength="20"
                                         autocomplete="price"
                                         />
+                                        <div class="invalid-feedback">
+                                            Please type a valid phone number.
+                                        </div>
                                     </div>
-                                    <div class="col">
+                                    <div class="col" id='div-quantity_0'>
                                         <label for="quantity[]"><?=translateText('quantity');?></label>
                                         <input
                                         required
                                         onblur="calcAmountTotal(<?=strtolower($moduleName)?>,0)"
+                                        id='quantity_0'
                                         name ='quantity[]' 
                                         placeholder='<?=translateText('quantity');?>'
                                         title = '<?=translateText('quantity');?>'
@@ -142,6 +165,9 @@ if(array_key_exists('ppid',$_REQUEST)){
                                         type="number"
                                         autocomplete="quantity"
                                         />
+                                        <div class="invalid-feedback">
+                                            Please type the quantity of this product.
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="form-row" >
@@ -157,7 +183,7 @@ if(array_key_exists('ppid',$_REQUEST)){
                                         class="form-control"
                                         />
                                     </div>
-                                    <div class="col">
+                                    <div class="col" id="div-provider_0">
                                         <label for="provider_id[]"><?=translateText('provider');?></label>
                                         <spam id="sprovider">
                                             <select name="provider_id[]" title="provider_id" class="form-control">
