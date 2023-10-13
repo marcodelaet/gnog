@@ -115,11 +115,11 @@ if(array_key_exists('ppid',$_REQUEST)){
                                 </div>
                                 <div class="form-row" >
                                   <div class="col" id='div-cost_0'>
-                                        <label for="cost[]"><?=translateText('cost');?></label><br/>
+                                        <label for="cost[]"><?=ucfirst(translateText('cost'));?></label><br/>
                                         <input
                                         required
                                         onkeypress="$(this).mask('#'+thousands+'###'+thousands+'##0'+cents+'00', {reverse: true});"
-                                        onblur="calcAmountTotal(<?=strtolower($moduleName)?>,0)"
+                                        onblur="calcAmountTotal(<?=strtolower($moduleName)?>,this.id.substr(this.id.search('_')+1))"
                                         id='cost_0'
                                         name ='cost[]' 
                                         placeholder="999,99"
@@ -136,7 +136,7 @@ if(array_key_exists('ppid',$_REQUEST)){
                                         <input
                                         required
                                         onkeypress="$(this).mask('#'+thousands+'###'+thousands+'##0'+cents+'00', {reverse: true});"
-                                        onblur="calcAmountTotal(<?=strtolower($moduleName)?>,0)"
+                                        onblur="calcAmountTotal(<?=strtolower($moduleName)?>,this.id.substr(this.id.search('_')+1))"
                                         id='price_0'
                                         name ='price[]' 
                                         placeholder="999,99"
@@ -155,12 +155,12 @@ if(array_key_exists('ppid',$_REQUEST)){
                                         <label for="quantity[]"><?=translateText('quantity');?></label>
                                         <input
                                         required
-                                        onblur="calcAmountTotal(<?=strtolower($moduleName)?>,0)"
+                                        onblur="calcAmountTotal(<?=strtolower($moduleName)?>,this.id.substr(this.id.search('_')+1))"
                                         id='quantity_0'
                                         name ='quantity[]' 
                                         placeholder='<?=translateText('quantity');?>'
                                         title = '<?=translateText('quantity');?>'
-                                        value=''
+                                        value='1'
                                         class="form-control" 
                                         type="number"
                                         autocomplete="quantity"

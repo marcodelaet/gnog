@@ -42,7 +42,7 @@ if(array_key_exists('auth_api',$_REQUEST)){
             if($filters != '')
                 $filters .= " AND ( ";
                 
-            $multiWhere = explode("*|*",$_GET['where']);
+            $multiWhere = explode("*|*",urldecode($_GET['where']));
            // echo $multiWhere;
             for($m=0; $m< count($multiWhere); $m++){
                 $wherers    = explode("***",$multiWhere[$m]);
@@ -79,7 +79,7 @@ if(array_key_exists('auth_api',$_REQUEST)){
     if($rs){
         echo json_encode(["response" => "OK","data" => $rs]);
     } else {
-        echo json_encode(["response" => "ERROR"]);
+        echo json_encode(["response" => "ERROR","sql" => $sql]);
     }
 }
 

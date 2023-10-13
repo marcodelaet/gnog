@@ -46,13 +46,30 @@ $moduleName = 'Proposal';
                         </div>
                         <div id="product-section">
                             <div id="product_0">
-                                <div class="form-row" >
-                                    <div class="col">
+                            <div class="form-row" >
+                                  <div class="col" id='div-cost_0'>
+                                        <label for="cost[]"><?=ucfirst(translateText('cost'));?></label><br/>
+                                        <input
+                                        required
+                                        onkeypress="$(this).mask('#'+thousands+'###'+thousands+'##0'+cents+'00', {reverse: true});"
+                                        onblur="calcAmountTotal(<?=strtolower($moduleName)?>,this.id.substr(this.id.search('_')+1))"
+                                        id='cost_0'
+                                        name ='cost[]' 
+                                        placeholder="999,99"
+                                        title = '<?=translateText('cost');?>'
+                                        value=''
+                                        class="form-control" 
+                                        type="currency" 
+                                        maxlength="20"
+                                        autocomplete="cost"
+                                        />
+                                    </div>
+                                    <div class="col" id='div-price_0'>
                                         <label for="price[]"><?=translateText('unit_price');?></label><br/>
                                         <input
                                         required
-                                        onkeypress="$(this).mask('#.###.##0,00', {reverse: true});"
-                                        onblur="calcAmountTotalOnProvider(<?=strtolower($moduleName)?>,0)"
+                                        onkeypress="$(this).mask('#'+thousands+'###'+thousands+'##0'+cents+'00', {reverse: true});"
+                                        onblur="calcAmountTotal(<?=strtolower($moduleName)?>,this.id.substr(this.id.search('_')+1))"
                                         id='price_0'
                                         name ='price[]' 
                                         placeholder="999,99"
@@ -63,22 +80,27 @@ $moduleName = 'Proposal';
                                         maxlength="20"
                                         autocomplete="price"
                                         />
+                                        <div class="invalid-feedback">
+                                            Please type a valid phone number.
+                                        </div>
                                     </div>
-                                    <div class="col">
+                                    <div class="col" id='div-quantity_0'>
                                         <label for="quantity[]"><?=translateText('quantity');?></label>
                                         <input
                                         required
-                                        onblur="calcAmountTotalOnProvider(<?=strtolower($moduleName)?>,0)"
+                                        onblur="calcAmountTotal(<?=strtolower($moduleName)?>,this.id.substr(this.id.search('_')+1))"
+                                        id='quantity_0'
                                         name ='quantity[]' 
                                         placeholder='<?=translateText('quantity');?>'
                                         title = '<?=translateText('quantity');?>'
-                                        value=''
-                                        min=1
-                                        max=9999999
+                                        value='1'
                                         class="form-control" 
                                         type="number"
                                         autocomplete="quantity"
                                         />
+                                        <div class="invalid-feedback">
+                                            Please type the quantity of this product.
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="form-row" >
@@ -94,7 +116,7 @@ $moduleName = 'Proposal';
                                         class="form-control"
                                         />
                                     </div>
-                                    <div class="col">
+                                    <div class="col" id="div-provider_0">
                                         <label for="provider_id[]"><?=translateText('provider');?></label>
                                         <spam id="sprovider">
                                             <select name="provider_id[]" title="provider_id" class="form-control">

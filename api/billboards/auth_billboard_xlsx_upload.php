@@ -48,6 +48,7 @@ if ($uploadOk > 0) {
                     $header_values = $r;
                     continue;
                 }
+                //echo "\r\n<BR/>".$header_values[$k];
                 $rows[] = array_combine($header_values, $r);
             }
             //print_r($rows);
@@ -69,7 +70,7 @@ if ($uploadOk > 0) {
             $cleanCity      = $rows[$i]['Ciudad '];
             $cleanCounty    = $rows[$i]['Alcaldía / Municipio'];
             $cleanColony    = $rows[$i]['Colonia'];
-            if(isset($rsbillboardID["name_key"])){
+            //if(isset($rsbillboardID["name_key"])){
                 // Cleaning names
                 $cleanProvider  = str_replace("\n","",str_replace("\r","",$rows[$i]['Proveedor']));
                 $cleanVista     = str_replace("\n","",str_replace("\r","",$rows[$i]['Vista']));
@@ -92,7 +93,9 @@ if ($uploadOk > 0) {
                 } else {
                     if(($rssalemodelID["name"] == '') || (is_null($rssalemodelID["name"]))){
                         $insertNewSaleModel = "INSERT INTO salemodels (id, name, description, is_digital, is_active, created_at, updated_at) VALUES (UUID(),'".$cleanTipo."','".$cleanTipo."','N','Y',now(),now())";
-                        $rs_insertNewSaleModel = $DB->executeInstruction($insertNewSaleModel);
+                        if(!$rs_insertNewSaleModel = $DB->executeInstruction($insertNewSaleModel)){
+                            $message .= "\nError on INSERT: ".$insertNewViewPoint;
+                        }
                         //$message .= $insertNewSaleModel . ' |SSS| ';
                         $salemodelID = "'".$DB->getDataSingle($sqlSaleModels)["id"]."'";
                     }
@@ -105,7 +108,9 @@ if ($uploadOk > 0) {
                 }else{
                     if(($rsviewpointID["name"] == '') || (is_null($rsviewpointID["name"]))){
                         $insertNewViewPoint = "INSERT INTO viewpoints (id, name, is_active, created_at, updated_at) VALUES (UUID(),'".$cleanVista."','Y',now(),now())";
-                        $rs_insertNewViewPoint = $DB->executeInstruction($insertNewViewPoint);
+                        if(!$rs_insertNewViewPoint = $DB->executeInstruction($insertNewViewPoint)){
+                            $message .= "\nError on INSERT: ".$insertNewViewPoint;
+                        }
                         //$message .= $insertNewViewPoint . ' |VVV| ';
                         $viewPointID = "'".$DB->getDataSingle($sqlViewPoints)["id"]."'";
                     } 
@@ -120,13 +125,20 @@ if ($uploadOk > 0) {
                 } else {
                     if(($numProviders == '0')){ // || ($rsproviderID["name"] == '') || (is_null($rsproviderID["name"]))
                         $insertNewProvider = "INSERT INTO providers (id, name, is_active, created_at, updated_at) VALUES (UUID(),'".$cleanProvider."','Y',now(),now())";
-                        $rs_insertNewProvider = $DB->executeInstruction($insertNewProvider);
+                        if(!$rs_insertNewProvider = $DB->executeInstruction($insertNewProvider)){
+                            $message .= "\nError on INSERT: ".$insertNewViewPoint;
+                        }
                         //$message .= $insertNewProvider . ' |PPP| ';
                         $providerID = "'".$DB->getDataSingle($sqlProviders)["id"]."'";
                     } 
                     else {echo "ERROR: ".$sqlProviders . " <BR/> Name: ".$rsproviderID["name"]."<BR/> NUM: ". $numProviders . " <BR/> COMPAT: ". str_replace('í','i',str_replace('á','a',strtolower(str_replace(' ','',$rsproviderID["name"])))) . " && " .str_replace('í','i',str_replace('á','a',strtolower(str_replace(' ','',$cleanProvider))));}
                 }
-                if($rsbillboardID["name_key"] != $claveInExcel){
+                $namekeySet = 1;
+                if(isset($rsbillboardID["name_key"])){
+                    if($rsbillboardID["name_key"] == $claveInExcel)
+                        $namekeySet = 0;
+                }
+                if($namekeySet==1){
                     $iluminated = 'N';
                     if($rows[$i]['Iluminación'] == 'Si')
                         $iluminated = 'Y';
@@ -143,7 +155,9 @@ if ($uploadOk > 0) {
 
                     $insertNewBillboard = "INSERT INTO billboards (id,name_key,address,state,county,city,colony,category,coordenates,latitud,longitud,price_int,cost_int,width,height,photo,provider_id,salemodel_id,viewpoint_id,is_iluminated, is_digital, is_active, created_at, updated_at) VALUES (UUID(),'".$rows[$i]['Clave']."','".$rows[$i]['Dirección']."','".$rows[$i]['Estado ']."','".$rows[$i]['Alcaldía / Municipio']."','".$rows[$i]['Ciudad ']."','".$rows[$i]['Colonia']."','".$rows[$i]['Categoría (NSE)']."','".$rows[$i]['Coordenadas']."','".$rows[$i]['Latitud']."','".$rows[$i]['Longitud']."',$price_int,$cost_int,$width,$height,'".$cleanClave.".jpg.jpg',$providerID,$salemodelID,$viewPointID,'$iluminated','N','Y',now(),now())";
 
-                    $rs_insertNewBillboard = $DB->executeInstruction($insertNewBillboard);
+                    if(!$rs_insertNewBillboard = $DB->executeInstruction($insertNewBillboard)){
+                        $message .= "\nError on INSERT: ".$insertNewBillboard;
+                    }
 
                     //$message .= $insertNewBillboard . ' ***|*** ';
                 } else {
@@ -162,15 +176,21 @@ if ($uploadOk > 0) {
                     // check changes on new fields (state,county,city,colony / '".$rows[$i]['Estado ']."','".$rows[$i]['Alcaldía / Municipio']."','".$rows[$i]['Ciudad ']."','".$rows[$i]['Colonia']."')
                     if((strtolower(str_replace('"','',str_replace(' ','',$rsbillboardID["state"]))) != strtolower(str_replace('"','',str_replace(' ','',$cleanState)))) || (strtolower(str_replace('"','',str_replace(' ','',$rsbillboardID["county"]))) != strtolower(str_replace('"','',str_replace(' ','',$cleanCounty)))) || (strtolower(str_replace('"','',str_replace(' ','',$rsbillboardID["city"]))) != strtolower(str_replace('"','',str_replace(' ','',$cleanCity)))) || (strtolower(str_replace('"','',str_replace(' ','',$rsbillboardID["colony"]))) != strtolower(str_replace('"','',str_replace(' ','',$cleanColony))))){
                         $updateBillboard = "UPDATE billboards SET state = '$cleanState',county = '$cleanCounty',city = '$cleanCity',colony = '$cleanColony' WHERE name_key = '". $rsbillboardID["name_key"]."'";
-                        $execUpdateLocal = $DB->executeInstruction($updateBillboard);
+                        if(!$execUpdateLocal = $DB->executeInstruction($updateBillboard)){
+                            $message .= "\nError on Update: ".$updateBillboard;
+                        }
                     }
                     // check changes on SaleModel ID
                     if($rsbillboardID["salemodel_id"] != str_replace("'","",$salemodelID)){
                         $updateBillboard = "UPDATE billboards SET salemodel_id=$salemodelID WHERE name_key = '". $rsbillboardID["name_key"]."'";
-                        $execUpdateSaleModel = $DB->executeInstruction($updateBillboard);
+                        if(!$execUpdateSaleModel = $DB->executeInstruction($updateBillboard)){
+                            $message .= "\nError on Update: ".$updateBillboard;
+                        }
                     }
                 }
-            }
+           /* }else{
+
+            }*/
         }
         $return = json_encode(["status" => "OK", "message" => "UPLOADED"]);
     } else { $message .= "UPLOAD ERROR";}
