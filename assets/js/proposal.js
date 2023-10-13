@@ -2046,7 +2046,7 @@ function getIdFromTable(table,bringColumns,searchValue){
         xfilters    = '';
         filters     = '';
         if(typeof(searchValue)!='undefined'){
-            filters += "&where="+searchValue;
+            filters += "&where="+encodeURIComponent(searchValue);
         }
 
         cols = '';
