@@ -120,7 +120,7 @@ if('1' == '2'){
                     </div>
                 </div>
                 <div class="form-row">
-                    <div class="col">
+                    <div class="dateInputFixedW">
                         <label for="start_date"><?=translateText('start_date');?></label>
                         <input
                         required
@@ -137,7 +137,7 @@ if('1' == '2'){
                             Please type the Offer name
                         </div>
                     </div>
-                    <div class="col">
+                    <div class="dateInputFixedW">
                         <label for="stop_date"><?=translateText('stop_date');?></label>
                         <input
                         required
