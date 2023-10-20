@@ -123,6 +123,13 @@ td{
     margin-right:3rem;
 }
 
+#proposal-dates {
+    display: flex !important;
+    font-size: 0.8rem !important;
+    margin-bottom:1rem !important;
+    color:#647487;
+}
+
 .proposal-body {
     margin-left:3rem;
     margin-right:3rem;

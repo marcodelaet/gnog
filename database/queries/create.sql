@@ -1094,6 +1094,12 @@ VALUES
 INSERT INTO translates 
 (id, code_str, text_eng, text_esp, text_ptbr, is_active, created_at, updated_at)
 VALUES
+(UUID(), 'change', 'change', 'cambiar', 'trocar', 'Y', NOW(), NOW());
+
+
+INSERT INTO translates 
+(id, code_str, text_eng, text_esp, text_ptbr, is_active, created_at, updated_at)
+VALUES
 (UUID(), 'category', 'category', 'categoria', 'categoria', 'Y', NOW(), NOW()),
 (UUID(), 'coordenates', 'coordenates', 'coordenadas', 'coordenadas', 'Y', NOW(), NOW()),
 (UUID(), 'is_iluminated', 'is iluminated', 'es iluminado', 'é iluminado', 'Y', NOW(), NOW()),

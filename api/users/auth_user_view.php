@@ -62,6 +62,35 @@ if(array_key_exists('auth_api',$_REQUEST)){
             $filters        .= " uuid = '$uuid'";
         }
     }
+
+    if(array_key_exists('where',$_GET)){
+        if($_GET['where']!==''){
+            //echo '<BR/> where: ' . $_GET['where'];
+            if($filters != '')
+                $filters .= " AND ( ";
+                
+            $multiWhere = explode("*|*",$_GET['where']);
+           // echo $multiWhere;
+            for($m=0; $m< count($multiWhere); $m++){
+                $wherers    = explode("***",$multiWhere[$m]);
+                if($m > 0)
+                    $filters .= " ) OR ( ";
+                for($i=0; $i< count($wherers); $i++){
+                    if($filters != '')
+                        $filters .= " AND ";
+                    else
+                        $filters .= " ( ";
+                    $jocker         = explode("|||",$wherers[$i]);
+                    if(count($jocker) > 1){
+                        $filters        .= " $jocker[0]='$jocker[1]'";
+                    }
+                }
+            }
+            $filters .= " ) ";
+        }
+    }
+
+
     if($filters !== ''){
         $filters = "WHERE ".$filters;
     }
