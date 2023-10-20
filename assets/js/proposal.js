@@ -742,7 +742,7 @@ function handleListEditOnLoad(ppid) {
 
     } else{
         const requestURL = window.location.protocol+'//'+locat+'api/proposals/auth_proposal_get.php?auth_api='+authApi+filters+orderby;
-        //console.log('mapaaaa- '+requestURL);
+        console.log('mapaaaa- '+requestURL);
         const request = new XMLHttpRequest();
         request.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {
@@ -766,8 +766,19 @@ function handleListEditOnLoad(ppid) {
                 if( (agency_name != '') && (agency_name != null)){
                     advertiser_name += " / " + agency_name;
                 }
-                document.getElementById('offer-name').innerText  = obj['data'][0].offer_name;
-                document.getElementById('advertiser-name').innerText  = advertiser_name;
+                document.getElementById('offer-name').innerText         = obj['data'][0].offer_name;
+                document.getElementById('advertiser-name').innerText    = advertiser_name;
+                startYear   = obj['data'][0].start_date.substr(0,4);
+                startMonth  = obj['data'][0].start_date.substr(5,2);
+                startDay    = obj['data'][0].start_date.substr(8,2);
+                startDate   = new Date(parseInt(startYear),parseInt(startMonth)-1,parseInt(startDay),0,0,0);
+                document.getElementById('start-date').innerText         = startDate.toLocaleDateString();
+
+                stopYear   = obj['data'][0].stop_date.substr(0,4);
+                stopMonth  = obj['data'][0].stop_date.substr(5,2);
+                stopDay    = obj['data'][0].stop_date.substr(8,2);
+                stopDate   = new Date(parseInt(stopYear),parseInt(stopMonth)-1,parseInt(stopDay),0,0,0);
+                document.getElementById('stop-date-alink').innerText    = stopDate.toLocaleDateString();
                 xcurrency = obj['data'][0].currency_c;
                 // Create our number formatter.
                 var formatter = new Intl.NumberFormat(lang, {
@@ -2281,7 +2292,114 @@ function changeStatus(proposalId,newStatus,oldStatus){
         request.open('GET', requestURL);
         //request.responseType = 'json';
         request.send();
+    } 
+}
+
+function changeDateForm(stringDate,proposalId){
+    // getting user Locale setting
+    const userLocale =
+    navigator.languages && navigator.languages.length
+      ? navigator.languages[0]
+      : navigator.language; 
+
+
+    divStopDate     = document.getElementById("stop-date");
+
+    // cleaning DIV
+    divStopDate.innerHTML = '';
+
+    // showing INPUT
+    newInput        = document.createElement('input');
+    stopDateValue   = stringDate;
+
+    // locales using day on the middle of the date
+    localeMiddleDay = 'es-DO,es-HN,lv-LV,es-NI,es-PA,en-PH,es-PR,en-SG,es-SV,en-US,es-US';
+    
+    aDate       = stopDateValue.split('/');
+    if(stopDateValue.search('-') >= 0 )
+        aDate       = stopDateValue.split('-');
+    if(aDate[0].length > 3){
+        year        = aDate[0];
+        month       = aDate[1];
+        day         = aDate[2];
+        if(localeMiddleDay.search(userLocale)  >= 0){
+            month       = aDate[2];
+            day         = aDate[1];    
+        }
+    }
+      
+    if(aDate[2].length > 3){
+        year        = aDate[2];
+        month       = aDate[1];
+        day         = aDate[0];
+        if(localeMiddleDay.search(userLocale) >= 0){
+            month       = aDate[0];
+            day         = aDate[1];                
+        }
     }
     
+    stopDateValue   = year+'-'+month+'-'+day;
+
+    newInput.classList.add('form-control');
+    newInput.setAttribute('id','stopdate');
+    newInput.setAttribute('name','stopdate');
+    newInput.setAttribute('type','date');
+    newInput.setAttribute('maxlength','8');
+    newInput.setAttribute('autocomplete','stop-date');
+    newInput.setAttribute('placeholder','31/10/2023');
+    newInput.setAttribute('value',stopDateValue);
+    newInput.setAttribute('title',translateText('stop_date',localStorage.getItem('ulang')));
+    newInput.setAttribute('onblur',"executeStopDatechange(this.value,'"+stopDateValue+"','"+proposalId+"')");
+    divStopDate.appendChild(newInput);
+
+    document.getElementById('stopdate').focus();
+
+}
+
+function executeStopDatechange(newDateValue,oldDateValue,proposalId){
+    authApi     = csrf_token;
+
+    if(newDateValue != oldDateValue){
+        msg = '';
+        if(msg != ''){
+            alert(msg);
+            return false;
+        }
+    } else { return false; }
+
+    locat       = window.location.hostname;
+    if(locat.slice(-1) != '/')
+        locat += '/';
+
+
+    let uid = localStorage.getItem('uuid');
+    filters = '&uid='+uid+'&ppid='+proposalId;
     
+    filters += '&newDate='+newDateValue+'&oldDate='+oldDateValue;
+    const requestURL = window.location.protocol+'//'+locat+'api/proposals/auth_proposal_changeDate.php?auth_api='+authApi+filters;   
+    console.log(requestURL);
+    const request = new XMLHttpRequest();
+    request.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            // Typical action to be performed when the document is ready:
+            //console.log(request.responseText);
+            obj = JSON.parse(request.responseText);
+            if(obj.response == 'OK'){
+                // cambiar la información en vivo con el nuevo status. Si el status es 100% o 0%, no permitir más cambios
+                
+                stopYear   = newDateValue.substr(0,4);
+                stopMonth  = newDateValue.substr(5,2);
+                stopDay    = newDateValue.substr(8,2);
+                stopDate   = new Date(parseInt(stopYear),parseInt(stopMonth)-1,parseInt(stopDay),0,0,0);
+
+                html= '<a id="stop-date-alink" title="'+translateText('change',localStorage.getItem('ulang')).charAt(0).toUpperCase() + translateText('change',localStorage.getItem('ulang')).slice(1) +' '+ translateText('stop_date',localStorage.getItem('ulang'))+'" type="button" onClick="changeDateForm(document.getElementById(this.id).innerText,\''+proposalId+'\');">'+stopDate.toLocaleDateString()+'</a>';
+
+                document.getElementById('stop-date').innerHTML    = html;
+            }
+            
+        }
+    };
+    request.open('GET', requestURL);
+    //request.responseType = 'json';
+    request.send();
 }

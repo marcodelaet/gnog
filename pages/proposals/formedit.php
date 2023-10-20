@@ -15,15 +15,27 @@ $moduleName = 'Proposal';
                 &nbsp;
             </div>
             <div class="input-group col-sm-1 " style="margin-bottom:1rem;">
-                <a type="button" title="Add New" class="btn btn-outline-primary my-2 my-sm-0" type="button" style="width:100%; text-align: center; vertical-align:middle;" onClick="location.href='?pr=<?=base64_encode('./pages/proposals/add/product/formadd.php')?>&ppid=<?=$_REQUEST['ppid']?>'"><span class="material-icons">add_box</span><div class="text-button"><?=translateText('add')?> <?=translateText('product')?></div></a>
+                <a title="<?=translateText('add')?> <?=translateText('product')?>" class="btn btn-outline-primary my-2 my-sm-0" type="button" style="width:100%; text-align: center; vertical-align:middle;" onClick="location.href='?pr=<?=base64_encode('./pages/proposals/add/product/formadd.php')?>&ppid=<?=$_REQUEST['ppid']?>'"><span class="material-icons">add_box</span><div class="text-button"><?=translateText('add')?> <?=translateText('product')?></div></a>
             </div>
         </div>
     </div>
 
     <div class="form-container">
-        <div class="form-header"><spam id="offer-name">&nbsp;</spam><spam id="advertiser-name">Advertiser / Agency</spam></div>
-            <div class="list-products-container" id="list-products">
-            </div>
+        <div class="form-header">
+            <spam id="offer-name">&nbsp;</spam>
+            <spam id="advertiser-name">Advertiser / Agency</spam>
+            <spam id="proposal-dates">
+                <spam id="start-date">01/10/2023</spam> - 
+                <spam id="stop-date">
+                    <a id="stop-date-alink" title="<?=ucfirst(translateText('change'))?> <?=translateText('stop_date')?>" type="button" onClick="changeDateForm(document.getElementById(this.id).innerText,'<?=$_REQUEST['ppid']?>');">
+                        31/10/2023
+                    </a>
+                </spam>
+            </spam>
+        </div>
+
+        <div class="list-products-container" id="list-products">
+        </div>
         </div>
     </div>    
 </div>

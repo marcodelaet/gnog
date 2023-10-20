@@ -45,9 +45,6 @@ if('1' == '2'){
                                 <?=inputSelect('advertiser',translateText('client'),'is_agency-N','name','')?>
                             </select>
                         </spam>
-                        <div class="invalid-feedback">
-                            Please choose a Client.
-                        </div>
                     </div>
                     <div class="col">
                         <label for="agency_id"><?=translateText('agency');?></label>
@@ -134,7 +131,7 @@ if('1' == '2'){
                         class="form-control" 
                         type="date" 
                         maxlength="8"
-                        autocomplete="date"
+                        autocomplete="start-date"
                         />
                         <div class="invalid-feedback">
                             Please type the Offer name
@@ -151,11 +148,17 @@ if('1' == '2'){
                         class="form-control" 
                         type="date" 
                         maxlength="8"
-                        autocomplete="date"
+                        autocomplete="stop-date"
                         />
                         <div class="invalid-feedback">
                             Please type the Offer name
                         </div>
+                    </div>
+                    <div class="col" id="sclient">
+                        <label for="executive"><?=translateText('executive');?></label>
+                        <select name="executive_id" id="selectexecutive" title="executive_id" class="form-control" autocomplete="executive_id" required>
+                            <?=inputSelect('user',translateText('executive'),'user_type|||user','username','')?>
+                        </select>
                     </div>
                 </div>
                 <div class="form-row main-contact-section">
