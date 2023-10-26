@@ -1574,8 +1574,37 @@ function listAdvertiserContacts(aid){
     } 
 }
 
-function listProviderContacts(pid){
+function getMainExecutive(aid){
+    errors      = 0;
+    authApi     = csrf_token;
+    locat       = window.location.hostname;
+    submodule   = 'advertiser';
 
+    if(locat.slice(-1) != '/')
+        locat += '/';
+
+    filters     = '&aid='+aid;
+
+    if(errors > 0){
+
+    } else{
+        selectInput   = document.getElementById('selectexecutive');
+        const requestURL = window.location.protocol+'//'+locat+'api/'+submodule+'s/auth_'+submodule+'_list.php?auth_api='+authApi+filters;
+        console.log(requestURL);
+        const request = new XMLHttpRequest();
+        request.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                // Typical action to be performed when the document is ready:
+                obj = JSON.parse(request.responseText);
+                if( (obj.response != 'error') && (obj.response != 'ZERO_RETURN')){
+                    selectInput.value = obj[i].executive_id;
+                }
+            }
+        };
+        request.open('GET', requestURL);
+        //request.responseType = 'json';
+        request.send();
+    } 
 }
 
 function refilterProductsType(typeInt,indexValue){
@@ -2359,13 +2388,26 @@ function changeDateForm(stringDate,proposalId){
 function executeStopDatechange(newDateValue,oldDateValue,proposalId){
     authApi     = csrf_token;
 
+    // show date (changing or not)
+    stopYear   = newDateValue.substr(0,4);
+    stopMonth  = newDateValue.substr(5,2);
+    stopDay    = newDateValue.substr(8,2);
+    stopDate   = new Date(parseInt(stopYear),parseInt(stopMonth)-1,parseInt(stopDay),0,0,0);
+
+    html= '<a id="stop-date-alink" title="'+translateText('change',localStorage.getItem('ulang')).charAt(0).toUpperCase() + translateText('change',localStorage.getItem('ulang')).slice(1) +' '+ translateText('stop_date',localStorage.getItem('ulang'))+'" type="button" onClick="changeDateForm(document.getElementById(this.id).innerText,\''+proposalId+'\');">'+stopDate.toLocaleDateString()+'</a>';
+
+    document.getElementById('stop-date').innerHTML    = html;
+
+    ///////////////////////////
+
     if(newDateValue != oldDateValue){
         msg = '';
         if(msg != ''){
             alert(msg);
             return false;
         }
-    } else { return false; }
+    } else {return false;}
+
 
     locat       = window.location.hostname;
     if(locat.slice(-1) != '/')
@@ -2386,15 +2428,6 @@ function executeStopDatechange(newDateValue,oldDateValue,proposalId){
             obj = JSON.parse(request.responseText);
             if(obj.response == 'OK'){
                 // cambiar la información en vivo con el nuevo status. Si el status es 100% o 0%, no permitir más cambios
-                
-                stopYear   = newDateValue.substr(0,4);
-                stopMonth  = newDateValue.substr(5,2);
-                stopDay    = newDateValue.substr(8,2);
-                stopDate   = new Date(parseInt(stopYear),parseInt(stopMonth)-1,parseInt(stopDay),0,0,0);
-
-                html= '<a id="stop-date-alink" title="'+translateText('change',localStorage.getItem('ulang')).charAt(0).toUpperCase() + translateText('change',localStorage.getItem('ulang')).slice(1) +' '+ translateText('stop_date',localStorage.getItem('ulang'))+'" type="button" onClick="changeDateForm(document.getElementById(this.id).innerText,\''+proposalId+'\');">'+stopDate.toLocaleDateString()+'</a>';
-
-                document.getElementById('stop-date').innerHTML    = html;
             }
             
         }
