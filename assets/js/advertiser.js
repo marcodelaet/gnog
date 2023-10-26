@@ -4,7 +4,7 @@ var csrf_token = $('meta[name="csrf-token"]').attr('content');
 module  = 'advertiser';
 
 function handleSubmit(form) {
-    if (form.corporate_name.value !== '' && form.address.value !== '') {
+    if (form.corporate_name.value !== '') {
         //form.submit();
         errors      = 0;
         authApi     = 'dasdasdkasdeewef';
@@ -17,6 +17,8 @@ function handleSubmit(form) {
             making_banners      = 'Y';
         corporate_name          = form.corporate_name.value;
         address                 = form.address.value;
+        
+        executive_id            = form.executive_id.value;
         
         locat       = window.location.hostname;
         if(locat.slice(-1) != '/')
@@ -31,7 +33,7 @@ function handleSubmit(form) {
         if(errors > 0){
 
         } else{
-            const requestURL = window.location.protocol+'//'+locat+'api/advertisers/auth_advertiser_add_new.php?auth_api='+authApi+'&agency='+agency+'&making_banners='+making_banners+'&corporate_name='+corporate_name+'&address='+address;
+            const requestURL = window.location.protocol+'//'+locat+'api/advertisers/auth_advertiser_add_new.php?auth_api='+authApi+'&agency='+agency+'&making_banners='+making_banners+'&corporate_name='+corporate_name+'&address='+address+'&executive_id='+executive_id;
             console.log(requestURL);
             const request = new XMLHttpRequest();
             request.onreadystatechange = function() {

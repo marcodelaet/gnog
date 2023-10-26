@@ -28,10 +28,18 @@ if(array_key_exists('auth_api',$_REQUEST)){
     }
     $corporate_name         = $_REQUEST['corporate_name'];
     $address                = $_REQUEST['address'];
+    if($address == ''){
+        $address = 'Sin dirección';
+    }
+    $executive_id           = 'NULL';
+    if($_REQUEST['executive_id'] != '0'){
+        $executive_id           = "'".$_REQUEST['executive_id']."'";
+    } 
+
 
     $module     = "advertisers";
-    $columns    = "id,is_agency,making_banners,corporate_name,address,is_active,created_at,updated_at";
-    $values     = "(UUID()),'$agency','$making_banners','$corporate_name','$address','Y',now(),now()";
+    $columns    = "id,executive_id,is_agency,making_banners,corporate_name,address,is_active,created_at,updated_at";
+    $values     = "(UUID()),$executive_id,'$agency','$making_banners','$corporate_name','$address','Y',now(),now()";
 
     // Query creation
     $sql = "INSERT INTO $module ($columns) VALUES ($values)";

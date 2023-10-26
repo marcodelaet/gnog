@@ -70,6 +70,13 @@ VALUES
 (UUID(),'Brasil','flag_BRA.png',2,'Y',NOW(),NOW());
 
 
+INSERT INTO 
+offices 
+(id, name, icon_flag, orderby, is_active,created_at,updated_at) 
+VALUES 
+(UUID(),'Guatemala','flag_HON.png',3,'Y',NOW(),NOW());
+
+
 
 
 # USERS
@@ -155,6 +162,15 @@ updated_at DATETIME NOT NULL
 
 ALTER TABLE advertisers
 ADD COLUMN making_banners ENUM('N','Y') NOT NULL AFTER address;
+
+ALTER TABLE advertisers
+ADD executive_id VARCHAR(40) NULL AFTER `id`; 
+
+# ADDING FK executive_id
+ALTER TABLE advertisers
+    ADD CONSTRAINT FKexecutiveID 
+	FOREIGN KEY (executive_id)
+    REFERENCES users(id);
 
 
 # CONTACTS
@@ -1270,6 +1286,9 @@ CREATE VIEW view_advertisers AS (
 	adv.corporate_name,
 	adv.address,
 	adv.making_banners,
+	adv.executive_id,
+	u.username,
+	u.email,
 	ct.contact_name,
 	ct.contact_surname,
 	ct.contact_email,
@@ -1285,6 +1304,7 @@ CREATE VIEW view_advertisers AS (
 	FROM
 	advertisers adv
 	LEFT JOIN view_advertisercontacts ct ON ct.contact_client_id = adv.id
+	LEFT JOIN users u ON adv.executive_id = u.id
 );
 
 # VIEW PROVIDERS

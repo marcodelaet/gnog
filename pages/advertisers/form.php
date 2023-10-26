@@ -50,6 +50,13 @@ if(array_key_exists('username',$_POST))
                             Please type the Corporate name
                         </div>
                     </div>
+                    <div class="col-2" id="sclient">
+                        <label for="executive"><?=translateText('executive');?></label>
+                        <select name="executive_id" id="selectexecutive" title="executive_id" class="form-control" autocomplete="executive_id" required>
+                            <?=inputSelect('user',translateText('executive'),'user_type|||user','username','')?>
+                        </select>
+                    </div>
+
                     <div class="col custom-control custom-switch" style="text-align:right; vertical-align:middle;">
                         <br/>
                         <input type="checkbox" class="custom-control-input" id="making-banners" name="making_banners">
@@ -93,36 +100,6 @@ if(array_key_exists('username',$_POST))
       //$region   = geoip_country_code_by_name($myIP);
      // echo "IP: ".$myIP."<BR/>Region: ".$region;
       ?>
-
-<script>
-    var input = document.querySelector("#phone");
-    window.intlTelInput(input, {
-      // allowDropdown: false,
-      // autoHideDialCode: false,
-      // autoPlaceholder: "off",
-      // dropdownContainer: document.body,
-      // excludeCountries: ["us"],
-      // formatOnDisplay: false,
-      // geoIpLookup: function(callback) {
-      //   $.get("http://ipinfo.io", function() {}, "jsonp").always(function(resp) {
-      //     var countryCode = (resp && resp.country) ? resp.country : "";
-      //     callback(countryCode);
-      //   });
-      // },
-      // hiddenInput: "full_number",
-      initialCountry: "mx",
-      // localizedCountries: { 'de': 'Deutschland' },
-      // nationalMode: false,
-      // onlyCountries: ['us', 'gb', 'ch', 'ca', 'do'],
-      // placeholderNumberType: "MOBILE",
-       preferredCountries: ['mx', 'br', 'us'],
-      // separateDialCode: true,
-      utilsScript: "/assets/js/build/utils.js",
-    });/*
-$("input").intlTelInput({
-    utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/8.4.6/js/utils.js"
-  });*/
-</script>
     </div>    
 </div>
 
