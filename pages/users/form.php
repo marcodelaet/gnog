@@ -3,6 +3,7 @@ $username = null;
 $password = null;
 $email    = null;
 $mobile   = null;
+$mexico_id  = '57b71c86-b204-11ed-997f-008cfa5abdac'; // ID on production DB
 
 if(array_key_exists('username',$_POST))
 {
@@ -32,6 +33,35 @@ if(array_key_exists('username',$_POST))
                             Please choose the Office
                         </div>
                     </div>
+                </div>
+                <div class="form-row">
+                    <div class="col-2">
+                        <label for="user_type"><?=ucfirst(translateText('user_type'));?></label><br/>
+                        <SELECT
+                        id  = 'user-type'
+                        name ='user_type' 
+                        title = '<?=ucfirst(translateText('user_type'));?>'
+                        class="form-control" 
+                        >
+                        <OPTION value='executive' user-level=25 ><?=ucfirst(translateText('executive'));?></OPTION>
+                        <OPTION value='user' user-level=20><?=ucfirst(translateText('user'));?></OPTION>
+                        <OPTION value='finanzas' user-level=30><?=ucfirst(translateText('finanzas'));?></OPTION>
+                        </SELECT>
+                    </div>
+                    <div class="col-2">
+                    <label for="language"><?=ucfirst(translateText('language'));?></label><br/>
+                        <SELECT
+                        id  = 'user-language'
+                        name ='user_language' 
+                        title = '<?=ucfirst(translateText('language'));?>'
+                        class="form-control" 
+                        >
+                        <OPTION value='esp'>Español</OPTION>
+                        <OPTION value='ptbr'>Português Brasileiro</OPTION>
+                        <OPTION value='eng'>English</OPTION>
+                        </SELECT>
+                    </div>
+                    <div class="col">&nbsp;</div>
                 </div>
                 <div class="form-row">
                     <div class="col">
