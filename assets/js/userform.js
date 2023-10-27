@@ -5,17 +5,20 @@ module = 'user';
 function handleSubmit(form) {
     if (form.username.value !== '' && form.email.value !== '' && form.mobile.value !== '' && form.password.value !== '' && form.retype_password.value !== '') {
         //form.submit();
-        errors      = 0;
-        authApi     = csrf_token;
-        username    = form.username.value;
-        email       = form.email.value;
-        mobile_ddi  = document.getElementsByClassName('iti__selected-flag')[0].title.split(':')[1].replace(' ','').replace('+','');
-        mobile      = form.mobile.value;
-        password    = form.password.value;
-        password2   = form.retype_password.value;
-        office      = form.officeDropdownMenuButton.value;
+        errors          = 0;
+        authApi         = csrf_token;
+        username        = form.username.value;
+        email           = form.email.value;
+        user_type       = form.user_type.value;
+        user_language   = form.user_language.value;
+        user_level      = document.getElementById('user-type').options[document.getElementById('user-type').selectedIndex].getAttribute('user-level');
+        mobile_ddi      = document.getElementsByClassName('iti__selected-flag')[0].title.split(':')[1].replace(' ','').replace('+','');
+        mobile          = form.mobile.value;
+        password        = form.password.value;
+        password2       = form.retype_password.value;
+        office          = form.officeDropdownMenuButton.value;
         
-        locat       = window.location.hostname;
+        locat           = window.location.hostname;
         if(locat.slice(-1) != '/')
             locat += '/';
 
@@ -29,7 +32,7 @@ function handleSubmit(form) {
 
         } else{
             const requestURL = window.location.protocol+'//'+locat+'api/'+module+'s/auth_'+module+'_add_new.php';
-            const querystring = 'auth_api='+authApi+'&username='+username+'&email='+email+'&mobile_international_code='+mobile_ddi+'&office='+office+'&mobile_number='+mobile+'&password='+password;
+            const querystring = 'auth_api='+authApi+'&username='+username+'&user_type='+user_type+'&user_language='+user_language+'&user_level='+user_level+'&email='+email+'&mobile_international_code='+mobile_ddi+'&office='+office+'&mobile_number='+mobile+'&password='+password;
             const request = new XMLHttpRequest();
             request.onreadystatechange = function() {
                 if (this.readyState == 4 && this.status == 200) {

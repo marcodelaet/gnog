@@ -853,6 +853,14 @@ created_at DATETIME NOT NULL,
 updated_at DATETIME NOT NULL
 );
 
+# ADDING FK LOGHISTORYUSER
+ALTER TABLE loghistory
+    ADD CONSTRAINT fk_loggedaction_user_id
+	FOREIGN KEY (user_id)
+    REFERENCES users (id);
+
+
+
 # TRANSLATES
 CREATE TABLE translates (
 id VARCHAR(40) PRIMARY KEY NOT NULL,
@@ -1068,6 +1076,17 @@ INSERT INTO translates
 VALUES
 (UUID(), 'on_map', 'on map', 'en el mapa', 'no mapa', 'Y', NOW(), NOW()),
 (UUID(), 'add+', 'add', 'añadir', 'adicionar', 'Y', NOW(), NOW());
+
+INSERT INTO translates 
+(id, code_str, text_eng, text_esp, text_ptbr, is_active, created_at, updated_at)
+VALUES
+(UUID(), 'finanzas', 'financial', 'financiero', 'financeiro', 'Y', NOW(), NOW()),
+(UUID(), 'language', 'language', 'idioma', 'idioma', 'Y', NOW(), NOW()),
+(UUID(), 'user_type', 'user type', 'tipo de usuario', 'tipo de usuário', 'Y', NOW(), NOW());
+
+
+
+
 
 
 INSERT INTO translates 

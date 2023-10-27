@@ -17,6 +17,9 @@ if(array_key_exists('auth_api',$_POST)){
 
     // values to insert
     $username               = $_POST['username']; 
+    $usertype               = $_POST['user_type']; 
+    $userlanguage           = $_POST['user_language']; 
+    $userlevel              = $_POST['user_level'];
     $email                  = $_POST['email'];
     $mobile_ddi             = "'000'";
     if(array_key_exists('mobile_international_code',$_POST)){
@@ -32,7 +35,7 @@ if(array_key_exists('auth_api',$_POST)){
     $authentication_string  = md5($_POST['password']);
 
     // Query creation
-    $sql = "INSERT INTO users (id,username,email,level_account,user_type,user_language,office_id,mobile_international_code,mobile_number,authentication_string,account_locked,created_at,updated_at) VALUES ((UUID()),'$username','$email','20','user','esp','$office_id',$mobile_ddi,$mobile,'$authentication_string','N',now(),now())";
+    $sql = "INSERT INTO users (id,username,email,level_account,user_type,user_language,office_id,mobile_international_code,mobile_number,authentication_string,account_locked,created_at,updated_at) VALUES ((UUID()),'$username','$email','$userlevel','$usertype','$userlanguage','$office_id',$mobile_ddi,$mobile,'$authentication_string','N',now(),now())";
     // INSERT data
     //echo $sql;
     $rs = $DB->executeInstruction($sql);
