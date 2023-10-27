@@ -161,9 +161,8 @@ function handleSubmit(form) {
     errors      = 0;
     authApi     = csrf_token;
     message     = '';
-    if (((form.name.value !== '' && form.client_id.value !== '0') || (form.client_id.value !== '0' && form.agency_id.value !== '0')) && (form.start_date.value !== '' && form.total.value !== '0'+cents+'00' && form.status_id.value !== '0') ) {
+    if (((form.name.value !== '' && form.client_id.value !== '0') || (form.client_id.value !== '0' && form.agency_id.value !== '0')) && (form.start_date.value !== '' && form.total.value !== '0'+cents+'00' && form.status_id.value !== '0' && form.executive_id.value !== '0') ) {
         //form.submit();
-
 
         pixel       = 'N';
         if(form.pixel.checked)
@@ -1565,6 +1564,7 @@ function listAdvertiserContacts(aid){
                 html    += '<OPTION value="0000"/>Loading...';
                 html    += '</SELECT>';
                 tableList.innerHTML = html;
+                getMainExecutive(aid);
                 //form.btnSave.innerHTML = "Searching...";
             }
         };
@@ -1589,7 +1589,7 @@ function getMainExecutive(aid){
 
     } else{
         selectInput   = document.getElementById('selectexecutive');
-        const requestURL = window.location.protocol+'//'+locat+'api/'+submodule+'s/auth_'+submodule+'_list.php?auth_api='+authApi+filters;
+        const requestURL = window.location.protocol+'//'+locat+'api/'+submodule+'s/auth_'+submodule+'_get.php?auth_api='+authApi+filters;
         console.log(requestURL);
         const request = new XMLHttpRequest();
         request.onreadystatechange = function() {
@@ -1597,7 +1597,10 @@ function getMainExecutive(aid){
                 // Typical action to be performed when the document is ready:
                 obj = JSON.parse(request.responseText);
                 if( (obj.response != 'error') && (obj.response != 'ZERO_RETURN')){
-                    selectInput.value = obj[i].executive_id;
+                    if(obj[0].executive_id != null)
+                        selectInput.value = obj[0].executive_id;
+                    else
+                        selectInput.value = 0;
                 }
             }
         };

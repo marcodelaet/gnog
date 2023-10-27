@@ -38,7 +38,7 @@ function inputSelect($table,$title,$where,$order,$selected){
                 break;
             case 'user':
                 $id = $obj[$i]->uuid_full;
-                $name = $obj[$i]->username;
+                $name = $obj[$i]->username . ' - ' .$obj[$i]->email;
                 break;
             case 'billboard':
                 $id = $obj->data[$i]->uuid_full;

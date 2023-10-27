@@ -1,9 +1,14 @@
 <?php
+
 //REQUIRE GLOBAL conf
 require_once('../../database/.config');
 
 // REQUIRE conexion class
 require_once('../../database/connect.database.php');
+
+ini_set('error_reporting', E_ALL);
+ini_set('display_errors', true);
+
 
 $DB = new MySQLDB($DATABASE_HOST,$DATABASE_USER,$DATABASE_PASSWORD,$DATABASE_NAME);
 
@@ -70,16 +75,18 @@ if(array_key_exists('auth_api',$_REQUEST)){
                 $filters .= " AND ( ";
                 
             $multiWhere = explode("*|*",$_GET['where']);
-           // echo $multiWhere;
+            //echo $multiWhere[0];
             for($m=0; $m< count($multiWhere); $m++){
                 $wherers    = explode("***",$multiWhere[$m]);
                 if($m > 0)
                     $filters .= " ) OR ( ";
                 for($i=0; $i< count($wherers); $i++){
-                    if($filters != '')
+                    if(($filters != '') && (substr($filters,-7,7) != ') OR ( '))
                         $filters .= " AND ";
-                    else
-                        $filters .= " ( ";
+                    else {
+                        if(substr($filters,-7,7) != ') OR ( ')
+                            $filters .= " ( ";
+                    }
                     $jocker         = explode("|||",$wherers[$i]);
                     if(count($jocker) > 1){
                         $filters        .= " $jocker[0]='$jocker[1]'";
