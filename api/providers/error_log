@@ -1,0 +1,48 @@
+[02-Nov-2023 00:13:54 UTC] PHP Warning:  mime_content_type(/public/providers_1.2_202306-ptBR.pdf): Failed to open stream: No such file or directory in /home/x65c41xdvxzn/homologcrm/assets/lib/SendMail.php on line 74
+[02-Nov-2023 00:13:54 UTC] PHP Warning:  fopen(/public/providers_1.2_202306-ptBR.pdf): Failed to open stream: No such file or directory in /home/x65c41xdvxzn/homologcrm/assets/lib/SendMail.php on line 78
+[02-Nov-2023 00:13:54 UTC] PHP Warning:  filesize(): stat failed for /public/providers_1.2_202306-ptBR.pdf in /home/x65c41xdvxzn/homologcrm/assets/lib/SendMail.php on line 79
+[02-Nov-2023 00:13:54 UTC] PHP Fatal error:  Uncaught TypeError: fread(): Argument #1 ($stream) must be of type resource, bool given in /home/x65c41xdvxzn/homologcrm/assets/lib/SendMail.php:79
+Stack trace:
+#0 /home/x65c41xdvxzn/homologcrm/assets/lib/SendMail.php(79): fread()
+#1 /home/x65c41xdvxzn/homologcrm/assets/lib/SendMail.php(105): SendMail->setFile()
+#2 /home/x65c41xdvxzn/homologcrm/assets/lib/SendMail.php(126): SendMail->addAttachedFile()
+#3 /home/x65c41xdvxzn/homologcrm/api/providers/auth_provider_sendmail.php(141): SendMail->sendGNogMail()
+#4 {main}
+  thrown in /home/x65c41xdvxzn/homologcrm/assets/lib/SendMail.php on line 79
+[02-Nov-2023 00:19:08 UTC] PHP Warning:  mime_content_type(./public/providers_1.2_202306-ptBR.pdf): Failed to open stream: No such file or directory in /home/x65c41xdvxzn/homologcrm/assets/lib/SendMail.php on line 74
+[02-Nov-2023 00:19:08 UTC] PHP Warning:  fopen(./public/providers_1.2_202306-ptBR.pdf): Failed to open stream: No such file or directory in /home/x65c41xdvxzn/homologcrm/assets/lib/SendMail.php on line 78
+[02-Nov-2023 00:19:08 UTC] PHP Warning:  filesize(): stat failed for ./public/providers_1.2_202306-ptBR.pdf in /home/x65c41xdvxzn/homologcrm/assets/lib/SendMail.php on line 79
+[02-Nov-2023 00:19:08 UTC] PHP Fatal error:  Uncaught TypeError: fread(): Argument #1 ($stream) must be of type resource, bool given in /home/x65c41xdvxzn/homologcrm/assets/lib/SendMail.php:79
+Stack trace:
+#0 /home/x65c41xdvxzn/homologcrm/assets/lib/SendMail.php(79): fread()
+#1 /home/x65c41xdvxzn/homologcrm/assets/lib/SendMail.php(105): SendMail->setFile()
+#2 /home/x65c41xdvxzn/homologcrm/assets/lib/SendMail.php(126): SendMail->addAttachedFile()
+#3 /home/x65c41xdvxzn/homologcrm/api/providers/auth_provider_sendmail.php(141): SendMail->sendGNogMail()
+#4 {main}
+  thrown in /home/x65c41xdvxzn/homologcrm/assets/lib/SendMail.php on line 79
+[02-Nov-2023 00:22:41 UTC] PHP Warning:  mime_content_type(../public/providers_1.2_202306-ptBR.pdf): Failed to open stream: No such file or directory in /home/x65c41xdvxzn/homologcrm/assets/lib/SendMail.php on line 74
+[02-Nov-2023 00:22:41 UTC] PHP Warning:  fopen(../public/providers_1.2_202306-ptBR.pdf): Failed to open stream: No such file or directory in /home/x65c41xdvxzn/homologcrm/assets/lib/SendMail.php on line 78
+[02-Nov-2023 00:22:41 UTC] PHP Warning:  filesize(): stat failed for ../public/providers_1.2_202306-ptBR.pdf in /home/x65c41xdvxzn/homologcrm/assets/lib/SendMail.php on line 79
+[02-Nov-2023 00:22:41 UTC] PHP Fatal error:  Uncaught TypeError: fread(): Argument #1 ($stream) must be of type resource, bool given in /home/x65c41xdvxzn/homologcrm/assets/lib/SendMail.php:79
+Stack trace:
+#0 /home/x65c41xdvxzn/homologcrm/assets/lib/SendMail.php(79): fread()
+#1 /home/x65c41xdvxzn/homologcrm/assets/lib/SendMail.php(105): SendMail->setFile()
+#2 /home/x65c41xdvxzn/homologcrm/assets/lib/SendMail.php(126): SendMail->addAttachedFile()
+#3 /home/x65c41xdvxzn/homologcrm/api/providers/auth_provider_sendmail.php(141): SendMail->sendGNogMail()
+#4 {main}
+  thrown in /home/x65c41xdvxzn/homologcrm/assets/lib/SendMail.php on line 79
+[03-Nov-2023 16:20:22 UTC] PHP Warning:  mime_content_type(): Failed identify data 0:(null) in /home/x65c41xdvxzn/homologcrm/api/providers/auth_provider_sendmail.php on line 192
+[03-Nov-2023 16:20:22 UTC] PHP Warning:  filesize(): stat failed for http://crm.gnogmedia.com/public/providers_1.2_202306-es.pdf in /home/x65c41xdvxzn/homologcrm/api/providers/auth_provider_sendmail.php on line 197
+[03-Nov-2023 16:20:22 UTC] PHP Fatal error:  Uncaught ValueError: fread(): Argument #2 ($length) must be greater than 0 in /home/x65c41xdvxzn/homologcrm/api/providers/auth_provider_sendmail.php:197
+Stack trace:
+#0 /home/x65c41xdvxzn/homologcrm/api/providers/auth_provider_sendmail.php(197): fread()
+#1 {main}
+  thrown in /home/x65c41xdvxzn/homologcrm/api/providers/auth_provider_sendmail.php on line 197
+[03-Nov-2023 16:24:28 UTC] PHP Warning:  Cannot modify header information - headers already sent by (output started at /home/x65c41xdvxzn/homologcrm/vendor/phpmailer/phpmailer/src/PHPMailer.php:920) in /home/x65c41xdvxzn/homologcrm/api/providers/auth_provider_sendmail.php on line 253
+[03-Nov-2023 16:24:28 UTC] PHP Warning:  Cannot modify header information - headers already sent by (output started at /home/x65c41xdvxzn/homologcrm/vendor/phpmailer/phpmailer/src/PHPMailer.php:920) in /home/x65c41xdvxzn/homologcrm/api/providers/auth_provider_sendmail.php on line 253
+[03-Nov-2023 16:29:42 UTC] PHP Warning:  Cannot modify header information - headers already sent by (output started at /home/x65c41xdvxzn/homologcrm/vendor/phpmailer/phpmailer/src/PHPMailer.php:920) in /home/x65c41xdvxzn/homologcrm/api/providers/auth_provider_sendmail.php on line 253
+[03-Nov-2023 16:29:42 UTC] PHP Warning:  Cannot modify header information - headers already sent by (output started at /home/x65c41xdvxzn/homologcrm/vendor/phpmailer/phpmailer/src/PHPMailer.php:920) in /home/x65c41xdvxzn/homologcrm/api/providers/auth_provider_sendmail.php on line 253
+[03-Nov-2023 16:33:12 UTC] PHP Warning:  Cannot modify header information - headers already sent by (output started at /home/x65c41xdvxzn/homologcrm/vendor/phpmailer/phpmailer/src/PHPMailer.php:920) in /home/x65c41xdvxzn/homologcrm/api/providers/auth_provider_sendmail.php on line 253
+[03-Nov-2023 16:33:13 UTC] PHP Warning:  Cannot modify header information - headers already sent by (output started at /home/x65c41xdvxzn/homologcrm/vendor/phpmailer/phpmailer/src/PHPMailer.php:920) in /home/x65c41xdvxzn/homologcrm/api/providers/auth_provider_sendmail.php on line 253
+[03-Nov-2023 16:36:02 UTC] PHP Warning:  Cannot modify header information - headers already sent by (output started at /home/x65c41xdvxzn/homologcrm/vendor/phpmailer/phpmailer/src/PHPMailer.php:920) in /home/x65c41xdvxzn/homologcrm/api/providers/auth_provider_sendmail.php on line 253
+[03-Nov-2023 18:36:38 UTC] PHP Warning:  Undefined variable $messageHtml in /home/x65c41xdvxzn/homologcrm/api/providers/auth_provider_sendmail.php on line 246
