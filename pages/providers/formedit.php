@@ -1,6 +1,6 @@
 <?php
 $moduleName = 'Provider';
-$tid        = $_REQUEST['tid'];
+$pid        = $_REQUEST['pid'];
 ?>
 <link rel="stylesheet" href="<?=$dir?>./assets/css/<?=$moduleName?>.css">
 <link rel="stylesheet" href="<?=$dir?>./assets/css/Inputs.css">
@@ -235,7 +235,7 @@ $tid        = $_REQUEST['tid'];
                 </div>
             </div>
             <div class="inputs-button-container">
-                <button class="button" name="btnSave" type="button" onClick="handleEditSubmit('<?=$tid?>',<?=strtolower($moduleName)?>)" >Save</button>
+                <button class="button" name="btnSave" type="button" onClick="handleEditSubmit('<?=$pid?>',<?=strtolower($moduleName)?>)" >Save</button>
             </div>
         </form>
       <?php
@@ -252,8 +252,8 @@ $tid        = $_REQUEST['tid'];
  ?>
 
 
-<?php if(array_key_exists('tid',$_REQUEST)){ ?>
+<?php if(array_key_exists('pid',$_REQUEST)){ ?>
 <script>
-    handleOnLoad("<?=$tid?>",<?=strtolower($moduleName)?>)
+    handleOnLoad("<?=$pid?>",<?=strtolower($moduleName)?>)
 </script>
 <?php } ?>

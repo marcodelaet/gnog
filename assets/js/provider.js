@@ -3,6 +3,123 @@ var csrf_token = $('meta[name="csrf-token"]').attr('content');
 module  = 'provider';
 //alert(csrf_token);
 
+/*******************************************************
+ * Default Email Text
+ **********************/
+var invite_body = [];
+invite_body['esp'] = "<p>Hola %user_fullname%, ¿Cómo estás?</p>"+
+"<p>Soy del equipo de <b>GNog Media y Tecnologia</b>.</p>"+
+"<p>Envio por aquí la liga de registro de nuestra plataforma de envío de facturas, y el acceso para el manual de usuario para que puedas entender cómo funciona el sistema y si tienes alguna duda, probablemente encuentres la respuesta en el documento, en cualquier caso estamos a tu disposición. para ayudarlos en lo que necesiten con respecto a la plataforma.</p>"+
+"<p>Haga el copy de la liga abajo y péguela en su browser para registrar su nombre de usuario y registrar su contraseña de acceso:</p>"+
+"<p>- "+
+//"<a id='contact-url-provider' target='_blank' href='%personal_url_to_register_href%'>"+
+"%personal_url_to_register%"+
+//"</a>"+
+"</p>"+
+"<p>Después de registrar su nombre de usuario y contraseña de acceso personal, puede iniciar sesión utilizando la siguiente dirección:</p>"+
+"<p>- "+
+//"<a href='https://providers.gnogmedia.com' target='_blank'>"+
+"https://providers.gnogmedia.com"+
+//"</a>"+
+"</p>"+
+"<p>Si tiene alguna pregunta, póngase en contacto para que podamos aclararla lo mejor posible.</p>"+
+"<p>Si es necesario programar una llamada para hacer este primer envío juntos, también podemos hacerlo.</p>"+
+"<p><div class='download-pdf-file'>"+
+"<b>Archivo PDF - Download "+
+"(Español) - Plataforma de Facturas:</b></p>"+
+"</div>"+
+"<div class='download-pdf-file'>-"+
+//"<a href='http://crm.gnogmedia.com/public/providers_1.2_202306-es.pdf' target='_blank'>"+
+"http://crm.gnogmedia.com/public/providers_1.2_202306-es.pdf"+
+//"</a>"+
+"</div></p>"+ 
+"<p><div class='download-pdf-file'>"+
+"<b>Arquivo PDF - Download "+
+"(Português Brasil) - Plataforma de Faturas:</b></p>"+
+"</div>"+
+"<div class='download-pdf-file'>-"+
+//"<a href='http://crm.gnogmedia.com/public/providers_1.2_202306-ptBR.pdf' target='_blank'>"+
+"http://crm.gnogmedia.com/public/providers_1.2_202306-ptBR.pdf"+
+//"</a>"+
+"</div></p>"+ 
+"<p>&nbsp;</p>"+
+"<p>Saludos</p>";
+
+invite_body['ptbr'] = "<p>Olá %user_fullname%, tudo bem?</p>"+
+"<p>Sou da equipe da <b>GNog Media y Tecnologia</b>.</p>"+
+"<p>Estamos enviando por aqui o acesso para registro em nossa plataforma de envío de faturas, e acceso ao manual de usuario para que possa entender como funciona nossa plataforma e caso tenha alguma dúvida, provavelmente encontrará respuestas neste documento, de qualquer modo estamos à disposición para ajudar no que for necessário em relação a plataforma.</p>"+
+"<p>Copie abaixo e cole em seu navegador o link abaixo para registrar seu nome de usuário, e registrar sua senha de acesso:</p>"+
+"<p>- "+
+"<a id='contact-url-provider' target='_blank' href='%personal_url_to_register_href%'>"+
+"%personal_url_to_register%"+
+"</a>"+
+"</p>"+
+"<p>Depois de registrar seu nome de usuário e senha de acesso pessoal, pode iniciar sessão utilizando o seguinte link:</p>"+
+"<p>- "+
+"<a href='https://providers.gnogmedia.com' target='_blank'>"+
+"https://providers.gnogmedia.com"+
+"</a>"+
+"</p>"+
+"<p>Caso tenha alguma pergunta, entre em contacto para que possamos ajudar da melhor maneira possível.</p>"+
+"<p>Se for necessário agendar uma call para fazermos este primeiro acesso e envio juntos, também podemos fazer.</p>"+
+"<p><div class='download-pdf-file'>"+
+"<b>Archivo PDF - Download "+
+"(Español) - Plataforma de Facturas:</b></p>"+
+"</div>"+
+"<div class='download-pdf-file'>-"+
+"<a href='http://crm.gnogmedia.com/public/providers_1.2_202306-es.pdf' target='_blank'>"+
+"http://crm.gnogmedia.com/public/providers_1.2_202306-es.pdf"+
+"</a>"+
+"</div></p>"+ 
+"<p><div class='download-pdf-file'>"+
+"<b>Arquivo PDF - Download "+
+"(Português Brasil) - Plataforma de Faturas:</b></p>"+
+"</div>"+
+"<div class='download-pdf-file'>-"+
+"<a href='http://crm.gnogmedia.com/public/providers_1.2_202306-ptBR.pdf' target='_blank'>"+
+"http://crm.gnogmedia.com/public/providers_1.2_202306-ptBR.pdf"+
+"</a>"+ 
+"</div></p>"+
+"<p>&nbsp;</p>"+
+"<p>Att</p>";
+
+invite_body['eng'] = "<p>Hello %user_fullname%, how are you?</p>"+
+"<p>We are from <b>GNog Media y Tecnologia</b> team.</p>"+
+"<p>We are sending to you the registration link to our platform where you can send your invoices, and sending too an access to the user's manual about this platform, then you can see how to use our platform and send invoices correctly. If you have any questions, probably you can found the answer on this manual.</p>"+
+"<p>Copy the link below and paste on your browser to register your credentials (username and password):</p>"+
+"<p>- "+
+"<a id='contact-url-provider' target='_blank' href='%personal_url_to_register_href%'>"+
+"%personal_url_to_register%"+
+"</a>"+
+"</p>"+
+"<p>Later you register your credentials you can login on our platform using your personal username and password accessing the link:</p>"+
+"<p>- "+
+"<a href='https://providers.gnogmedia.com' target='_blank'>"+
+"https://providers.gnogmedia.com"+
+"</a>"+
+"</p>"+
+"<p>If you have any question, contact us please.</p>"+
+"<p><div class='download-pdf-file'>"+
+"<b>Archivo PDF - Download "+
+"(Español) - Plataforma de Facturas:</b></p>"+
+"</div>"+
+"<div class='download-pdf-file'>-"+
+"<a href='http://crm.gnogmedia.com/public/providers_1.2_202306-es.pdf' target='_blank'>"+
+"http://crm.gnogmedia.com/public/providers_1.2_202306-es.pdf"+
+"</a>"+
+"</div></p>"+ 
+"<p><div class='download-pdf-file'>"+
+"<b>Arquivo PDF - Download "+
+"(Português Brasil) - Plataforma de Faturas:</b></p>"+
+"</div>"+
+"<div class='download-pdf-file'>-"+
+"<a href='http://crm.gnogmedia.com/public/providers_1.2_202306-ptBR.pdf' target='_blank'>"+
+"http://crm.gnogmedia.com/public/providers_1.2_202306-ptBR.pdf"+
+"</a>"+
+"</div></p>"+ 
+"<p>&nbsp;</p>"+
+"<p>Best regards</p>";
+
 function handleSubmit(form) {
     if (form.name.value !== '' && form.address.value !== '' || product_id != '0' || salemodel_id != '0') {
         //form.submit();
@@ -286,6 +403,7 @@ function handleViewOnLoad(pid) {
                     for(i=0;i < obj['data'].length; i++){
                         xuserIcon   = 'person';
                         xcopy       = '';
+                        full_name   = obj['data'][i].contact_name + ' ' + obj['data'][i].contact_surname;
                         if(obj['data'][i].contact_position!='')
                             position = obj['data'][i].contact_position;
                         
@@ -293,14 +411,18 @@ function handleViewOnLoad(pid) {
                             xeffect     = '';
                             xuser       = obj['data'][i].username;
                         } else {
+                            contact_email   = obj['data'][i].contact_email;
+
                             xeffect = 'insider'; 
                             xuser = 'https://providers.gnogmedia.com?pr=Li9wYWdlcy91c2Vycy9mb3JtLnBocA==&cpid='+obj['data'][i].contact_provider_id;
                             xcopy = '&nbsp;&nbsp;&nbsp;<a style="color: #212529" href="javascript:void(0)" title="'+translateText('copy_user_crt_url',localStorage.getItem('ulang'))+' ('+obj['data'][i].contact_email+')" onclick="copyStringToClipboard(\''+xuser+'\'\)"><spam class="material-icons icon-data">content_copy</spam></a>';
-                            xcopy += '&nbsp;<a style="color: #212529" href="javascript:void(0)" title="'+translateText('send_user_crt_url_to',localStorage.getItem('ulang'))+' '+obj['data'][i].contact_email+'" onclick=""><spam class="material-icons icon-data">send</spam></a>';
+                            //xcopy += '&nbsp;<a style="color: #212529" href="javascript:void(0)" title="'+translateText('send_user_crt_url_to',localStorage.getItem('ulang'))+' '+obj['data'][i].contact_email+'" onclick=""><spam class="material-icons icon-data">send</spam></a>';
+                            textHTML = invite_body['esp'];
+                            xcopy += '&nbsp;<a style="color: #212529; cursor: pointer;" title="'+translateText('send_user_crt_url_to',localStorage.getItem('ulang'))+' '+obj['data'][i].contact_email+'"  data-toggle="modal" data-target="#sendmailModal" data-whatever="@mdo" onclick="document.getElementById(\'sendbutton\').disabled = false; document.getElementById(\'sendbutton\').innerText = translateText(\'send_message\',localStorage.getItem(\'ulang\')); document.getElementById(\'provider_contact_email\').innerText=\''+contact_email+'\'; document.getElementById(\'pemail\').value=\''+contact_email+'\'; document.getElementById(\'pname\').value=\''+full_name+'\'; document.getElementById(\'plink\').value=\''+xuser+'\'; document.getElementById(\'bodytext-html\').value =  textHTML.replace(\'%personal_url_to_register%\',\''+xuser+'\').replace(\'%personal_url_to_register_href%\',\''+xuser+'\').replace(\'%user_fullname%\',\''+full_name+'\'); document.getElementById(\'language-option\').value=\'esp\'; document.getElementById(\'bodyText\').innerHTML = textHTML.replace(\'%personal_url_to_register%\',\''+xuser+'\').replace(\'%personal_url_to_register_href%\',\''+xuser+'\').replace(\'%user_fullname%\',\''+full_name+'\');"><spam class="material-icons icon-data">send</spam></a>';
                         }
                         xhtml += '<div class="space-blank">&nbsp;</div>';
                         xhtml += '<div class="'+module+'-data">';
-                        xhtml += '    <spam id="card-contact-fullname-and-position">'+obj['data'][i].contact_name + ' ' + obj['data'][i].contact_surname + ' ('+position+')</spam>';
+                        xhtml += '    <spam id="card-contact-fullname-and-position">'+full_name + ' ('+position+')</spam>';
                         xhtml += '</div>';
                         xhtml += '<div class="'+module+'-data">';
                         xhtml += '    <spam class="material-icons icon-data">email</spam>';
@@ -518,4 +640,56 @@ function handleRemove(pid,locked_status){
     request.open('GET', requestURL);
     //request.responseType = 'json';
     request.send();
+}
+
+function changeMessageLanguage(language,xname,xlink){
+    document.getElementById('bodyText').innerHTML = invite_body[language].replace('%personal_url_to_register%',xlink).replace('%personal_url_to_register_href%',xlink).replace('%user_fullname%',xname);
+    document.getElementById('bodytext-html').value = document.getElementById('bodyText').innerHTML;
+}
+
+function sendmailToProviderContact(form){
+    //form.submit();
+    errors          = 0;
+    authApi         = csrf_token;
+    message         = '';
+
+    user_token      = form.tku.value;
+    user_id         = form.uid.value;
+    provider_id     = form.pid.value;
+    provider_email  = form.pemail.value;
+    provider_name   = form.pname.value;
+    bodytext_html   = encodeURIComponent(form.bodytext.value);
+    if(bodytext_html == ''){
+        bodytext_html = encodeURIComponent(document.getElementById('bodyText').innerHTML);
+    }
+
+    querystring = 'auth_api='+authApi+'&tku='+user_token+'&pid='+provider_id+'&uid='+user_id+'&name='+provider_name+'&email='+provider_email+'&bodytext='+bodytext_html;
+    locat       = window.location.hostname;
+    if(locat.slice(-1) != '/')
+        locat += '/';
+
+    if(errors > 0){
+        alert(message);
+    } else{
+        const requestURL = window.location.protocol+'//'+locat+'api/providers/auth_provider_sendmail.php';
+        console.log(requestURL+'?'+querystring);
+        const request = new XMLHttpRequest();
+        request.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                // Typical action to be performed when the document is ready:
+                obj = JSON.parse(request.responseText);
+                document.getElementById('sendbutton').innerText = translateText('sent',localStorage.getItem('ulang'));
+                //alert('Status: '+obj.status);
+                //window.location.href = 'pr=Li9wYWdlcy9wcm92aWRlcnMvaW5mby5waHA=&pid='+provider_id;
+            }
+            else{
+                document.getElementById('sendbutton').disabled = true;
+                document.getElementById('sendbutton').innerText = "Sending...";
+            }
+        };
+        request.open('POST', requestURL, true);
+        request.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+        //request.responseType = 'json';
+        request.send(querystring);
+    }
 }

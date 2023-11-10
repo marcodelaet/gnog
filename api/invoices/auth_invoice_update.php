@@ -234,8 +234,10 @@ if(array_key_exists('auth_api',$_POST)){
             $messageHtml   .= "<p>PtBR: <p>$description_ptbr </p></p>";
             $messageHtml   .= "<p>Eng: <p>$description_en </p></p>";
             
+            $attachedFiles = "";
+
             if($LOCALSERVER != 'local') {
-                $SendGNogMail->sendGNogMail($from_name,$from_email,$to_name,$to_email,$subject,$messageHtml,$signFilePath);
+                $SendGNogMail->sendGNogMail($from_name,$from_email,$to_name,$to_email,$subject,$messageHtml,$signFilePath,$attachedFiles);
             }
             /*************************************
              * END SEND MAIL AND HISTORY SECTION
