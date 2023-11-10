@@ -2,6 +2,7 @@
 /public/provider/csv/*
 /public/proposal/csv/*
 /database/.config
+/assets/lib/.configSMTP
 composer.json
 composer.lock
 index_.php

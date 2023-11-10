@@ -69,7 +69,7 @@ if(array_key_exists('auth_api',$_REQUEST)){
     }
 
     // Query creation
-    $sql = "SELECT $columns FROM $tableOrView $filters";
+    $sql = "SELECT $columns FROM $tableOrView $filters GROUP BY name";
     // LIST data
 //    echo $sql;
 

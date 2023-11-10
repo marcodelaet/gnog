@@ -181,16 +181,14 @@ if('1' == '2'){
                                 </select>
                             </div>
                         </div>
-                        <div>
-                            <div class="form-row">
-                                <div class="col custom-control custom-switch" style="text-align:right;">
-                                    <input type="checkbox" class="custom-control-input" value="0" onchange="refilterProductsType(this.value,'0');" id="digital_product" name="digital_product">
-                                    <label class="custom-control-label" for="digital_product"><?=translateText('digital_product');?></label>
-                                </div>
-                            </div>
-                        </div>
                         <div id="product-section">
                             <div id="product_0">
+                                <div class="form-row">
+                                    <div class="col custom-control custom-switch" style="text-align:right;">
+                                        <input type="checkbox" class="custom-control-input" value="0" onchange="refilterProductsType(this.value,this.id.substr(this.id.search('-')+1));" id="digital_product-0" name="digital_product[]" />
+                                        <label class="custom-control-label" for="digital_product-0"><?=translateText('digital_product');?></label>
+                                    </div>
+                                </div>
                                 <div class="form-row">
                                     <div class="col">
                                         &nbsp;
@@ -466,5 +464,7 @@ $(document).ready(function(){
   });
 });
 
+// resetando primeiro produto como OFFLINE
+refilterProductsType(1,0);
 
 </script>
