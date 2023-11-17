@@ -765,13 +765,19 @@ function handleListEditOnLoad(ppid) {
                 if( (agency_name != '') && (agency_name != null)){
                     advertiser_name += " / " + agency_name;
                 }
+
+                linkType    = '-alink';
+                if(obj['data'][0].status_id == '6'){
+                    linkType = '';
+                }
+
                 document.getElementById('offer-name').innerText         = obj['data'][0].offer_name;
                 document.getElementById('advertiser-name').innerText    = advertiser_name;
                 startYear   = obj['data'][0].start_date.substr(0,4);
                 startMonth  = obj['data'][0].start_date.substr(5,2);
                 startDay    = obj['data'][0].start_date.substr(8,2);
                 startDate   = new Date(parseInt(startYear),parseInt(startMonth)-1,parseInt(startDay),0,0,0);
-                document.getElementById('start-date-alink').innerText   = startDate.toLocaleDateString();
+                document.getElementById('start-date'+linkType).innerText   = startDate.toLocaleDateString();
 
                 stopYear   = obj['data'][0].stop_date.substr(0,4);
                 stopMonth  = obj['data'][0].stop_date.substr(5,2);
