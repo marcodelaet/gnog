@@ -25,9 +25,13 @@ $moduleName = 'Proposal';
             <spam id="offer-name">&nbsp;</spam>
             <spam id="advertiser-name">Advertiser / Agency</spam>
             <spam id="proposal-dates">
-                <spam id="start-date">01/10/2023</spam> - 
-                <spam id="stop-date">
-                    <a id="stop-date-alink" title="<?=ucfirst(translateText('change'))?> <?=translateText('stop_date')?>" type="button" onClick="changeDateForm(document.getElementById(this.id).innerText,'<?=$_REQUEST['ppid']?>');">
+                <spam id="start-date">
+                    <a id="start-date-alink" title="<?=ucfirst(translateText('change'))?> <?=translateText('start_date')?>" type="button" onClick="changeDateForm('start',document.getElementById(this.id).innerText,'<?=$_REQUEST['ppid']?>');">
+                        01/10/2023
+                    </a>
+                </spam> - 
+                <spam id="stop-date" >
+                    <a id="stop-date-alink" title="<?=ucfirst(translateText('change'))?> <?=translateText('stop_date')?>" type="button" onClick="changeDateForm('stop',document.getElementById(this.id).innerText,'<?=$_REQUEST['ppid']?>');">
                         31/10/2023
                     </a>
                 </spam>
