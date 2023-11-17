@@ -18,29 +18,10 @@ require('../../assets/lib/SendMail.php');
 // Creating a new instance to SendMail class
 $SendGNogMail = new SendMail();
 
-
-//use phpmailer\phpmailer\Exception;
-/***********************
-use PHPMailer\PHPMailer\PHPMailer;
-
-require '../../vendor/phpmailer/phpmailer/src/Exception.php';
-require '../../vendor/phpmailer/phpmailer/src/PHPMailer.php';
-require '../../vendor/phpmailer/phpmailer/src/SMTP.php';
+/*
 
 
-$mail = new PHPMailer();
-
-$mail->isSMTP();
-$mail->Host = 'smtp.gmail-relay.com';
-$mail->SMTPAuth = false;
-//$mail->Username = 'it@gnog.com.br';
-//$mail->Password = 'Rcy08cow2D';
-$mail->SMTPSecure = 'tls';
-$mail->Port = 25;
-
-$mail->SMTPDebug = 4;
-
- 
+require '../../assets/lib/.configSMTP'; 
 
 //FROM must be logged user data
 $mail->setFrom('contato@gnog.com.br', 'GNog Media - Providers');

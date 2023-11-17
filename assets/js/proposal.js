@@ -918,7 +918,7 @@ function handleListEditOnLoad(ppid) {
 
 function handleListOnLoad(search) {
     errors      = 0;
-    authApi     = csrf_token;
+    authApi     = encodeURIComponent(csrf_token);
     locat       = window.location.hostname;
 
     filters     = '';
@@ -936,7 +936,7 @@ function handleListOnLoad(search) {
     } else{
         tableList   = document.getElementById('listProposals');
         const requestURL = window.location.protocol+'//'+locat+'api/proposals/auth_proposal_list.php?auth_api='+authApi+filters;
-        //console.log(requestURL);
+        console.log(requestURL);
         const request = new XMLHttpRequest();
         request.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {
@@ -1291,13 +1291,15 @@ function newProductForm(copy,destination,items){
 
     for(iteration=0; iteration <= items; iteration++){
         //alert(items + ' - '+ iteration)
-        document.getElementById(destination).innerHTML = document.getElementById(destination).innerHTML.replace('Value_0','Value_'+start_index).replace('Name_0','Name_'+start_index).replace('Id_0','Id_'+start_index).replace('DropdownMenuButton_0','DropdownMenuButton_'+start_index).replace(",'0');",",'"+start_index+"');").replace('product_0','product_'+start_index).replace('salemodel_0','salemodel_'+start_index).replace('provider_0','provider_'+start_index).replace('oohproviders_0','oohproviders_'+start_index).replace('oohkeys_0','oohkeys_'+start_index).replace('oohsalemodels_0','oohsalemodels_'+start_index).replace('oohcost_0','oohcost_'+start_index).replace('oohprice_0','oohprice_'+start_index).replace('oohstate_0','oohstate_'+start_index).replace('oohcolony_0','oohcolony_'+start_index).replace('oohcity_0','oohcity_'+start_index).replace('oohcounty_0','oohcounty_'+start_index).replace('div-quantity_0','div-quantity_'+start_index).replace('div-price_0','div-price_'+start_index).replace('quantity_0','quantity_'+start_index).replace('price_0','price_'+start_index).replace('cost_0','cost_'+start_index);
+        document.getElementById(destination).innerHTML = document.getElementById(destination).innerHTML.replace('Value_0','Value_'+start_index).replace('Name_0','Name_'+start_index).replace('Id_0','Id_'+start_index).replace('DropdownMenuButton_0','DropdownMenuButton_'+start_index).replace(",'0');",",'"+start_index+"');").replace('product_0','product_'+start_index).replace('salemodel_0','salemodel_'+start_index).replace('provider_0','provider_'+start_index).replace('oohproviders_0','oohproviders_'+start_index).replace('oohkeys_0','oohkeys_'+start_index).replace('oohsalemodels_0','oohsalemodels_'+start_index).replace('oohcost_0','oohcost_'+start_index).replace('oohprice_0','oohprice_'+start_index).replace('oohstate_0','oohstate_'+start_index).replace('oohcolony_0','oohcolony_'+start_index).replace('oohcity_0','oohcity_'+start_index).replace('oohcounty_0','oohcounty_'+start_index).replace('div-quantity_0','div-quantity_'+start_index).replace('div-price_0','div-price_'+start_index).replace('quantity_0','quantity_'+start_index).replace('price_0','price_'+start_index).replace('cost_0','cost_'+start_index).replace('digital_product-0','digital_product-'+start_index).replace('digital_product-0','digital_product-'+start_index).replace('ooh-list-form-0','ooh-list-form-'+start_index);
     }
     htmlRemoveButton = '<div class="form-row" id="btnRemove_'+start_index+'" >';
     htmlRemoveButton += '<div class="col" style="text-align:right;">';
     htmlRemoveButton += '<button class="btn-danger material-icons-outlined" type="button" onclick="removeProductForm('+start_index+');">remove_circle_outline</button>';
     htmlRemoveButton += '</div>';
     htmlRemoveButton += '</div>';
+
+    document.getElementById('ooh-list-form-'+start_index).innerHTML="";
 
     document.getElementById(destination).innerHTML += htmlRemoveButton;
 }
@@ -1614,7 +1616,7 @@ function refilterProductsType(typeInt,indexValue){
     typeInt++;
     if(typeInt > 1)
         typeInt = 0;
-    document.getElementById('digital_product').value = typeInt;
+    document.getElementById('digital_product-'+indexValue).value = typeInt;
     
     errors      = 0;
     authApi     = csrf_token;
@@ -1631,20 +1633,23 @@ function refilterProductsType(typeInt,indexValue){
     if(errors > 0){
 
     } else{
-        productList   = document.getElementById('div-selectproduct_0');
+        productList   = document.getElementById('div-selectproduct_'+indexValue);
         const requestURL = window.location.protocol+'//'+locat+'api/'+submodule+'s/auth_'+submodule+'_list.php?auth_api='+authApi+filters;
         //console.log(requestURL);
         const request = new XMLHttpRequest();
         request.onreadystatechange = function() {
             html    = '<label for="product_id[]">'+ucfirst(translateText('product',localStorage.getItem('ulang')))+'</label>';
             html   += '<spam id="sproduct">'
-            html   += '<SELECT id="selectproduct_'+indexValue+'" name="product_id[]" onchange="refilterSaleModel(document.getElementById(\'digital_product\').value,this.value,this.id.split(\'_\')[1]); checkOOHSelection(this[this.selectedIndex].innerText,this.id.split(\'_\')[1]);" title="product_id" class="form-control" autocomplete="product_id"  required>';
+            html   += '<SELECT id="selectproduct_'+indexValue+'" name="product_id[]" onchange="refilterSaleModel(document.getElementById(\'digital_product-'+indexValue+'\').value,this.value,this.id.split(\'_\')[1]); checkOOHSelection(this[this.selectedIndex].innerText,this.id.split(\'_\')[1]);" title="product_id" class="form-control" autocomplete="product_id"  required>';
             if (this.readyState == 4 && this.status == 200) {
                 // Typical action to be performed when the document is ready:
                 obj = JSON.parse(request.responseText);
                 if( (obj.response != 'error') && (obj.response != 'ZERO_RETURN')){
                     html += '<OPTION value="0"/>'+translateText('please_select',localStorage.getItem('ulang'))+' '+ucfirst(translateText('product',localStorage.getItem('ulang')));
                     for(var i=0;i < obj.length; i++){
+                        if(obj[i].name == 'OOH'){
+                            html += '<option value="'+obj[i].uuid_full+'" >'+obj[i].name+' ('+translateText('no_keys',localStorage.getItem('ulang'))+')</option>';
+                        }
                         html += '<OPTION value="'+obj[i].uuid_full+'"/>'+obj[i].name;
                     }
                     html    += '</SELECT>';
@@ -1775,8 +1780,8 @@ function checkOOHSelection(stringValue,indexValue){
     }
     document.getElementById("div-oohkeys_"+indexValue).innerHTML = xhtml;
 }
-/*<select name="product_id[]" id="selectproduct_0" title="product_id" class="form-control" autocomplete="product_id" onchange="refilterSaleModel(document.getElementById('digital_product').value,this.value,this.id.split('_')[1]); checkOOHSelection(this[this.selectedIndex].innerText,this.id.split('_')[1])" required="" data-gtm-form-interact-field-id="0">
-<select name="product_id[]" id="selectproduct_0" title="product_id" class="form-control" autocomplete="product_id" onchange="document.getElementById('digital_product').value,this.value,this.id.split('_')[1]); checkOOHSelection(this[this.selectedIndex].innerText,this.id.split('_')[1]);" required="">
+/*<select name="product_id[]" id="selectproduct_0" title="product_id" class="form-control" autocomplete="product_id" onchange="refilterSaleModel(document.getElementById('digital_product-'+indexValue).value,this.value,this.id.split('_')[1]); checkOOHSelection(this[this.selectedIndex].innerText,this.id.split('_')[1])" required="" data-gtm-form-interact-field-id="0">
+<select name="product_id[]" id="selectproduct_0" title="product_id" class="form-control" autocomplete="product_id" onchange="document.getElementById('digital_product-'+indexValue).value,this.value,this.id.split('_')[1]); checkOOHSelection(this[this.selectedIndex].innerText,this.id.split('_')[1]);" required="">
 */
 
 function getBillboardIds(oohlist,indexValue){
@@ -1888,9 +1893,9 @@ function getBillboardIds(oohlist,indexValue){
 
     for(r=0;r < rows.length;r++){
     // busca na tabela billboards: billboard_id (id), bb_provider_id (provider_id), bb_salemodel_id (salemodel_id), cost_int, price_int, state, city, county
-        getIdFromTable('billboard','uuid as id,name,provider_id,provider_name,salemodel_id,salemodel_name,cost_int,price_int,state,city,county,colony','name|||'+rows[r]);
+        getIdFromTable('billboard','uuid as id,name,provider_id,provider_name,salemodel_id,salemodel_name,cost_int,price_int,state,city,county,colony','name|||'+rows[r].trim());
         if(objGlobal.response=='ERROR'){
-            alert(rows[r] + ' no encontrado. No es posible añadir en la lista de OOHs');
+            alert(rows[r].trim() + ' no encontrado. No es posible añadir en la lista de OOHs');
         } else {
             if(r > 0){
                 billboard_id    += ',';
@@ -2105,7 +2110,7 @@ function getIdFromTable(table,bringColumns,searchValue){
         } else{
             const requestURLGet = window.location.protocol+'//'+locat+'api/'+table+'s/auth_'+table+'_get.php?auth_api='+authApi+filters+cols;
             //alert(requestURLGet);
-            console.log(requestURLGet);
+            //console.log(requestURLGet);
             const requestGet = new XMLHttpRequest();
             requestGet.onreadystatechange = function() {
                 if (this.readyState == 4 && this.status == 200) {
