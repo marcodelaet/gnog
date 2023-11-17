@@ -40,9 +40,13 @@ if(array_key_exists('auth_api',$_REQUEST)){
     $auth_api   = $_REQUEST['auth_api'];
 
     $user_id    = $_REQUEST['uid']; 
-    $newDate  = '0';
+    $newDate    = '0';
     if(array_key_exists('newDate',$_REQUEST))
         $newDate = $_REQUEST['newDate'];
+
+    $newStartDate   = '0';
+    if(array_key_exists('newStartDate',$_REQUEST))
+        $newStartDate   = $_REQUEST['newStartDate'];
 
     $oldDate  = '0';
     if(array_key_exists('oldDate',$_REQUEST))
@@ -53,10 +57,23 @@ if(array_key_exists('auth_api',$_REQUEST)){
         $proposalId = $_REQUEST['ppid'];
     
     // update Stop Date
+    $sett = "updated_at=now()";
     if(($newDate != '0') && ($proposalId != '0')){
-        $sett   = "updated_at=now(),stop_date='$newDate 00:00:00'";
+        $sett   .= ",stop_date='$newDate 23:59:59'";
+        $newDateHistory = $newDate;
+        $dateTypeENG    = 'stop';
+        $dateTypeESP    = 'final';
+        $dateTypePTBR   = 'final';
     }
-        
+
+    if(($newStartDate != '0') && ($proposalId != '0')){
+        $sett   .= ",start_date='$newStartDate 00:00:00'";
+        $newDateHistory = $newStartDate;
+        $dateTypeENG    = 'start';
+        $dateTypeESP    = 'de início';
+        $dateTypePTBR   = 'inicial';
+    }
+
 
     // Query creation
     $sql = "UPDATE proposals SET $sett WHERE id='".$proposalId."'";
@@ -66,9 +83,9 @@ if(array_key_exists('auth_api',$_REQUEST)){
 
     // Response JSON 
     if($rs){
-        $description_en     = "Changed Stop Date from $oldDate to $newDate";
-        $description_es     = "Cambio de la fecha final de $oldDate para $newDate";
-        $description_ptbr   = "Alteração da Data final de $oldDate para $newDate";
+        $description_en     = "Changed $dateTypeENG Date from $oldDate to $newDateHistory";
+        $description_es     = "Cambio de la fecha $dateTypeESP de $oldDate para $newDateHistory";
+        $description_ptbr   = "Alteração da Data $dateTypePTBR de $oldDate para $newDateHistory";
         // setting history log
         setHistory($user_id,'proposals',$proposalId,$description_en,$description_es,$description_ptbr,$user_token,$auth_api,'text');
 

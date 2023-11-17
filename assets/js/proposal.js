@@ -765,13 +765,19 @@ function handleListEditOnLoad(ppid) {
                 if( (agency_name != '') && (agency_name != null)){
                     advertiser_name += " / " + agency_name;
                 }
+
+                linkType    = '-alink';
+                if(obj['data'][0].status_id == '6'){
+                    linkType = '';
+                }
+
                 document.getElementById('offer-name').innerText         = obj['data'][0].offer_name;
                 document.getElementById('advertiser-name').innerText    = advertiser_name;
                 startYear   = obj['data'][0].start_date.substr(0,4);
                 startMonth  = obj['data'][0].start_date.substr(5,2);
                 startDay    = obj['data'][0].start_date.substr(8,2);
                 startDate   = new Date(parseInt(startYear),parseInt(startMonth)-1,parseInt(startDay),0,0,0);
-                document.getElementById('start-date').innerText         = startDate.toLocaleDateString();
+                document.getElementById('start-date'+linkType).innerText   = startDate.toLocaleDateString();
 
                 stopYear   = obj['data'][0].stop_date.substr(0,4);
                 stopMonth  = obj['data'][0].stop_date.substr(5,2);
@@ -2332,29 +2338,30 @@ function changeStatus(proposalId,newStatus,oldStatus){
     } 
 }
 
-function changeDateForm(stringDate,proposalId){
+function changeDateForm(dateType,stringDate,proposalId){
     // getting user Locale setting
     const userLocale =
     navigator.languages && navigator.languages.length
       ? navigator.languages[0]
       : navigator.language; 
 
+    // dateType: stop / start
 
-    divStopDate     = document.getElementById("stop-date");
+    divDate     = document.getElementById(dateType+"-date");
 
     // cleaning DIV
-    divStopDate.innerHTML = '';
+    divDate.innerHTML = '';
 
     // showing INPUT
-    newInput        = document.createElement('input');
-    stopDateValue   = stringDate;
+    newInput    = document.createElement('input');
+    dateValue   = stringDate;
 
     // locales using day on the middle of the date
     localeMiddleDay = 'es-DO,es-HN,lv-LV,es-NI,es-PA,en-PH,es-PR,en-SG,es-SV,en-US,es-US';
     
-    aDate       = stopDateValue.split('/');
-    if(stopDateValue.search('-') >= 0 )
-        aDate       = stopDateValue.split('-');
+    aDate       = dateValue.split('/');
+    if(dateValue.search('-') >= 0 )
+        aDate       = dateValue.split('-');
     if(aDate[0].length > 3){
         year        = aDate[0];
         month       = aDate[1];
@@ -2375,36 +2382,36 @@ function changeDateForm(stringDate,proposalId){
         }
     }
     
-    stopDateValue   = year+'-'+month+'-'+day;
+    dateValue   = year+'-'+month+'-'+day;
 
     newInput.classList.add('form-control');
-    newInput.setAttribute('id','stopdate');
-    newInput.setAttribute('name','stopdate');
+    newInput.setAttribute('id',dateType+'date');
+    newInput.setAttribute('name',dateType+'date');
     newInput.setAttribute('type','date');
     newInput.setAttribute('maxlength','8');
-    newInput.setAttribute('autocomplete','stop-date');
+    newInput.setAttribute('autocomplete',dateType+'-date');
     newInput.setAttribute('placeholder','31/10/2023');
-    newInput.setAttribute('value',stopDateValue);
-    newInput.setAttribute('title',translateText('stop_date',localStorage.getItem('ulang')));
-    newInput.setAttribute('onblur',"executeStopDatechange(this.value,'"+stopDateValue+"','"+proposalId+"')");
-    divStopDate.appendChild(newInput);
+    newInput.setAttribute('value',dateValue);
+    newInput.setAttribute('title',translateText(dateType+'_date',localStorage.getItem('ulang')));
+    newInput.setAttribute('onblur',"executeDatechange('"+dateType+"',this.value,'"+dateValue+"','"+proposalId+"')");
+    divDate.appendChild(newInput);
 
-    document.getElementById('stopdate').focus();
+    document.getElementById(dateType+'date').focus();
 
 }
 
-function executeStopDatechange(newDateValue,oldDateValue,proposalId){
+function executeDatechange(dateType,newDateValue,oldDateValue,proposalId){
     authApi     = csrf_token;
 
     // show date (changing or not)
-    stopYear   = newDateValue.substr(0,4);
-    stopMonth  = newDateValue.substr(5,2);
-    stopDay    = newDateValue.substr(8,2);
-    stopDate   = new Date(parseInt(stopYear),parseInt(stopMonth)-1,parseInt(stopDay),0,0,0);
+    year   = newDateValue.substr(0,4);
+    month  = newDateValue.substr(5,2);
+    day    = newDateValue.substr(8,2);
+    date   = new Date(parseInt(year),parseInt(month)-1,parseInt(day),0,0,0);
 
-    html= '<a id="stop-date-alink" title="'+translateText('change',localStorage.getItem('ulang')).charAt(0).toUpperCase() + translateText('change',localStorage.getItem('ulang')).slice(1) +' '+ translateText('stop_date',localStorage.getItem('ulang'))+'" type="button" onClick="changeDateForm(document.getElementById(this.id).innerText,\''+proposalId+'\');">'+stopDate.toLocaleDateString()+'</a>';
+    html= '<a id="'+dateType+'-date-alink" title="'+translateText('change',localStorage.getItem('ulang')).charAt(0).toUpperCase() + translateText('change',localStorage.getItem('ulang')).slice(1) +' '+ translateText(dateType+'_date',localStorage.getItem('ulang'))+'" type="button" onClick="changeDateForm(\''+dateType+'\',document.getElementById(this.id).innerText,\''+proposalId+'\');">'+date.toLocaleDateString()+'</a>';
 
-    document.getElementById('stop-date').innerHTML    = html;
+    document.getElementById(dateType+'-date').innerHTML    = html;
 
     ///////////////////////////
 
@@ -2425,8 +2432,13 @@ function executeStopDatechange(newDateValue,oldDateValue,proposalId){
     let uid = localStorage.getItem('uuid');
     filters = '&uid='+uid+'&ppid='+proposalId;
     
-    filters += '&newDate='+newDateValue+'&oldDate='+oldDateValue;
-    const requestURL = window.location.protocol+'//'+locat+'api/proposals/auth_proposal_changeDate.php?auth_api='+authApi+filters;   
+    nameDateField = 'newDate';
+    if(dateType == 'start'){
+        nameDateField = 'newStartDate';
+    }
+
+    filters += '&'+nameDateField+'='+newDateValue+'&oldDate='+oldDateValue;
+    const requestURL = window.location.protocol+'//'+locat+'api/proposals/auth_proposal_changeDate.php?auth_api='+authApi+filters;
     console.log(requestURL);
     const request = new XMLHttpRequest();
     request.onreadystatechange = function() {
