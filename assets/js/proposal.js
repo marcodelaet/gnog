@@ -918,7 +918,7 @@ function handleListEditOnLoad(ppid) {
 
 function handleListOnLoad(search) {
     errors      = 0;
-    authApi     = csrf_token;
+    authApi     = encodeURIComponent(csrf_token);
     locat       = window.location.hostname;
 
     filters     = '';
@@ -936,7 +936,7 @@ function handleListOnLoad(search) {
     } else{
         tableList   = document.getElementById('listProposals');
         const requestURL = window.location.protocol+'//'+locat+'api/proposals/auth_proposal_list.php?auth_api='+authApi+filters;
-        //console.log(requestURL);
+        console.log(requestURL);
         const request = new XMLHttpRequest();
         request.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {

@@ -13,11 +13,19 @@ $con = $DB->connect();
 // check authentication / local Storage
 if(array_key_exists('auth_api',$_REQUEST)){
     
+    $token = $_REQUEST['auth_api'];
+
+    $sqlTkUser = "SELECT user_type FROM view_users WHERE UUID = '".$_COOKIE['uuid']."' AND token like '%".str_replace(" ","+",urldecode($token))."%'";
+    
+    $rsTkUser = $DB->getData($sqlTkUser);
+
+    //echo $sqlTkUser;
+    
     // check auth_api === local storage
     //if($localStorage == $_REQUEST['auth_api']){}
 
     // User Group
-    $group          = 'user';
+    $group          = $rsTkUser[0]['user_type'];
 
     // setting query
     $columns        = "UUID,product_id,making_banners, production_cost, production_cost_int, product_name,salemodel_id,is_taxable,tax_percent_int,salemodel_name,provider_id,provider_name,user_id,username,client_id,client_name,agency_id,agency_name,status_id,status_name,status_percent,offer_name,description,start_date,stop_date,sum(amount) as amount,currency,quantity,is_active";
@@ -53,8 +61,9 @@ if(array_key_exists('auth_api',$_REQUEST)){
     // Response JSON 
     header('Content-type: application/json');
     if($rs){
-        if($numberOfRows > 0)
+        if($numberOfRows > 0){
             echo json_encode($rs);
+        }
         else
             echo "[{'response':'0 results'}]";
     }
