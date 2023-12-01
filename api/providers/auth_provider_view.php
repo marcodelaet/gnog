@@ -31,7 +31,7 @@ if(array_key_exists('auth_api',$_REQUEST)){
 
     $offSet         = 0;
     $numberOfRegistries = 500;
-    $columns        = "left(uuid,13) as uuid, uuid as uuid_full, product_id, product_name, $addColumn salemodel_id, salemodel_name, product_price, currency, name, address, webpage_url, concat(contact_name,' ', contact_surname,' (', contact_email,')') as contact, contact_name, contact_surname, contact_email, contact_position, phone_international_code, phone_prefix, phone_number, concat('+',phone_international_code,phone_number) as phone, is_active";
+    $columns        = "left(uuid,13) as uuid, uuid as uuid_full, product_id, product_name, $addColumn salemodel_id, salemodel_name, product_price, currency, name, address, webpage_url, concat(contact_name,' ', contact_surname,' (', contact_email,')') as contact, contact_name, contact_surname, contact_email, contact_position, phone_international_code, phone_prefix, phone_number, concat('+',phone_international_code,phone_number) as phone, is_active, concat(name,webpage_url,contact_name, contact_surname, contact_email,phone_international_code, phone_prefix, phone_number) as search";
     $tableOrView    = "view_providers";
     $orderBy        = "order by name";
     
@@ -94,11 +94,15 @@ if(array_key_exists('auth_api',$_REQUEST)){
 
     // Response JSON
     header('Content-type: application/json'); 
-    if($rs){
-        echo json_encode(["result" => "OK","data" => $rs, "rows" => "$rsNumRows"]);
-    }
-    else {
-        echo json_encode(["result" => "ERROR", "data" => "$sqlPaged"]);
+    if($rsNumRows > 0){
+        $totalPages  = intval($rsNumRows / $numberOfRegistries)+1;
+        if($rs){
+            echo json_encode(["response" => "OK","data" => $rs, "rows" => $rsNumRows, "pages" => "$totalPages"]);
+        } else {
+            echo json_encode(["response" => "ERROR"]);
+        }  
+    } else {
+        echo json_encode(["response" => "ZERO_RETURN", "rows" => $rsNumRows, "pages" => "0"]);
     }
 }
 

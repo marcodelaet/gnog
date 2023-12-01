@@ -878,18 +878,18 @@ function handleListEditOnLoad(ppid) {
                                 '<div class="col-sm-2 line-list-'+obj['data'][i].billboard_id+' '+deletedbillboard+'">'+obj['data'][i].billboard_name+'</div>' +
                                 '<div class="col-sm-2 line-list-'+obj['data'][i].billboard_id+' '+deletedbillboard+'">'+(parseFloat(obj['data'][i].billboard_width)/100).toFixed(1)+' x '+(parseFloat(obj['data'][i].billboard_height)/100).toFixed(1)+'</div>' +
                                 '<div class="col-sm-1 line-list-'+obj['data'][i].billboard_id+' '+deletedbillboard+'">'+obj['data'][i].billboard_viewpoint_name+'</div>' +
-                                '<div class="col-sm-3 line-list-'+obj['data'][i].billboard_id+' '+deletedbillboard+'">'+formatter.format(obj['data'][i].billboard_cost)+' / <span id="price-'+obj['data'][i].billboard_id+'">'+formatter.format(obj['data'][i].billboard_price)+'</span>' +//' / <span id="cost-'+obj['data'][i].billboard_id+'">'+formatter.format(obj['data'][i].production_cost)+'</span>' +
+                                '<div class="col-sm-3 line-list-'+obj['data'][i].billboard_id+' '+deletedbillboard+'">'+formatter.format(obj['data'][i].productbillboard_cost)+' / <span id="price-'+obj['data'][i].billboard_id+'">'+formatter.format(obj['data'][i].billboard_price)+'</span>' +//' / <span id="cost-'+obj['data'][i].billboard_id+'">'+formatter.format(obj['data'][i].production_cost)+'</span>' +
                                 '</div>'+ 
                             '<div class="input-group col-sm-3" id="rate-delete-'+obj['data'][i].billboard_id+'">';
                                 if(deletedbillboard == '') {
                                     //html += '<label for="fee-'+obj[i].billboard_id+'">Fee rate</label>' +
                                     html += $impression_cost_line + 
-                                    '<a href="javascript:void(0);" onclick="calculatorFee(\''+obj['data'][i].proposalproduct_id+'\',\''+obj['data'][i].billboard_id+'\','+obj['data'][i].billboard_cost_int+',\''+obj['data'][i].billboard_name+'\',\''+xcurrency+'\');">'+
+                                    '<a href="javascript:void(0);" onclick="calculatorFee(\''+obj['data'][i].proposalproduct_id+'\',\''+obj['data'][i].billboard_id+'\','+obj['data'][i].productbillboard_cost_int+',\''+obj['data'][i].billboard_name+'\',\''+xcurrency+'\');">'+
                                     '<span class="material-icons" style="font-size:1.5rem; color:black;" title="Informe de costo del fee de '+obj['data'][i].billboard_salemodel_name+' '+obj['data'][i].billboard_name+'">price_change</span>'+
                                     '</a>'+
                                     '<input name="fee-'+obj['data'][i].billboard_id+'" id="fee-'+obj['data'][i].billboard_id+'" placeholder="% Fee" title="Percent (%) fee" aria-label="Percent (%) fee" value="30" class="form-control" style="height:1.5rem !important; width:3.5rem !important;" type="percent" maxlength="2" autocomplete="fee" />'+
                                     '<div class="input-group-append" style="height:1.5rem !important; width:3.5rem !important;"><span class="input-group-text">% ' +
-                                    '<a href="javascript:void(0);" onclick="executeFeeOnPrice(\''+obj['data'][i].proposalproduct_id+'\',\''+obj['data'][i].billboard_id+'\','+obj['data'][i].billboard_cost_int+',\''+obj['data'][i].billboard_name+'\',\''+xcurrency+'\');">'+
+                                    '<a href="javascript:void(0);" onclick="executeFeeOnPrice(\''+obj['data'][i].proposalproduct_id+'\',\''+obj['data'][i].billboard_id+'\','+obj['data'][i].productbillboard_cost_int+',\''+obj['data'][i].billboard_name+'\',\''+xcurrency+'\');">'+
                                     '<span class="material-icons" style="font-size:1.5rem; color:black;" title="Calcula Fee para '+obj['data'][i].billboard_salemodel_name+' '+obj['data'][i].billboard_name+'">calculate</span>'+
                                     '</a>'+
                                     '</span></div>';
@@ -1305,7 +1305,9 @@ function newProductForm(copy,destination,items){
     htmlRemoveButton += '</div>';
     htmlRemoveButton += '</div>';
 
-    document.getElementById('ooh-list-form-'+start_index).innerHTML="";
+    if(document.getElementById('ooh-list-form-'+start_index)!=null){
+        document.getElementById('ooh-list-form-'+start_index).innerHTML="";
+    }
 
     document.getElementById(destination).innerHTML += htmlRemoveButton;
 }
@@ -1721,7 +1723,7 @@ function refilterSaleModel(typeInt,productCode,indexValue){
         
         if(salemodelList){
             const requestURL = window.location.protocol+'//'+locat+'api/'+submodule+'s/auth_'+submodule+'_view.php?auth_api='+authApi+filters;
-            //console.log(requestURL);
+            console.log(requestURL);
             const request = new XMLHttpRequest();
             request.onreadystatechange = function() {
                 html    = '<label for="salemodel_id[]">' + ucfirst(translateText('sale_model',localStorage.getItem('ulang'))) + '</label>';
