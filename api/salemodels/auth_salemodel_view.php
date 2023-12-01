@@ -19,31 +19,70 @@ if(array_key_exists('auth_api',$_REQUEST)){
     //if($localStorage == $_REQUEST['auth_api']){}
 
     // setting query
+    $offSet         = 0;
+    $numberOfRegistries = 1000;
     
-    $columns        = "(sm.id) as uuid_full, (pd.id) as product_id, pd.code, pd.name as product_name, sm.name, sm.description, sm.is_active";
+    $columns        = "(sm.id) as uuid_full, (pd.id) as product_id, pd.code, pd.name as product_name, pd.is_digital as product_is_digital, sm.name, sm.description, sm.is_digital as is_digital, sm.is_active, CASE WHEN pd.name IS NULL THEN sm.name ELSE concat(pd.name,sm.name) END as search";
     $tableOrView    = " products pd JOIN productxsalemodels psm ON psm.product_id = pd.id RIGHT JOIN salemodels sm ON psm.salemodel_id = sm.id";
-    $orderBy        = "order by sm.name";
+    $orderBy        = "order by name";
+    $groupBy        = "";
+
+
+    // page
+    if(array_key_exists('returninglines',$_REQUEST)){
+        $numberOfRegistries = $_REQUEST['returninglines'];
+    }
+
+    if(array_key_exists('p',$_REQUEST)){
+        if($_REQUEST['p']!==''){
+            $offSet        = intval($_REQUEST['p']) * $numberOfRegistries;
+        }
+    }
+    $limit          = "limit $offSet, $numberOfRegistries";
 
     // filters
     $filters                = '';
     if(array_key_exists('search',$_REQUEST)){
         if($_REQUEST['search']!==''){
             $jocker         = $_REQUEST['search'];
-            $filters        .= "AND search like '%$jocker%'";
+            if((strtolower($jocker) == 'todos') || (strtolower($jocker) == 'all')){
+                $filters        = " product_id IS NULL";
+            } elseif(strtolower($jocker) == 'digital'){
+                $filters        = " is_digital = 'Y'";
+            } elseif(strtolower($jocker) == 'offline'){
+                $filters        = " is_digital = 'N'";
+            } elseif(strtolower($jocker) == 'off'){
+                $filters        = " is_digital = 'N'";
+            } else {
+                $filters        = " search like '%$jocker%'";
+            }
         }
     }
 
-    if(array_key_exists('digyn',$_GET)){
-        $_GET['where'] = 'is_digital|||'.$_GET['digyn'].'***'.$_GET['where'];
+    if(array_key_exists('orderby',$_REQUEST)){
+        $orderBy = "order by ".$_REQUEST['orderby'];
+    }
+
+    // group by
+    if(array_key_exists('groupby',$_REQUEST)){
+        if($_REQUEST['groupby']!==''){
+            $grouped        = $_REQUEST['groupby'];
+            $groupBy        = " GROUP BY $grouped";
+        }
+    }
+
+
+    if(array_key_exists('digyn',$_REQUEST)){
+        $_REQUEST['where'] = 'is_digital|||'.$_REQUEST['digyn'].'***'.$_REQUEST['where'];
     }
 
     $tableNick  = '';
-    if(array_key_exists('where',$_GET)){
-        if($_GET['where']!==''){
+    if(array_key_exists('where',$_REQUEST)){
+        if($_REQUEST['where']!==''){
             if($filters != '')
                 $filters .= " AND ( ";
 
-            $multiWhere = explode("*|*",$_GET['where']);
+            $multiWhere = explode("*|*",$_REQUEST['where']);
            // echo $multiWhere;
             for($m=0; $m< count($multiWhere); $m++){
                 $wherers    = explode("***",$multiWhere[$m]);
@@ -53,12 +92,14 @@ if(array_key_exists('auth_api',$_REQUEST)){
                     $jocker         = explode("|||",$wherers[$i]);
                     $tableNick = 'sm';
                     $filtered = '';
+                    /*
                     if($jocker[0] == 'is_digital'){
                         if(strpos($tableOrView,' JOIN') > 0){
                             $tableNick = 'sm.';
                         }
                         $filters        .= " $tableNick$jocker[0]='$jocker[1]'";
                     }
+                    */
                    // echo substr($filters,-7,7)."<BR/>";
                     if(($filters != '') && ((substr($filters,-8,8) != " ) OR ( ") && (substr($filters,-5,5) != " AND ")) && (substr($filters,-7,7) != " AND ( ")){
                         $filtered = " ";
@@ -74,7 +115,8 @@ if(array_key_exists('auth_api',$_REQUEST)){
 
                     if($jocker[0] == 'product_id'){
                         if(strpos($tableOrView,' JOIN') > 0){
-                            $tableNick = 'pd.';
+                            //$tableNick = 'pd.';
+                            $tableNick = '(product_';
                         }
                         $jocker[0] = 'id';
                     }
@@ -96,27 +138,37 @@ if(array_key_exists('auth_api',$_REQUEST)){
 
     $filtered= "WHERE is_active='Y'"; 
     if(strpos($tableOrView,' JOIN') > 0){
-        $filtered= "WHERE sm.is_active='Y'"; 
+        //$filtered= "WHERE sm.is_active='Y'"; 
+        $filtered= "WHERE is_active='Y'";
     }
     if($filters != '')
         $filters = "$filtered AND $filters";
 
+    if(array_key_exists('digyn',$_REQUEST)){
+        $filters .= " AND is_digital = '".$_REQUEST['digyn']."'";
+    }
+
     
 
-
     // Query creation
-    $sql = "SELECT $columns FROM $tableOrView $filters $orderBy";
+    $sql = "SELECT * FROM (SELECT $columns FROM $tableOrView) AS t1 $filters $groupBy $orderBy";
+    $sqlPaged = "SELECT * FROM (SELECT $columns FROM $tableOrView) AS t1 $filters $groupBy $orderBy $limit" ;
     // LIST data
-    //echo "<BR/>".$sql."<BR/>";
-    $rs = $DB->getData($sql);
-    $numRows = $DB->numRows($sql);
+    // echo $sql;
+    $rs = $DB->getData($sqlPaged);
+    $rsNumRows = $DB->numRows($sql);
 
     // Response JSON
     header('Content-type: application/json'); 
-    if($rs){
-        echo json_encode(['response'=>'OK','data'=>$rs,'numRows'=>$numRows]);
+    if($rsNumRows > 0){
+        $totalPages  = intval($rsNumRows / $numberOfRegistries)+1;
+        if($rs){
+            echo json_encode(["response" => "OK","data" => $rs, "rows" => $rsNumRows, "pages" => "$totalPages"]);
+        } else {
+            echo json_encode(["response" => "ERROR"]);
+        }  
     } else {
-        echo json_encode(['response'=>'ERROR','SQL'=>$sql]);
+        echo json_encode(["response" => "ZERO_RETURN", "rows" => $rsNumRows, "pages" => "0"]);
     }
 }
 

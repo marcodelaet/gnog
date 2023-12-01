@@ -97,6 +97,16 @@ if(array_key_exists('tk',$_COOKIE) && (array_key_exists('uuid',$_COOKIE)))
               </div>
             </div> 
           </a>  
+          <a class="dropdown-item" id="nav-item-billboards-list" title="List of <?=translateText('sale_model');?>" href="?pr=<?=base64_encode('./pages/salemodels/index.php')?>" >
+            <div class="submenu-option nav-gnog-submenu">
+              <div class="submenu-icon">
+                <span class="material-icons"  style="font-size:4rem;">sell</span>
+              </div>
+              <div class="submenu-text">
+              <?=translateText('sale_model');?>
+              </div>
+            </div> 
+          </a>  
          <!-- <a class="dropdown-item" id="nav-item-billboards-list" title="List of <?=translateText('billboard');?>" href="?pr=<?=base64_encode('./pages/maps/index.php')?>&smid=a1ec69ae-cd6c-11ec-a3eb-008cfa5abdac&state=Colima" >
             <div class="submenu-option">
               <div class="submenu-icon">

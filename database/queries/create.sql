@@ -1093,11 +1093,6 @@ INSERT INTO translates
 VALUES
 (UUID(), 'message', 'message', 'mensaje', 'mensagem', 'Y', NOW(), NOW());
 
-
-
-
-
-
 INSERT INTO translates 
 (id, code_str, text_eng, text_esp, text_ptbr, is_active, created_at, updated_at)
 VALUES
@@ -1159,6 +1154,30 @@ INSERT INTO translates
 (id, code_str, text_eng, text_esp, text_ptbr, is_active, created_at, updated_at)
 VALUES
 (UUID(), 'is_not_iluminated', 'is not iluminated', 'no hay iluminación', 'sem iluminação', 'Y', NOW(), NOW());
+
+
+INSERT INTO translates 
+(id, code_str, text_eng, text_esp, text_ptbr, is_active, created_at, updated_at)
+VALUES
+(UUID(), 'is_not_digital', 'is not digital', 'no es digital', 'não é digital', 'Y', NOW(), NOW()),
+(UUID(), 'is_digital', 'is digital', 'es digital', 'é digital', 'Y', NOW(), NOW());
+
+INSERT INTO translates 
+(id, code_str, text_eng, text_esp, text_ptbr, is_active, created_at, updated_at)
+VALUES
+(UUID(), 'all', 'all', 'todos', 'todos', 'Y', NOW(), NOW());
+
+INSERT INTO translates 
+(id, code_str, text_eng, text_esp, text_ptbr, is_active, created_at, updated_at)
+VALUES
+(UUID(), '0_results', 'no results found', 'no hay resultados', 'Sem resultados', 'Y', NOW(), NOW());
+
+INSERT INTO translates 
+(id, code_str, text_eng, text_esp, text_ptbr, is_active, created_at, updated_at)
+VALUES
+(UUID(), 'name_of_m', 'name of', 'nombre del', 'nome do', 'Y', NOW(), NOW()),
+(UUID(), 'name_of_f', 'name of', 'nombre del la', 'nome da', 'Y', NOW(), NOW()),
+(UUID(), 'name', 'name', 'nombre', 'nome', 'Y', NOW(), NOW());
 
 
 
@@ -1373,7 +1392,10 @@ CREATE VIEW view_providers AS (
 	LEFT JOIN users u ON ct.contact_email = u.email
 );
 
+
 # VIEW BILLBOARDS
+drop view view_billboards;
+
 CREATE VIEW view_billboards AS 
 (
 	SELECT
@@ -1406,6 +1428,8 @@ CREATE VIEW view_billboards AS
 	b.photo as photo,
     pb.proposalproduct_id as proposalproduct_id,
     pb.is_active as is_productbillboard_active,
+	pb.cost_int as productbillboard_cost_int,
+	pb.price_int as productbillboard_price_int,
 	CONCAT(name_key,p.name,sm.name,vp.name,b.state,b.address) as search
 	FROM billboards b
 	INNER JOIN providers p ON b.provider_id = p.id
@@ -1617,6 +1641,8 @@ CREATE VIEW view_proposals AS (
 	(pb.price_int / 100) as billboard_price,
 	pb.price_int as billboard_price_int,
 	pb.is_active as is_proposalbillboard_active,
+	pb.cost_int as productbillboard_cost_int,
+	pb.price_int as productbillboard_price_int,
 	ppp.is_active as is_proposalproduct_active,
 	CONCAT((pps.id),pd.name,sm.name,pv.name,u.username,adv.corporate_name,pps.offer_name,ppp.currency) AS search
 	FROM 

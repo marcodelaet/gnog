@@ -69,6 +69,72 @@ function inputSelect($table,$title,$where,$order,$selected){
     return $html;
 }
 
+function inputSelectNoZeroSelect($table,$title,$where,$order,$selected){
+    $authApi    = $_COOKIE['tk'];
+    $protocol = strtolower(substr($_SERVER["SERVER_PROTOCOL"],0,strpos( $_SERVER["SERVER_PROTOCOL"],'/'))).'://';
+    $url = $_SERVER['HTTP_HOST'];
+    if(substr($url,-1,1) != '/')
+        $url .= '/';
+    $fullUrl    = $protocol . $url;
+    $table_plural = $table . 's';
+    if(substr($table,-1,strlen($table) ) == 's')
+        $table_plural = $table . 'es';
+
+    $groupby = "name";
+    if($table == 'advertiser') {
+        $groupby = "UUID";
+    }
+
+    $fullUrl .= 'api/'.$table_plural.'/auth_'.$table.'_view.php?auth_api='.$authApi.'&order='.$order.'&where='.$where.'&selected='.$selected.'&groupby='.$groupby.'&allRows=1';
+    //return $fullUrl;
+    $homepage = file_get_contents($fullUrl);
+    $obj = json_decode($homepage);
+    //return $obj;
+    if(is_array($obj))
+        $numberOfRows = count($obj);
+    else
+        $numberOfRows = count($obj->data);
+    $html        = '';
+    for($i=0;$i < $numberOfRows; $i++){
+        $className      = "";
+        $markingSelect = ''; 
+        switch($table){
+            case  'advertiser':
+                $id = $obj[$i]->uuid_full;
+                $name = $obj[$i]->corporate_name;
+                break;
+            case 'user':
+                $id = $obj[$i]->uuid_full;
+                $name = $obj[$i]->username . ' - ' .$obj[$i]->email;
+                break;
+            case 'billboard':
+                $id = $obj->data[$i]->uuid_full;
+                $name = $obj->data[$i]->name;
+                break;
+            case 'provider':
+                $id = $obj->data[$i]->uuid_full;
+                $name = $obj->data[$i]->name;
+                break;
+            case 'rate':
+                if(!is_null($obj[$i]->orderby))
+                    $className = " class='bold' ";
+                $id = $obj[$i]->id;
+                $name = $obj[$i]->id;
+                break;
+            default:
+                $id = $obj->data[$i]->uuid_full;
+                $name = $obj->data[$i]->name;
+                break;
+        }
+        if($id == $selected)
+            $markingSelect = 'selected';
+        // adding a new option to products when OOH
+        $html .= '<option '.$className.' value="'.$id.'" '.$markingSelect.' >'.$name.'</option>';
+    }
+    return $html;
+}
+
+
 function inputFilterSelect($table,$title,$where,$order,$selected){
     $authApi    = $_COOKIE['tk'];
     $protocol = strtolower(substr($_SERVER["SERVER_PROTOCOL"],0,strpos( $_SERVER["SERVER_PROTOCOL"],'/'))).'://';
