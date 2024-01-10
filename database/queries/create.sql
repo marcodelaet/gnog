@@ -235,7 +235,8 @@ VALUES
 ((UUID()),'GYM','GYM','N','Y',NOW(),NOW()),
 ((UUID()),'CENTROS COMERCIALES','CENTROS COMERCIALES','N','Y',NOW(),NOW()),
 ((UUID()),'OOH','OOH','N','Y',NOW(),NOW()),
-((UUID()),'Programmatic','Programmatic','Y','Y',NOW(),NOW());
+((UUID()),'Programmatic','Programmatic','Y','Y',NOW(),NOW()),
+((UUID()),'CINE','CINE','N','Y',NOW(),NOW());
 
 
 #STATUSES
@@ -776,6 +777,11 @@ ALTER TABLE proposalsxproducts
 ALTER TABLE proposalsxproducts
 	ADD column production_cost_int INTEGER AFTER price_int;
 
+#ADDING FIELDS start_date and stop_date
+ALTER TABLE proposalsxproducts 
+	ADD start_date DATE NULL DEFAULT NULL AFTER quantity, 
+	ADD stop_date DATE NULL DEFAULT NULL AFTER start_date; 
+
 #ADDING FIELD cost_int
 ALTER TABLE `proposalsxproducts` 
 	ADD `cost_int` BIGINT NULL AFTER `county`; 
@@ -1179,6 +1185,22 @@ VALUES
 (UUID(), 'name_of_f', 'name of', 'nombre del la', 'nome da', 'Y', NOW(), NOW()),
 (UUID(), 'name', 'name', 'nombre', 'nome', 'Y', NOW(), NOW());
 
+
+INSERT INTO translates 
+(id, code_str, text_eng, text_esp, text_ptbr, is_active, created_at, updated_at)
+VALUES
+(UUID(), 'unique_date', 'unique event', 'evento unico', 'evento único', 'Y', NOW(), NOW());
+
+INSERT INTO translates 
+(id, code_str, text_eng, text_esp, text_ptbr, is_active, created_at, updated_at)
+VALUES
+(UUID(), 'fill', 'fill', 'complete', 'preencha', 'Y', NOW(), NOW()),
+(UUID(), 'first', 'first', 'primero', 'primeiro', 'Y', NOW(), NOW());
+
+INSERT INTO translates 
+(id, code_str, text_eng, text_esp, text_ptbr, is_active, created_at, updated_at)
+VALUES
+(UUID(), 'event_date', 'event date', 'fecha del evento', 'data do evento', 'Y', NOW(), NOW());
 
 
 # FILES
