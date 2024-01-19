@@ -53,7 +53,7 @@ if(array_key_exists('username',$_POST))
                     <div class="col-2" id="sclient">
                         <label for="executive"><?=translateText('executive');?></label>
                         <select name="executive_id" id="selectexecutive" title="executive_id" class="form-control" autocomplete="executive_id" required>
-                            <?=inputSelect('user',translateText('executive'),'user_type|||user','username','')?>
+                            <?=inputSelect('user',translateText('executive'),'user_type|||executive*|*user_type|||admin','username','')?>
                         </select>
                     </div>
 

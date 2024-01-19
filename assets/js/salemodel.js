@@ -285,7 +285,7 @@ function handleListOnLoad(search,page) {
         pages     += '&p='+(parseInt(page)-1);
     }
 
-    lines       = 50; // quantity of lines to return on JSON result query
+    lines       = 25; // quantity of lines to return on JSON result query
     
     strlines    = '&returninglines='+lines;
     if(locat.slice(-1) != '/')

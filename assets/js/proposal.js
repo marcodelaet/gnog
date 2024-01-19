@@ -59,6 +59,8 @@ function handleSubmitAddProduct(form,proposalId){
 
         proposal_id = proposalId;
         virg            = '';
+        product_start_date  = '';
+        product_stop_date   = '';
         product_id      = '';
         salemodel_id    = '';
         provider_id     = '';
@@ -78,6 +80,8 @@ function handleSubmitAddProduct(form,proposalId){
                  ************************************/
                 qtdBillboard = document.getElementsByName('oohprice_'+p+'[]').length;
                 for(pr=0; pr < qtdBillboard; pr++){
+                    objStartDate.push(document.getElementsByName('start_date_product[]')[p].value);
+                    objStopDate.push(document.getElementsByName('stop_date_product[]')[p].value);
                     objProductValue.push(document.getElementsByName('product_id[]')[p].value);
                     objSaleModel.push(document.getElementsByName('oohsalemodel_id[]')[pr].value);
                     objProviderId.push(document.getElementsByName('oohprovider_id[]')[pr].value);
@@ -95,6 +99,8 @@ function handleSubmitAddProduct(form,proposalId){
                 /**************************************
                  * ANOTHER PRODUCT
                  ************************************/
+                objStartDate.push(document.getElementsByName('start_date_product[]')[p].value);
+                objStopDate.push(document.getElementsByName('stop_date_product[]')[p].value);
                 objProductValue.push(document.getElementsByName('product_id[]')[p].value);
                 objSaleModel.push(document.getElementsByName('salemodel_id[]')[p].value);
                 objProviderId.push(document.getElementsByName('provider_id[]')[p].value);
@@ -133,6 +139,8 @@ function handleSubmitAddProduct(form,proposalId){
                 }    
             } 
 
+            product_start_date += virg + objStartDate[i];
+            product_stop_date += virg + objStopDate[i];
             product_id      += virg + objProductValue[p];
             salemodel_id    += virg + objSaleModel[p];
             cost            += virg + xcost;
@@ -150,7 +158,7 @@ function handleSubmitAddProduct(form,proposalId){
             billboard_id    += virg + objBillboard[p];
 
         }
-        addProduct('['+product_id+']','['+salemodel_id+']','['+cost+']','['+price+']',currency,'['+quantity+']','['+provider_id+']',proposal_id,'['+state_id+']','['+city_id+']','['+county_id+']','['+colony_id+']','['+billboard_id+']');
+        addProduct('['+product_start_date+']','['+product_stop_date+']','['+product_id+']','['+salemodel_id+']','['+cost+']','['+price+']',currency,'['+quantity+']','['+provider_id+']',proposal_id,'['+state_id+']','['+city_id+']','['+county_id+']','['+colony_id+']','['+billboard_id+']');
 
         form.btnSave.innerHTML = "Save";
         window.location.href = '?pr=Li9wYWdlcy9wcm9wb3NhbHMvZm9ybWVkaXQucGhw&ppid='+proposalId;
@@ -188,6 +196,8 @@ function handleSubmit(form) {
         currency                = form.currency.value;
 
         objProduct      = document.getElementsByName('product_id[]');
+        objStartDate    = [];
+        objStopDate     = [];
         objProductValue = [];
         objSaleModel    = [];
         objProviderId   = [];
@@ -207,6 +217,8 @@ function handleSubmit(form) {
                  ************************************/
                 qtdBillboard = document.getElementsByName('oohprice_'+p+'[]').length;
                 for(pr=0; pr < qtdBillboard; pr++){
+                    objStartDate.push(document.getElementsByName('start_date_product[]')[p].value);
+                    objStopDate.push(document.getElementsByName('stop_date_product[]')[p].value);
                     objProductValue.push(document.getElementsByName('product_id[]')[p].value);
                     objSaleModel.push(document.getElementsByName('oohsalemodel_id[]')[pr].value);
                     objProviderId.push(document.getElementsByName('oohprovider_id[]')[pr].value);
@@ -224,6 +236,8 @@ function handleSubmit(form) {
                 /**************************************
                  * ANOTHER PRODUCT
                  ************************************/
+                objStartDate.push(document.getElementsByName('start_date_product[]')[p].value);
+                objStopDate.push(document.getElementsByName('stop_date_product[]')[p].value);
                 objProductValue.push(document.getElementsByName('product_id[]')[p].value);
                 objSaleModel.push(document.getElementsByName('salemodel_id[]')[p].value);
                 objProviderId.push(document.getElementsByName('provider_id[]')[p].value);
@@ -257,6 +271,8 @@ function handleSubmit(form) {
 
                     proposal_id     = obj[0].id;
                     virg            = '';
+                    product_start_date  = '';
+                    product_stop_date   = '';
                     product_id      = '';
                     salemodel_id    = '';
                     provider_id     = '';
@@ -295,6 +311,8 @@ function handleSubmit(form) {
                             }    
                         } 
 
+                        product_start_date += virg + objStartDate[i];
+                        product_stop_date += virg + objStopDate[i];
                         product_id      += virg + objProductValue[i];
                         salemodel_id    += virg + objSaleModel[i];
                         cost            += virg + xcost;
@@ -312,7 +330,7 @@ function handleSubmit(form) {
                         billboard_id    += virg + objBillboard[i];
                     }
 
-                    addProduct('['+product_id+']','['+salemodel_id+']','['+cost+']','['+price+']',currency,'['+quantity+']','['+provider_id+']',proposal_id,'['+state_id+']','['+city_id+']','['+county_id+']','['+colony_id+']','['+billboard_id+']');
+                    addProduct('['+product_start_date+']','['+product_stop_date+']','['+product_id+']','['+salemodel_id+']','['+cost+']','['+price+']',currency,'['+quantity+']','['+provider_id+']',proposal_id,'['+state_id+']','['+city_id+']','['+county_id+']','['+colony_id+']','['+billboard_id+']');
                     // alert('['+product_id+']'+'['+salemodel_id+']'+'['+cost+']'+'['+price+']'+currency+'['+quantity+']'+'['+provider_id+']'+proposal_id+'['+state_id+']'+'['+city_id+']'+'['+county_id+']'+'['+colony_id+']'+'['+billboard_id+']');
 
                     form.btnSave.innerHTML = "Save";
@@ -338,6 +356,8 @@ function handleSubmitProvider(form){
 
         total       = form.total.value;
 
+        product_start_date  = document.getElementById('start_date_product').value;
+        product_stop_date   = document.getElementById('stop_date_product').value;
         product     = document.getElementById('productID').value;
         saleModel   = document.getElementById('salemodelID').value;
         proposal_id = document.getElementById('proposalID').value;
@@ -356,6 +376,8 @@ function handleSubmitProvider(form){
             alert(message);
         } else{
             virg            = '';
+            start_date      = '';
+            stop_date       = '';
             product_id      = '';
             salemodel_id    = '';
             price           = '';
@@ -380,6 +402,9 @@ function handleSubmitProvider(form){
                         }
                     }    
                 } 
+                start_date      += virg + product_start_date;
+                stop_date       += virg + product_stop_date;
+                product_id      += virg + product;
                 product_id      += virg + product;
                 salemodel_id    += virg + saleModel;
                 price           += virg + xprice;
@@ -395,7 +420,7 @@ function handleSubmitProvider(form){
                 colony_id       += virg + colony;
 
             }
-            addProduct('['+product_id+']','['+salemodel_id+']','['+price+']',currency,'['+quantity+']','['+provider_id+']',proposal_id,'['+state_id+']','['+city_id+']','['+county_id+']','['+colony_id+']');
+            addProduct('['+start_date+']','['+stop_date+']','['+product_id+']','['+salemodel_id+']','['+price+']',currency,'['+quantity+']','['+provider_id+']',proposal_id,'['+state_id+']','['+city_id+']','['+county_id+']','['+colony_id+']');
 
             form.btnSave.innerHTML = "Save";
             window.location.href = '?pr=Li9wYWdlcy9wcm9wb3NhbHMvZm9ybWVkaXQucGhw&ppid='+proposal_id;
@@ -1293,11 +1318,11 @@ function newProductForm(copy,destination,items){
     
     //document.getElementById(destination).after(divRow);
     start_index++;
-    document.getElementById(destination).innerHTML += (document.getElementById(copy).innerHTML.replace('proposal,0','proposal,'+start_index).replace('proposal,0','proposal,'+start_index).replace('product_0','product_'+start_index).replace('state_0','state_'+start_index).replace('price_0','price_'+start_index).replace('amount_0','amount_'+start_index).replace('DropdownMenuButton_0','DropdownMenuButton_'+start_index).replace(",'0');",",'"+start_index+"');").replace('div-selectcolony_0','div-selectcolony_'+start_index).replace('div-selectcounty_0','div-selectcounty_'+start_index).replace('div-selectcity_0','div-selectcity_'+start_index).replace('div-selectState_0','div-selectState_'+start_index));
+    document.getElementById(destination).innerHTML += (document.getElementById(copy).innerHTML.replace('proposal,0','proposal,'+start_index).replace('proposal,0','proposal,'+start_index).replace('product_0','product_'+start_index).replace('state_0','state_'+start_index).replace('price_0','price_'+start_index).replace('amount_0','amount_'+start_index).replace('DropdownMenuButton_0','DropdownMenuButton_'+start_index).replace(",'0');",",'"+start_index+"');").replace('div-selectcolony_0','div-selectcolony_'+start_index).replace('div-selectcounty_0','div-selectcounty_'+start_index).replace('div-selectcity_0','div-selectcity_'+start_index).replace('div-selectState_0','div-selectState_'+start_index).replace('div-datetype-option_0','div-datetype-option_'+start_index));
 
     for(iteration=0; iteration <= items; iteration++){
         //alert(items + ' - '+ iteration)
-        document.getElementById(destination).innerHTML = document.getElementById(destination).innerHTML.replace('Value_0','Value_'+start_index).replace('Name_0','Name_'+start_index).replace('Id_0','Id_'+start_index).replace('DropdownMenuButton_0','DropdownMenuButton_'+start_index).replace(",'0');",",'"+start_index+"');").replace('product_0','product_'+start_index).replace('salemodel_0','salemodel_'+start_index).replace('provider_0','provider_'+start_index).replace('oohproviders_0','oohproviders_'+start_index).replace('oohkeys_0','oohkeys_'+start_index).replace('oohsalemodels_0','oohsalemodels_'+start_index).replace('oohcost_0','oohcost_'+start_index).replace('oohprice_0','oohprice_'+start_index).replace('oohstate_0','oohstate_'+start_index).replace('oohcolony_0','oohcolony_'+start_index).replace('oohcity_0','oohcity_'+start_index).replace('oohcounty_0','oohcounty_'+start_index).replace('div-quantity_0','div-quantity_'+start_index).replace('div-price_0','div-price_'+start_index).replace('quantity_0','quantity_'+start_index).replace('price_0','price_'+start_index).replace('cost_0','cost_'+start_index).replace('digital_product-0','digital_product-'+start_index).replace('digital_product-0','digital_product-'+start_index).replace('ooh-list-form-0','ooh-list-form-'+start_index);
+        document.getElementById(destination).innerHTML = document.getElementById(destination).innerHTML.replace('Value_0','Value_'+start_index).replace('Name_0','Name_'+start_index).replace('Id_0','Id_'+start_index).replace('DropdownMenuButton_0','DropdownMenuButton_'+start_index).replace(",'0');",",'"+start_index+"');").replace('product_0','product_'+start_index).replace('salemodel_0','salemodel_'+start_index).replace('provider_0','provider_'+start_index).replace('oohproviders_0','oohproviders_'+start_index).replace('oohkeys_0','oohkeys_'+start_index).replace('oohsalemodels_0','oohsalemodels_'+start_index).replace('oohcost_0','oohcost_'+start_index).replace('oohprice_0','oohprice_'+start_index).replace('oohstate_0','oohstate_'+start_index).replace('oohcolony_0','oohcolony_'+start_index).replace('oohcity_0','oohcity_'+start_index).replace('oohcounty_0','oohcounty_'+start_index).replace('div-quantity_0','div-quantity_'+start_index).replace('div-price_0','div-price_'+start_index).replace('quantity_0','quantity_'+start_index).replace('price_0','price_'+start_index).replace('cost_0','cost_'+start_index).replace('digital_product-0','digital_product-'+start_index).replace('datetype-option-0','datetype-option-'+start_index).replace('digital_product-0','digital_product-'+start_index).replace('datetype-option-0','datetype-option-'+start_index).replace('start_date_product_0','start_date_product_'+start_index).replace('start_date_product_0','start_date_product_'+start_index).replace('start_date_product_0','start_date_product_'+start_index).replace('stop_date_product_0','stop_date_product_'+start_index).replace('stop_date_product_0','stop_date_product_'+start_index).replace('stop_date_product_0','stop_date_product_'+start_index).replace('ooh-list-form-0','ooh-list-form-'+start_index).replace('div-stopDate-product-0','div-stopDate-product-'+start_index).replace('div-startDate-product-0','div-startDate-product-'+start_index).replace('datetype_option-0','datetype_option-'+start_index).replace('datetype_option-0','datetype_option-'+start_index);
     }
     htmlRemoveButton = '<div class="form-row" id="btnRemove_'+start_index+'" >';
     htmlRemoveButton += '<div class="col" style="text-align:right;">';
@@ -1308,6 +1333,9 @@ function newProductForm(copy,destination,items){
     if(document.getElementById('ooh-list-form-'+start_index)!=null){
         document.getElementById('ooh-list-form-'+start_index).innerHTML="";
     }
+
+    d_start.push(0);
+    d_stop.push(0);
 
     document.getElementById(destination).innerHTML += htmlRemoveButton;
 }
@@ -1360,12 +1388,12 @@ function getId(table,where){
     }
 }
 
-function addProduct(product_id,salemodel_id,cost,price,currency,quantity,provider_id,proposal_id,state,city,county,colony,billboard_id){
+function addProduct(start_date,stop_date,product_id,salemodel_id,cost,price,currency,quantity,provider_id,proposal_id,state,city,county,colony,billboard_id){
     errors      = 0;
     authApi     = csrf_token;
     locat       = window.location.hostname;
 
-    querystring = 'auth_api='+authApi+"&product_id="+product_id+"&salemodel_id="+salemodel_id+"&billboard_id="+billboard_id+"&cost="+cost+"&price="+price+"&currency="+currency+"&quantity="+quantity+"&provider_id="+provider_id+"&proposal_id="+proposal_id+"&state="+state+"&city="+city+"&county="+county+"&colony="+colony;
+    querystring = 'auth_api='+authApi+"&start_date="+start_date+"&stop_date="+stop_date+"&product_id="+product_id+"&salemodel_id="+salemodel_id+"&billboard_id="+billboard_id+"&cost="+cost+"&price="+price+"&currency="+currency+"&quantity="+quantity+"&provider_id="+provider_id+"&proposal_id="+proposal_id+"&state="+state+"&city="+city+"&county="+county+"&colony="+colony;
 
     if(locat.slice(-1) != '/')
         locat += '/';
@@ -1618,6 +1646,25 @@ function getMainExecutive(aid){
         //request.responseType = 'json';
         request.send();
     } 
+}
+
+function remakeDateField(typeInt,indexValue){
+    typeInt++;
+    if(typeInt > 1)
+        typeInt = 0;
+    document.getElementById('datetype_option-'+indexValue).value = typeInt;
+
+    
+    if(typeInt == 1){
+        document.getElementById('div-stopDate-product-'+indexValue).style   ='display:none;';
+        document.getElementById('stop_date_product_'+indexValue).value     = '';
+        document.getElementById('label-start_date_product_'+indexValue).innerText = ucfirst(translateText('event_date',localStorage.getItem('ulang')));
+    } else {
+        document.getElementById('div-stopDate-product-'+indexValue).style   ='display:block;';
+        d_stop[indexValue] = 0;
+        document.getElementById('label-start_date_product_'+indexValue).innerText = translateText('start_date',localStorage.getItem('ulang'));
+    }
+
 }
 
 function refilterProductsType(typeInt,indexValue){

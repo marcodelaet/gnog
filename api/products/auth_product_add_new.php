@@ -21,6 +21,8 @@ if(array_key_exists('auth_api',$_REQUEST)){
     //if($localStorage == $_REQUEST['auth_api']){}
 
     // values to insert
+    $start_date     = str_replace("[","",str_replace("]","",$_REQUEST['start_date'])); 
+    $stop_date      = str_replace("[","",str_replace("]","",$_REQUEST['stop_date'])); 
     $product_id     = str_replace("[","",str_replace("]","",$_REQUEST['product_id'])); 
     $proposal_id    = $_REQUEST['proposal_id'];
     $xsalemodel_id  = str_replace("[","",str_replace("]","",$_REQUEST['salemodel_id'])); 
@@ -39,6 +41,8 @@ if(array_key_exists('auth_api',$_REQUEST)){
     $xquantity      = "1";
     $xprice         = "0";
     
+    $aStartDate = explode(",",$start_date);
+    $aStopDate  = explode(",",$stop_date);
     $aProducts  = explode(",",$product_id);
     $aSalemodel = explode(",",$xsalemodel_id);
     $aCost      = explode(",",$cost);
@@ -55,6 +59,19 @@ if(array_key_exists('auth_api',$_REQUEST)){
     $pppid      = '';
     $response   = "ERROR"; 
     for($i = 0; $i < count($aProducts); $i++){
+        if(array_key_exists('start_date',$_REQUEST)){
+            if($aStartDate[$i] !== '')
+                $start_date_item    = "'".$aStartDate[$i]."'";
+            else 
+                $start_date_item    = "NULL";
+        }
+        if(array_key_exists('stop_date',$_REQUEST)){
+            if($aStopDate[$i] !== '')
+                $stop_date_item    = "'".$aStopDate[$i]."'";
+            else
+                $stop_date_item    = "NULL";
+        }
+
         if(array_key_exists('provider_id',$_REQUEST)){
             if($aProvider[$i] !== '0')
                 $provider_id= "('".$aProvider[$i]."')";
@@ -81,7 +98,7 @@ if(array_key_exists('auth_api',$_REQUEST)){
         }
 
         // Query creation
-        $sql = "INSERT INTO proposalsxproducts (id,product_id,proposal_id,salemodel_id,provider_id,state,city,county,colony,cost_int,price_int,currency,quantity,is_active,created_at,updated_at) VALUES ((UUID()),('".$aProducts[$i]."'),('$proposal_id'),($salemodel_id),$provider_id,'$aState[$i]','$aCity[$i]','$aCounty[$i]','$aColony[$i]',$xcost,$xprice,'$currency',$xquantity,'Y',now(),now())";
+        $sql = "INSERT INTO proposalsxproducts (id,start_date,stop_date,product_id,proposal_id,salemodel_id,provider_id,state,city,county,colony,cost_int,price_int,currency,quantity,is_active,created_at,updated_at) VALUES ((UUID()),".$start_date_item.",".$stop_date_item.",('".$aProducts[$i]."'),('$proposal_id'),($salemodel_id),$provider_id,'$aState[$i]','$aCity[$i]','$aCounty[$i]','$aColony[$i]',$xcost,$xprice,'$currency',$xquantity,'Y',now(),now())";
         //echo "<BR/>".$sql;
         // INSERT data
         $rs = $DB->executeInstruction($sql);

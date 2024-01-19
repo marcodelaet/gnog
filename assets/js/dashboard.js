@@ -20,7 +20,6 @@ function handleListOnLoad(uid,status,month,year,search,currency) {
     var today       = new Date();
     var xday        = today.getDate();
     var xmonth      = today.getMonth()+1; // getMonth starts at 0
-    var xlenDate    = ('00'+ xmonth).length;
     var xyear       = today.getFullYear();
     var xcurrency   = 'MXN';
 
@@ -45,6 +44,9 @@ function handleListOnLoad(uid,status,month,year,search,currency) {
         document.getElementById('rate_id').value=xcurrency;
     }
 
+    // setting length of month string
+    var xlenDate    = ('00'+ xmonth).length;
+   
     //var mySQLFullDate = xyear+'-'+xmonth+'-'+xday;
     var xmonthfull  = ('00' + xmonth).substring(xlenDate-2,xlenDate);
     var yearMonth = xyear+xmonthfull;

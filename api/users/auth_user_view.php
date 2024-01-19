@@ -1,14 +1,14 @@
 <?php
 
+ini_set('error_reporting', E_ALL);
+ini_set('display_errors', true);
+
+
 //REQUIRE GLOBAL conf
 require_once('../../database/.config');
 
 // REQUIRE conexion class
 require_once('../../database/connect.database.php');
-
-ini_set('error_reporting', E_ALL);
-ini_set('display_errors', true);
-
 
 $DB = new MySQLDB($DATABASE_HOST,$DATABASE_USER,$DATABASE_PASSWORD,$DATABASE_NAME);
 

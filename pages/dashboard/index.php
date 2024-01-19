@@ -12,6 +12,7 @@ if(1==2)
   $dir2 = "../../../.";
 }
 ?>
+
 <link rel="stylesheet" href="<?=$dir?>./assets/css/<?=$moduleName?>.css">
 <link rel="stylesheet" href="<?=$dir?>./assets/css/Inputs.css">
 <link rel="stylesheet" href="<?=$dir?>./assets/css/Button.css">
@@ -33,7 +34,7 @@ if(1==2)
     <div class="input-group col-sm-12   ">
         <select class="custom-select" name="executive_id" id="executive_id" title="Assigned Executive" onchange="handleListGoalOnLoad(this.value,undefined,document.getElementById('month').value,document.getElementById('year').value,'status='+returnSelectedStatuses(document.getElementById('status_id'))); handleListOnLoad(this.value,undefined,document.getElementById('month').value,document.getElementById('year').value,'status='+returnSelectedStatuses(document.getElementById('status_id')));" autocomplete="executive_id">
         <?php if($_COOKIE['lacc'] >= 99999) { ?>
-            <?=inputFilterSelect('user',translateText('executive'),'','username','')?>
+            <?=inputSelect('user',translateText('executive'),'user_type|||executive*|*user_type|||admin','username','')?>
             <?php } else { ?>
                 <option value="0"><?=translateText('only_admin');?></option>
             <?php } ?>
