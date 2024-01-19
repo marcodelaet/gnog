@@ -1,4 +1,7 @@
 <?php
+ini_set('error_reporting', E_ALL);
+ini_set('display_errors', true);
+
 //REQUIRE GLOBAL conf
 require_once('../../database/.config');
 
@@ -94,7 +97,7 @@ if(array_key_exists('auth_api',$_REQUEST)){
             echo "[{'response':'0 results'}]";
     }
     else{
-        echo '[{"response":"Error"}]';
+        echo '[{"response":"Error","sql":"'.$sql.'"}]';
     }
 }
 
