@@ -1078,7 +1078,7 @@ function handleRemoveProductFromProposal(proposalproduct_id){
         locat += '/';
 
     const requestURL = window.location.protocol+'//'+locat+'api/proposals/auth_proposalxproduct_remove.php?auth_api='+authApi+filters;
-    alert(requestURL);
+    //alert(requestURL);
     const request = new XMLHttpRequest();
     request.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
