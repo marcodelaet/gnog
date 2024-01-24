@@ -19,7 +19,7 @@ if(array_key_exists('auth_api',$_REQUEST)){
     $group          = 'admin';
 
     // setting query
-    $columns        = "UUID,is_digital,productbillboard_cost_int,(productbillboard_cost_int/100) as productbillboard_cost,productbillboard_price_int,(productbillboard_price_int/100) as productbillboard_price,making_banners,production_cost,production_cost_int,is_proposalbillboard_active,proposalproduct_id,is_taxable,tax_percent_int,product_id,product_name,salemodel_id,salemodel_name,provider_id,provider_name,user_id,username,client_id,client_name,agency_id,agency_name,status_id,status_name,status_percent,offer_name,description,start_date,stop_date,currency_c,billboard_state,billboard_city,billboard_county,billboard_colony,billboard_name,billboard_height,billboard_width,state,city,county,colony,billboard_cost,billboard_cost_int,billboard_price,billboard_price_int,billboard_id, billboard_provider_name,billboard_salemodel_name,billboard_viewpoint_name,amount,quantity,is_active";
+    $columns        = "UUID,is_digital,productbillboard_cost_int,(productbillboard_cost_int/100) as productbillboard_cost,productbillboard_price_int,is_proposalproduct_active,(productbillboard_price_int/100) as productbillboard_price,making_banners,production_cost,production_cost_int,is_proposalbillboard_active,proposalproduct_id,is_taxable,tax_percent_int,product_id,product_name,salemodel_id,salemodel_name,provider_id,provider_name,user_id,username,client_id,client_name,agency_id,agency_name,status_id,status_name,status_percent,offer_name,description,start_date,stop_date,currency_c,billboard_state,billboard_city,billboard_county,billboard_colony,billboard_name,billboard_height,billboard_width,state,city,county,colony,billboard_cost,billboard_cost_int,billboard_price,billboard_price_int,billboard_id, billboard_provider_name,billboard_salemodel_name,billboard_viewpoint_name,amount,quantity,is_active";
     $tableOrView    = "view_proposals";
 
     // filters
@@ -73,6 +73,15 @@ if(array_key_exists('auth_api',$_REQUEST)){
                 $filters .= " AND ";
             $advertiser_id  = $_REQUEST['advertiser_id'];
             $filters        .= " client_id = '$advertiser_id' ";
+        }
+    }
+
+    if(array_key_exists('product_is_active',$_REQUEST)){
+        if($_REQUEST['product_is_active']!==''){
+            if($filters != '')
+                $filters .= " AND ";
+            $product_active  = $_REQUEST['product_is_active'];
+            $filters        .= " is_proposalproduct_active = '$product_active' ";
         }
     }
 

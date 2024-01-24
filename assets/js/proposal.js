@@ -584,13 +584,16 @@ function handleViewOnLoad(ppid) {
                 document.getElementById('statusDropdownMenuButton').innerHTML = '<spam class="material-icons icon-data" id="card-status-icon" style="color:'+color_status+'">thermostat</spam>' + translateText(obj['data'][0].status_name,localStorage.getItem('ulang')) + ' ('+ obj['data'][0].status_percent+'%)';
                 // products list for statement
                 for(var i=0;i<obj['data'].length;i++){
-                    xxhtml += '<spam class="product-line">'+obj['data'][i].quantity + ' x ' + obj['data'][i].product_name + ' / ' + obj['data'][i].salemodel_name+' - '+formatter.format(obj['data'][i].amount)+'</spam><br />';
+                    deleted_line='';
+                    if(obj['data'][i].is_proposalproduct_active == "N")
+                        deleted_line='deleted-billboard';
+                    xxhtml += '<spam class="product-line '+deleted_line+'">'+obj['data'][i].quantity + ' x ' + obj['data'][i].product_name + ' / ' + obj['data'][i].salemodel_name+' - '+formatter.format(obj['data'][i].amount)+'</spam><br />';
                 }
                 classStatus = document.getElementsByClassName('dropdown-item status'); 
                 for(var cs=0; cs < classStatus.length; cs++){
                     classStatus[cs].setAttribute('onclick',classStatus[cs].getAttribute('onclick').replace(",'');",",'"+obj['data'][0].status_id+"');"));
                 }
-                document.getElementById('products-list').innerHTML          = xxhtml;                
+                document.getElementById('products-list').innerHTML          = xxhtml;
             }
             else{
                 //form.btnSave.innerHTML = "Searching...";
@@ -839,18 +842,28 @@ function handleListEditOnLoad(ppid) {
                         providerOld     = 0;
                         numberProducts++;
                        // if(showLine == 1){
-                            html += '<div class="row list-products-row">' +
-                            '<div class="col-sm-1">'+(numberProducts)+'</div>' +
-                            '<div class="col-sm-3">'+obj['data'][i].product_name+' / '+obj['data'][i].salemodel_name+'</div>' +
-                            '<div class="col-sm-2">'+obj['data'][i].state+'</div>'; 
-                            //'<div class="col-sm-2">Rate % All</div>' +
-                            if(aBillboards.indexOf(obj['data'][i].salemodel_name) != -1){
-                            //if(obj[i].billboard_salemodel_name != null){
-                                html += '<div class="col-sm-2" style="text-align:center; white-space: nowrap;"><a title="'+ucfirst(translateText('choose',localStorage.getItem('ulang')))+' '+obj['data'][i].salemodel_name+' '+translateText('on_map',localStorage.getItem('ulang'))+'" href="?pr=Li9wYWdlcy9tYXBzL2luZGV4LnBocA==&smid='+obj['data'][i].salemodel_id+'&ppid='+ppid+'&pppid='+obj['data'][i].proposalproduct_id+'&state='+obj['data'][i].state+'&city='+obj['data'][i].city+'&county='+obj['data'][i].county+'&colony='+obj['data'][i].colony+'"><span class="material-icons" style="font-size:1.2rem;">map</span><br/><span style="font-size:0.8rem">'+ucfirst(translateText('choose',localStorage.getItem('ulang')))+' '+obj['data'][i].salemodel_name+' '+translateText('on_map',localStorage.getItem('ulang'))+'</span></a></div>';
-                            } else {
-                                html += '<div class="col-sm-2" style="text-align:center; white-space: nowrap;"><a title="'+ucfirst(translateText('add+',localStorage.getItem('ulang')))+' '+translateText('provider',localStorage.getItem('ulang'))+'" href="?pr=Li9wYWdlcy9wcm9wb3NhbHMvYWRkL3Byb2R1Y3QvcHJvdmlkZXIvZm9ybWFkZC5waHA=&smid='+obj['data'][i].salemodel_id+'&ppid='+ppid+'&pppid='+obj['data'][i].proposalproduct_id+'&state='+obj['data'][i].state+'&city='+obj['data'][i].city+'&county='+obj['data'][i].county+'&colony='+obj['data'][i].colony+'"><span class="material-icons" style="font-size:1.2rem;">add_business</span> <br/><span style="font-size:0.8rem">'+ucfirst(translateText('add+',localStorage.getItem('ulang')))+' '+translateText('provider',localStorage.getItem('ulang'))+'</span></a></div>';
+                            // showing only actived products
+                            if(obj['data'][i].is_proposalproduct_active=="Y"){
+                                html += '<div class="row list-products-row" id="product-'+obj['data'][i].proposalproduct_id+'-row">' +
+                                '<div class="col-sm-1">'+(numberProducts)+'</div>' +
+                                '<div class="col-sm-3">'+obj['data'][i].product_name+' / '+obj['data'][i].salemodel_name+'</div>' +
+                                '<div class="col-sm-2">'+obj['data'][i].state+'</div>'; 
+                                //'<div class="col-sm-2">Rate % All</div>' +
+                                if(aBillboards.indexOf(obj['data'][i].salemodel_name) != -1){
+                                //if(obj[i].billboard_salemodel_name != null){
+                                    html += '<div class="col-sm-2" style="text-align:center; white-space: nowrap;"><a title="'+ucfirst(translateText('choose',localStorage.getItem('ulang')))+' '+obj['data'][i].salemodel_name+' '+translateText('on_map',localStorage.getItem('ulang'))+'" href="?pr=Li9wYWdlcy9tYXBzL2luZGV4LnBocA==&smid='+obj['data'][i].salemodel_id+'&ppid='+ppid+'&pppid='+obj['data'][i].proposalproduct_id+'&state='+obj['data'][i].state+'&city='+obj['data'][i].city+'&county='+obj['data'][i].county+'&colony='+obj['data'][i].colony+'"><span class="material-icons" style="font-size:1.2rem;">map</span><br/><span style="font-size:0.8rem">'+ucfirst(translateText('choose',localStorage.getItem('ulang')))+' '+obj['data'][i].salemodel_name+' '+translateText('on_map',localStorage.getItem('ulang'))+'</span></a></div>';
+                                } else {
+                                    html += '<div class="col-sm-2" style="text-align:center; white-space: nowrap;"><a title="'+ucfirst(translateText('add+',localStorage.getItem('ulang')))+' '+translateText('provider',localStorage.getItem('ulang'))+'" href="?pr=Li9wYWdlcy9wcm9wb3NhbHMvYWRkL3Byb2R1Y3QvcHJvdmlkZXIvZm9ybWFkZC5waHA=&smid='+obj['data'][i].salemodel_id+'&ppid='+ppid+'&pppid='+obj['data'][i].proposalproduct_id+'&state='+obj['data'][i].state+'&city='+obj['data'][i].city+'&county='+obj['data'][i].county+'&colony='+obj['data'][i].colony+'"><span class="material-icons" style="font-size:1.2rem;">add_business</span> <br/><span style="font-size:0.8rem">'+ucfirst(translateText('add+',localStorage.getItem('ulang')))+' '+translateText('provider',localStorage.getItem('ulang'))+'</span></a></div>';
+                                }
+                                // remove option (only when without providers)
+                                //alert(obj['data'][i].provider_id);
+                                if(obj['data'][i].provider_id == null){
+                                    html +='<div class="col-sm-1" id="button-delete-'+obj['data'][i].proposalproduct_id+'">'+
+                                    '<a href="javascript:void(0);" onclick="if(confirm(\''+translateText('confirm',localStorage.getItem('ulang'))+' '+translateText('to_remove',localStorage.getItem('ulang'))+' '+obj['data'][i].salemodel_name+' '+translateText('from_the_list',localStorage.getItem('ulang'))+'?\')){handleRemoveProductFromProposal(\''+obj['data'][i].proposalproduct_id+'\');}">'+
+                                    '<span class="material-icons" style="font-size:1.5rem; color:black;" title="'+translateText('remove',localStorage.getItem('ulang'))+' '+obj['data'][i].salemodel_name+' '+translateText('from_the_list',localStorage.getItem('ulang'))+'">delete</span></a></div>';
+                                }
+                                html += '</div>';  
                             }
-                            html += '</div>';
                         //}    
                     }
                     // css to special times
@@ -863,17 +876,17 @@ function handleListEditOnLoad(ppid) {
                     provider        = obj['data'][i].provider_id;
                     provider_name   = obj['data'][i].provider_name;
                     showLine        = 1;
-                    if(obj['data'][i].is_proposalbillboard_active === null){
-                       // provider_name = "";// "Sin proveedor";
+                    if((obj['data'][i].is_proposalbillboard_active === null) && ((provider == null) || (provider =='111'))){
+                        provider_name = "";// "Sin proveedor";
                         if((aProviders.indexOf(provider) >= 0) && (aBillboards.indexOf(obj['data'][i].salemodel_name) != -1)){
                             showLine = 0;
                         }
-                        //provider = '111';
+                        provider = '111';
                     }
 
                     if(provider != providerOld){
                         numberProviders++;
-                        html += '<div class="row list-products-row">' +
+                        html += '<div class="row provider-description">' +
                         '<div class="col-sm-2">' +
                         '<div class="col-sm-12 provider-name">'+provider_name+'</div>';
                         //html += '<a href="?pr=Li9wYWdlcy9tYXBzL2luZGV4LnBocA==&pid='+obj[i].provider_id+'&ppid='+ppid+'"><span class="material-icons" style="font-size:1.2rem;">edit</span></a>';
@@ -924,8 +937,8 @@ function handleListEditOnLoad(ppid) {
 
                         if(deletedbillboard == ''){
                             html += '<div class="col-sm-1" id="button-delete-'+obj['data'][i].billboard_id+'">'+
-                            '<a href="javascript:void(0);" onclick="if(confirm(\'Confirma quitar '+obj['data'][i].salemodel_name+' clave '+obj['data'][i].billboard_name+' en la lista del estado de '+obj['data'][i].state+'?\')){handleRemoveFromList(\''+obj['data'][i].proposalproduct_id+'\',\''+obj['data'][i].billboard_id+'\');}">'+
-                            '<span class="material-icons" style="font-size:1.5rem; color:black;" title="Remove '+obj['data'][i].billboard_salemodel_name+' '+obj['data'][i].billboard_name+' from list">delete</span></a></div>';
+                            '<a href="javascript:void(0);" onclick="if(confirm(\''+translateText('confirm',localStorage.getItem('ulang'))+' '+translateText('to_remove',localStorage.getItem('ulang'))+' '+obj['data'][i].salemodel_name+' '+translateText('key',localStorage.getItem('ulang'))+' '+obj['data'][i].billboard_name+' '+translateText('on_the_list',localStorage.getItem('ulang'))+' '+translateText('from_the_state_of',localStorage.getItem('ulang'))+' '+obj['data'][i].state+'?\')){handleRemoveFromList(\''+obj['data'][i].proposalproduct_id+'\',\''+obj['data'][i].billboard_id+'\');}">'+
+                            '<span class="material-icons" style="font-size:1.5rem; color:black;" title="'+translateText('remove',localStorage.getItem('ulang'))+' '+obj['data'][i].billboard_salemodel_name+' '+obj['data'][i].billboard_name+' '+translateText('from_the_list',localStorage.getItem('ulang'))+'">delete</span></a></div>';
                         }
                         html += '</div>' +
                         '</div>' +
@@ -1055,6 +1068,35 @@ function handleListOnLoad(search) {
     }
     // window.location.href = '?pr=Li9wYWdlcy91c2Vycy9saXN0LnBocA==';
 }
+
+function handleRemoveProductFromProposal(proposalproduct_id){
+    authApi     = csrf_token;
+    filters     = '&pppid='+proposalproduct_id;
+    
+    locat       = window.location.hostname;
+    if(locat.slice(-1) != '/')
+        locat += '/';
+
+    const requestURL = window.location.protocol+'//'+locat+'api/proposals/auth_proposalxproduct_remove.php?auth_api='+authApi+filters;
+    alert(requestURL);
+    const request = new XMLHttpRequest();
+    request.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            // Typical action to be performed when the document is ready:
+            //console.log(request.responseText);
+            obj = JSON.parse(request.responseText);
+            if(obj.response == 'OK'){
+                product_line = document.getElementById('product-'+proposalproduct_id+'-row');
+                product_line.innerHTML='';
+            }
+        }
+    };
+    request.open('GET', requestURL);
+    //request.responseType = 'json';
+    request.send();
+ 
+}
+
 
 // remove billboard from proposals / product list
 function handleRemoveFromList(proposalproduct_id,billboard_id){

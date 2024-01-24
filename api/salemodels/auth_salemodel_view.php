@@ -136,17 +136,26 @@ if(array_key_exists('auth_api',$_REQUEST)){
         }
     }
 
-    $filtered= "WHERE is_active='Y'"; 
+
+    $filtered= "WHERE "; 
     if(strpos($tableOrView,' JOIN') > 0){
         //$filtered= "WHERE sm.is_active='Y'"; 
-        $filtered= "WHERE is_active='Y'";
+        $filtered= "WHERE ";
     }
-    if($filters != '')
-        $filters = "$filtered AND $filters";
 
+    if($filters != ''){
+        $filters = "$filtered $filters";
+        $filters .= " AND ";
+    } else {
+        $filters .= "$filtered ";
+    }
+    $filters .= " is_active='Y'";    
+
+    
     if(array_key_exists('digyn',$_REQUEST)){
         $filters .= " AND is_digital = '".$_REQUEST['digyn']."'";
     }
+
 
     
 
