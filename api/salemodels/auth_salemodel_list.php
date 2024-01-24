@@ -62,9 +62,23 @@ if(array_key_exists('auth_api',$_REQUEST)){
         }
     }
 
-    if($filters !== ''){
-        $filters = "WHERE ".$filters;
+
+    $filtered= "WHERE "; 
+    if($filters != ''){
+        $filters = "$filtered $filters";
+        $filters .= " AND ";
+    } else {
+        $filters .= "$filtered ";
     }
+    $filters .= " is_active='Y'";    
+
+    
+    if(array_key_exists('digyn',$_REQUEST)){
+        $filters .= " AND is_digital = '".$_REQUEST['digyn']."'";
+    }
+
+    // show only active registries
+    // $filters .= " AND is_active='Y'";
 
     // Query creation
     $sql = "SELECT $columns FROM $tableOrView $filters $orderBy $groupBy";
