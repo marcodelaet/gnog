@@ -24,6 +24,9 @@ CREATE VIEW view_users AS (
 CREATE VIEW view_goals AS (
 	SELECT
 	u.username,
+	u.level_account,
+	u.user_type,
+	u.token,
 	(g.user_id) AS UUID,
 	g.goal_amount,
 	g.goal_month,

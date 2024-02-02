@@ -6,6 +6,8 @@ function inputSelect($table,$title,$where,$order,$selected){
     $authApi    = $_COOKIE['tk'];
     $protocol = strtolower(substr($_SERVER["SERVER_PROTOCOL"],0,strpos( $_SERVER["SERVER_PROTOCOL"],'/'))).'://';
     $url = $_SERVER['HTTP_HOST'];
+    //Only showing actives
+    $onlyActives    = 'Y';
     if(substr($url,-1,1) != '/')
         $url .= '/';
     $fullUrl    = $protocol . $url;
@@ -18,27 +20,30 @@ function inputSelect($table,$title,$where,$order,$selected){
         $groupby = "UUID";
     }
 
-    $fullUrl .= 'api/'.$table_plural.'/auth_'.$table.'_view.php?auth_api='.$authApi.'&order='.$order.'&where='.$where.'&selected='.$selected.'&groupby='.$groupby.'&allRows=1';
+    $fullUrl .= 'api/'.$table_plural.'/auth_'.$table.'_view.php?auth_api='.$authApi.'&order='.$order.'&where='.$where.'&selected='.$selected.'&groupby='.$groupby.'&only_actives='.$onlyActives.'&allRows=1';
     //return $fullUrl;
     $homepage = file_get_contents($fullUrl);
     $obj = json_decode($homepage);
+    //echo "OBJ: ".$obj;
     //return $obj;
-    if(is_array($obj))
+    if(is_array($obj)){
         $numberOfRows = count($obj);
-    else
+    }
+    else{
         $numberOfRows = count($obj->data);
+    }
     $html        = '<option value="0" >'.translateText('please_select').' '.$title.'</option>';
     for($i=0;$i < $numberOfRows; $i++){
         $className      = "";
-        $markingSelect = ''; 
+        $markingSelect  = ''; 
         switch($table){
             case  'advertiser':
                 $id = $obj[$i]->uuid_full;
                 $name = $obj[$i]->corporate_name;
                 break;
             case 'user':
-                $id = $obj[$i]->uuid_full;
-                $name = $obj[$i]->username . ' - ' .$obj[$i]->email;
+                $id             = $obj[$i]->uuid_full;
+                $name           = $obj[$i]->username . ' - ' .$obj[$i]->email;
                 break;
             case 'billboard':
                 $id = $obj->data[$i]->uuid_full;
@@ -448,4 +453,16 @@ function inputDropDownSearchStyle($table,$title,$where,$order,$selected){
     $html .= '</ul></div>';
     return $html;
 }
+
+function showYearOptions($startYear,$endYear,$selected){
+    $html           = '';
+    for($year=$startYear;$year < $endYear; $year++){
+        $setSelected    = '';
+        if($year == $selected)
+            $setSelected = "selected";
+        $html .= '<option value="'.$year.'" '.$setSelected.'>'.$year.'</option>'."\r\n";
+    }
+    return $html;
+}
+
 ?>
