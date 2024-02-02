@@ -12,23 +12,24 @@ function handleGoalSubmit(form) {
     year    = document.getElementsByName('start_year').value;
     amount  = document.getElementsByName('amount_goal[]');
     month   = document.getElementsByName('start_month[]');
+    authApi = csrf_token;
     
     var formData = new FormData(form);
+    formData.append('auth_api',authApi);
     //form.submit();
     errors      = 0;
-    authApi     = csrf_token;
+    
     message     = '';
 
     locat       = window.location.hostname;
     if(locat.slice(-1) != '/')
         locat += '/';
     
-    if(form.user_id.value == '0'){
+    if(form.executive_id.value == '0'){
         message += "\n- Choose an executive";
         errors++;
     }
 
-    
     for(i=0;i<amount.length;i++){
         if(amount[i].value == ''){
             message += "\n- Please, fill amount value, month "+(i+1)+"!";
@@ -193,7 +194,7 @@ function handleListGoalOnLoad(currency) {
     if(errors > 0){
 
     } else{
-        const requestURL = window.location.protocol+'//'+locat+'api/'+moduleGoal+'s/auth_'+moduleGoal+'_list.php?auth_api='+authApi+filters;
+        const requestURL = window.location.protocol+'//'+locat+'api/'+moduleGoal+'s/auth_'+moduleGoal+'_list.php?auth_api='+htmlentities(authApi)+filters;
         console.log(requestURL);
         const request   = new XMLHttpRequest();
         request.onreadystatechange = function() {
@@ -500,7 +501,7 @@ function handleListGoalAtFormOnLoad() {
                 // Create our number formatter.
                 html = '';
                 for(g=0;g < obj.length;g++){
-                    alert(obj[g].currency);
+                    //alert(obj[g].currency);
                     var formatter = new Intl.NumberFormat(lang, {
                         style: 'currency',
                         currency: obj[g].currency,

@@ -1,4 +1,7 @@
 <?php
+ini_set('error_reporting', E_ALL);
+ini_set('display_errors', true);
+
 //REQUIRE GLOBAL conf
 require_once('../../database/.config');
 
@@ -15,10 +18,18 @@ if(array_key_exists('auth_api',$_REQUEST)){
     
     // check auth_api === local storage
     //if($localStorage == $_REQUEST['auth_api']){}
+    $sql_sec = "SELECT username, email, user_language, user_type, level_account, token, account_locked FROM view_users WHERE token LIKE '%".str_replace(" ","+",$_REQUEST['auth_api'])."%'";
+    $rs_sec = $DB->getData($sql_sec);
+
+    //echo "<BR/>$sql_sec<BR/>";
 
     // User Group
-    $group          = 'user';
+    $group          = $rs_sec[0]['user_type'];
+    $level          = $rs_sec[0]['level_account'];
+    $username       = $rs_sec[0]['username'];
 
+    // currency default: MXN (Pesos Mexicanos)
+    $currency         = 'MXN';
     if(array_key_exists('currency',$_REQUEST)){
         if($_REQUEST['currency']!==''){
             $currency         = $_REQUEST['currency'];
@@ -49,6 +60,12 @@ if(array_key_exists('auth_api',$_REQUEST)){
     
     // filters
     $filters                = '';
+
+    if($level < '99999'){
+        if($filters != '')
+            $filters .= " AND ";
+        $filters  .= " username = '$username'";
+    }
 
     if(array_key_exists('search',$_REQUEST)){
         if($_REQUEST['search']!==''){

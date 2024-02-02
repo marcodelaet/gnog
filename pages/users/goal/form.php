@@ -5,6 +5,8 @@ $user_id       = 0;
 if(array_key_exists('tid',$_GET))
     $user_id       = $_GET['tid'];
 
+$level  = $_COOKIE['lacc'];
+
 ?>
 <link rel="stylesheet" href="<?=$dir?>./assets/css/<?=$moduleName?>.css">
 <link rel="stylesheet" href="<?=$dir?>./assets/css/Inputs.css">
@@ -14,32 +16,29 @@ if(array_key_exists('tid',$_GET))
 
 <div class='form-<?=strtolower($moduleName)?>-container'>
     <div class="form-container">
-        <div class="form-header">New <?=$moduleName?></div>
+        <div class="form-header"><?=ucfirst(translateText('new'))?> <?=ucfirst(translateText(strtolower($moduleName)))?>s</div>
+<?php
+if($level >= '99999'){
+?>
         <form name='<?=strtolower($moduleName)?>' method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
             <div class="inputs-form-container">
                 <div class="form-row">
                     <div class="col-sm-8">
-                    <label for="user_id">Executive</label>
-                    <select class="custom-select" name="user_id" title="Users" autocomplete="user_id" >
-                        <?=inputFilterSelect('user','Choose an Executive','','username',"$user_id")?>
-                    </select>
-                    </div>
-                    <div class="col-sm-2">
-                        <label for="start_year">Year</label>
-                        <select class="custom-select" name="start_year" title="Year" autocomplete="year">
-                            <option value="2022">2022</option>
-                            <option value="2023">2023</option>
-                            <option value="2024">2024</option>
-                            <option value="2025">2025</option>
-                            <option value="2026">2026</option>
-                            <option value="2027">2027</option>
-                            <option value="2028">2028</option>
-                            <option value="2029">2029</option>
-                            <option value="2030">2030</option>
+                    <label for="executive"><?=translateText('executive');?></label>
+                        <select name="executive_id" id="selectexecutive" title="executive_id" class="form-control" autocomplete="executive_id" required>
+                            <?=inputSelect('user',translateText('executive'),'user_type|||executive*|*user_type|||admin','username','')?>
                         </select>
                     </div>
                     <div class="col-sm-2">
-                        <label for="rate_id">Currency</label>
+                        <label for="start_year"><?=translateText('year')?></label>
+                        <select class="custom-select" name="start_year" title="<?=translateText('year')?>" autocomplete="year">
+                            <?php
+                                echo showYearOptions($YEAR_TODAY,(int)$YEAR_TODAY+10,$YEAR_TODAY);
+                            ?>
+                        </select>
+                    </div>
+                    <div class="col-sm-2">
+                        <label for="rate_id"><?=translateText('currency')?></label>
                         <select class="custom-select" name="rate_id" title="Rates" autocomplete="rate_id" >
                             <?=inputFilterNoZeroSelect('rate','Rates','','orderby','')?>
                         </select>
@@ -48,35 +47,35 @@ if(array_key_exists('tid',$_GET))
                 
                 <div class="form-row" style="margin-top:1rem">
                     <div class="col-sm-3">
-                        <label for="start_month">Month</label>
-                        <select class="custom-select" name="start_month[]" title="Month" autocomplete="month">
-                            <option value="1">January</option>
+                        <label for="start_month"><?=translateText('month')?></label>
+                        <select class="custom-select" name="start_month[]" title="<?=translateText('month')?>" autocomplete="month">
+                            <option value="1"><?=translateText('january')?></option>
                             </select>
-                            <select class="custom-select" name="start_month[]" title="Month" autocomplete="month">
-                            <option value="2">February</option>
+                            <select class="custom-select" name="start_month[]" title="<?=translateText('month')?>" autocomplete="month">
+                            <option value="2"><?=translateText('february')?></option>
                             </select>
-                            <select class="custom-select" name="start_month[]" title="Month" autocomplete="month">
-                            <option value="3">March</option>
+                            <select class="custom-select" name="start_month[]" title="<?=translateText('month')?>" autocomplete="month">
+                            <option value="3"><?=translateText('march')?></option>
                             </select>
-                            <select class="custom-select" name="start_month[]" title="Month" autocomplete="month">
-                            <option value="4">April</option>
+                            <select class="custom-select" name="start_month[]" title="<?=translateText('month')?>" autocomplete="month">
+                            <option value="4"><?=translateText('april')?></option>
                             </select>
-                            <select class="custom-select" name="start_month[]" title="Month" autocomplete="month">
-                            <option value="5">May</option>
+                            <select class="custom-select" name="start_month[]" title="<?=translateText('month')?>" autocomplete="month">
+                            <option value="5"><?=translateText('may')?></option>
                             </select>
-                            <select class="custom-select" name="start_month[]" title="Month" autocomplete="month">
-                            <option value="6">June</option>
+                            <select class="custom-select" name="start_month[]" title="<?=translateText('month')?>" autocomplete="month">
+                            <option value="6"><?=translateText('june')?></option>
                             </select>
                     </div>
                     <div class="col">
-                        <label for="amount_goal">Amount</label>
+                        <label for="amount_goal"><?=translateText('amount')?></label>
                         <input
                             required
                             onkeypress="$(this).mask('#.###.##0,00', {reverse: true});"
-                            onchange="calcAmountTotal(<?=strtolower($moduleName)?>)"
+                            onchange="calcAmountGoalTotal(<?=strtolower($moduleName)?>)"
                             name ='amount_goal[]' 
                             placeholder="999,99"
-                            title = 'Goal / Amount'
+                            title = '<?=translateText('goal')?> / <?=translateText('amount')?>'
                             value=''
                             class="form-control" 
                             type="currency" 
@@ -86,10 +85,10 @@ if(array_key_exists('tid',$_GET))
                         <input
                             required
                             onkeypress="$(this).mask('#.###.##0,00', {reverse: true});"
-                            onchange="calcAmountTotal(<?=strtolower($moduleName)?>)"
+                            onchange="calcAmountGoalTotal(<?=strtolower($moduleName)?>)"
                             name ='amount_goal[]' 
                             placeholder="999,99"
-                            title = 'Goal / Amount'
+                            title = '<?=translateText('goal')?> / <?=translateText('amount')?>'
                             value=''
                             class="form-control" 
                             type="currency" 
@@ -99,10 +98,10 @@ if(array_key_exists('tid',$_GET))
                         <input 
                             required
                             onkeypress="$(this).mask('#.###.##0,00', {reverse: true});"
-                            onchange="calcAmountTotal(<?=strtolower($moduleName)?>)"
+                            onchange="calcAmountGoalTotal(<?=strtolower($moduleName)?>)"
                             name ='amount_goal[]' 
                             placeholder="999,99"
-                            title = 'Goal / Amount'
+                            title = '<?=translateText('goal')?> / <?=translateText('amount')?>'
                             value=''
                             class="form-control" 
                             type="currency" 
@@ -112,10 +111,10 @@ if(array_key_exists('tid',$_GET))
                         <input
                             required
                             onkeypress="$(this).mask('#.###.##0,00', {reverse: true});"
-                            onchange="calcAmountTotal(<?=strtolower($moduleName)?>)"
+                            onchange="calcAmountGoalTotal(<?=strtolower($moduleName)?>)"
                             name ='amount_goal[]' 
                             placeholder="999,99"
-                            title = 'Goal / Amount'
+                            title = '<?=translateText('goal')?> / <?=translateText('amount')?>'
                             value=''
                             class="form-control" 
                             type="currency" 
@@ -125,10 +124,10 @@ if(array_key_exists('tid',$_GET))
                         <input
                             required
                             onkeypress="$(this).mask('#.###.##0,00', {reverse: true});"
-                            onchange="calcAmountTotal(<?=strtolower($moduleName)?>)"
+                            onchange="calcAmountGoalTotal(<?=strtolower($moduleName)?>)"
                             name ='amount_goal[]' 
                             placeholder="999,99"
-                            title = 'Goal / Amount'
+                            title = '<?=translateText('goal')?> / <?=translateText('amount')?>'
                             value=''
                             class="form-control" 
                             type="currency" 
@@ -138,10 +137,10 @@ if(array_key_exists('tid',$_GET))
                         <input
                             required
                             onkeypress="$(this).mask('#.###.##0,00', {reverse: true});"
-                            onchange="calcAmountTotal(<?=strtolower($moduleName)?>)"
+                            onchange="calcAmountGoalTotal(<?=strtolower($moduleName)?>)"
                             name ='amount_goal[]' 
                             placeholder="999,99"
-                            title = 'Goal / Amount'
+                            title = '<?=translateText('goal')?> / amount'
                             value=''
                             class="form-control" 
                             type="currency" 
@@ -154,34 +153,34 @@ if(array_key_exists('tid',$_GET))
                     </div>
                     <div class="col">
                         <label for="start_month">Month</label>
-                            <select class="custom-select" name="start_month[]" title="Month" autocomplete="month">
-                            <option value="7">July</option>
+                            <select class="custom-select" name="start_month[]" title="<?=translateText('month')?>" autocomplete="month">
+                            <option value="7"><?=translateText('july')?></option>
                             </select>
-                            <select class="custom-select" name="start_month[]" title="Month" autocomplete="month">
-                            <option value="8">August</option>
+                            <select class="custom-select" name="start_month[]" title="<?=translateText('month')?>" autocomplete="month">
+                            <option value="8"><?=translateText('august')?></option>
                             </select>
-                            <select class="custom-select" name="start_month[]" title="Month" autocomplete="month">
-                            <option value="9">September</option>
+                            <select class="custom-select" name="start_month[]" title="<?=translateText('month')?>" autocomplete="month">
+                            <option value="9"><?=translateText('september')?></option>
                             </select>
-                            <select class="custom-select" name="start_month[]" title="Month" autocomplete="month">
-                            <option value="10">Octuber</option>
+                            <select class="custom-select" name="start_month[]" title="<?=translateText('month')?>" autocomplete="month">
+                            <option value="10"><?=translateText('octuber')?></option>
                             </select>
-                            <select class="custom-select" name="start_month[]" title="Month" autocomplete="month">
-                            <option value="11">November</option>
+                            <select class="custom-select" name="start_month[]" title="<?=translateText('month')?>" autocomplete="month">
+                            <option value="11"><?=translateText('november')?></option>
                             </select>
-                            <select class="custom-select" name="start_month[]" title="Month" autocomplete="month">
-                            <option value="12">December</option> 
+                            <select class="custom-select" name="start_month[]" title="<?=translateText('month')?>" autocomplete="month">
+                            <option value="12"><?=translateText('december')?></option> 
                             </select>
                     </div>
                     <div class="col">
-                        <label for="amount_goal">Amount</label>
+                        <label for="amount_goal"><?=translateText('amount')?></label>
                         <input
                             required
                             onkeypress="$(this).mask('#.###.##0,00', {reverse: true});"
-                            onchange="calcAmountTotal(<?=strtolower($moduleName)?>)"
+                            onchange="calcAmountGoalTotal(<?=strtolower($moduleName)?>)"
                             name ='amount_goal[]' 
                             placeholder="999,99"
-                            title = 'Goal / Amount'
+                            title = '<?=translateText('goal')?> / <?=translateText('amount')?>'
                             value=''
                             class="form-control" 
                             type="currency" 
@@ -191,10 +190,10 @@ if(array_key_exists('tid',$_GET))
                         <input
                             required
                             onkeypress="$(this).mask('#.###.##0,00', {reverse: true});"
-                            onchange="calcAmountTotal(<?=strtolower($moduleName)?>)"
+                            onchange="calcAmountGoalTotal(<?=strtolower($moduleName)?>)"
                             name ='amount_goal[]' 
                             placeholder="999,99"
-                            title = 'Goal / Amount'
+                            title = '<?=translateText('goal')?> / <?=translateText('amount')?>'
                             value=''
                             class="form-control" 
                             type="currency" 
@@ -204,10 +203,10 @@ if(array_key_exists('tid',$_GET))
                         <input
                             required
                             onkeypress="$(this).mask('#.###.##0,00', {reverse: true});"
-                            onchange="calcAmountTotal(<?=strtolower($moduleName)?>)"
+                            onchange="calcAmountGoalTotal(<?=strtolower($moduleName)?>)"
                             name ='amount_goal[]' 
                             placeholder="999,99"
-                            title = 'Goal / Amount'
+                            title = '<?=translateText('goal')?> / <?=translateText('amount')?>'
                             value=''
                             class="form-control" 
                             type="currency" 
@@ -217,10 +216,10 @@ if(array_key_exists('tid',$_GET))
                         <input
                             required
                             onkeypress="$(this).mask('#.###.##0,00', {reverse: true});"
-                            onchange="calcAmountTotal(<?=strtolower($moduleName)?>)"
+                            onchange="calcAmountGoalTotal(<?=strtolower($moduleName)?>)"
                             name ='amount_goal[]' 
                             placeholder="999,99"
-                            title = 'Goal / Amount'
+                            title = '<?=translateText('goal')?> / <?=translateText('amount')?>'
                             value=''
                             class="form-control" 
                             type="currency" 
@@ -230,10 +229,10 @@ if(array_key_exists('tid',$_GET))
                         <input
                             required
                             onkeypress="$(this).mask('#.###.##0,00', {reverse: true});"
-                            onchange="calcAmountTotal(<?=strtolower($moduleName)?>)"
+                            onchange="calcAmountGoalTotal(<?=strtolower($moduleName)?>)"
                             name ='amount_goal[]' 
                             placeholder="999,99"
-                            title = 'Goal / Amount'
+                            title = '<?=translateText('goal')?> / <?=translateText('amount')?>'
                             value=''
                             class="form-control" 
                             type="currency" 
@@ -243,10 +242,10 @@ if(array_key_exists('tid',$_GET))
                         <input
                             required
                             onkeypress="$(this).mask('#.###.##0,00', {reverse: true});"
-                            onchange="calcAmountTotal(<?=strtolower($moduleName)?>)"
+                            onchange="calcAmountGoalTotal(<?=strtolower($moduleName)?>)"
                             name ='amount_goal[]' 
                             placeholder="999,99"
-                            title = 'Goal / Amount'
+                            title = '<?=translateText('goal')?> / <?=translateText('amount')?>'
                             value=''
                             class="form-control" 
                             type="currency" 
@@ -260,7 +259,7 @@ if(array_key_exists('tid',$_GET))
                 </div>
                 <div class="form-row" style="margin-top:1rem">
                     <div class="col">
-                        <label for="amount_goal">Annual Amount</label>
+                        <label for="amount_goal"><?=translateText('amount')?> (Total - <?=ucfirst(translateText('annual'))?>)</label>
                         <input
                             required
                             onkeypress="$(this).mask('#.###.##0,00', {reverse: true});"
@@ -268,7 +267,7 @@ if(array_key_exists('tid',$_GET))
                             name ='amount_total'
                             readonly=true 
                             placeholder="999,99"
-                            title = 'Goal / Amount'
+                            title = '<?=translateText('goal')?> / <?=translateText('amount')?>'
                             value=''
                             class="form-control" 
                             type="currency" 
@@ -282,19 +281,21 @@ if(array_key_exists('tid',$_GET))
                 </div>
             </div>
             <div class="inputs-button-container">
-                <input type="hidden" name="auth_api" value="sj83fnfn8dsndvudsnudvnus">
-                <button class="button" name="btnSave" type="button" onClick="handleSubmit(<?=strtolower($moduleName)?>)" >Save</button>
+                <button class="button" name="btnSave" type="button" onClick="handleGoalSubmit(<?=strtolower($moduleName)?>)" >Save</button>
             </div>
         </form>
+<?php 
+} 
+?>
         <div class="space-margin">&nbsp;</div>
         <table class="table table-hover table-sm">
             <caption>List of <?=$moduleName?>s</caption>
             <thead>
                 <tr>
-                    <th scope="col">Executive</th>
-                    <th scope="col">Year</th>
-                    <th scope="col">Total Amount</th>
-                    <th scope="col" style="text-align:center;">Settings</th>
+                    <th scope="col"><?=translateText('executive')?></th>
+                    <th scope="col"><?=translateText('year')?></th>
+                    <th scope="col"><?=translateText('amount')?> (Total)</th>
+                    <th scope="col" style="text-align:center;"><?=translateText('settings')?></th>
                 </tr>
             </thead>
             <tbody id="<?=strtolower($moduleName)?>-list">

@@ -62,17 +62,9 @@ if(1==2)
                     </div>
                     <div class="input-group col-sm-5">
                         <select class="custom-select" name="year" id="year" title="Year" autocomplete="year" onchange="handleListGoalOnLoad(document.getElementById('executive_id').value,undefined,document.getElementById('month').value,this.value,'status='+returnSelectedStatuses(document.getElementById('status_id'))); handleListOnLoad(document.getElementById('executive_id').value,undefined,document.getElementById('month').value,this.value,'status='+returnSelectedStatuses(document.getElementById('status_id')));">
-                            <option value="2022">2022</option>
-                            <option value="2023">2023</option>
-                            <option value="2024">2024</option>
-                            <option value="2025">2025</option>
-                            <option value="2026">2026</option>
-                            <option value="2027">2027</option>
-                            <option value="2028">2028</option>
-                            <option value="2029">2029</option>
-                            <option value="2030">2030</option>
-                            <option value="2029">2031</option>
-                            <option value="2030">2032</option>
+                        <?php
+                                echo showYearOptions(2022,(int)$YEAR_TODAY+1,$YEAR_TODAY);
+                            ?>
                         </select>
                     </div>
                 </div>

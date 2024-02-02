@@ -73,6 +73,8 @@ if(array_key_exists('auth_api',$_REQUEST)){
             //echo '<BR/> where: ' . $_GET['where'];
             if($filters != '')
                 $filters .= " AND ( ";
+            else
+                $filters .= "(";
                 
             $multiWhere = explode("*|*",$_GET['where']);
             //echo $multiWhere[0];
@@ -81,7 +83,7 @@ if(array_key_exists('auth_api',$_REQUEST)){
                 if($m > 0)
                     $filters .= " ) OR ( ";
                 for($i=0; $i< count($wherers); $i++){
-                    if(($filters != '') && (substr($filters,-7,7) != ') OR ( '))
+                    if(($filters != '(') && (substr($filters,-7,7) != ') OR ( '))
                         $filters .= " AND ";
                     else {
                         if(substr($filters,-7,7) != ') OR ( ')
@@ -93,10 +95,17 @@ if(array_key_exists('auth_api',$_REQUEST)){
                     }
                 }
             }
-            $filters .= " ) ";
+            $filters .= " ) )";
         }
     }
 
+    if(array_key_exists('only_actives',$_REQUEST)){
+        if($_REQUEST['only_actives']=='Y'){
+            if($filters != '')
+                $filters .= " AND ";
+            $filters        .= " account_locked = 'N'";
+        }
+    }
 
     if($filters !== ''){
         $filters = "WHERE ".$filters;
@@ -107,15 +116,15 @@ if(array_key_exists('auth_api',$_REQUEST)){
     $sql = "SELECT left(uuid,13)as uuid, uuid as uuid_full, level_account, username, email, mobile_number,mobile_international_code, concat('+',mobile_international_code,mobile_number) as mobile, account_locked FROM view_users $filters order by username";
     // LIST data
     //echo $sql;
+    
     $rs = $DB->getData($sql);
 
-  
-
+    
     // Response JSON 
     if($rs){
         header('Content-type: application/json');
         echo json_encode($rs);
-    }
+    } 
 }
 
 //close connection

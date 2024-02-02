@@ -196,7 +196,7 @@ function handleViewOnLoad(aid) {
 
     } else{
         const requestURL = window.location.protocol+'//'+locat+'api/'+module+'s/auth_'+module+'_get.php?auth_api='+authApi+filters;
-        //alert(requestURL);
+        console.log(requestURL);
         const request   = new XMLHttpRequest();
         agency          = 'Direct';
         impressions     = 'no'; 
@@ -215,7 +215,7 @@ function handleViewOnLoad(aid) {
                 document.getElementById('advertiser_name').innerHTML                    = obj[0].corporate_name;
                 document.getElementById('group').innerHTML                              = agency;
                 document.getElementById('card-address').innerHTML                       = obj[0].address;
-                document.getElementById('impressions').innerHTML                        = impressions;
+                //document.getElementById('impressions').innerHTML                        = impressions;
 
                 xhtml = '';
                 for(i=0;i < obj.length; i++){

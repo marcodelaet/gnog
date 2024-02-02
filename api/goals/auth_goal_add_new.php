@@ -11,14 +11,14 @@ $DB = new MySQLDB($DATABASE_HOST,$DATABASE_USER,$DATABASE_PASSWORD,$DATABASE_NAM
 $con = $DB->connect();
 
 // check authentication / local Storage
-if(array_key_exists('auth_api',$_REQUEST)){
+if(array_key_exists('auth_api',$_POST)){
     // check auth_api === local storage
     //if($localStorage == $_REQUEST['auth_api']){}
 
     // values to insert
     $table      = "goals";
     $columns    = "id,user_id,goal_month,goal_year,currency_id,goal_amount,created_at,updated_at";
-    $user_id    = $_POST['user_id'];
+    $user_id    = $_POST['executive_id'];
     if($user_id != '0')
     {
         $oks        = 0;

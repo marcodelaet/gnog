@@ -994,6 +994,16 @@ INSERT INTO translates
 VALUES
 (UUID(), 'from_the_list', 'from the list', 'del listado', 'da listagem', 'Y', NOW(), NOW());
 
+INSERT INTO translates 
+(id, code_str, text_eng, text_esp, text_ptbr, is_active, created_at, updated_at)
+VALUES
+(UUID(), 'annual', 'annual', 'anual', 'anual', 'Y', NOW(), NOW());
+
+INSERT INTO translates 
+(id, code_str, text_eng, text_esp, text_ptbr, is_active, created_at, updated_at)
+VALUES
+(UUID(), 'goal', 'goal', 'meta', 'meta', 'Y', NOW(), NOW());
+
 
 
 INSERT INTO translates 
