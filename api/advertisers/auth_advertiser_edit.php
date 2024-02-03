@@ -29,14 +29,25 @@ if(array_key_exists('auth_api',$_REQUEST)){
             $sett .= ",is_agency='".$_REQUEST['agency']."'";
         }
     }
+    if(array_key_exists('making_banners',$_REQUEST)){
+        if($_REQUEST['making_banners']!==''){
+            $sett .= ",making_banners='".$_REQUEST['making_banners']."'";
+        }
+    }
+
     if(array_key_exists('corporate_name',$_REQUEST)){
         if($_REQUEST['corporate_name']!==''){
-            $sett .= ",corporate_name='".$_REQUEST['corporate_name']."'";
+            $sett .= ",corporate_name='".urldecode($_REQUEST['corporate_name'])."'";
         }
     }
     if(array_key_exists('address',$_REQUEST)){
         if($_REQUEST['address']!==''){
-            $sett .= ",address='".$_REQUEST['address']."'";
+            $sett .= ",address='".urldecode($_REQUEST['address'])."'";
+        }
+    }
+    if(array_key_exists('executive_id',$_REQUEST)){
+        if($_REQUEST['executive_id']!==''){
+            $sett .= ",executive_id='".$_REQUEST['executive_id']."'";
         }
     }
 

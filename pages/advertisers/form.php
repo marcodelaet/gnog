@@ -39,16 +39,13 @@ if(array_key_exists('username',$_POST))
                         required
                         name ='corporate_name' 
                         placeholder='<?=Ucfirst(translateText('corporate_name'));?>'
-                        title = 'corporate_name'
+                        title = '<?=Ucfirst(translateText('corporate_name'));?>'
                         value='<?=$advertiser?>'
                         class="form-control" 
                         type="text" 
                         maxlength="40"
                         autocomplete="corporate_name"
                         />
-                        <div class="invalid-feedback">
-                            Please type the Corporate name
-                        </div>
                     </div>
                     <div class="col-2" id="sclient">
                         <label for="executive"><?=translateText('executive');?></label>
@@ -72,7 +69,7 @@ if(array_key_exists('username',$_POST))
                         required
                         name ='address' 
                         placeholder='99, <?=Ucfirst(translateText('address'));?> - City - Country - Postal Code'
-                        title = 'address'
+                        title = '<?=Ucfirst(translateText('address'));?>'
                         value=''
                         class="form-control"  
                         autocomplete="address"
@@ -85,7 +82,7 @@ if(array_key_exists('username',$_POST))
                 
             </div>
             <div class="inputs-button-container">
-                <button class="button" name="btnSave" type="button" onClick="handleSubmit(<?=strtolower($moduleName)?>)" ><?=Ucfirst(translateText('save'));?></button>
+                <button class="button" name="btnSave" type="button" onClick="handleSubmit(<?=strtolower($moduleName)?>)" ><?=Ucfirst(translateText('continue'));?></button>
             </div>
         </form>
       <?php

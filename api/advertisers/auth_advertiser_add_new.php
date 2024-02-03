@@ -26,8 +26,8 @@ if(array_key_exists('auth_api',$_REQUEST)){
         if($_REQUEST['making_banners']!=='')
             $making_banners = $_REQUEST['making_banners'];
     }
-    $corporate_name         = $_REQUEST['corporate_name'];
-    $address                = $_REQUEST['address'];
+    $corporate_name         = urldecode($_REQUEST['corporate_name']);
+    $address                = urldecode($_REQUEST['address']);
     if($address == ''){
         $address = 'Sin dirección';
     }

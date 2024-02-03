@@ -47,7 +47,7 @@ if(array_key_exists('auth_api',$_REQUEST)){
     }
 
     // filters
-    $filters                = '';
+    $filters = "is_active='Y' ";
     if(array_key_exists('search',$_GET)){
         if($_GET['search']!==''){
             if($filters != '')
@@ -56,7 +56,6 @@ if(array_key_exists('auth_api',$_REQUEST)){
             $filters        .= " search like '%$jocker%'";
         }
     }
-    $filters = "is_active='Y' ";
     if(array_key_exists('where',$_GET)){
         if($_GET['where']!==''){
             if($filters != '')
