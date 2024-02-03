@@ -383,10 +383,14 @@ function handleViewOnLoad(pid) {
             if (this.readyState == 4 && this.status == 200) {
                 // Typical action to be performed when the document is ready:
                 obj = JSON.parse(request.responseText);
-                phone_number = obj['data'][0].phone_number.replace(" ","");
-                if((obj['data'][0].phone_prefix!='') && (obj['data'][0].phone_prefix!='0'))
+
+                if(obj['data'][0].phone_number !== null)
+                    phone_number = obj['data'][0].phone_number.replace(" ","");
+                if((obj['data'][0].phone_prefix!==null) && (obj['data'][0].phone_prefix!='0'))
                     phone_number = obj['data'][0].phone_prefix+obj['data'][0].phone_number.replace(" ","");
-                if(obj['data'][0].address!=''){
+                
+                address = translateText('no_address_information',localStorage.getItem('ulang'));
+                if(obj['data'][0].address!==null){
                     address = obj['data'][0].address;     
                 }
                 if(obj['data'][0].webpage_url!=''){
@@ -421,23 +425,31 @@ function handleViewOnLoad(pid) {
                             xcopy += '&nbsp;<a style="color: #212529; cursor: pointer;" title="'+translateText('send_user_crt_url_to',localStorage.getItem('ulang'))+' '+obj['data'][i].contact_email+'"  data-toggle="modal" data-target="#sendmailModal" data-whatever="@mdo" onclick="document.getElementById(\'sendbutton\').disabled = false; document.getElementById(\'sendbutton\').innerText = translateText(\'send_message\',localStorage.getItem(\'ulang\')); document.getElementById(\'provider_contact_email\').innerText=\''+contact_email+'\'; document.getElementById(\'pemail\').value=\''+contact_email+'\'; document.getElementById(\'pname\').value=\''+full_name+'\'; document.getElementById(\'plink\').value=\''+xuser+'\'; document.getElementById(\'bodytext-html\').value =  textHTML.replace(\'%personal_url_to_register%\',\''+xuser+'\').replace(\'%personal_url_to_register_href%\',\''+xuser+'\').replace(\'%user_fullname%\',\''+full_name+'\'); document.getElementById(\'language-option\').value=\'esp\'; document.getElementById(\'bodyText\').innerHTML = textHTML.replace(\'%personal_url_to_register%\',\''+xuser+'\').replace(\'%personal_url_to_register_href%\',\''+xuser+'\').replace(\'%user_fullname%\',\''+full_name+'\');"><spam class="material-icons icon-data">send</spam></a>';
                         }
                         xhtml += '<div class="space-blank">&nbsp;</div>';
-                        xhtml += '<div class="'+module+'-data">';
-                        xhtml += '    <spam id="card-contact-fullname-and-position">'+full_name + ' ('+position+')</spam>';
-                        xhtml += '</div>';
-                        xhtml += '<div class="'+module+'-data">';
-                        xhtml += '    <spam class="material-icons icon-data">email</spam>';
-                        xhtml += '    <spam id="card-email">'+obj['data'][i].contact_email+'</spam>';
-                        xhtml += '</div>';
-                        xhtml += '<div class="'+module+'-data">';
-                        xhtml += '    <spam class="material-icons icon-data">phone</spam>';
-                        xhtml += '    <spam id="card-phone">+'+obj['data'][i].phone_international_code.replace(" ","") + phone_number+'</spam>';
-                        xhtml += '</div>';
-                        xhtml += '<div class="'+module+'-data">';
-                        xhtml += '    <spam class="material-icons icon-data">'+xuserIcon+'</spam>';
-                        xhtml += '    <spam id="card-user-'+obj['data'][i].contact_provider_id+'" class="card-user '+xeffect+'">'+xuser+'</spam>';
-                        xhtml += xcopy;
-                        xhtml += '</div>';
 
+                        if(obj['data'][i].contact_name !== null){
+                            xhtml += '<div class="'+module+'-data">';
+                            xhtml += '    <spam id="card-contact-fullname-and-position">'+full_name + ' ('+position+')</spam>';
+                            xhtml += '</div>';
+                        }
+                        if(obj['data'][i].contact_email !== null){
+                            xhtml += '<div class="'+module+'-data">';
+                            xhtml += '    <spam class="material-icons icon-data">email</spam>';
+                            xhtml += '    <spam id="card-email">'+obj['data'][i].contact_email+'</spam>';
+                            xhtml += '</div>';
+                        }
+                        if(obj['data'][i].phone_international_code !== null){
+                            xhtml += '<div class="'+module+'-data">';
+                            xhtml += '    <spam class="material-icons icon-data">phone</spam>';
+                            xhtml += '    <spam id="card-phone">+'+obj['data'][i].phone_international_code.replace(" ","") + phone_number+'</spam>';
+                            xhtml += '</div>';
+                        }
+                        if(obj['data'][i].contact_provider_id !== null){
+                            xhtml += '<div class="'+module+'-data">';
+                            xhtml += '    <spam class="material-icons icon-data">'+xuserIcon+'</spam>';
+                            xhtml += '    <spam id="card-user-'+obj['data'][i].contact_provider_id+'" class="card-user '+xeffect+'">'+xuser+'</spam>';
+                            xhtml += xcopy;
+                            xhtml += '</div>';
+                        }
                         
                     }
                 } else {
@@ -543,7 +555,7 @@ function handleListOnLoad(search) {
                 obj         = JSON.parse(request.responseText);
                 html        = '';
                 country     = '';
-                console.log(obj);
+                //console.log(obj);
                 if(obj.rows > 0){
                     for(var i=0;i < obj['data'].length; i++){
                         

@@ -15,8 +15,8 @@ function handleSubmit(form) {
         making_banners = 'N';
         if(form.making_banners.checked)
             making_banners      = 'Y';
-        corporate_name          = form.corporate_name.value;
-        address                 = form.address.value;
+        corporate_name          = encodeURIComponent(form.corporate_name.value);
+        address                 = encodeURIComponent(form.address.value);
         
         executive_id            = form.executive_id.value;
         
@@ -105,7 +105,7 @@ function handleSubmitCSV(form){
 }
 
 function handleEditSubmit(aid,form) {
-    if (form.corporate_name.value !== '' && form.address.value !== '' && form.main_contact_email.value !== '') {
+    if (form.corporate_name.value !== '' && form.address.value !== '') {
         //form.submit();
    
         errors      = 0;
@@ -115,39 +115,26 @@ function handleEditSubmit(aid,form) {
         if(form.agency.checked)
             agency              = 'Y';
         
+        making_banners    = 'N';
+        if(form.making_banners.checked){
+            making_banners = 'Y';
+        }
+        
         sett     = '&aid='+aid;
         sett     += '&agency='+agency;
+        sett     += '&making_banners='+making_banners;
+
         corporate_name          = form.corporate_name.value;
         if(corporate_name !== ''){
-            sett     += '&corporate_name='+corporate_name;
+            sett     += '&corporate_name='+encodeURIComponent(corporate_name);
         }
         address                 = form.address.value;
         if(address !== ''){
-            sett     += '&address='+address;
+            sett     += '&address='+encodeURIComponent(address);
         }
-        main_contact_name       = form.main_contact_name.value;
-        if(main_contact_name !== ''){
-            sett     += '&main_contact_name='+main_contact_name;
-        }
-        main_contact_surname    = form.main_contact_surname.value;
-        if(main_contact_surname !== ''){
-            sett     += '&main_contact_surname='+main_contact_surname;
-        }
-        main_contact_email      = form.main_contact_email.value;
-        if(main_contact_email !== ''){
-            sett     += '&main_contact_email='+main_contact_email;
-        }
-        /*phone_ddi  = form.mobile_ddi.value;
-        if(phone_ddi !== ''){
-            sett     += '&phone_ddi='+phone_ddi.replace(' ','');
-        }*/
-        phone                   = form.phone.value;
-        if(phone !== ''){
-            sett     += '&phone='+phone.replace(" ","");
-        }
-        main_contact_position   = form.main_contact_position.value;
-        if(main_contact_position !== ''){
-            sett     += '&main_contact_position='+main_contact_position;
+        executive_id       = form.executive_id.value;
+        if(executive_id !== '0'){
+            sett     += '&executive_id='+executive_id;
         }
         
         console.log(sett);
@@ -209,30 +196,42 @@ function handleViewOnLoad(aid) {
                     agency = 'Agency';
                 if(obj[0].making_banners == 'Y')
                     impressions     = 'yes';
-                phone_number = obj[0].phone_number.replace(" ","");
-                if((obj[0].phone_prefix!='') && (obj[0].phone_prefix!='0'))
+                if(obj[0].phone_number !== null)
+                    phone_number = obj[0].phone_number.replace(" ","");
+                if((obj[0].phone_prefix!==null) && (obj[0].phone_prefix!='0'))
                     phone_number = obj[0].phone_prefix+obj[0].phone_number.replace(" ","");
                 document.getElementById('advertiser_name').innerHTML                    = obj[0].corporate_name;
                 document.getElementById('group').innerHTML                              = agency;
-                document.getElementById('card-address').innerHTML                       = obj[0].address;
+                address = translateText('no_address_information',localStorage.getItem('ulang'));
+                if(obj[0].address!==null){
+                    address = obj[0].address;
+                }
+                    
+                document.getElementById('card-address').innerHTML                       = address;
                 //document.getElementById('impressions').innerHTML                        = impressions;
 
                 xhtml = '';
                 for(i=0;i < obj.length; i++){
-                    if(obj[i].contact_position!='')
-                        position = obj[i].contact_position;
                     xhtml += '<div class="space-blank">&nbsp;</div>';
-                    xhtml += '<div class="'+module+'-data">';
-                    xhtml += '    <spam id="card-contact-fullname-and-position">'+obj[i].contact_name + ' ' + obj[i].contact_surname + ' ('+position+')</spam>';
-                    xhtml += '</div>';
-                    xhtml += '<div class="'+module+'-data">';
-                    xhtml += '    <spam class="material-icons icon-data">email</spam>';
-                    xhtml += '    <spam id="card-email">'+obj[i].contact_email+'</spam>';
-                    xhtml += '</div>';
-                    xhtml += '<div class="'+module+'-data">';
-                    xhtml += '    <spam class="material-icons icon-data">phone</spam>';
-                    xhtml += '    <spam id="card-phone">+'+obj[i].phone_international_code.replace(" ","") + phone_number+'</spam>';
-                    xhtml += '</div>';
+                    if(obj[i].contact_name !== null){
+                        if(obj[i].contact_position!='')
+                        position = obj[i].contact_position;
+                        xhtml += '<div class="'+module+'-data">';
+                        xhtml += '    <spam id="card-contact-fullname-and-position">'+obj[i].contact_name + ' ' + obj[i].contact_surname + ' ('+position+')</spam>';
+                        xhtml += '</div>';
+                    }
+                    if(obj[i].contact_email !== null){
+                        xhtml += '<div class="'+module+'-data">';
+                        xhtml += '    <spam class="material-icons icon-data">email</spam>';
+                        xhtml += '    <spam id="card-email">'+obj[i].contact_email+'</spam>';
+                        xhtml += '</div>';
+                    }
+                    if(obj[i].phone_international_code !== null){
+                        xhtml += '<div class="'+module+'-data">';
+                        xhtml += '    <spam class="material-icons icon-data">phone</spam>';
+                        xhtml += '    <spam id="card-phone">+'+obj[i].phone_international_code.replace(" ","") + phone_number+'</spam>';
+                        xhtml += '</div>';
+                    }
                 }
                 document.getElementById("list-contacts").innerHTML = xhtml;
             }
@@ -268,14 +267,12 @@ function handleOnLoad(aid,form) {
                 obj = JSON.parse(request.responseText);
                 if(obj[0].is_agency == 'Y')
                     form.agency.checked = true;
+                if(obj[0].making_banners == 'Y')
+                    form.making_banners.checked = true;
                 form.corporate_name.value           = obj[0].corporate_name;
                 form.address.value                  = obj[0].address;
-                form.main_contact_name.value        = obj[0].main_contact_name;
-                form.main_contact_surname.value     = obj[0].main_contact_surname;
-                form.main_contact_email.value       = obj[0].main_contact_email;
-                //form.phone_ddi.value              = obj[0].phone_international_code.replace(" ","");
-                form.phone.value                    = obj[0].phone_number.replace(" ","");
-                form.main_contact_position.value    = obj[0].main_contact_position;
+                if(obj[0].executive_id !== null)
+                    form.executive_id.value             = obj[0].executive_id;
             }
             else{
                 //form.btnSave.innerHTML = "Searching...";

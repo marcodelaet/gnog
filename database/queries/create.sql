@@ -992,6 +992,17 @@ VALUES
 INSERT INTO translates 
 (id, code_str, text_eng, text_esp, text_ptbr, is_active, created_at, updated_at)
 VALUES
+(UUID(), 'changes', 'changes', 'cambios', 'alterações', 'Y', NOW(), NOW());
+
+INSERT INTO translates 
+(id, code_str, text_eng, text_esp, text_ptbr, is_active, created_at, updated_at)
+VALUES
+(UUID(), 'no_address_information', 'no address information', 'no se ha proporcionado ninguna dirección', 'Nenhum endereço informado', 'Y', NOW(), NOW());
+
+
+INSERT INTO translates 
+(id, code_str, text_eng, text_esp, text_ptbr, is_active, created_at, updated_at)
+VALUES
 (UUID(), 'from_the_list', 'from the list', 'del listado', 'da listagem', 'Y', NOW(), NOW());
 
 INSERT INTO translates 

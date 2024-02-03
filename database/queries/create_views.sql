@@ -142,11 +142,7 @@ CREATE VIEW view_providers AS (
 	u.account_locked,
 	CONCAT('+',ct.phone_international_code,ct.phone_prefix,ct.phone_number) AS phone,
 	pv.is_active,
-	CASE WHEN ct.contact_email IS NOT NULL THEN 
-		CONCAT((pv.id),pd.name,sm.name,pv.name,pv.webpage_url,ct.contact_name,ct.contact_surname,ct.contact_email,'+',ct.phone_international_code,ct.phone_number) 
-	ELSE
-		CONCAT((pv.id),pd.name,sm.name,pv.name,pv.webpage_url) 
-	END AS search
+	CONCAT((pv.id),CASE WHEN pd.name IS NULL THEN '' ELSE pd.name END,CASE WHEN sm.name IS NULL THEN '' ELSE sm.name END,pv.name,CASE WHEN pv.webpage_url IS NULL THEN '' ELSE pv.webpage_url END,CASE WHEN ct.contact_name IS NULL THEN '' ELSE ct.contact_name END,CASE WHEN ct.contact_surname IS NULL THEN '' ELSE ct.contact_surname END,CASE WHEN ct.contact_email IS NULL THEN '' ELSE ct.contact_email END,'+',CASE WHEN ct.phone_international_code  IS NULL THEN '' ELSE ct.phone_international_code END,CASE WHEN ct.phone_number IS NULL THEN '' ELSE ct.phone_number END) AS search 
 	FROM 
 	providers pv
 	LEFT JOIN providersxproduct pp ON pp.provider_id = pv.id
