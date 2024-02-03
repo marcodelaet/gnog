@@ -544,65 +544,71 @@ function handleListOnLoad(search) {
                 html        = '';
                 country     = '';
                 console.log(obj);
-                for(var i=0;i < obj['data'].length; i++){
-                    
-                    color_status = '#d60b0e';
-                    if(obj['data'][i].is_active == 'Y')
-                        color_status = '#298c3d';
+                if(obj.rows > 0){
+                    for(var i=0;i < obj['data'].length; i++){
+                        
+                        color_status = '#d60b0e';
+                        if(obj['data'][i].is_active == 'Y')
+                            color_status = '#298c3d';
 
-                    switch (obj['data'][i].phone_international_code) {
-                        case '52':
-                            country = 'MEX';
-                            break;
-                        case '55':
-                            country = 'BRA';
-                            break;
-                        case '1':
-                            country = 'USA';
-                            break;
-                        default:
-                            country = 'XXX';
+                        switch (obj['data'][i].phone_international_code) {
+                            case '52':
+                                country = 'MEX';
+                                break;
+                            case '55':
+                                country = 'BRA';
+                                break;
+                            case '1':
+                                country = 'USA';
+                                break;
+                            default:
+                                country = 'XXX';
+                        }
+                        phone_number    = "";
+                        contact         = "-------";
+                    //alert(typeof(obj['data'][i].contact));
+                    phone_number = "--------"
+                        if((obj['data'][i].contact !== 'null') && (obj['data'][i].contact !== null)){
+                            phone_number    = obj['data'][i].phone;
+                            contact         = obj['data'][i].contact;
+                            if((obj['data'][i].phone_prefix!='') && (obj['data'][i].phone_prefix !== 'null') && (obj['data'][i].phone_prefix !== null))
+                                phone_number = '+'+obj['data'][i].phone_international_code+obj['data'][i].phone_prefix+obj['data'][i].phone_number.replace(" ","");
+
+                            if((obj['data'][i].phone_prefix == 'null') || (obj['data'][i].phone_prefix == null))
+                                phone_number = '+'+obj['data'][i].phone_international_code+obj['data'][i].phone_number.replace(" ","");
+                        }
+                        webpage = '-------';
+                        if( (obj['data'][i].webpage_url !== 'null') && (obj['data'][i].webpage_url !== null))
+                            webpage = obj['data'][i].webpage_url;
+                        string_qty_contact = "No contacts";
+                        if(obj['data'][i].qty_contact > 0)
+                            string_qty_contact = obj['data'][i].qty_contact + ' contact';
+                        if(obj['data'][i].qty_contact > 1)
+                            string_qty_contact += 's';
+                        html += '<tr><td>'+obj['data'][i].name+'</td><td>'+webpage+'</td><td nowrap>'+string_qty_contact+'</td><td style="text-align:center;"><span id="locked_status_'+obj['data'][i].uuid_full+'" class="material-icons" style="color:'+color_status+'">circle</span></td><td nowrap style="text-align:center;">';
+                        // information card
+                        html += '<a href="?pr=Li9wYWdlcy9wcm92aWRlcnMvaW5mby5waHA=&pid='+obj['data'][i].uuid_full+'"><span class="material-icons" style="font-size:1.5rem; color:black;" title="Information Card '+obj['data'][i].name+'">info</span></a>';
+
+                        // Edit form
+                        html += '<a href="?pr=Li9wYWdlcy9wcm92aWRlcnMvZm9ybWVkaXQucGhw&pid='+obj['data'][i].uuid_full+'"><span class="material-icons" style="font-size:1.5rem; color:black;" title="Edit '+module + ' '+obj['data'][i].name+'">edit</span></a>';
+
+                        // Remove 
+                        html += '<a href="javascript:void(0)" onclick="handleRemove(\''+obj['data'][i].uuid_full+'\',\''+obj['data'][i].is_active+'\')"><span class="material-icons" style="font-size:1.5rem; color:black;" title="Remove '+module + ' '+obj['data'][i].name+'">delete</span></a>';
+
+                        // Add Contact
+                        html += '<a href="?pr=Li9wYWdlcy9hZHZlcnRpc2Vycy9jb250YWN0cy9mb3JtLnBocA==&md=Provider&tid='+obj['data'][i].uuid_full+'"><span class="material-icons" style="font-size:1.5rem; color:black;" title="Add a contact to '+module + ' '+obj['data'][i].name+'">contact_mail</span></a>';
+
+                        html += '</td></tr>';
                     }
-                    phone_number    = "";
-                    contact         = "-------";
-                   //alert(typeof(obj['data'][i].contact));
-                   phone_number = "--------"
-                    if((obj['data'][i].contact !== 'null') && (obj['data'][i].contact !== null)){
-                        phone_number    = obj['data'][i].phone;
-                        contact         = obj['data'][i].contact;
-                        if((obj['data'][i].phone_prefix!='') && (obj['data'][i].phone_prefix !== 'null') && (obj['data'][i].phone_prefix !== null))
-                            phone_number = '+'+obj['data'][i].phone_international_code+obj['data'][i].phone_prefix+obj['data'][i].phone_number.replace(" ","");
-
-                        if((obj['data'][i].phone_prefix == 'null') || (obj['data'][i].phone_prefix == null))
-                            phone_number = '+'+obj['data'][i].phone_international_code+obj['data'][i].phone_number.replace(" ","");
-                    }
-                    webpage = '-------';
-                    if( (obj['data'][i].webpage_url !== 'null') && (obj['data'][i].webpage_url !== null))
-                        webpage = obj['data'][i].webpage_url;
-                    string_qty_contact = "No contacts";
-                    if(obj['data'][i].qty_contact > 0)
-                        string_qty_contact = obj['data'][i].qty_contact + ' contact';
-                    if(obj['data'][i].qty_contact > 1)
-                        string_qty_contact += 's';
-                    html += '<tr><td>'+obj['data'][i].name+'</td><td>'+webpage+'</td><td nowrap>'+string_qty_contact+'</td><td style="text-align:center;"><span id="locked_status_'+obj['data'][i].uuid_full+'" class="material-icons" style="color:'+color_status+'">circle</span></td><td nowrap style="text-align:center;">';
-                    // information card
-                    html += '<a href="?pr=Li9wYWdlcy9wcm92aWRlcnMvaW5mby5waHA=&pid='+obj['data'][i].uuid_full+'"><span class="material-icons" style="font-size:1.5rem; color:black;" title="Information Card '+obj['data'][i].name+'">info</span></a>';
-
-                    // Edit form
-                    html += '<a href="?pr=Li9wYWdlcy9wcm92aWRlcnMvZm9ybWVkaXQucGhw&pid='+obj['data'][i].uuid_full+'"><span class="material-icons" style="font-size:1.5rem; color:black;" title="Edit '+module + ' '+obj['data'][i].name+'">edit</span></a>';
-
-                    // Remove 
-                    html += '<a href="javascript:void(0)" onclick="handleRemove(\''+obj['data'][i].uuid_full+'\',\''+obj['data'][i].is_active+'\')"><span class="material-icons" style="font-size:1.5rem; color:black;" title="Remove '+module + ' '+obj['data'][i].name+'">delete</span></a>';
-
-                    // Add Contact
-                    html += '<a href="?pr=Li9wYWdlcy9hZHZlcnRpc2Vycy9jb250YWN0cy9mb3JtLnBocA==&md=Provider&tid='+obj['data'][i].uuid_full+'"><span class="material-icons" style="font-size:1.5rem; color:black;" title="Add a contact to '+module + ' '+obj['data'][i].name+'">contact_mail</span></a>';
-
-                    html += '</td></tr>';
+                } else {
+                    html = '<tr><td colspan="5"><div style="text-align:center;" role="status">';
+                    html += '<span class="returning_zero">0 results</span>';
+                    html += '</div></td></tr>';
                 }
                 tableList.innerHTML = html;
             }
             else{
-                html = '<tr><td colspan="5"><div style="margin-left:45%; margin-right:45%;" class="spinner-border" style="text-align:center;" role="status">';
+                html = '<tr><td colspan="5"><div style="margin-left:45%; margin-right:45%;text-align:center;" class="spinner-border" role="status">';
                 html += '<span class="sr-only">Loading...</span>';
                 html += '</div></td></tr>';
                 tableList.innerHTML = html;

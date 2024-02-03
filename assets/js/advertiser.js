@@ -196,7 +196,7 @@ function handleViewOnLoad(aid) {
 
     } else{
         const requestURL = window.location.protocol+'//'+locat+'api/'+module+'s/auth_'+module+'_get.php?auth_api='+authApi+filters;
-        console.log(requestURL);
+        //console.log(requestURL);
         const request   = new XMLHttpRequest();
         agency          = 'Direct';
         impressions     = 'no'; 

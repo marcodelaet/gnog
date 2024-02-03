@@ -103,7 +103,11 @@ CREATE VIEW view_advertisers AS (
 	CONCAT('+',ct.phone_international_code,ct.phone_prefix,ct.phone_number) AS phone,
 	adv.is_agency,
 	adv.is_active,
-	CONCAT((adv.id),adv.corporate_name,ct.contact_name,ct.contact_surname,ct.contact_email,'+',ct.phone_international_code,ct.phone_number) AS search
+	CASE WHEN ct.contact_email IS NOT NULL THEN 
+		CONCAT((adv.id),adv.corporate_name,ct.contact_name,ct.contact_surname,ct.contact_email,'+',ct.phone_international_code,ct.phone_number) 
+	ELSE
+		CONCAT((adv.id),adv.corporate_name)
+	END AS search
 	FROM
 	advertisers adv
 	LEFT JOIN view_advertisercontacts ct ON ct.contact_client_id = adv.id
@@ -138,7 +142,11 @@ CREATE VIEW view_providers AS (
 	u.account_locked,
 	CONCAT('+',ct.phone_international_code,ct.phone_prefix,ct.phone_number) AS phone,
 	pv.is_active,
-	CONCAT((pv.id),pd.name,sm.name,pv.name,pv.webpage_url,ct.contact_name,ct.contact_surname,ct.contact_email,'+',ct.phone_international_code,ct.phone_number) AS search
+	CASE WHEN ct.contact_email IS NOT NULL THEN 
+		CONCAT((pv.id),pd.name,sm.name,pv.name,pv.webpage_url,ct.contact_name,ct.contact_surname,ct.contact_email,'+',ct.phone_international_code,ct.phone_number) 
+	ELSE
+		CONCAT((pv.id),pd.name,sm.name,pv.name,pv.webpage_url) 
+	END AS search
 	FROM 
 	providers pv
 	LEFT JOIN providersxproduct pp ON pp.provider_id = pv.id
