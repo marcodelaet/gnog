@@ -58,13 +58,6 @@ if(array_key_exists('auth_api',$_REQUEST)){
     if(($_POST['tax_percent'] != '') && ($_POST['tax_percent'] > '0') )
         $tax_percent    = $_POST['tax_percent'];
 
-   /* $pixel_original = $_POST['pixel'];
-
-    $pixel = "N";
-    if(isset($pixel_original)){
-        $pixel = "Y";
-    }*/
-
     $pixel      = $_POST['pixel_option'];
     $taxable    = $_POST['taxable_option'];
     
