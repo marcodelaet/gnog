@@ -37,12 +37,12 @@ if(array_key_exists('auth_api',$_REQUEST)){
 
     if(array_key_exists('corporate_name',$_REQUEST)){
         if($_REQUEST['corporate_name']!==''){
-            $sett .= ",corporate_name='".urldecode($_REQUEST['corporate_name'])."'";
+            $sett .= ",corporate_name='".addslashes(urldecode($_REQUEST['corporate_name']))."'";
         }
     }
     if(array_key_exists('address',$_REQUEST)){
         if($_REQUEST['address']!==''){
-            $sett .= ",address='".urldecode($_REQUEST['address'])."'";
+            $sett .= ",address='".addslashes(urldecode($_REQUEST['address']))."'";
         }
     }
     if(array_key_exists('executive_id',$_REQUEST)){

@@ -1,4 +1,7 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1); 
+
 //REQUIRE GLOBAL conf
 require_once('../../database/.config');
 
@@ -19,32 +22,39 @@ if(array_key_exists('auth_api',$_REQUEST)){
     // values to update
     if(array_key_exists('name',$_REQUEST)){
         if($_REQUEST['name']!==''){
-            $sett .= ",name='".$_REQUEST['name']."'";
+            $sett .= ",name='".addslashes(urldecode($_REQUEST['name']))."'";
         }
     }
     if(array_key_exists('address',$_REQUEST)){
         if($_REQUEST['address']!==''){
-            $sett .= ",address='".$_REQUEST['address']."'";
+            $sett .= ",address='".addslashes(urldecode($_REQUEST['address']))."'";
         }
     }
     if(array_key_exists('webpage_url',$_REQUEST)){
         if($_REQUEST['webpage_url']!==''){
-            $sett .= ",webpage_url='".$_REQUEST['webpage_url']."'";
+            $sett .= ",webpage_url='".addslashes(urldecode($_REQUEST['webpage_url']))."'";
         }
     }
+
+    /* ***************************************
+    ** PRODUCT FIELDS DISABLED ***************
+    ******************************************
+
     if(array_key_exists('product_id',$_REQUEST)){
-        if($_REQUEST['product_id']!==''){
+        if($_REQUEST['product_id']!=='0'){
             $sett .= ",product_id=('".$_REQUEST['product_id']."')";
         }
     }
     if(array_key_exists('salemodel_id',$_REQUEST)){
-        if($_REQUEST['salemodel_id']!==''){
+        if($_REQUEST['salemodel_id']!=='0'){
             $sett .= ",salemodel_id=('".$_REQUEST['salemodel_id']."')";
         }
     }
+    
     if(array_key_exists('product_price',$_REQUEST)){
         $product_price = (float)str_replace(",",".",str_replace(".","",$_REQUEST['product_price'])) * 100;
-        if($_REQUEST['product_price']!==''){
+        echo $product_price;
+        if($product_price>0){
             $sett .= ",product_price=".$product_price;
         }
     }
@@ -53,6 +63,9 @@ if(array_key_exists('auth_api',$_REQUEST)){
             $sett .= ",currency='".$_REQUEST['currency']."'";
         }
     }
+
+    *****************************************************************/
+    
     // Query creation
     $sql = "UPDATE providers SET $sett WHERE id=('".$_REQUEST['pid']."')";
     // INSERT data

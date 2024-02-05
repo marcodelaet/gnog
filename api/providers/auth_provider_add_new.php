@@ -1,8 +1,7 @@
 <?php
-/*
-error_reporting(E_ALL);
-ini_set('display_errors', 1); 
-*/
+// error_reporting(E_ALL);
+// ini_set('display_errors', 1); 
+
 //REQUIRE GLOBAL conf
 require_once('../../database/.config');
 
@@ -27,6 +26,9 @@ if(array_key_exists('auth_api',$_REQUEST)){
     if(array_key_exists('uid',$_REQUEST)){
         $user_id = $_REQUEST['uid'];
     }
+    /* ***************************************
+    ** PRODUCT FIELDS DISABLED ***************
+    ******************************************
 
     // values to insert
     $salemodel_id           = $_GET['salemodel_id'];
@@ -37,6 +39,8 @@ if(array_key_exists('auth_api',$_REQUEST)){
         }
     }
     $currency               = $_GET['currency'];
+    ************************************************************/
+    
     $name                   = addslashes(urldecode($_GET['name']));
     $webpage_url            = addslashes(urldecode($_GET['webpage_url']));
     $address                = addslashes(urldecode($_GET['address']));
