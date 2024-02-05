@@ -9,17 +9,17 @@ $moduleName = 'Provider';
 
 <div class='form-<?=strtolower($moduleName)?>-container'>
     <div class="form-container">
-        <div class="form-header">New <?=$moduleName?></div>
+        <div class="form-header"><?=ucfirst(translateText('new'));?> <?=ucfirst(translateText(strtolower($moduleName)));?></div>
         <form name='<?=strtolower($moduleName)?>' method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
             <div class="inputs-form-container">
                 <div class="form-row">
                     <div class="col">
-                        <label for="name">Name</label>
+                        <label for="name"><?=ucfirst(translateText('name'));?></label>
                         <input
                         required
                         name ='name' 
-                        placeholder='Name'
-                        title = 'name'
+                        placeholder='<?=ucfirst(translateText('name'));?>'
+                        title = '<?=ucfirst(translateText('name'));?>'
                         value=''
                         class="form-control" 
                         type="text" 
@@ -32,7 +32,7 @@ $moduleName = 'Provider';
                     </div>
                 </div>
                 <div class="form-row">
-                    <label for="name">Webpage</label>
+                    <label for="name"><?=ucfirst(translateText('webpage'));?></label>
                     <div class="input-group mb-3">
                         <div class="input-group-prepend">
                             <span class="input-group-text" id="basic-addon3">https://example.com/</span>
@@ -41,7 +41,7 @@ $moduleName = 'Provider';
                         required
                         name ='webpage_url' 
                         placeholder='Type the URL here'
-                        title = 'webpage_url'
+                        title = '<?=ucfirst(translateText('webpage'));?>'
                         value=''
                         class="form-control" 
                         type="text" 
@@ -55,12 +55,12 @@ $moduleName = 'Provider';
                 </div>
                 <div class="form-row">
                     <div class="col">
-                        <label for="address">Address</label>
+                        <label for="address"><?=ucfirst(translateText('address'));?></label>
                         <textarea
                         required
                         name ='address' 
-                        placeholder='99, Address - City - Country - Postal Code'
-                        title = 'address'
+                        placeholder='99, <?=ucfirst(translateText('address'));?> - <?=ucfirst(translateText('city'));?> - Country - Postal Code'
+                        title = '<?=ucfirst(translateText('address'));?>'
                         value=''
                         class="form-control"  
                         autocomplete="address"
@@ -70,19 +70,20 @@ $moduleName = 'Provider';
                         </div>
                     </div>
                 </div>
+<!-- PRODUCT AREA - DISABLED
                 <div class="form-row product-section">
                     <div class="col">
                         <div class="form-row" >
                             <div class="col product-header">
-                                Product
+                                <?=ucfirst(translateText('product'));?>
                             </div>
                         </div>
                         <div class="form-row" >
                             <div class="col">
-                                <label for="product_id">Product</label>
+                                <label for="product_id"><?=ucfirst(translateText('product'));?></label>
                                 <spam id="sproduct">
                                     <select name="product_id" id="selectproduct" title="product_id" class="form-control" autocomplete="product_id" required>
-                                        <?=inputSelect('product','Product','','name','');?>
+                                        <?=inputSelect('product',ucfirst(translateText('product')),'','name','');?>
                                     </select>
                                 </spam>
                                 <div class="invalid-feedback">
@@ -90,13 +91,13 @@ $moduleName = 'Provider';
                                 </div>
                             </div>
                             <div class="col">
-                                <label for="product_price">Product Price</label>
+                                <label for="product_price"><?=ucfirst(translateText('price'));?></label>
                                 <input
                                 required
                                 onkeypress="$(this).mask('#.###.##0,00', {reverse: true});"
                                 name ='product_price' 
                                 placeholder='0,00'
-                                title = 'Product Price'
+                                title = '<?=ucfirst(translateText('price'));?>'
                                 value=''
                                 class="form-control" 
                                 type="currency" 
@@ -111,7 +112,7 @@ $moduleName = 'Provider';
                                 <select
                                 required
                                 name ='currency' 
-                                title = 'Currency'
+                                title = '<?=ucfirst(translateText('currency'));?>'
                                 class="form-control"
                                 autocomplete="currency">
                                     <option value="MXN">MXN</option>
@@ -122,10 +123,10 @@ $moduleName = 'Provider';
                         </div>
                         <div class="form-row" >
                             <div class="col">
-                                <label for="salemodel_id">Sale Model</label>
+                                <label for="salemodel_id"><?=ucfirst(translateText('sale_model'));?></label>
                                 <spam id="ssalemodel">
                                     <select name="salemodel_id" id="selectsalemodel" title="salemodel_id" class="form-control" autocomplete="salemodel_id" required>
-                                        <?=inputSelect('salemodel','Sale model','','name','')?>
+                                        <?=inputSelect('salemodel',ucfirst(translateText('sale_model')),'','name','')?>
                                     </select>
                                 </spam>
                                 <div class="invalid-feedback">
@@ -136,10 +137,11 @@ $moduleName = 'Provider';
                     </div>
                 </div>
             </div>
+END OF PRODUCT AREA  -->
             <div class="inputs-button-container">
                 <input type="hidden" name="tku" value="<?=$_COOKIE['tk']?>" />
                 <input type="hidden" name="uid" value="<?=$_COOKIE['uuid']?>" />
-                <button class="button" name="btnSave" type="button" onClick="handleSubmit(<?=strtolower($moduleName)?>)" >Save</button>
+                <button class="button" name="btnSave" type="button" onClick="handleSubmit(<?=strtolower($moduleName)?>)" ><?=ucfirst(translateText('continue'));?></button>
             </div>
         </form>
       <?php
