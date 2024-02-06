@@ -327,7 +327,7 @@ function handleOnLoad(bid,form) {
 
 function handleListOnLoad(search,page) {
     errors      = 0;
-    authApi     = csrf_token;
+    authApi     = encodeURIComponent(csrf_token);
     locat       = window.location.hostname;
 
     groupby     = '';
@@ -355,7 +355,7 @@ function handleListOnLoad(search,page) {
     } else{
         tableList   = document.getElementById('listBillboards');
         const requestURL = window.location.protocol+'//'+locat+'api/billboards/auth_billboard_view.php?auth_api='+authApi+filters+groupby+addColumn+pages;
-        console.log(requestURL);
+        //console.log(requestURL);
         const request = new XMLHttpRequest();
         request.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {

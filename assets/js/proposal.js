@@ -960,7 +960,7 @@ function handleListEditOnLoad(ppid) {
     }
 }
 
-function handleListOnLoad(search) {
+function handleListOnLoad(search,page) {
     errors      = 0;
     authApi     = encodeURIComponent(csrf_token);
     locat       = window.location.hostname;
@@ -972,6 +972,14 @@ function handleListOnLoad(search) {
         filters     += '&search='+search;
     }
 
+    pages       = '';
+    if(typeof page == 'undefined')
+        page  = '1';
+    if(page !== '1'){
+        pages     += '&p='+(parseInt(page)-1);
+    }
+
+
     if(locat.slice(-1) != '/')
         locat += '/';
 
@@ -979,24 +987,29 @@ function handleListOnLoad(search) {
 
     } else{
         tableList   = document.getElementById('listProposals');
-        const requestURL = window.location.protocol+'//'+locat+'api/proposals/auth_proposal_list.php?auth_api='+authApi+filters;
+        const requestURL = window.location.protocol+'//'+locat+'api/proposals/auth_proposal_list.php?auth_api='+authApi+filters+pages;
         console.log(requestURL);
         const request = new XMLHttpRequest();
         request.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {
                 // Typical action to be performed when the document is ready:
                 obj         = JSON.parse(request.responseText);
-                if(typeof obj[0].response != 'undefined'){
+                if(obj.response == 'ZERO_RETURN'){
                     html = '<tr><td colspan="8"><div style="margin-left:45%; margin-right:45%;text-align:center;" role="status">';
                     html += '0 Results';
                     html += '</td></tr>';
-                    tableList.innerHTML = html;    
+                    tableList.innerHTML = html;
+                    pagesController(page,obj['pages']);
+                    if(parseInt(page) > parseInt(obj['pages'])){
+                        page        = 1;
+                        filter.goto.value = 1;
+                    }
                 }else{
                     html        = ''; 
-                    for(var i=0;i < obj.length; i++){
+                    for(var i=0;i < obj['data'].length; i++){
                         var formatter = new Intl.NumberFormat(lang, {
                             style: 'currency',
-                            currency: obj[i].currency,
+                            currency: obj['data'][i].currency,
                             //maximumSignificantDigits: 2,
                     
                             // These options are needed to round to whole numbers if that's what you want.
@@ -1004,53 +1017,58 @@ function handleListOnLoad(search) {
                             //maximumFractionDigits: 0, // (causes 2500.99 to be printed as $2,501)
                         });
                         color_status = '#d60b0e';
-                        if(obj[i].is_active == 'Y')
+                        if(obj['data'][i].is_active == 'Y')
                             color_status = '#298c3d';
 
 
 
                         color_status = '#d60b0e';
                         color_letter = '#CCCCFF';
-                        if(obj[i].status_percent == '100'){
+                        if(obj['data'][i].status_percent == '100'){
                             color_status = '#298c3d';
                             color_letter = '#CCCCFF';
                         }
-                        if(obj[i].status_percent == '90'){
+                        if(obj['data'][i].status_percent == '90'){
                             color_status = '#03fc84';
                             color_letter = '#000000';
                         }
-                        if(obj[i].status_percent == '75'){
+                        if(obj['data'][i].status_percent == '75'){
                             color_status = '#77fc03';
                             color_letter = '#000000';
                         }
-                        if(obj[i].status_percent == '50'){
+                        if(obj['data'][i].status_percent == '50'){
                             color_status = '#ebfc03';
                             color_letter = '#6666FF';
                         }
-                        if(obj[i].status_percent == '25'){
+                        if(obj['data'][i].status_percent == '25'){
                             color_status = '#fc3d03';
                             color_letter = '#CCCCFF';
                         }
                             
                         agency = '';
-                        if(typeof(obj[i].agency_name) === 'string')
-                            agency = ' / '+obj[i].agency_name;
-                        amount = obj[i].amount;
-                        start_date  = new Date(obj[i].start_date);
-                        stop_date   = new Date(obj[i].stop_date);
-                        html += '<tr><td>'+obj[i].offer_name+'</td><td nowrap>'+obj[i].client_name+agency+'</td><td nowrap>'+obj[i].username+'</td><td nowrap>'+formatter.format(amount)+'</td><td>'+start_date.toLocaleString(lang).split(" ")[0].replace(",","")+'</td><td>'+stop_date.toLocaleString(lang).split(" ")[0].replace(",","")+'</td><td style="text-align:center;" ><span id="status_'+obj[i].UUID+'" class="material-icons" title="'+obj[i].status_percent+'% '+translateText(obj[i].status_name,localStorage.getItem('ulang'))+'" style="color:'+color_status+'">thermostat</span><br/><span class="status-description" style="background-color:'+color_status+'; color:'+color_letter+'">&nbsp;&nbsp;'+obj[i].status_percent+'% '+translateText(obj[i].status_name,localStorage.getItem('ulang'))+'&nbsp;&nbsp;</span></td><td nowrap style="text-align:center;">';
+                        if(typeof(obj['data'][i].agency_name) === 'string')
+                            agency = ' / '+obj['data'][i].agency_name;
+                        amount = obj['data'][i].amount;
+                        start_date  = new Date(obj['data'][i].start_date);
+                        stop_date   = new Date(obj['data'][i].stop_date);
+                        html += '<tr><td>'+obj['data'][i].offer_name+'</td><td nowrap>'+obj['data'][i].client_name+agency+'</td><td nowrap>'+obj['data'][i].username+'</td><td nowrap>'+formatter.format(amount)+'</td><td>'+start_date.toLocaleString(lang).split(" ")[0].replace(",","")+'</td><td>'+stop_date.toLocaleString(lang).split(" ")[0].replace(",","")+'</td><td style="text-align:center;" ><span id="status_'+obj['data'][i].UUID+'" class="material-icons" title="'+obj['data'][i].status_percent+'% '+translateText(obj['data'][i].status_name,localStorage.getItem('ulang'))+'" style="color:'+color_status+'">thermostat</span><br/><span class="status-description" style="background-color:'+color_status+'; color:'+color_letter+'">&nbsp;&nbsp;'+obj['data'][i].status_percent+'% '+translateText(obj['data'][i].status_name,localStorage.getItem('ulang'))+'&nbsp;&nbsp;</span></td><td nowrap style="text-align:center;">';
                         // information card
-                        html += '<a href="?pr=Li9wYWdlcy9wcm9wb3NhbHMvaW5mby5waHA=&ppid='+obj[i].UUID+'"><span class="material-icons" style="font-size:1.5rem; color:black;" title="Information Card '+obj[i].offer_name+'">info</span></a>';
+                        html += '<a href="?pr=Li9wYWdlcy9wcm9wb3NhbHMvaW5mby5waHA=&ppid='+obj['data'][i].UUID+'"><span class="material-icons" style="font-size:1.5rem; color:black;" title="Information Card '+obj['data'][i].offer_name+'">info</span></a>';
 
                         // Edit form
-                        html += '<a href="?pr=Li9wYWdlcy9wcm9wb3NhbHMvZm9ybWVkaXQucGhw&ppid='+obj[i].UUID+'"><span class="material-icons" style="font-size:1.5rem; color:black;" title="Edit '+module + ' '+obj[i].offer_name+'">edit</span></a>';
+                        html += '<a href="?pr=Li9wYWdlcy9wcm9wb3NhbHMvZm9ybWVkaXQucGhw&ppid='+obj['data'][i].UUID+'"><span class="material-icons" style="font-size:1.5rem; color:black;" title="Edit '+module + ' '+obj['data'][i].offer_name+'">edit</span></a>';
 
                         // Remove 
-                        html += '<a href="javascript:void(0)" onclick="handleRemove(\''+obj[i].UUID+'\',\''+obj[i].status_percent+'\')"><span class="material-icons" style="font-size:1.5rem; color:black;" title="Remove '+module + ' '+obj[i].offer_name+'">delete</span></a>';
+                        html += '<a href="javascript:void(0)" onclick="handleRemove(\''+obj['data'][i].UUID+'\',\''+obj['data'][i].status_percent+'\')"><span class="material-icons" style="font-size:1.5rem; color:black;" title="Remove '+module + ' '+obj['data'][i].offer_name+'">delete</span></a>';
 
                         html += '</td></tr>';
                     }
                     tableList.innerHTML = html;
+                    pagesController(page,obj['pages']);
+                    if(parseInt(page) > parseInt(obj['pages'])){
+                        page        = 1;
+                        filter.goto.value = 1;
+                    }    
                 }
             }
             else{
@@ -1067,6 +1085,36 @@ function handleListOnLoad(search) {
         request.send();
     }
     // window.location.href = '?pr=Li9wYWdlcy91c2Vycy9saXN0LnBocA==';
+}
+
+function pagesController(actualpage,totalpages){
+    document.getElementById('btn_firstpage').disabled=false;
+    document.getElementById('btn_beforepage').disabled=false;
+    document.getElementById('btn_nextpage').disabled=false;
+    document.getElementById('btn_lastpage').disabled=false;
+
+    if(parseInt(filter.goto.value) <= 1){ 
+        document.getElementById('btn_firstpage').disabled=true;
+        document.getElementById('btn_beforepage').disabled=true;
+    }
+    if(parseInt(filter.goto.value) >= totalpages){ 
+        document.getElementById('btn_nextpage').disabled=true;
+        document.getElementById('btn_lastpage').disabled=true;
+    }
+
+    filter.totalpages.value = totalpages;
+    document.getElementById('text-totalpages').innerText = totalpages;
+
+}
+
+function gotoLast(){
+    totalpages = filter.totalpages.value;
+    if(parseInt(filter.goto.value) <= totalpages){
+        handleListOnLoad(filter.search.value,totalpages); 
+        filter.goto.value = totalpages;
+    }else{
+        document.getElementById('btn_lastpage').disabled=true;
+    }
 }
 
 function handleRemoveProductFromProposal(proposalproduct_id){
