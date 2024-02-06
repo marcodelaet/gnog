@@ -33,6 +33,8 @@ if(array_key_exists('auth_api',$_REQUEST)){
     $group          = $rsTkUser[0]['user_type'];
 
     // setting query
+    $offSet         = 0;
+    $numberOfRegistries = 30;
     $columns        = "UUID,product_id,making_banners, production_cost, production_cost_int, product_name,salemodel_id,is_taxable,tax_percent_int,salemodel_name,provider_id,provider_name,user_id,username,client_id,client_name,agency_id,agency_name,status_id,status_name,status_percent,offer_name,description,start_date,stop_date,sum(amount) as amount,currency,quantity,is_active";
     $tableOrView    = "view_proposals";
     $orderBy        = " group by UUID";
@@ -50,7 +52,22 @@ if(array_key_exists('auth_api',$_REQUEST)){
             $jocker         = $_REQUEST['search'];
             $filters        .= " search like '%$jocker%'";
         }
-    }  
+    }
+
+    // page
+    if(array_key_exists('p',$_REQUEST)){
+        if($_REQUEST['p']!==''){
+            $offSet        = intval($_REQUEST['p']) * $numberOfRegistries;
+        }
+    }
+    $limit          = "limit $offSet, $numberOfRegistries";
+
+    if(array_key_exists('allRows',$_REQUEST)){
+        if($_REQUEST['allRows']!=='0'){
+            $limit = '';
+            $numberOfRegistries = 10000000;
+        }
+    }
     
     if($filters !== ''){
         $filters = "WHERE ".$filters;
@@ -58,22 +75,24 @@ if(array_key_exists('auth_api',$_REQUEST)){
 
     // Query creation
     $sql = "SELECT $columns FROM $tableOrView $filters $orderBy";
+    $sqlPaged = "SELECT $columns FROM $tableOrView $filters $orderBy $limit";
+    
     // LIST data
     //echo $sql;
-    $rs = $DB->getData($sql);
-    $numberOfRows = $DB->numRows($sql); 
+    $rs = $DB->getData($sqlPaged);
+    $rsNumRows = $DB->numRows($sql);
 
     // Response JSON 
     header('Content-type: application/json');
-    if($rs){
-        if($numberOfRows > 0){
-            echo json_encode($rs);
+    if($rsNumRows > 0){
+        $totalPages  = intval($rsNumRows / $numberOfRegistries)+1;
+        if($rs){
+            echo json_encode(["response" => "OK","data" => $rs, "rows" => $rsNumRows, "pages" => "$totalPages"]);
+        } else {
+            echo json_encode(["response" => "ERROR"]);
         }
-        else
-            echo "[{'response':'0 results'}]";
-    }
-    else{
-        echo '[{"response":"Error"}]';
+    } else {
+        echo json_encode(["response" => "ZERO_RETURN", "rows" => $rsNumRows, "pages" => "0"]);
     }
 }
 

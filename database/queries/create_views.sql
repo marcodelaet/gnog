@@ -407,7 +407,16 @@ CREATE VIEW view_proposals AS (
 	pb.cost_int as productbillboard_cost_int,
 	pb.price_int as productbillboard_price_int,
 	ppp.is_active as is_proposalproduct_active,
-	CONCAT((pps.id),pd.name,sm.name,pv.name,u.username,adv.corporate_name,pps.offer_name,ppp.currency) AS search
+	CONCAT(
+		pps.id,
+		CASE WHEN pd.name IS NOT NULL THEN pd.name ELSE '' END,
+		CASE WHEN sm.name IS NOT NULL THEN sm.name ELSE '' END,
+		CASE WHEN pv.name IS NOT NULL THEN pv.name ELSE '' END,
+		CASE WHEN u.username IS NOT NULL THEN u.username ELSE '' END,
+		CASE WHEN adv.corporate_name IS NOT NULL THEN adv.corporate_name ELSE '' END,
+		pps.offer_name,
+		CASE WHEN ppp.currency IS NOT NULL THEN ppp.currency ELSE '' END
+		) AS search
 	FROM 
 	proposals pps
 	LEFT JOIN proposalsxproducts ppp ON ppp.proposal_id = pps.id
