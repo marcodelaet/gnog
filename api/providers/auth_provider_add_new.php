@@ -1,6 +1,6 @@
 <?php
-// error_reporting(E_ALL);
-// ini_set('display_errors', 1); 
+ error_reporting(E_ALL);
+ ini_set('display_errors', 1); 
 
 //REQUIRE GLOBAL conf
 require_once('../../database/.config');
@@ -47,16 +47,17 @@ if(array_key_exists('auth_api',$_REQUEST)){
 
     $columns    = "id, name, webpage_url, address, is_active, created_at, updated_at";
     $values     = "(UUID()),'$name','$webpage_url','$address','Y',now(),now()";
-    $table      = "providers";
+    $module      = "providers";
 
     // Query creation
-    $sql = "INSERT INTO $table ($columns) VALUES ($values)";
+    $sql = "INSERT INTO $module ($columns) VALUES ($values)";
     // INSERT data
     $rs = $DB->executeInstruction($sql);
 
     // Response JSON 
+    header('Content-type: application/json');
     if($rs){
-        $query_get_id = "SELECT id FROM providers WHERE name='$name' AND webpage_url='$webpage_url' AND address='$address'";
+        $query_get_id = "SELECT id FROM $module WHERE name='$name' AND webpage_url='$webpage_url' AND address='$address'";
 
         // getting Invoice ID
         $rs_provider    = $DB->getData($query_get_id);
@@ -67,12 +68,14 @@ if(array_key_exists('auth_api',$_REQUEST)){
         $description_en     = "New provider $name registered on the platform";
         $description_es     = "Nuevo proveedor $name registrado en la plataforma";
         $description_ptbr   = "Novo provedor $name registrado na plataforma";
-        //$message = "setHistory($user_id,'invoices',$description,$user_token,$form_token,'text')";
+
         setHistory($user_id,'providers',$provider_id,$description_en,$description_es,$description_ptbr,$user_token,$auth_api,'text');
 
-        header('Content-type: application/json');
-            echo json_encode(['status' => 'OK']);    
+        echo json_encode(['result' => 'OK','return_id' => $provider_id]);
+    } else {
+        echo json_encode(['result' => 'ERROR']);
     }
+
 
 }
 

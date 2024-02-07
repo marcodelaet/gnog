@@ -50,17 +50,16 @@ if(array_key_exists('auth_api',$_REQUEST)){
     // LIST data
    // echo $sql;
     $rs = $DB->getData($sql);
-
-    
-
-  
+    $numRows = $DB->numRows($sql);
 
     // Response JSON 
     header('Content-type: application/json');
-    if($rs){
-        echo json_encode($rs);
+    if($numRows > 0){
+        if($rs){
+            echo json_encode(['result'=>'OK','data'=>$rs,'numRows'=>$numRows]);
+        }    
     } else {
-        echo '[{"response":"Error"}]';
+        echo json_encode(['result'=>'ZERO_RETURN','numRows'=>$numRows]);
     }
 }
 

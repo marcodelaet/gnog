@@ -156,16 +156,23 @@ function handleSubmit(form) {
         if(errors > 0){
             alert(message);
         } else{
-            const requestURL = window.location.protocol+'//'+locat+'api/providers/auth_provider_add_new.php?auth_api='+authApi+'&tk='+user_token+'&uid='+user_id+'&name='+xname+'&webpage_url='+webpage_url+'&address='+address+'&product_id='+product_id+'&salemodel_id='+salemodel_id+'&product_price='+product_price+'&currency='+currency;
+            const requestURL = window.location.protocol+'//'+locat+'api/'+module+'s/auth_'+module+'_add_new.php?auth_api='+authApi+'&tk='+user_token+'&uid='+user_id+'&name='+xname+'&webpage_url='+webpage_url+'&address='+address;
             console.log(requestURL);
             const request = new XMLHttpRequest();
             request.onreadystatechange = function() {
                 if (this.readyState == 4 && this.status == 200) {
-                   // Typical action to be performed when the document is ready:
-                   obj = JSON.parse(request.responseText);
-                   form.btnSave.innerHTML = "Save";
-                   //alert('Status: '+obj.status);
-                   window.location.href = '?pr=Li9wYWdlcy9wcm92aWRlcnMvdGtwL2luZGV4LnBocA==';
+                    // Typical action to be performed when the document is ready:
+                    obj = JSON.parse(request.responseText);
+                    if(obj.result=='OK'){
+                        form.btnSave.innerHTML = ucfirst(translateText('continue',localStorage.getItem('ulang')));
+                        if(confirm(translateText('do_you_want',localStorage.getItem('ulang'))+' '+translateText('add+',localStorage.getItem('ulang'))+' '+translateText('contact',localStorage.getItem('ulang'))+'s '+translateText('to_the_m',localStorage.getItem('ulang'))+' '+translateText(module,localStorage.getItem('ulang'))+' '+xname+'?')){
+                            window.location.href = '?pr=Li9wYWdlcy9hZHZlcnRpc2Vycy9jb250YWN0cy9mb3JtLnBocA==&md=Provider&pid='+obj.return_id;
+                        } else {
+                            window.location.href = '?pr=Li9wYWdlcy9wcm92aWRlcnMvdGtwL2luZGV4LnBocA==';
+                        }
+
+                        
+                    }
                 }
                 else{
                     form.btnSave.innerHTML = "Saving...";
@@ -509,7 +516,7 @@ function handleOnLoad(pid,form) {
     }
 }
 
-function handleListOnLoad(search) {
+function handleListOnLoad(search,page) {
     errors      = 0;
     authApi     = csrf_token;
     locat       = window.location.hostname;
@@ -524,6 +531,13 @@ function handleListOnLoad(search) {
         filters     += '&search='+search;
     }
 
+    pages       = '';
+    if(typeof page == 'undefined')
+        page  = '1';
+    if(page !== '1'){
+        pages     += '&p='+(parseInt(page)-1);
+    }
+
     if(locat.slice(-1) != '/')
         locat += '/';
 
@@ -531,79 +545,97 @@ function handleListOnLoad(search) {
 
     } else{
         tableList   = document.getElementById('listProviders');
-        const requestURL = window.location.protocol+'//'+locat+'api/providers/auth_provider_view.php?auth_api='+authApi+filters+groupby+addColumn;
-        console.log(requestURL);
+        const requestURL = window.location.protocol+'//'+locat+'api/providers/auth_provider_view.php?auth_api='+authApi+filters+groupby+addColumn+pages;
+        //console.log(requestURL);
         const request = new XMLHttpRequest();
         request.onreadystatechange = function() {
             //console.log(this.readyState + '/n' + this.status);
             if (this.readyState == 4 && this.status == 200) {
                 // Typical action to be performed when the document is ready:
                 obj         = JSON.parse(request.responseText);
-                html        = '';
-                country     = '';
-                //console.log(obj);
-                if(obj.rows > 0){
-                    for(var i=0;i < obj['data'].length; i++){
-                        
-                        color_status = '#d60b0e';
-                        if(obj['data'][i].is_active == 'Y')
-                            color_status = '#298c3d';
-
-                        switch (obj['data'][i].phone_international_code) {
-                            case '52':
-                                country = 'MEX';
-                                break;
-                            case '55':
-                                country = 'BRA';
-                                break;
-                            case '1':
-                                country = 'USA';
-                                break;
-                            default:
-                                country = 'XXX';
-                        }
-                        phone_number    = "";
-                        contact         = "-------";
-                    //alert(typeof(obj['data'][i].contact));
-                    phone_number = "--------"
-                        if((obj['data'][i].contact !== 'null') && (obj['data'][i].contact !== null)){
-                            phone_number    = obj['data'][i].phone;
-                            contact         = obj['data'][i].contact;
-                            if((obj['data'][i].phone_prefix!='') && (obj['data'][i].phone_prefix !== 'null') && (obj['data'][i].phone_prefix !== null))
-                                phone_number = '+'+obj['data'][i].phone_international_code+obj['data'][i].phone_prefix+obj['data'][i].phone_number.replace(" ","");
-
-                            if((obj['data'][i].phone_prefix == 'null') || (obj['data'][i].phone_prefix == null))
-                                phone_number = '+'+obj['data'][i].phone_international_code+obj['data'][i].phone_number.replace(" ","");
-                        }
-                        webpage = '-------';
-                        if( (obj['data'][i].webpage_url !== 'null') && (obj['data'][i].webpage_url !== null))
-                            webpage = obj['data'][i].webpage_url;
-                        string_qty_contact = "No contacts";
-                        if(obj['data'][i].qty_contact > 0)
-                            string_qty_contact = obj['data'][i].qty_contact + ' contact';
-                        if(obj['data'][i].qty_contact > 1)
-                            string_qty_contact += 's';
-                        html += '<tr><td>'+obj['data'][i].name+'</td><td>'+webpage+'</td><td nowrap>'+string_qty_contact+'</td><td style="text-align:center;"><span id="locked_status_'+obj['data'][i].uuid_full+'" class="material-icons" style="color:'+color_status+'">circle</span></td><td nowrap style="text-align:center;">';
-                        // information card
-                        html += '<a href="?pr=Li9wYWdlcy9wcm92aWRlcnMvaW5mby5waHA=&pid='+obj['data'][i].uuid_full+'"><span class="material-icons" style="font-size:1.5rem; color:black;" title="Information Card '+obj['data'][i].name+'">info</span></a>';
-
-                        // Edit form
-                        html += '<a href="?pr=Li9wYWdlcy9wcm92aWRlcnMvZm9ybWVkaXQucGhw&pid='+obj['data'][i].uuid_full+'"><span class="material-icons" style="font-size:1.5rem; color:black;" title="Edit '+module + ' '+obj['data'][i].name+'">edit</span></a>';
-
-                        // Remove 
-                        html += '<a href="javascript:void(0)" onclick="handleRemove(\''+obj['data'][i].uuid_full+'\',\''+obj['data'][i].is_active+'\')"><span class="material-icons" style="font-size:1.5rem; color:black;" title="Remove '+module + ' '+obj['data'][i].name+'">delete</span></a>';
-
-                        // Add Contact
-                        html += '<a href="?pr=Li9wYWdlcy9hZHZlcnRpc2Vycy9jb250YWN0cy9mb3JtLnBocA==&md=Provider&tid='+obj['data'][i].uuid_full+'"><span class="material-icons" style="font-size:1.5rem; color:black;" title="Add a contact to '+module + ' '+obj['data'][i].name+'">contact_mail</span></a>';
-
-                        html += '</td></tr>';
+                if(obj.response == 'ZERO_RETURN'){
+                    html = '<tr><td colspan="8"><div style="margin-left:45%; margin-right:45%;text-align:center;" role="status">';
+                    html += '0 Results';
+                    html += '</td></tr>';
+                    pagesController(page,obj['pages']);
+                    if(parseInt(page) > parseInt(obj['pages'])){
+                        page        = 1;
+                        filter.goto.value = 1;
                     }
-                } else {
-                    html = '<tr><td colspan="5"><div style="text-align:center;" role="status">';
-                    html += '<span class="returning_zero">0 results</span>';
-                    html += '</div></td></tr>';
+                }else{
+                    html        = '';
+                    country     = '';
+                    //console.log(obj);
+                    if(obj.rows > 0){
+                        for(var i=0;i < obj['data'].length; i++){
+                            
+                            color_status = '#d60b0e';
+                            if(obj['data'][i].is_active == 'Y')
+                                color_status = '#298c3d';
+
+                            switch (obj['data'][i].phone_international_code) {
+                                case '52':
+                                    country = 'MEX';
+                                    break;
+                                case '55':
+                                    country = 'BRA';
+                                    break;
+                                case '1':
+                                    country = 'USA';
+                                    break;
+                                default:
+                                    country = 'XXX';
+                            }
+                            phone_number    = "";
+                            contact         = "-------";
+                        //alert(typeof(obj['data'][i].contact));
+                        phone_number = "--------"
+                            if((obj['data'][i].contact !== 'null') && (obj['data'][i].contact !== null)){
+                                phone_number    = obj['data'][i].phone;
+                                contact         = obj['data'][i].contact;
+                                if((obj['data'][i].phone_prefix!='') && (obj['data'][i].phone_prefix !== 'null') && (obj['data'][i].phone_prefix !== null))
+                                    phone_number = '+'+obj['data'][i].phone_international_code+obj['data'][i].phone_prefix+obj['data'][i].phone_number.replace(" ","");
+
+                                if((obj['data'][i].phone_prefix == 'null') || (obj['data'][i].phone_prefix == null))
+                                    phone_number = '+'+obj['data'][i].phone_international_code+obj['data'][i].phone_number.replace(" ","");
+                            }
+                            webpage = '-------';
+                            if( (obj['data'][i].webpage_url !== 'null') && (obj['data'][i].webpage_url !== null))
+                                webpage = obj['data'][i].webpage_url;
+                            string_qty_contact = "No contacts";
+                            if(obj['data'][i].qty_contact > 0)
+                                string_qty_contact = obj['data'][i].qty_contact + ' contact';
+                            if(obj['data'][i].qty_contact > 1)
+                                string_qty_contact += 's';
+                            html += '<tr><td>'+obj['data'][i].name+'</td><td>'+webpage+'</td><td nowrap>'+string_qty_contact+'</td><td style="text-align:center;"><span id="locked_status_'+obj['data'][i].uuid_full+'" class="material-icons" style="color:'+color_status+'">circle</span></td><td nowrap style="text-align:center;">';
+                            // information card
+                            html += '<a href="?pr=Li9wYWdlcy9wcm92aWRlcnMvaW5mby5waHA=&pid='+obj['data'][i].uuid_full+'"><span class="material-icons" style="font-size:1.5rem; color:black;" title="Information Card '+obj['data'][i].name+'">info</span></a>';
+
+                            // Edit form
+                            html += '<a href="?pr=Li9wYWdlcy9wcm92aWRlcnMvZm9ybWVkaXQucGhw&pid='+obj['data'][i].uuid_full+'"><span class="material-icons" style="font-size:1.5rem; color:black;" title="Edit '+module + ' '+obj['data'][i].name+'">edit</span></a>';
+
+                            // Remove 
+                            html += '<a href="javascript:void(0)" onclick="handleRemove(\''+obj['data'][i].uuid_full+'\',\''+obj['data'][i].is_active+'\')"><span class="material-icons" style="font-size:1.5rem; color:black;" title="Remove '+module + ' '+obj['data'][i].name+'">delete</span></a>';
+
+                            // Add Contact
+                            html += '<a href="?pr=Li9wYWdlcy9hZHZlcnRpc2Vycy9jb250YWN0cy9mb3JtLnBocA==&md=Provider&pid='+obj['data'][i].uuid_full+'"><span class="material-icons" style="font-size:1.5rem; color:black;" title="'+ucfirst(translateText('add+',localStorage.getItem('ulang')))+' '+translateText('a_m',localStorage.getItem('ulang'))+' '+translateText('contact',localStorage.getItem('ulang'))+' '+translateText('to_the_m',localStorage.getItem('ulang'))+' '+translateText(module,localStorage.getItem('ulang')) + ' '+obj['data'][i].name+'">contact_mail</span></a>';
+
+                            html += '</td></tr>';
+                        }
+                        pagesController(page,obj['pages']);
+                        if(parseInt(page) > parseInt(obj['pages'])){
+                            page        = 1;
+                            filter.goto.value = 1;
+                        }    
+    
+                    } else {
+                        html = '<tr><td colspan="5"><div style="text-align:center;" role="status">';
+                        html += '<span class="returning_zero">0 results</span>';
+                        html += '</div></td></tr>';
+                    }
+                    tableList.innerHTML = html;
                 }
-                tableList.innerHTML = html;
+                    
             }
             else{
                 html = '<tr><td colspan="5"><div style="margin-left:45%; margin-right:45%;text-align:center;" class="spinner-border" role="status">';
@@ -676,7 +708,7 @@ function sendmailToProviderContact(form){
         alert(message);
     } else{
         const requestURL = window.location.protocol+'//'+locat+'api/providers/auth_provider_sendmail.php';
-        console.log(requestURL+'?'+querystring);
+        //console.log(requestURL+'?'+querystring);
         const request = new XMLHttpRequest();
         request.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {
@@ -695,5 +727,35 @@ function sendmailToProviderContact(form){
         request.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
         //request.responseType = 'json';
         request.send(querystring);
+    }
+}
+
+function pagesController(actualpage,totalpages){
+    document.getElementById('btn_firstpage').disabled=false;
+    document.getElementById('btn_beforepage').disabled=false;
+    document.getElementById('btn_nextpage').disabled=false;
+    document.getElementById('btn_lastpage').disabled=false;
+
+    if(parseInt(filter.goto.value) <= 1){ 
+        document.getElementById('btn_firstpage').disabled=true;
+        document.getElementById('btn_beforepage').disabled=true;
+    }
+    if(parseInt(filter.goto.value) >= totalpages){ 
+        document.getElementById('btn_nextpage').disabled=true;
+        document.getElementById('btn_lastpage').disabled=true;
+    }
+
+    filter.totalpages.value = totalpages;
+    document.getElementById('text-totalpages').innerText = totalpages;
+
+}
+
+function gotoLast(){
+    totalpages = filter.totalpages.value;
+    if(parseInt(filter.goto.value) <= totalpages){
+        handleListOnLoad(filter.search.value,totalpages); 
+        filter.goto.value = totalpages;
+    }else{
+        document.getElementById('btn_lastpage').disabled=true;
     }
 }

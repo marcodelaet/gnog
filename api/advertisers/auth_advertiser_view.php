@@ -25,6 +25,9 @@ if(array_key_exists('auth_api',$_REQUEST)){
         }
     }
 
+    $offSet         = 0;
+    $numberOfRegistries = 10;
+
     $columns = " left(uuid,13)as uuid, executive_id, username, email, uuid as uuid_full, making_banners, $addColumn corporate_name, address, concat(contact_name,' ',contact_surname,' (', contact_email,')') as contact, contact_name, contact_surname, contact_email, contact_position, phone_international_code, phone_prefix, phone_number, is_agency, is_active, concat('+',phone_international_code,phone_number) as phone";
     $tableOrView    = "view_advertisers";
     $orderBy        = " ORDER BY corporate_name";
@@ -68,22 +71,41 @@ if(array_key_exists('auth_api',$_REQUEST)){
         $filters = "WHERE ".$filters;
     }
 
+    // page
+    if(array_key_exists('p',$_REQUEST)){
+        if($_REQUEST['p']!==''){
+            $offSet        = intval($_REQUEST['p']) * $numberOfRegistries;
+        }
+    }
+    $limit          = "limit $offSet, $numberOfRegistries";
 
+    if(array_key_exists('allRows',$_REQUEST)){
+        if($_REQUEST['allRows']!=='0'){
+            $limit = '';
+            $numberOfRegistries = 10000000;
+        }
+    }
     // Query creation
     $sql = "SELECT $columns FROM $tableOrView $filters $groupBy $orderBy";
+    $sqlPaged = "SELECT $columns FROM $tableOrView $filters $groupBy $orderBy $limit";
     // LIST data
     //echo $sql;
-    $rs = $DB->getData($sql);
-
-  
+    $rs = $DB->getData($sqlPaged);
+    $rsNumRows = $DB->numRows($sql);
 
     // Response JSON 
     header('Content-type: application/json');
-    if($rs){
-        echo json_encode($rs);
+    if($rsNumRows > 0){
+        $totalPages  = intval($rsNumRows / $numberOfRegistries)+1;
+        if($rs){
+            echo json_encode(["response" => "OK","data" => $rs, "rows" => $rsNumRows, "pages" => "$totalPages"]);
+        } else {
+            echo json_encode(["response" => "ERROR"]);
+        }
     } else {
-        echo '[{"response":"Error"}]';
+        echo json_encode(["response" => "ZERO_RETURN", "rows" => $rsNumRows, "pages" => "0"]);
     }
+
 }
 
 //close connection

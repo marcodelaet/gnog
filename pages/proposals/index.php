@@ -34,8 +34,8 @@ $moduleNameProp = 'Proposal';
                     <div class="input-group col-sm-2">
                     </div>
                     <div class="input-group col-sm-4">
-                        <input type="search" name="search" class="form-control rounded" placeholder="Search..." aria-label="Search" />
-                        <button class="material-icons btn btn-outline-primary my-2 my-sm-0" title="Search" type="button" onClick="filter.goto.value = 1; handleListOnLoad(filter.search.value,filter.goto.value)">search</button>
+                        <input type="search" name="search" class="form-control rounded" placeholder="<?=ucfirst(translateText('search'))?>..." aria-label="<?=ucfirst(translateText('search'))?>" />
+                        <button class="material-icons btn btn-outline-primary my-2 my-sm-0" title="<?=ucfirst(translateText('search'))?>" type="button" onClick="filter.goto.value = 1; handleListOnLoad(filter.search.value,filter.goto.value)">search</button>
                     </div>
                 </div>
             </form>

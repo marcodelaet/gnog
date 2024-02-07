@@ -997,6 +997,27 @@ VALUES
 INSERT INTO translates 
 (id, code_str, text_eng, text_esp, text_ptbr, is_active, created_at, updated_at)
 VALUES
+(UUID(), 'active', 'active', 'activo', 'ativo', 'Y', NOW(), NOW());
+
+INSERT INTO translates 
+(id, code_str, text_eng, text_esp, text_ptbr, is_active, created_at, updated_at)
+VALUES
+(UUID(), 'a_v_m', 'an', 'un', 'um', 'Y', NOW(), NOW()),
+(UUID(), 'a_v_f', 'an', 'una', 'uma', 'Y', NOW(), NOW()),
+(UUID(), 'a_m', 'a', 'un', 'um', 'Y', NOW(), NOW()),
+(UUID(), 'a_f', 'a', 'una', 'uma', 'Y', NOW(), NOW());
+
+
+INSERT INTO translates 
+(id, code_str, text_eng, text_esp, text_ptbr, is_active, created_at, updated_at)
+VALUES
+(UUID(), 'do_you_want', 'do you want', 'quieres', 'gostaria', 'Y', NOW(), NOW()),
+(UUID(), 'to_the_m', 'to the', 'para el', 'para o', 'Y', NOW(), NOW()),
+(UUID(), 'to_the_f', 'to the', 'para la', 'para a', 'Y', NOW(), NOW());
+
+INSERT INTO translates 
+(id, code_str, text_eng, text_esp, text_ptbr, is_active, created_at, updated_at)
+VALUES
 (UUID(), 'no_address_information', 'no address information', 'no se ha proporcionado ninguna dirección', 'Nenhum endereço informado', 'Y', NOW(), NOW());
 
 

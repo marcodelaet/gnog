@@ -30,7 +30,7 @@ if(array_key_exists('auth_api',$_REQUEST)){
     }
 
     $offSet         = 0;
-    $numberOfRegistries = 500;
+    $numberOfRegistries = 15;
     $columns        = "left(uuid,13) as uuid, uuid as uuid_full, product_id, product_name, $addColumn salemodel_id, salemodel_name, product_price, currency, name, address, webpage_url, concat(contact_name,' ', contact_surname,' (', contact_email,')') as contact, contact_name, contact_surname, contact_email, contact_position, phone_international_code, phone_prefix, phone_number, concat('+',phone_international_code,phone_number) as phone, is_active, concat(name,webpage_url,contact_name, contact_surname, contact_email,phone_international_code, phone_prefix, phone_number) as search";
     $tableOrView    = "view_providers";
     $orderBy        = "order by name";
@@ -44,6 +44,13 @@ if(array_key_exists('auth_api',$_REQUEST)){
         }
     }
     $limit          = "limit $offSet, $numberOfRegistries";
+
+    if(array_key_exists('allRows',$_REQUEST)){
+        if($_REQUEST['allRows']!=='0'){
+            $limit = '';
+            $numberOfRegistries = 10000000;
+        }
+    }
 
     // order by
     if(array_key_exists('orderby',$_REQUEST)){
