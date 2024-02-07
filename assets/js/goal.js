@@ -194,7 +194,7 @@ function handleListGoalOnLoad(currency) {
     if(errors > 0){
 
     } else{
-        const requestURL = window.location.protocol+'//'+locat+'api/'+moduleGoal+'s/auth_'+moduleGoal+'_list.php?auth_api='+htmlentities(authApi)+filters;
+        const requestURL = window.location.protocol+'//'+locat+'api/'+moduleGoal+'s/auth_'+moduleGoal+'_list.php?auth_api='+decodeURIComponent(authApi)+filters;
         console.log(requestURL);
         const request   = new XMLHttpRequest();
         request.onreadystatechange = function() {

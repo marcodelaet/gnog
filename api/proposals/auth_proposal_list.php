@@ -34,7 +34,7 @@ if(array_key_exists('auth_api',$_REQUEST)){
 
     // setting query
     $offSet         = 0;
-    $numberOfRegistries = 30;
+    $numberOfRegistries = 20;
     $columns        = "UUID,product_id,making_banners, production_cost, production_cost_int, product_name,salemodel_id,is_taxable,tax_percent_int,salemodel_name,provider_id,provider_name,user_id,username,client_id,client_name,agency_id,agency_name,status_id,status_name,status_percent,offer_name,description,start_date,stop_date,sum(amount) as amount,currency,quantity,is_active";
     $tableOrView    = "view_proposals";
     $orderBy        = " group by UUID";
