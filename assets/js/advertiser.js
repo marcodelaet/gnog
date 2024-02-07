@@ -7,18 +7,25 @@ function handleSubmit(form) {
     if (form.corporate_name.value !== '') {
         //form.submit();
         errors      = 0;
-        authApi     = 'dasdasdkasdeewef';
-
+        authApi     = csrf_token;
+        user_token  = form.tku.value;
+        user_id     = form.uid.value;
+        
         agency      = 'N';
-        if(form.agency.checked)
+        if(form.agency_option.checked)
             agency              = 'Y';
         making_banners = 'N';
-        if(form.making_banners.checked)
+        if(form.making_banners_option.checked)
             making_banners      = 'Y';
         corporate_name          = encodeURIComponent(form.corporate_name.value);
         address                 = encodeURIComponent(form.address.value);
-        
         executive_id            = form.executive_id.value;
+
+        var formData = new FormData(form);
+        formData.append("making_banners",making_banners);
+        formData.append("agency",agency);
+        formData.append("tk",user_token);
+
         
         locat       = window.location.hostname;
         if(locat.slice(-1) != '/')
@@ -33,24 +40,28 @@ function handleSubmit(form) {
         if(errors > 0){
 
         } else{
-            const requestURL = window.location.protocol+'//'+locat+'api/advertisers/auth_advertiser_add_new.php?auth_api='+authApi+'&agency='+agency+'&making_banners='+making_banners+'&corporate_name='+corporate_name+'&address='+address+'&executive_id='+executive_id;
+            const requestURL = window.location.protocol+'//'+locat+'api/advertisers/auth_advertiser_add_new.php?auth_api='+authApi+'&tk='+user_token+'&uid='+user_id+'&agency='+agency+'&making_banners='+making_banners+'&corporate_name='+corporate_name+'&address='+address+'&executive_id='+executive_id;
             console.log(requestURL);
             const request = new XMLHttpRequest();
             request.onreadystatechange = function() {
                 if (this.readyState == 4 && this.status == 200) {
-                   // Typical action to be performed when the document is ready:
-                   obj = JSON.parse(request.responseText);
-                   form.btnSave.innerHTML = "Save";
-                   //console.log('Status: '+obj.status);
-                   window.location.href = '?pr=Li9wYWdlcy9hZHZlcnRpc2Vycy90a3AvaW5kZXgucGhw';
-                }
-                else{
+                    // Typical action to be performed when the document is ready:
+                    obj = JSON.parse(request.responseText);
+                    if(obj.result=='OK'){
+                        form.btnSave.innerHTML = ucfirst(translateText('continue',localStorage.getItem('ulang')));
+                        if(confirm(translateText('do_you_want',localStorage.getItem('ulang'))+' '+translateText('add+',localStorage.getItem('ulang'))+' '+translateText('contact',localStorage.getItem('ulang'))+'s '+translateText('to_the_m',localStorage.getItem('ulang'))+' '+translateText(module,localStorage.getItem('ulang'))+' '+decodeURIComponent(corporate_name)+'?')){
+                            window.location.href = '?pr=Li9wYWdlcy9hZHZlcnRpc2Vycy9jb250YWN0cy9mb3JtLnBocA==&md=Advertiser&aid='+obj.return_id;
+                        } else {
+                            window.location.href = '?pr=Li9wYWdlcy9hZHZlcnRpc2Vycy90a3AvaW5kZXgucGhw';
+                        }
+                    }
+                }else{
                     form.btnSave.innerHTML = "Saving...";
                 }
             };
-            request.open('GET', requestURL);
+            request.open('POST', requestURL);
             //request.responseType = 'json';
-            request.send();
+            request.send(formData);
         }
     } else
         alert('Please, fill all required fields (*)');
@@ -60,7 +71,7 @@ function handleSubmitCSV(form){
     if (form.advertiser_file.value !== '') {
         //form.submit();
         errors      = 0;
-        authApi     = 'dasdasdkasdeewef';
+        authApi     = csrf_token;
 
         file        = form.advertiser_file;
         var formData = new FormData(form);
@@ -109,7 +120,7 @@ function handleEditSubmit(aid,form) {
         //form.submit();
    
         errors      = 0;
-        authApi     = 'dasdasdkasdeewef';
+        authApi     = csrf_token;
 
         agency      = 'N';
         if(form.agency.checked)
@@ -171,7 +182,7 @@ function handleEditSubmit(aid,form) {
 
 function handleViewOnLoad(aid) {
     errors      = 0;
-    authApi     = 'dasdasdkasdeewef';
+    authApi     = csrf_token;
     locat       = window.location.hostname;
 
     filters     = '&aid='+aid;
@@ -192,44 +203,44 @@ function handleViewOnLoad(aid) {
             if (this.readyState == 4 && this.status == 200) {
                 // Typical action to be performed when the document is ready:
                 obj = JSON.parse(request.responseText);
-                if(obj[0].is_agency == 'Y')
+                if(obj['data'][0].is_agency == 'Y')
                     agency = 'Agency';
-                if(obj[0].making_banners == 'Y')
+                if(obj['data'][0].making_banners == 'Y')
                     impressions     = 'yes';
-                if(obj[0].phone_number !== null)
-                    phone_number = obj[0].phone_number.replace(" ","");
-                if((obj[0].phone_prefix!==null) && (obj[0].phone_prefix!='0'))
+                if(obj['data'][0].phone_number !== null)
+                    phone_number = obj['data'][0].phone_number.replace(" ","");
+                if((obj['data'][0].phone_prefix!==null) && (obj['data'][0].phone_prefix!='0'))
                     phone_number = obj[0].phone_prefix+obj[0].phone_number.replace(" ","");
-                document.getElementById('advertiser_name').innerHTML                    = obj[0].corporate_name;
+                document.getElementById('advertiser_name').innerHTML                    = obj['data'][0].corporate_name;
                 document.getElementById('group').innerHTML                              = agency;
                 address = translateText('no_address_information',localStorage.getItem('ulang'));
-                if(obj[0].address!==null){
-                    address = obj[0].address;
+                if(obj['data'][0].address!==null){
+                    address = obj['data'][0].address;
                 }
                     
                 document.getElementById('card-address').innerHTML                       = address;
                 //document.getElementById('impressions').innerHTML                        = impressions;
 
                 xhtml = '';
-                for(i=0;i < obj.length; i++){
+                for(i=0;i < obj['data'].length; i++){
                     xhtml += '<div class="space-blank">&nbsp;</div>';
-                    if(obj[i].contact_name !== null){
-                        if(obj[i].contact_position!='')
-                        position = obj[i].contact_position;
+                    if(obj['data'][i].contact_name !== null){
+                        if(obj['data'][i].contact_position!='')
+                        position = obj['data'][i].contact_position;
                         xhtml += '<div class="'+module+'-data">';
-                        xhtml += '    <spam id="card-contact-fullname-and-position">'+obj[i].contact_name + ' ' + obj[i].contact_surname + ' ('+position+')</spam>';
+                        xhtml += '    <spam id="card-contact-fullname-and-position">'+obj['data'][i].contact_name + ' ' + obj['data'][i].contact_surname + ' ('+position+')</spam>';
                         xhtml += '</div>';
                     }
-                    if(obj[i].contact_email !== null){
+                    if(obj['data'][i].contact_email !== null){
                         xhtml += '<div class="'+module+'-data">';
                         xhtml += '    <spam class="material-icons icon-data">email</spam>';
-                        xhtml += '    <spam id="card-email">'+obj[i].contact_email+'</spam>';
+                        xhtml += '    <spam id="card-email">'+obj['data'][i].contact_email+'</spam>';
                         xhtml += '</div>';
                     }
-                    if(obj[i].phone_international_code !== null){
+                    if(obj['data'][i].phone_international_code !== null){
                         xhtml += '<div class="'+module+'-data">';
                         xhtml += '    <spam class="material-icons icon-data">phone</spam>';
-                        xhtml += '    <spam id="card-phone">+'+obj[i].phone_international_code.replace(" ","") + phone_number+'</spam>';
+                        xhtml += '    <spam id="card-phone">+'+obj['data'][i].phone_international_code.replace(" ","") + phone_number+'</spam>';
                         xhtml += '</div>';
                     }
                 }
@@ -247,7 +258,7 @@ function handleViewOnLoad(aid) {
 
 function handleOnLoad(aid,form) {
     errors      = 0;
-    authApi     = 'dasdasdkasdeewef';
+    authApi     = csrf_token;
     locat       = window.location.hostname;
 
     filters     = '&aid='+aid;
@@ -265,14 +276,14 @@ function handleOnLoad(aid,form) {
             if (this.readyState == 4 && this.status == 200) {
                 // Typical action to be performed when the document is ready:
                 obj = JSON.parse(request.responseText);
-                if(obj[0].is_agency == 'Y')
+                if(obj['data'][0].is_agency == 'Y')
                     form.agency.checked = true;
-                if(obj[0].making_banners == 'Y')
+                if(obj['data'][0].making_banners == 'Y')
                     form.making_banners.checked = true;
-                form.corporate_name.value           = obj[0].corporate_name;
-                form.address.value                  = obj[0].address;
-                if(obj[0].executive_id !== null)
-                    form.executive_id.value             = obj[0].executive_id;
+                form.corporate_name.value           = obj['data'][0].corporate_name;
+                form.address.value                  = obj['data'][0].address;
+                if(obj['data'][0].executive_id !== null)
+                    form.executive_id.value             = obj['data'][0].executive_id;
             }
             else{
                 //form.btnSave.innerHTML = "Searching...";
@@ -284,7 +295,7 @@ function handleOnLoad(aid,form) {
     }
 }
 
-function handleListOnLoad(search) {
+function handleListOnLoad(search,page) {
     errors      = 0;
     authApi     = csrf_token;
     locat       = window.location.hostname;
@@ -299,6 +310,13 @@ function handleListOnLoad(search) {
         filters     += '&search='+search;
     }
 
+    pages       = '';
+    if(typeof page == 'undefined')
+        page  = '1';
+    if(page !== '1'){
+        pages     += '&p='+(parseInt(page)-1);
+    }
+
     if(locat.slice(-1) != '/')
         locat += '/';
 
@@ -306,67 +324,82 @@ function handleListOnLoad(search) {
 
     } else{
         tableList   = document.getElementById('listAdvertisers');
-        const requestURL = window.location.protocol+'//'+locat+'api/advertisers/auth_advertiser_view.php?auth_api='+authApi+filters+groupby+addColumn;
+        const requestURL = window.location.protocol+'//'+locat+'api/advertisers/auth_advertiser_view.php?auth_api='+authApi+filters+groupby+addColumn+pages;
         //console.log(requestURL);
         const request = new XMLHttpRequest();
         request.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {
                 // Typical action to be performed when the document is ready:
                 obj         = JSON.parse(request.responseText);
-                html        = '';
-                country     = '';
-                for(var i=0;i < obj.length; i++){
-                    color_status = '#d60b0e';
-                    if(obj[i].is_active == 'Y')
-                        color_status = '#298c3d';
-                    
-                    advertiser_type = 'Direct';
-                    if(obj[i].is_agency == 'Y')
-                        advertiser_type = 'Agency';
-
-                        switch (obj[i].phone_international_code) {
-                            case '52':
-                                country = 'MEX';
-                                break;
-                            case '55':
-                                country = 'BRA';
-                                break;
-                            case '1':
-                                country = 'USA';
-                                break;
-                            default:
-                                country = 'XXX';
-                        }
-                    string_qty_contact = "No contacts";
-                    if(obj[i].qty_contact > 0)
-                        string_qty_contact = obj[i].qty_contact + ' contact';
-                    if(obj[i].qty_contact > 1)
-                        string_qty_contact += 's';
-                        
-                    html += '<tr><td>'+obj[i].corporate_name+'</td><td>'+advertiser_type+'</td><td nowrap>'+string_qty_contact+'</td><td style="text-align:center;"><span id="locked_status_'+obj[i].uuid_full+'" class="material-icons" style="color:'+color_status+'">circle</span></td><td nowrap style="text-align:center;">';
-                    // information card
-                    html += '<a href="?pr=Li9wYWdlcy9hZHZlcnRpc2Vycy9pbmZvLnBocA==&aid='+obj[i].uuid_full+'"><span class="material-icons" style="font-size:1.5rem; color:black;" title="Information Card '+obj[i].corporate_name+'">info</span></a>';
-
-                    // Edit form
-                    html += '<a href="?pr=Li9wYWdlcy9hZHZlcnRpc2Vycy9mb3JtZWRpdC5waHA=&aid='+obj[i].uuid_full+'"><span class="material-icons" style="font-size:1.5rem; color:black;" title="Edit '+module + ' '+obj[i].corporate_name+'">edit</span></a>';
-
-                    // Remove 
-                    html += '<a href="javascript:void(0)" onclick="handleRemove(\''+obj[i].uuid_full+'\',\''+obj[i].is_active+'\')"><span class="material-icons" style="font-size:1.5rem; color:black;" title="Remove '+module + ' '+obj[i].corporate_name+'">delete</span></a>';
-
-                    // Add Contact
-                    html += '<a href="?pr=Li9wYWdlcy9hZHZlcnRpc2Vycy9jb250YWN0cy9mb3JtLnBocA==&md=Advertiser&aid='+obj[i].uuid_full+'"><span class="material-icons" style="font-size:1.5rem; color:black;" title="Add a contact to '+module + ' '+obj[i].corporate_name+'">contact_mail</span></a>';
-
+                if(obj.response == 'ZERO_RETURN'){
+                    html = '<tr><td colspan="8"><div style="margin-left:45%; margin-right:45%;text-align:center;" role="status">';
+                    html += '0 Results';
                     html += '</td></tr>';
+                    pagesController(page,obj['pages']);
+                    if(parseInt(page) > parseInt(obj['pages'])){
+                        page        = 1;
+                        filter.goto.value = 1;
+                    }
+                }else{
+                    html        = '';
+                    country     = '';
+                    for(var i=0;i < obj['data'].length; i++){
+                        color_status = '#d60b0e';
+                        if(obj['data'][i].is_active == 'Y')
+                            color_status = '#298c3d';
+                        
+                        advertiser_type = 'Direct';
+                        if(obj['data'][i].is_agency == 'Y')
+                            advertiser_type = 'Agency';
+
+                            switch (obj['data'][i].phone_international_code) {
+                                case '52':
+                                    country = 'MEX';
+                                    break;
+                                case '55':
+                                    country = 'BRA';
+                                    break;
+                                case '1':
+                                    country = 'USA';
+                                    break;
+                                default:
+                                    country = 'XXX';
+                            }
+                        string_qty_contact = "No contacts";
+                        if(obj['data'][i].qty_contact > 0)
+                            string_qty_contact = obj['data'][i].qty_contact + ' contact';
+                        if(obj['data'][i].qty_contact > 1)
+                            string_qty_contact += 's';
+                            
+                        html += '<tr><td>'+obj['data'][i].corporate_name+'</td><td>'+advertiser_type+'</td><td nowrap>'+string_qty_contact+'</td><td style="text-align:center;"><span id="locked_status_'+obj['data'][i].uuid_full+'" class="material-icons" style="color:'+color_status+'">circle</span></td><td nowrap style="text-align:center;">';
+                        // information card
+                        html += '<a href="?pr=Li9wYWdlcy9hZHZlcnRpc2Vycy9pbmZvLnBocA==&aid='+obj['data'][i].uuid_full+'"><span class="material-icons" style="font-size:1.5rem; color:black;" title="Information Card '+obj['data'][i].corporate_name+'">info</span></a>';
+
+                        // Edit form
+                        html += '<a href="?pr=Li9wYWdlcy9hZHZlcnRpc2Vycy9mb3JtZWRpdC5waHA=&aid='+obj['data'][i].uuid_full+'"><span class="material-icons" style="font-size:1.5rem; color:black;" title="Edit '+module + ' '+obj['data'][i].corporate_name+'">edit</span></a>';
+
+                        // Remove 
+                        html += '<a href="javascript:void(0)" onclick="handleRemove(\''+obj['data'][i].uuid_full+'\',\''+obj['data'][i].is_active+'\')"><span class="material-icons" style="font-size:1.5rem; color:black;" title="Remove '+module + ' '+obj['data'][i].corporate_name+'">delete</span></a>';
+
+                        // Add Contact
+                        html += '<a href="?pr=Li9wYWdlcy9hZHZlcnRpc2Vycy9jb250YWN0cy9mb3JtLnBocA==&md=Advertiser&aid='+obj['data'][i].uuid_full+'"><span class="material-icons" style="font-size:1.5rem; color:black;" title="'+ucfirst(translateText('add+',localStorage.getItem('ulang')))+' '+translateText('a_m',localStorage.getItem('ulang'))+' '+translateText('contact',localStorage.getItem('ulang'))+' '+translateText('to_the_m',localStorage.getItem('ulang'))+' '+translateText(module,localStorage.getItem('ulang')) + ' '+obj['data'][i].corporate_name+'">contact_mail</span></a>';
+
+                        html += '</td></tr>';
+                    }
+                    pagesController(page,obj['pages']);
+                    if(parseInt(page) > parseInt(obj['pages'])){
+                        page        = 1;
+                        filter.goto.value = 1;
+                    }    
                 }
-                tableList.innerHTML = html;
             }
             else{
                 html = '<tr><td colspan="5"><div style="margin-left:45%; margin-right:45%;" class="spinner-border" style="text-align:center;" role="status">';
                 html += '<span class="sr-only">Loading...</span>';
                 html += '</div></td></tr>';
-                tableList.innerHTML = html;
                 //form.btnSave.innerHTML = "Searching...";
             }
+            tableList.innerHTML = html;
         };
         request.open('GET', requestURL);
         //request.responseType = 'json';
@@ -376,7 +409,7 @@ function handleListOnLoad(search) {
 }
 
 function handleRemove(aid,locked_status){
-    authApi     = 'dasdasdkasdeewef';
+    authApi     = csrf_token;
     filters     = '&aid='+aid+'&lk='+locked_status;
     
     locat       = window.location.hostname;
@@ -399,4 +432,34 @@ function handleRemove(aid,locked_status){
     request.open('GET', requestURL);
     //request.responseType = 'json';
     request.send();
+}
+
+function pagesController(actualpage,totalpages){
+    document.getElementById('btn_firstpage').disabled=false;
+    document.getElementById('btn_beforepage').disabled=false;
+    document.getElementById('btn_nextpage').disabled=false;
+    document.getElementById('btn_lastpage').disabled=false;
+
+    if(parseInt(filter.goto.value) <= 1){ 
+        document.getElementById('btn_firstpage').disabled=true;
+        document.getElementById('btn_beforepage').disabled=true;
+    }
+    if(parseInt(filter.goto.value) >= totalpages){ 
+        document.getElementById('btn_nextpage').disabled=true;
+        document.getElementById('btn_lastpage').disabled=true;
+    }
+
+    filter.totalpages.value = totalpages;
+    document.getElementById('text-totalpages').innerText = totalpages;
+
+}
+
+function gotoLast(){
+    totalpages = filter.totalpages.value;
+    if(parseInt(filter.goto.value) <= totalpages){
+        handleListOnLoad(filter.search.value,totalpages); 
+        filter.goto.value = totalpages;
+    }else{
+        document.getElementById('btn_lastpage').disabled=true;
+    }
 }

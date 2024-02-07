@@ -19,7 +19,7 @@ $subModuleName = 'Contact';
 
 <div class='form-<?=strtolower($subModuleName)?>-container'>
     <div class="form-container">
-        <div class="form-header">New <?=$subModuleName?> for <?=$moduleName?></div>
+        <div class="form-header"><?=translateText("new")?> <?=translateText(strtolower($subModuleName))?> <?=translateText('for')?> <?=translateText(strtolower($moduleName))?> - <spam id="<?=strtolower($moduleName)?>-name"></spam></div>
         <form name='<?=strtolower($moduleName)?>_<?=strtolower($subModuleName)?>' method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
             <div class="form-row <?=strtolower($subModuleName)?>-section">
                 <div class="col">
@@ -153,8 +153,9 @@ $subModuleName = 'Contact';
 
 
       ?>
+<script type="text/javascript" >
+    getNameToShow('<?=strtolower($moduleName)?>','<?=$clientID?>');
 
-<script>
     var input = document.querySelector("#phone");
     window.intlTelInput(input, {
       // allowDropdown: false,

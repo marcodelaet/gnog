@@ -26,6 +26,55 @@ function removeContactForm(index){
     document.getElementById('btnRemove_'+index).remove();
 }
 
+function getNameToShow(table,id){
+    errors      = 0;
+    authApi     = csrf_token;
+    locat       = window.location.hostname;
+
+    // filters     = '&tid='+tid;
+    xfilters    = '';
+    filters     = '';
+
+    id_parameter = 'aid'; // advertiser
+    if(table=='provider')
+        id_parameter = 'pid';
+
+    filters += "&"+id_parameter+"="+id;
+
+
+    
+
+    if(locat.slice(-1) != '/')
+        locat += '/';
+
+    if(errors > 0){
+
+    } else{
+        const requestURLGet = window.location.protocol+'//'+locat+'api/'+table+'s/auth_'+table+'_get.php?auth_api='+authApi+filters;
+        //console.log(requestURLGet);
+        const requestGet = new XMLHttpRequest();
+        requestGet.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                
+                objGet = JSON.parse(requestGet.responseText);
+                if(table == 'provider')
+                    xname = objGet.data[0].name;
+                else
+                    xname = objGet.data[0].corporate_name;
+
+                //console.log('NAME: '+xname);
+                document.getElementById(table+'-name').innerText = xname;
+            }
+            else{
+                //form.btnSave.innerHTML = "Searching...";
+            }
+        };
+        requestGet.open('GET', requestURLGet);
+        //request.responseType = 'json';
+        requestGet.send();
+    }
+}
+
 function getId(table,where){
     errors      = 0;
     authApi     = csrf_token;

@@ -28,8 +28,8 @@ if(array_key_exists('username',$_POST))
             <div class="inputs-form-container">
                 <div class="form-row">
                     <div class="col custom-control custom-switch" style="text-align:right;">
-                        <input type="checkbox" class="custom-control-input" id="customSwitch1" name="agency">
-                        <label class="custom-control-label" for="customSwitch1"><?=Ucfirst(translateText('is_agency'));?></label>
+                        <input type="checkbox" class="custom-control-input" id="agency_option" name="agency_option">
+                        <label class="custom-control-label" for="agency_option"><?=Ucfirst(translateText('is_agency'));?></label>
                     </div>
                 </div>
                 <div class="form-row">
@@ -56,8 +56,8 @@ if(array_key_exists('username',$_POST))
 
                     <div class="col custom-control custom-switch" style="text-align:right; vertical-align:middle;">
                         <br/>
-                        <input type="checkbox" class="custom-control-input" id="making-banners" name="making_banners">
-                        <label class="custom-control-label" for="making-banners"><?=Ucfirst(translateText('making_banners'));?></label>
+                        <input type="checkbox" class="custom-control-input" id="making_banners_option" name="making_banners_option">
+                        <label class="custom-control-label" for="making_banners_option"><?=Ucfirst(translateText('making_banners'));?></label>
                     </div>
                 </div>
                 <div class="form-row">
@@ -82,6 +82,8 @@ if(array_key_exists('username',$_POST))
                 
             </div>
             <div class="inputs-button-container">
+                <input type="hidden" name="uid" value="<?=$_COOKIE['uuid']?>" />
+                <input type="hidden" name="tku" value="<?=$_COOKIE['tk']?>" />
                 <button class="button" name="btnSave" type="button" onClick="handleSubmit(<?=strtolower($moduleName)?>)" ><?=Ucfirst(translateText('continue'));?></button>
             </div>
         </form>

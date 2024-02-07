@@ -988,7 +988,7 @@ function handleListOnLoad(search,page) {
     } else{
         tableList   = document.getElementById('listProposals');
         const requestURL = window.location.protocol+'//'+locat+'api/proposals/auth_proposal_list.php?auth_api='+authApi+filters+pages;
-        console.log(requestURL);
+        //console.log(requestURL);
         const request = new XMLHttpRequest();
         request.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {
@@ -998,7 +998,6 @@ function handleListOnLoad(search,page) {
                     html = '<tr><td colspan="8"><div style="margin-left:45%; margin-right:45%;text-align:center;" role="status">';
                     html += '0 Results';
                     html += '</td></tr>';
-                    tableList.innerHTML = html;
                     pagesController(page,obj['pages']);
                     if(parseInt(page) > parseInt(obj['pages'])){
                         page        = 1;
@@ -1063,7 +1062,6 @@ function handleListOnLoad(search,page) {
 
                         html += '</td></tr>';
                     }
-                    tableList.innerHTML = html;
                     pagesController(page,obj['pages']);
                     if(parseInt(page) > parseInt(obj['pages'])){
                         page        = 1;
@@ -1076,9 +1074,9 @@ function handleListOnLoad(search,page) {
                 //html += '<span class="sr-only">Loading...</span>';
                 html += '<span class="sr-only">0 results</span>';
                 html += '</div></td></tr>';
-                tableList.innerHTML = html;
                 //form.btnSave.innerHTML = "Searching...";
             }
+            tableList.innerHTML = html;
         };
         request.open('GET', requestURL);
         //request.responseType = 'json';
