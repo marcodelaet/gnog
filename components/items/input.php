@@ -38,8 +38,8 @@ function inputSelect($table,$title,$where,$order,$selected){
         $markingSelect  = ''; 
         switch($table){
             case  'advertiser':
-                $id = $obj[$i]->uuid_full;
-                $name = $obj[$i]->corporate_name;
+                $id = $obj->data[$i]->uuid_full;
+                $name = $obj->data[$i]->corporate_name;
                 break;
             case 'user':
                 $id             = $obj[$i]->uuid_full;

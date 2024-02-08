@@ -1399,17 +1399,10 @@ function transformToInt(value){
 }
 
 function newProductForm(copy,destination,items){
-    
-    //let divRow = document.createElement("div").setAttribute('class','form-row');
-    //let divCol = document.createElement("div").setAttribute('class','col');
-    //divRow.appendChild(divCol);
-    
-    //document.getElementById(destination).after(divRow);
     start_index++;
     document.getElementById(destination).innerHTML += (document.getElementById(copy).innerHTML.replace('proposal,0','proposal,'+start_index).replace('proposal,0','proposal,'+start_index).replace('product_0','product_'+start_index).replace('state_0','state_'+start_index).replace('price_0','price_'+start_index).replace('amount_0','amount_'+start_index).replace('DropdownMenuButton_0','DropdownMenuButton_'+start_index).replace(",'0');",",'"+start_index+"');").replace('div-selectcolony_0','div-selectcolony_'+start_index).replace('div-selectcounty_0','div-selectcounty_'+start_index).replace('div-selectcity_0','div-selectcity_'+start_index).replace('div-selectState_0','div-selectState_'+start_index).replace('div-datetype-option_0','div-datetype-option_'+start_index));
 
     for(iteration=0; iteration <= items; iteration++){
-        //alert(items + ' - '+ iteration)
         document.getElementById(destination).innerHTML = document.getElementById(destination).innerHTML.replace('Value_0','Value_'+start_index).replace('Name_0','Name_'+start_index).replace('Id_0','Id_'+start_index).replace('DropdownMenuButton_0','DropdownMenuButton_'+start_index).replace(",'0');",",'"+start_index+"');").replace('product_0','product_'+start_index).replace('salemodel_0','salemodel_'+start_index).replace('provider_0','provider_'+start_index).replace('oohproviders_0','oohproviders_'+start_index).replace('oohkeys_0','oohkeys_'+start_index).replace('oohsalemodels_0','oohsalemodels_'+start_index).replace('oohcost_0','oohcost_'+start_index).replace('oohprice_0','oohprice_'+start_index).replace('oohstate_0','oohstate_'+start_index).replace('oohcolony_0','oohcolony_'+start_index).replace('oohcity_0','oohcity_'+start_index).replace('oohcounty_0','oohcounty_'+start_index).replace('div-quantity_0','div-quantity_'+start_index).replace('div-price_0','div-price_'+start_index).replace('quantity_0','quantity_'+start_index).replace('price_0','price_'+start_index).replace('cost_0','cost_'+start_index).replace('digital_product-0','digital_product-'+start_index).replace('datetype-option-0','datetype-option-'+start_index).replace('digital_product-0','digital_product-'+start_index).replace('datetype-option-0','datetype-option-'+start_index).replace('start_date_product_0','start_date_product_'+start_index).replace('start_date_product_0','start_date_product_'+start_index).replace('start_date_product_0','start_date_product_'+start_index).replace('stop_date_product_0','stop_date_product_'+start_index).replace('stop_date_product_0','stop_date_product_'+start_index).replace('stop_date_product_0','stop_date_product_'+start_index).replace('ooh-list-form-0','ooh-list-form-'+start_index).replace('div-stopDate-product-0','div-stopDate-product-'+start_index).replace('div-startDate-product-0','div-startDate-product-'+start_index).replace('datetype_option-0','datetype_option-'+start_index).replace('datetype_option-0','datetype_option-'+start_index);
     }
     htmlRemoveButton = '<div class="form-row" id="btnRemove_'+start_index+'" >';
@@ -1426,6 +1419,25 @@ function newProductForm(copy,destination,items){
     d_stop.push(0);
 
     document.getElementById(destination).innerHTML += htmlRemoveButton;
+
+    document.getElementById('digital_product-'+start_index).value = document.getElementById('digital_product-0').value;
+    document.getElementById('datetype_option-'+start_index).value = document.getElementById('datetype_option-0').value;
+
+    /**************************************************************************
+     * Checking options
+     ************************************************************************/
+    for(opt_number=1;opt_number <= start_index;opt_number++){
+        document.getElementById('digital_product-'+opt_number).checked = false;
+        if(document.getElementById('digital_product-'+opt_number).value == '1'){
+            document.getElementById('digital_product-'+opt_number).checked = true;
+        } 
+        
+        document.getElementById('datetype_option-'+opt_number).checked = false;
+        if(document.getElementById('datetype_option-'+opt_number).value == '1'){
+            document.getElementById('datetype_option-'+opt_number).checked = true;
+        }
+    }
+    
 }
 
 function removeProductForm(index){
