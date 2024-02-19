@@ -234,7 +234,7 @@ if('1' == '2'){
                                         type="date" 
                                         maxlength="8"
                                         autocomplete="start-date-product"
-                                        onfocus="if(start_date.value!=''){if((this.value=='null') || (this.value=='')){if(d_start[this.id.split('_')[3]]<=0){if(confirm('<?=translateText('start_date');?> es la mista <?=translateText('start_date');?> de la campaña?')){this.value=start_date.value; }else{d_start[this.id.split('_')[3]]++; this.focus();}}}}else{alert('<?=translateText('fill');?> <?=translateText('start_date');?> <?=translateText('first');?>'); start_date.focus();}"
+                                        onfocus="if(<?=strtolower($moduleName)?>.start_date.value!=''){if((this.value=='null') || (this.value=='')){if(d_start[this.id.split('_')[3]]<=0){if(confirm('<?=translateText('start_date');?> es la mista <?=translateText('start_date');?> de la campaña?')){this.value=<?=strtolower($moduleName)?>.start_date.value; }else{d_start[this.id.split('_')[3]]++; this.focus();}}}}else{alert('<?=translateText('fill');?> <?=translateText('start_date');?> <?=translateText('first');?>'); <?=strtolower($moduleName)?>.start_date.focus();}"
                                         />
                                     </div>
                                     <div class="dateInputFixedW" id="div-stopDate-product-0">
@@ -250,7 +250,7 @@ if('1' == '2'){
                                         type="date" 
                                         maxlength="8"
                                         autocomplete="stop-date-product"
-                                        onfocus="if(stop_date.value!=''){if((this.value=='null') || (this.value=='')){if(d_stop[this.id.split('_')[3]]<=0){if(confirm('<?=translateText('stop_date');?> es la mista <?=translateText('stop_date');?> de la campaña?')){this.value=stop_date.value;}else{d_stop[this.id.split('_')[3]]++; this.focus();}}}}else{alert('<?=translateText('fill');?> <?=translateText('stop_date');?> <?=translateText('first');?>'); stop_date.focus();}"
+                                        onfocus="if(<?=strtolower($moduleName)?>.stop_date.value!=''){if((this.value=='null') || (this.value=='')){if(d_stop[this.id.split('_')[3]]<=0){if(confirm('<?=translateText('stop_date');?> es la mista <?=translateText('stop_date');?> de la campaña?')){this.value=<?=strtolower($moduleName)?>.stop_date.value;}else{d_stop[this.id.split('_')[3]]++; this.focus();}}}}else{alert('<?=translateText('fill');?> <?=translateText('stop_date');?> <?=translateText('first');?>'); <?=strtolower($moduleName)?>.stop_date.focus();}"
                                         />
                                     </div>
 
