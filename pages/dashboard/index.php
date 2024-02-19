@@ -32,7 +32,7 @@ if(1==2)
         </div>
     </div>
     <div class="input-group col-sm-12   ">
-        <select class="custom-select" name="executive_id" id="executive_id" title="Assigned Executive" onchange="handleListGoalOnLoad(this.value,undefined,document.getElementById('month').value,document.getElementById('year').value,'status='+returnSelectedStatuses(document.getElementById('status_id'))); handleListOnLoad(this.value,undefined,document.getElementById('month').value,document.getElementById('year').value,'status='+returnSelectedStatuses(document.getElementById('status_id')));" autocomplete="executive_id">
+        <select class="custom-select" name="executive_id" id="executive_id" title="Assigned Executive" onchange="handleListGoalOnLoad(this.value,undefined,document.getElementById('month').value,document.getElementById('year').value,'status='+returnSelectedStatuses(document.getElementById('status_id'))); handleListLastWeekOnLoad(this.value,undefined,document.getElementById('rate_id').value); handleListOnLoad(this.value,undefined,document.getElementById('month').value,document.getElementById('year').value,'status='+returnSelectedStatuses(document.getElementById('status_id')));" autocomplete="executive_id">
         <?php if($_COOKIE['lacc'] >= 99999) { ?>
             <?=inputSelect('user',translateText('executive'),'user_type|||executive*|*user_type|||admin','username','')?>
             <?php } else { ?>
@@ -74,7 +74,7 @@ if(1==2)
                     </div>
                     <div class="input-group col-sm-5">
                         <div class="currency-select">
-                            <select class="custom-select" id="rate_id" name="rate_id" title="Rates" autocomplete="rate_id" onChange="handleListGoalOnLoad(this.value); handleListOnLoad('','','','','',this.value);// getCurrencyValue(document.getElementById('goal-currency').innerText,this.value,document.getElementById('goal-0').innerText+'---'+document.getElementById('goal-1').innerText+'---'+document.getElementById('goal-2').innerText,'dashboard'); updateCurrencyListValue(document.getElementsByClassName('currency-line'),this.value,document.getElementsByClassName('amount-line'),'dashboard'); updateCurrencyListMonthlyValue(document.getElementsByClassName('currency-line'),this.value,document.getElementsByClassName('amount-month-line'),'dashboard'); ">
+                            <select class="custom-select" id="rate_id" name="rate_id" title="Rates" autocomplete="rate_id" onChange="handleListGoalOnLoad(this.value); handleListOnLoad('','','','','',this.value); handleListLastWeekOnLoad(document.getElementById('executive_id').value,undefined,this.value);// getCurrencyValue(document.getElementById('goal-currency').innerText,this.value,document.getElementById('goal-0').innerText+'---'+document.getElementById('goal-1').innerText+'---'+document.getElementById('goal-2').innerText,'dashboard'); updateCurrencyListValue(document.getElementsByClassName('currency-line'),this.value,document.getElementsByClassName('amount-line'),'dashboard'); updateCurrencyListMonthlyValue(document.getElementsByClassName('currency-line'),this.value,document.getElementsByClassName('amount-month-line'),'dashboard'); ">
                                 <?=inputFilterNoZeroSelect('rate','Rates','','orderby','USD')?>
                             </select>
                         </div>
@@ -94,9 +94,41 @@ if(1==2)
     <div class="result-container">
         <div class="row">
             <div class="col">
-                Dashboard Private Area
+                Dashboard - <?=translateText('proposal')?>s <?=translateText('of_the_week')?>
                 <table class="table table-hover table-sm">
-                    <caption>List of Proposals / Goals</caption>
+                    <caption><?=ucfirst(translateText('list_of'))?> <?=translateText('proposal')?>s <?=translateText('of_the_week')?></caption>
+                    <thead>
+                        <tr>
+                            <th scope="col"><?=translateText('offer_campaign');?></th>
+                            <th scope="col"><?=translateText('advertiser');?></th>
+                            <th scope="col"><?=translateText('assign_executive');?></th>
+                            <th scope="col"><?=translateText('amount');?></th>
+                            <th scope="col"><?=translateText('monthly');?></th>
+                            <th scope="col" style="text-align:center;"><?=translateText('status');?></th>
+                            <th scope="col" style="text-align:center;"><?=translateText('settings');?></th>
+                        </tr>
+                    </thead>
+                    <tbody id="listDashboardLastWeek">
+                        <tr>
+                            <td class="table-column-offerName">...</td>
+                            <td class="table-column-AdvertiserName">...</td>
+                            <td class="table-column-AssignedExecutive">...</td>
+                            <td class="table-column-Amount">...</td>
+                            <td class="table-column-Status">...</td>
+                            <td style="text-align:center;">...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="row">
+            <div class="graph" id="graph-last-proposals"></div>
+        </div>   
+        <div class="row">
+            <div class="col">
+                Dashboard - Booking
+                <table class="table table-hover table-sm">
+                    <caption><?=ucfirst(translateText('list_of'))?> <?=translateText('proposal')?>s / <?=ucfirst(translateText('goal'))?>s</caption>
                     <thead>
                         <tr>
                             <th scope="col"><?=translateText('offer_campaign');?></th>
@@ -110,7 +142,7 @@ if(1==2)
                     </thead>
                     <tbody id="listDashboard">
                         <tr>
-                            <td class="table-column-offerName">Nestle</td>
+                            <td class="table-column-offerName">...</td>
                             <td class="table-column-AdvertiserName">...</td>
                             <td class="table-column-AssignedExecutive">...</td>
                             <td class="table-column-Amount">...</td>
@@ -143,6 +175,7 @@ if(1==2)
     updateRates();
     handleListGoalOnLoad();
     handleListOnLoad();
+    handleListLastWeekOnLoad()
 </script>
 <?php 
 

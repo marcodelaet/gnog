@@ -115,7 +115,7 @@ if(array_key_exists('ppid',$_REQUEST)){
                                 </div>
                                 <div class="form-row" >
                                   <div class="col" id='div-cost_0'>
-                                        <label for="cost[]"><?=ucfirst(translateText('cost'));?></label><br/>
+                                        <label for="cost[]"><?=ucfirst(translateText('cost'));?> (<?=ucfirst(translateText('unit'))?>)</label><br/>
                                         <input
                                         required
                                         onkeypress="$(this).mask('#'+thousands+'###'+thousands+'##0'+cents+'00', {reverse: true});"

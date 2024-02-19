@@ -74,7 +74,8 @@ if(array_key_exists('auth_api',$_REQUEST)){
             if($filters != '')
                 $filters .= " AND ";
             $fullDate         = $_REQUEST['date'];
-            $filters        .= " ( (concat(year(stop_date),right(concat('00',month(stop_date)),2)) >= '$fullDate') AND (concat(year(start_date),right(concat('00',month(start_date)),2)) <= '$fullDate') )";
+            
+            $filters        .= " (DATE(proposal_updated_at) BETWEEN date_sub(date('$fullDate'), INTERVAL 1 week) AND date('$fullDate')) ";
         }
     }
     

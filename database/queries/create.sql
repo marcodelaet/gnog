@@ -941,12 +941,28 @@ VALUES
 (UUID(), 'unit_price', 'Unit Price', 'Precio Unitario', 'Preço Unitário', 'Y', NOW(), NOW()),
 (UUID(), 'quantity', 'Quantity', 'Cantidad', 'Quantidade', 'Y', NOW(), NOW()),
 (UUID(), 'total', 'Total', 'Total', 'Total', 'Y', NOW(), NOW()),
-(UUID(), 'save', 'Save', 'Ahorrar', 'Salvar', 'Y', NOW(), NOW()),
+(UUID(), 'save', 'save', 'guardar', 'salvar', 'Y', NOW(), NOW()),
 (UUID(), 'pixel_required', 'Pixel required', 'Píxel requerido', 'Pixel requerido', 'Y', NOW(), NOW()),
 (UUID(), 'proposal', 'Proposal', 'Propuesta', 'Proposta', 'Y', NOW(), NOW()),
 (UUID(), 'new', 'New', 'Generando', 'Gerando', 'Y', NOW(), NOW()),
 (UUID(), 'please_select', 'Please, select ', 'Por favor, seleccione ', 'Por favor, escolha ', 'Y', NOW(), NOW()),
 (UUID(), 'offer_campaign', 'Offer / Campaign', 'Oferta / Campaña', 'Campanha', 'Y', NOW(), NOW());
+
+INSERT INTO translates 
+(id, code_str, text_eng, text_esp, text_ptbr, is_active, created_at, updated_at)
+VALUES
+(UUID(), 'values_in', 'values in', 'montos en', 'valores em', 'Y', NOW(), NOW());
+
+INSERT INTO translates 
+(id, code_str, text_eng, text_esp, text_ptbr, is_active, created_at, updated_at)
+VALUES
+(UUID(), 'unit', 'unit', 'unitario', 'unitário', 'Y', NOW(), NOW());
+
+
+INSERT INTO translates 
+(id, code_str, text_eng, text_esp, text_ptbr, is_active, created_at, updated_at)
+VALUES
+(UUID(), 'margin', 'margin', 'utilidad', 'margem', 'Y', NOW(), NOW());
 
 
 INSERT INTO translates 
@@ -993,6 +1009,13 @@ INSERT INTO translates
 (id, code_str, text_eng, text_esp, text_ptbr, is_active, created_at, updated_at)
 VALUES
 (UUID(), 'changes', 'changes', 'cambios', 'alterações', 'Y', NOW(), NOW());
+
+INSERT INTO translates 
+(id, code_str, text_eng, text_esp, text_ptbr, is_active, created_at, updated_at)
+VALUES
+(UUID(), 'list_of', 'list of', 'lista de', 'lista de', 'Y', NOW(), NOW()),
+(UUID(), 'of_the_week', 'of the week', 'de la semana', 'da semana', 'Y', NOW(), NOW());
+
 
 INSERT INTO translates 
 (id, code_str, text_eng, text_esp, text_ptbr, is_active, created_at, updated_at)
