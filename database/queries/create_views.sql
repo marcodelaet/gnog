@@ -374,6 +374,141 @@ CREATE VIEW view_proposals AS (
 	(
 		((((ppp.price_int * ppp.quantity) / c.rate) * ceur.rate) / (TIMESTAMPDIFF(MONTH, ppp.start_date, ppp.stop_date) + 1)) / 100
 	) END AS amount_per_month_EUR,
+	(ppp.cost_int * ppp.quantity) AS cost_int,
+	(ppp.cost_int * ppp.quantity) / 100 AS cost,
+	((ppp.cost_int * ppp.quantity) / (TIMESTAMPDIFF(MONTH, ppp.start_date, ppp.stop_date) + 1)) AS cost_per_month_int,
+	((ppp.cost_int * ppp.quantity) / (TIMESTAMPDIFF(MONTH, ppp.start_date, ppp.stop_date) + 1)) / 100 AS cost_per_month,
+	CASE 
+	WHEN c.id = 'USD' THEN
+	(
+		(ppp.cost_int * ppp.quantity)
+	) ELSE 
+	(
+		(((ppp.cost_int * ppp.quantity) / c.rate) * cusd.rate)
+	) END  AS cost_USD_int,
+	CASE
+	WHEN c.id = 'USD' THEN
+	(
+		(ppp.cost_int * ppp.quantity) / 100
+	) ELSE 
+	(
+		(((ppp.cost_int * ppp.quantity) / c.rate) * cusd.rate) / 100
+	) END AS cost_USD,
+	CASE
+	WHEN c.id = 'USD' THEN
+	(
+		((ppp.cost_int * ppp.quantity) / (TIMESTAMPDIFF(MONTH, ppp.start_date, ppp.stop_date) + 1))
+	) ELSE 
+	(
+		((((ppp.cost_int * ppp.quantity) / c.rate) * cusd.rate) / (TIMESTAMPDIFF(MONTH, ppp.start_date, ppp.stop_date) + 1))
+	) END AS cost_per_month_USD_int,
+	CASE
+	WHEN c.id = 'USD' THEN
+	(
+		((ppp.cost_int * ppp.quantity) / (TIMESTAMPDIFF(MONTH, ppp.start_date, ppp.stop_date) + 1)) / 100
+	) ELSE 
+	(
+		((((ppp.cost_int * ppp.quantity) / c.rate) * cusd.rate) / (TIMESTAMPDIFF(MONTH, ppp.start_date, ppp.stop_date) + 1)) / 100
+	) END AS cost_per_month_USD,
+	
+	CASE
+	WHEN c.id = 'MXN' THEN
+	(
+		(ppp.cost_int * ppp.quantity)
+	) ELSE 
+	(
+		(((ppp.cost_int * ppp.quantity) / c.rate) * cmxn.rate)
+	) END  AS cost_MXN_int,
+	CASE
+	WHEN c.id = 'MXN' THEN
+	(
+		(ppp.cost_int * ppp.quantity) / 100
+	) ELSE 
+	(
+		(((ppp.cost_int * ppp.quantity) / c.rate) * cmxn.rate) / 100
+	) END AS cost_MXN,
+	CASE
+	WHEN c.id = 'MXN' THEN
+	(
+		((ppp.cost_int * ppp.quantity) / (TIMESTAMPDIFF(MONTH, ppp.start_date, ppp.stop_date) + 1))
+	) ELSE 
+	(
+		((((ppp.cost_int * ppp.quantity) / c.rate) * cmxn.rate) / (TIMESTAMPDIFF(MONTH, ppp.start_date, ppp.stop_date) + 1))
+	) END AS cost_per_month_MXN_int,
+	CASE
+	WHEN c.id = 'MXN' THEN
+	(
+		((ppp.cost_int * ppp.quantity) / (TIMESTAMPDIFF(MONTH, ppp.start_date, ppp.stop_date) + 1)) / 100
+	) ELSE 
+	(
+		((((ppp.cost_int * ppp.quantity) / c.rate) * cmxn.rate) / (TIMESTAMPDIFF(MONTH, ppp.start_date, ppp.stop_date) + 1)) / 100
+	) END AS cost_per_month_MXN,
+	
+	CASE
+	WHEN c.id = 'BRL' THEN
+	(
+		(ppp.cost_int * ppp.quantity)
+	) ELSE 
+	(
+		(((ppp.cost_int * ppp.quantity) / c.rate) * cbrl.rate)
+	) END  AS cost_BRL_int,
+	CASE
+	WHEN c.id = 'BRL' THEN
+	(
+		(ppp.cost_int * ppp.quantity) / 100
+	) ELSE 
+	(
+		(((ppp.cost_int * ppp.quantity) / c.rate) * cbrl.rate) / 100
+	) END AS cost_BRL,
+	CASE
+	WHEN c.id = 'BRL' THEN
+	(
+		((ppp.cost_int * ppp.quantity) / (TIMESTAMPDIFF(MONTH, ppp.start_date, ppp.stop_date) + 1))
+	) ELSE 
+	(
+		((((ppp.cost_int * ppp.quantity) / c.rate) * cbrl.rate) / (TIMESTAMPDIFF(MONTH, ppp.start_date, ppp.stop_date) + 1))
+	) END AS cost_per_month_BRL_int,
+	CASE
+	WHEN c.id = 'BRL' THEN
+	(
+		((ppp.cost_int * ppp.quantity) / (TIMESTAMPDIFF(MONTH, ppp.start_date, ppp.stop_date) + 1)) / 100
+	) ELSE 
+	(
+		((((ppp.cost_int * ppp.quantity) / c.rate) * cbrl.rate) / (TIMESTAMPDIFF(MONTH, ppp.start_date, ppp.stop_date) + 1)) / 100
+	) END AS cost_per_month_BRL,
+	
+	CASE
+	WHEN c.id = 'EUR' THEN
+	(
+		(ppp.cost_int * ppp.quantity)
+	) ELSE 
+	(
+		(((ppp.cost_int * ppp.quantity) / c.rate) * ceur.rate)
+	) END  AS cost_EUR_int,
+	CASE
+	WHEN c.id = 'EUR' THEN
+	(
+		(ppp.cost_int * ppp.quantity) / 100
+	) ELSE 
+	(
+		(((ppp.cost_int * ppp.quantity) / c.rate) * ceur.rate) / 100
+	) END AS cost_EUR,
+	CASE
+	WHEN c.id = 'EUR' THEN
+	(
+		((ppp.cost_int * ppp.quantity) / (TIMESTAMPDIFF(MONTH, ppp.start_date, ppp.stop_date) + 1))
+	) ELSE 
+	(
+		((((ppp.cost_int * ppp.quantity) / c.rate) * ceur.rate) / (TIMESTAMPDIFF(MONTH, ppp.start_date, ppp.stop_date) + 1))
+	) END AS cost_per_month_EUR_int,
+	CASE
+	WHEN c.id = 'EUR' THEN
+	(
+		((ppp.cost_int * ppp.quantity) / (TIMESTAMPDIFF(MONTH, ppp.start_date, ppp.stop_date) + 1)) / 100
+	) ELSE 
+	(
+		((((ppp.cost_int * ppp.quantity) / c.rate) * ceur.rate) / (TIMESTAMPDIFF(MONTH, ppp.start_date, ppp.stop_date) + 1)) / 100
+	) END AS cost_per_month_EUR,
 	CASE 
 	WHEN (agency_id is not null and agency_id <> '') THEN 
 	( 
@@ -407,6 +542,10 @@ CREATE VIEW view_proposals AS (
 	pb.cost_int as productbillboard_cost_int,
 	pb.price_int as productbillboard_price_int,
 	ppp.is_active as is_proposalproduct_active,
+	ppp.created_at as proposalproduct_created_at,
+	ppp.updated_at as proposalproduct_updated_at,
+	pps.created_at as proposal_created_at,
+	pps.updated_at as proposal_updated_at,
 	CONCAT(
 		pps.id,
 		CASE WHEN pd.name IS NOT NULL THEN pd.name ELSE '' END,
