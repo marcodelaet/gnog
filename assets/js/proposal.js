@@ -665,9 +665,9 @@ function handleViewProductsOnLoad(ppid,pppid) {
                 }
                 
                 startDate           = new Date(obj['data'][0].start_date);
-                formattedStartDate  = startDate.getDate()+"/"+(parseInt(startDate.getMonth())+1)+"/"+startDate.getFullYear();
+                formattedStartDate  = startDate.toLocaleDateString(lang);
                 stopDate            = new Date(obj['data'][0].stop_date);
-                formattedStopDate   = stopDate.getDate()+"/"+(parseInt(stopDate.getMonth())+1)+"/"+stopDate.getFullYear();
+                formattedStopDate   = stopDate.toLocaleDateString(lang);
                 document.getElementById('is-digital').style         = 'color:'+is_digital_color;
                 document.getElementById('is-digital').innerText     = is_digital_text; 
                 document.getElementById('proposal-name').innerHTML  = obj['data'][0].offer_name;
@@ -683,7 +683,13 @@ function handleViewProductsOnLoad(ppid,pppid) {
                 for(var i=0;i<obj['data'].length;i++){
                     xxhtml += '<spam class="product-line">'+obj['data'][0].product_name + ' / ' + obj['data'][0].salemodel_name+'</spam><br />';
                 }
-                document.getElementById('proposal-product-name').innerHTML          = xxhtml;                
+                document.getElementById('proposal-product-name').innerHTML          = xxhtml;
+                strStartDateMonth                                       = '00'+(startDate.getMonth()+1);
+                strStopDateMonth                                        = '00'+(stopDate.getMonth()+1);
+                strStartDateDay                                         = '00'+(startDate.getDate());
+                strStopDateDay                                          = '00'+(stopDate.getDate());
+                document.getElementById('start-date-input').value       = startDate.getFullYear()+'-'+strStartDateMonth.substr(-2,2)+'-'+strStartDateDay.substr(-2,2);
+                document.getElementById('stop-date-input').value        = stopDate.getFullYear()+'-'+strStopDateMonth.substr(-2,2)+'-'+strStopDateDay.substr(-2,2);
             }
             else{
                 //form.btnSave.innerHTML = "Searching...";
@@ -726,12 +732,19 @@ function handleListAddProductOnLoad(ppid){
                 const startDate = new Date(obj['data'][0].start_date);
                 const stopDate  = new Date(obj['data'][0].stop_date);
 
-                document.getElementById('start-date').innerText         = startDate.toLocaleDateString(lang);
-                document.getElementById('stop-date').innerText          = stopDate.toLocaleDateString(lang);
                 document.getElementById('offer-name').innerText         = obj['data'][0].offer_name;
                 document.getElementById('advertiser-name').innerText    = advertiser_name;
                 document.getElementById('info-currency').innerText      = obj['data'][0].currency_c;
+                document.getElementById('start-date').innerText         = startDate.toLocaleDateString(lang);
+                document.getElementById('stop-date').innerText          = stopDate.toLocaleDateString(lang);
                 document.getElementById('currency').value               = obj['data'][0].currency_c;
+                strStartDateMonth                                       = '00'+(startDate.getMonth()+1);
+                strStopDateMonth                                        = '00'+(stopDate.getMonth()+1);
+                strStartDateDay                                         = '00'+(startDate.getDate());
+                strStopDateDay                                          = '00'+(stopDate.getDate());
+                document.getElementById('start-date-input').value       = startDate.getFullYear()+'-'+strStartDateMonth.substr(-2,2)+'-'+strStartDateDay.substr(-2,2);
+                document.getElementById('stop-date-input').value        = stopDate.getFullYear()+'-'+strStopDateMonth.substr(-2,2)+'-'+strStopDateDay.substr(-2,2);
+                document.getElementById('currency-input').value         = obj['data'][0].currency_c;
                 xcurrency = obj['data'][0].currency_c;
                 // Create our number formatter.
                 var formatter = new Intl.NumberFormat(lang, {
@@ -1420,21 +1433,29 @@ function newProductForm(copy,destination,items){
 
     document.getElementById(destination).innerHTML += htmlRemoveButton;
 
-    document.getElementById('digital_product-'+start_index).value = document.getElementById('digital_product-0').value;
-    document.getElementById('datetype_option-'+start_index).value = document.getElementById('datetype_option-0').value;
+    if(document.getElementById('digital_product-'+start_index) != null){
+        document.getElementById('digital_product-'+start_index).value = document.getElementById('digital_product-0').value;
+    }
+    if(document.getElementById('datetype_option-'+start_index) != null){
+        document.getElementById('datetype_option-'+start_index).value = document.getElementById('datetype_option-0').value;
+    }
+    
 
     /**************************************************************************
      * Checking options
      ************************************************************************/
-    for(opt_number=1;opt_number <= start_index;opt_number++){
-        document.getElementById('digital_product-'+opt_number).checked = false;
-        if(document.getElementById('digital_product-'+opt_number).value == '1'){
-            document.getElementById('digital_product-'+opt_number).checked = true;
-        } 
-        
-        document.getElementById('datetype_option-'+opt_number).checked = false;
-        if(document.getElementById('datetype_option-'+opt_number).value == '1'){
-            document.getElementById('datetype_option-'+opt_number).checked = true;
+    for(opt_number=0;opt_number <= start_index;opt_number++){
+        if(document.getElementById('digital_product-'+start_index) != null){
+            document.getElementById('digital_product-'+opt_number).checked = false;
+            if(document.getElementById('digital_product-'+opt_number).value == '1'){
+                document.getElementById('digital_product-'+opt_number).checked = true;
+            } 
+        }        
+        if(document.getElementById('datetype_option-'+start_index) != null){
+            document.getElementById('datetype_option-'+opt_number).checked = false;
+            if(document.getElementById('datetype_option-'+opt_number).value == '1'){
+                document.getElementById('datetype_option-'+opt_number).checked = true;
+            }
         }
     }
     
