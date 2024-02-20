@@ -259,7 +259,7 @@ if('1' == '2'){
                                     <div class="col-2" id="div-selectproduct_0">
                                         <label for="product_id[]"><?=translateText('product');?></label>
                                         <spam id="sproduct">
-                                            <select name="product_id[]" id="selectproduct_0" title="product_id" class="form-control" autocomplete="product_id" onchange="refilterSaleModel(document.getElementById('digital_product').value,this.value,this.id.split('_')[1]); checkOOHSelection(this[this.selectedIndex].innerText,this.id.split('_')[1])" required>
+                                            <select name="product_id[]" id="selectproduct_0" title="product_id" class="form-control" autocomplete="product_id" onchange="refilterSaleModel(document.getElementById('digital_product-'+this.id.split('_')[1]).value,this.value,this.id.split('_')[1]); checkOOHSelection(this[this.selectedIndex].innerText,this.id.split('_')[1])" required>
                                                 <?=inputSelect('product',translateText('product'),'is_digital|||N','name','')?>
                                             </select>
                                         </spam>
