@@ -36,6 +36,8 @@ function handleSubmitAddProduct(form,proposalId){
 
     currency        = document.getElementById('currency').value;
     objProduct      = document.getElementsByName('product_id[]');
+    objStartDate    = [];
+    objStopDate     = [];
     objProductValue = [];
     objSaleModel    = [];
     objProviderId   = [];
@@ -72,6 +74,7 @@ function handleSubmitAddProduct(form,proposalId){
         cost            = '';
         price           = '';
         billboard_id    = '';
+        
 
         for(p=0; p < objProduct.length;p++){    
             if(objProduct[p][objProduct[p].selectedIndex].innerText == 'OOH'){
@@ -114,6 +117,7 @@ function handleSubmitAddProduct(form,proposalId){
                 objBillboard.push('0');
                 indexed++;
             }
+            virg = '';
             if(p>0)
                 virg = ',';
 
@@ -139,14 +143,14 @@ function handleSubmitAddProduct(form,proposalId){
                 }    
             } 
 
-            product_start_date += virg + objStartDate[i];
-            product_stop_date += virg + objStopDate[i];
+            product_start_date += virg + objStartDate[p];
+            product_stop_date += virg + objStopDate[p];
             product_id      += virg + objProductValue[p];
             salemodel_id    += virg + objSaleModel[p];
             cost            += virg + xcost;
             price           += virg + xprice;
             xquantity       = 1;
-            if((objQuantity[i] != '') || (objQuantity[i] > 0))
+            if((objQuantity[p] != '') || (objQuantity[p] > 0))
                 xquantity = objQuantity[p];
             quantity        += virg + xquantity;
             provider_id     += virg + objProviderId[p];
@@ -156,8 +160,10 @@ function handleSubmitAddProduct(form,proposalId){
             county_id       += virg + objCounty[p];
             colony_id       += virg + objColony[p];
             billboard_id    += virg + objBillboard[p];
+            //console.log('psdt['+p+']: '+product_start_date);
 
         }
+        //console.log('psdt_url: '+product_start_date);
         addProduct('['+product_start_date+']','['+product_stop_date+']','['+product_id+']','['+salemodel_id+']','['+cost+']','['+price+']',currency,'['+quantity+']','['+provider_id+']',proposal_id,'['+state_id+']','['+city_id+']','['+county_id+']','['+colony_id+']','['+billboard_id+']');
 
         form.btnSave.innerHTML = "Save";
@@ -850,6 +856,7 @@ function handleListEditOnLoad(ppid) {
 
                 for(i=0;i < obj['data'].length; i++){
                     // products list
+                    actualProduct = obj['data'][i].salemodel_name + obj['data'][i].state;
                     product = obj['data'][i].salemodel_name + obj['data'][i].state;
                     if(product != productOld){
                         providerOld     = 0;
@@ -857,10 +864,10 @@ function handleListEditOnLoad(ppid) {
                        // if(showLine == 1){
                             // showing only actived products
                             if(obj['data'][i].is_proposalproduct_active=="Y"){
-                                html += '<div class="row list-products-row" id="product-'+obj['data'][i].proposalproduct_id+'-row">' +
-                                '<div class="col-sm-1">'+(numberProducts)+'</div>' +
-                                '<div class="col-sm-3">'+obj['data'][i].product_name+' / '+obj['data'][i].salemodel_name+'</div>' +
-                                '<div class="col-sm-2">'+obj['data'][i].state+'</div>'; 
+                                html += '<div class="row list-products-row" id="product-'+obj['data'][i].proposalproduct_id+'-row">';
+                                html += '<div class="col-sm-1">'+(numberProducts)+'</div>';
+                                html += '<div class="col-sm-3">'+obj['data'][i].product_name+' / '+obj['data'][i].salemodel_name+'</div>';
+                                html += '<div class="col-sm-2">'+obj['data'][i].state+'</div>'; 
                                 //'<div class="col-sm-2">Rate % All</div>' +
                                 if(aBillboards.indexOf(obj['data'][i].salemodel_name) != -1){
                                 //if(obj[i].billboard_salemodel_name != null){
@@ -876,7 +883,7 @@ function handleListEditOnLoad(ppid) {
                                     '<span class="material-icons" style="font-size:1.5rem; color:black;" title="'+translateText('remove',localStorage.getItem('ulang'))+' '+obj['data'][i].salemodel_name+' '+translateText('from_the_list',localStorage.getItem('ulang'))+'">delete</span></a></div>';
                                 }
                                 html += '</div>';  
-                            }
+                            } else { product = "reset"; numberProducts--; }
                         //}    
                     }
                     // css to special times
@@ -958,7 +965,7 @@ function handleListEditOnLoad(ppid) {
                         '</div>';    
                     }
 
-                    productOld = obj['data'][i].salemodel_name + obj['data'][i].state;
+                    productOld = product;
                     providerOld = provider;
                 }
                 document.getElementById('list-products').innerHTML = html;
@@ -1001,7 +1008,7 @@ function handleListOnLoad(search,page) {
     } else{
         tableList   = document.getElementById('listProposals');
         const requestURL = window.location.protocol+'//'+locat+'api/proposals/auth_proposal_list.php?auth_api='+authApi+filters+pages;
-        //console.log(requestURL);
+        console.log(requestURL);
         const request = new XMLHttpRequest();
         request.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {
@@ -1523,7 +1530,7 @@ function addProduct(start_date,stop_date,product_id,salemodel_id,cost,price,curr
 
     } else{
         const requestURLAdd = window.location.protocol+'//'+locat+'api/products/auth_product_add_new.php';
-        //console.log(requestURLAdd + "\n?"+querystring);
+        console.log(requestURLAdd + "\n?"+querystring);
         const requestAdd = new XMLHttpRequest();
         requestAdd.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {
