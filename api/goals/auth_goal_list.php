@@ -54,7 +54,7 @@ if(array_key_exists('auth_api',$_REQUEST)){
     if(array_key_exists('groupby',$_REQUEST)){
         if($_REQUEST['groupby']!==''){
             $grouped        = $_REQUEST['groupby'];
-            $groupBy        = " ORDER BY $grouped";
+            $groupBy        = " GROUP BY $grouped";
         }
     }
     
@@ -108,14 +108,14 @@ if(array_key_exists('auth_api',$_REQUEST)){
     }
 
     // Query creation
-    $sql = "SELECT $columns FROM $tableOrView $filters $orderBy $groupBy";
+    $sql = "SELECT $columns FROM $tableOrView $filters $groupBy $orderBy";
     // LIST data
     //echo $sql;
     $rs = $DB->getData($sql);
 
     // Response JSON 
+    header('Content-type: application/json');
     if($rs){
-        header('Content-type: application/json');
         echo json_encode($rs);
     }
 }

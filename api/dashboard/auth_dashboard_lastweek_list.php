@@ -91,6 +91,7 @@ if(array_key_exists('auth_api',$_REQUEST)){
     $numberOfRows = $DB->numRows($sql); 
 
     // Response JSON 
+    header('Content-type: application/json');
     if($rs){
         if($numberOfRows > 0)
             echo json_encode($rs);

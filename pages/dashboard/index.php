@@ -22,7 +22,7 @@ if(1==2)
 
 <div class="lateral-filter-container">
     <div class="input-group col-sm-12">
-        <select class="custom-select" name="status_id" id="status_id" title="Status" autocomplete="status_id" onclick="handleListGoalOnLoad(document.getElementById('executive_id').value,undefined,document.getElementById('month').value,document.getElementById('year').value,'status='+returnSelectedStatuses(this)); handleListOnLoad(document.getElementById('executive_id').value,undefined,document.getElementById('month').value,document.getElementById('year').value,'status='+returnSelectedStatuses(this));" multiple>
+        <select class="custom-select" name="status_id" id="status_id" title="Status" autocomplete="status_id" onclick="handleListGoalOnLoad(document.getElementById('executive_id').value,undefined,document.getElementById('month').value,document.getElementById('year').value,'status='+returnSelectedStatuses(this)); handleListOnLoad(document.getElementById('executive_id').value,undefined,document.getElementById('month').value,document.getElementById('year').value,'status='+returnSelectedStatuses(this),document.getElementById('rate_id').value); handleShowExecutiveGoalGraphYearly(document.getElementById('executive_id').value,undefined,document.getElementById('month').value,document.getElementById('year').value,'status='+returnSelectedStatuses(this),document.getElementById('rate_id').value); handleShowExecutiveGoalGraph(document.getElementById('executive_id').value,undefined,document.getElementById('month').value,document.getElementById('year').value,'status='+returnSelectedStatuses(this),document.getElementById('rate_id').value);" multiple>
             <?=inputFilterNoZeroSelect('status',translateText('status'),'','percent','')?>
         </select>
     </div>
@@ -32,7 +32,7 @@ if(1==2)
         </div>
     </div>
     <div class="input-group col-sm-12   ">
-        <select class="custom-select" name="executive_id" id="executive_id" title="Assigned Executive" onchange="handleListGoalOnLoad(this.value,undefined,document.getElementById('month').value,document.getElementById('year').value,'status='+returnSelectedStatuses(document.getElementById('status_id'))); handleListLastWeekOnLoad(this.value,undefined,document.getElementById('rate_id').value); handleListOnLoad(this.value,undefined,document.getElementById('month').value,document.getElementById('year').value,'status='+returnSelectedStatuses(document.getElementById('status_id')));" autocomplete="executive_id">
+        <select class="custom-select" name="executive_id" id="executive_id" title="Assigned Executive" onchange="handleListGoalOnLoad(this.value,undefined,document.getElementById('month').value,document.getElementById('year').value,'status='+returnSelectedStatuses(document.getElementById('status_id'))); handleListLastWeekOnLoad(this.value,undefined,document.getElementById('rate_id').value); handleListOnLoad(this.value,undefined,document.getElementById('month').value,document.getElementById('year').value,'status='+returnSelectedStatuses(document.getElementById('status_id')),document.getElementById('rate_id').value); handleShowExecutiveGoalGraphYearly(this.value,undefined,document.getElementById('year').value,'status='+returnSelectedStatuses(document.getElementById('status_id')),document.getElementById('rate_id').value); handleShowExecutiveGoalGraph(this.value,undefined,document.getElementById('month').value,document.getElementById('year').value,'status='+returnSelectedStatuses(document.getElementById('status_id')),document.getElementById('rate_id').value);" autocomplete="executive_id">
         <?php if($_COOKIE['lacc'] >= 99999) { ?>
             <?=inputSelect('user',translateText('executive'),'user_type|||executive*|*user_type|||admin','username','')?>
             <?php } else { ?>
@@ -45,7 +45,7 @@ if(1==2)
             <form name='filter' method="post" enctype="multipart/form-data">
                 <div class="form-row">
                     <div class="input-group col-sm-7">
-                        <select class="custom-select" name="month" id="month" title="Month" autocomplete="month" onchange="handleListGoalOnLoad(document.getElementById('executive_id').value,undefined,this.value,document.getElementById('year').value,'status='+returnSelectedStatuses(document.getElementById('status_id'))); handleListOnLoad(document.getElementById('executive_id').value,undefined,this.value,document.getElementById('year').value,'status='+returnSelectedStatuses(document.getElementById('status_id')));">
+                        <select class="custom-select" name="month" id="month" title="Month" autocomplete="month" onchange="handleListGoalOnLoad(document.getElementById('executive_id').value,undefined,this.value,document.getElementById('year').value,'status='+returnSelectedStatuses(document.getElementById('status_id'))); handleListOnLoad(document.getElementById('executive_id').value,undefined,this.value,document.getElementById('year').value,'status='+returnSelectedStatuses(document.getElementById('status_id')),document.getElementById('rate_id').value); handleShowExecutiveGoalGraph(document.getElementById('executive_id').value,undefined,this.value,document.getElementById('year').value,'status='+returnSelectedStatuses(document.getElementById('status_id')),document.getElementById('rate_id').value);">
                             <option value="1"><?=translateText('january');?></option>
                             <option value="2"><?=translateText('february');?></option>
                             <option value="3"><?=translateText('march');?></option>
@@ -61,7 +61,7 @@ if(1==2)
                         </select>
                     </div>
                     <div class="input-group col-sm-5">
-                        <select class="custom-select" name="year" id="year" title="Year" autocomplete="year" onchange="handleListGoalOnLoad(document.getElementById('executive_id').value,undefined,document.getElementById('month').value,this.value,'status='+returnSelectedStatuses(document.getElementById('status_id'))); handleListOnLoad(document.getElementById('executive_id').value,undefined,document.getElementById('month').value,this.value,'status='+returnSelectedStatuses(document.getElementById('status_id')));">
+                        <select class="custom-select" name="year" id="year" title="Year" autocomplete="year" onchange="handleListGoalOnLoad(document.getElementById('executive_id').value,undefined,document.getElementById('month').value,this.value,'status='+returnSelectedStatuses(document.getElementById('status_id'))); handleListOnLoad(document.getElementById('executive_id').value,undefined,document.getElementById('month').value,this.value,'status='+returnSelectedStatuses(document.getElementById('status_id')),document.getElementById('rate_id').value); handleShowExecutiveGoalGraphYearly(document.getElementById('executive_id').value,undefined,this.value,'status='+returnSelectedStatuses(document.getElementById('status_id')),document.getElementById('rate_id').value); handleShowExecutiveGoalGraph(document.getElementById('executive_id').value,undefined,document.getElementById('month').value,this.value,'status='+returnSelectedStatuses(document.getElementById('status_id')),document.getElementById('rate_id').value);">
                         <?php
                                 echo showYearOptions(2022,(int)$YEAR_TODAY+1,$YEAR_TODAY);
                             ?>
@@ -74,7 +74,7 @@ if(1==2)
                     </div>
                     <div class="input-group col-sm-5">
                         <div class="currency-select">
-                            <select class="custom-select" id="rate_id" name="rate_id" title="Rates" autocomplete="rate_id" onChange="handleListGoalOnLoad(this.value); handleListOnLoad('','','','','',this.value); handleListLastWeekOnLoad(document.getElementById('executive_id').value,undefined,this.value);// getCurrencyValue(document.getElementById('goal-currency').innerText,this.value,document.getElementById('goal-0').innerText+'---'+document.getElementById('goal-1').innerText+'---'+document.getElementById('goal-2').innerText,'dashboard'); updateCurrencyListValue(document.getElementsByClassName('currency-line'),this.value,document.getElementsByClassName('amount-line'),'dashboard'); updateCurrencyListMonthlyValue(document.getElementsByClassName('currency-line'),this.value,document.getElementsByClassName('amount-month-line'),'dashboard'); ">
+                            <select class="custom-select" id="rate_id" name="rate_id" title="Rates" autocomplete="rate_id" onChange="handleListGoalOnLoad(this.value); handleListOnLoad(document.getElementById('executive_id').value,undefined,document.getElementById('month').value,document.getElementById('year').value,'status='+returnSelectedStatuses(document.getElementById('status_id')),this.value); handleShowExecutiveGoalGraphYearly(document.getElementById('executive_id').value,undefined,document.getElementById('year').value,'status='+returnSelectedStatuses(document.getElementById('status_id')),this.value); handleShowExecutiveGoalGraph(document.getElementById('executive_id').value,undefined,document.getElementById('month').value,document.getElementById('year').value,'status='+returnSelectedStatuses(document.getElementById('status_id')),this.value); handleListLastWeekOnLoad(document.getElementById('executive_id').value,undefined,this.value);// getCurrencyValue(document.getElementById('goal-currency').innerText,this.value,document.getElementById('goal-0').innerText+'---'+document.getElementById('goal-1').innerText+'---'+document.getElementById('goal-2').innerText,'dashboard'); updateCurrencyListValue(document.getElementsByClassName('currency-line'),this.value,document.getElementsByClassName('amount-line'),'dashboard'); updateCurrencyListMonthlyValue(document.getElementsByClassName('currency-line'),this.value,document.getElementsByClassName('amount-month-line'),'dashboard'); ">
                                 <?=inputFilterNoZeroSelect('rate','Rates','','orderby','USD')?>
                             </select>
                         </div>
@@ -92,6 +92,15 @@ if(1==2)
 </div>
 <div class='<?=strtolower($moduleName)?>-container'>
     <div class="result-container">
+        <div class="row">
+            <div class="graph" id="graph-executive-goals"></div>
+        </div>
+        <div class="row">
+            &nbsp;
+        </div>
+        <div class="row">
+            <div class="graph" id="graph-executive-goals-yearly"></div>
+        </div>   
         <div class="row">
             <div class="col">
                 Dashboard - <?=translateText('proposal')?>s <?=translateText('of_the_week')?>
@@ -175,7 +184,9 @@ if(1==2)
     updateRates();
     handleListGoalOnLoad();
     handleListOnLoad();
-    handleListLastWeekOnLoad()
+    handleListLastWeekOnLoad();
+    handleShowExecutiveGoalGraph();
+    handleShowExecutiveGoalGraphYearly();
 </script>
 <?php 
 

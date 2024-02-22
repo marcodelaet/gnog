@@ -647,6 +647,30 @@ CREATE VIEW view_proposals AS (
 	ppp.updated_at as proposalproduct_updated_at,
 	pps.created_at as proposal_created_at,
 	pps.updated_at as proposal_updated_at,
+	CASE WHEN g.user_id IS NOT NULL THEN 
+		g.goal_month
+	ELSE 
+		0
+	END 
+	AS goal_month,
+	CASE WHEN g.user_id IS NOT NULL THEN 
+		g.goal_year
+	ELSE 
+		0
+	END 
+	AS goal_year,
+	CASE WHEN g.user_id IS NOT NULL THEN 
+		g.currency_id
+	ELSE 
+		0
+	END 
+	AS goal_currency,
+	CASE WHEN g.user_id IS NOT NULL THEN 
+		g.goal_amount
+	ELSE 
+		0
+	END 
+	AS goal_amount,
 	CONCAT(
 		pps.id,
 		CASE WHEN pd.name IS NOT NULL THEN pd.name ELSE '' END,
@@ -678,6 +702,7 @@ CREATE VIEW view_proposals AS (
 	INNER JOIN users u ON u.id = pps.user_id
 	INNER JOIN advertisers adv ON adv.id = pps.advertiser_id
 	LEFT JOIN advertisers age ON age.id = pps.agency_id
+	LEFT JOIN goals g ON g.user_id = u.id
 );
 
 # VIEW INVOICES_FILES

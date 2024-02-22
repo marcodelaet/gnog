@@ -362,8 +362,6 @@ function handleSubmitProvider(form){
 
         total       = form.total.value;
 
-        product_start_date  = document.getElementById('start_date_product').value;
-        product_stop_date   = document.getElementById('stop_date_product').value;
         product     = document.getElementById('productID').value;
         saleModel   = document.getElementById('salemodelID').value;
         proposal_id = document.getElementById('proposalID').value;
@@ -374,10 +372,13 @@ function handleSubmitProvider(form){
         colony      = document.getElementById('colonySel').value;
         currency    = document.getElementById('currency').value;
 
-        objPrice        = document.getElementsByName('price[]');    
+        objPrice        = document.getElementsByName('price[]');
+        objCost        = document.getElementsByName('cost[]');
         objQuantity     = document.getElementsByName('quantity[]');
         objProviderId   = document.getElementsByName('provider_id[]');
-        
+        objStartDate    = [];
+        objStopDate     = [];
+
         if(errors > 0){
             alert(message);
         } else{
@@ -386,6 +387,7 @@ function handleSubmitProvider(form){
             stop_date       = '';
             product_id      = '';
             salemodel_id    = '';
+            cost            = '';
             price           = '';
             quantity        = '';
             provider_id     = '';
@@ -408,11 +410,24 @@ function handleSubmitProvider(form){
                         }
                     }    
                 } 
-                start_date      += virg + product_start_date;
-                stop_date       += virg + product_stop_date;
-                product_id      += virg + product;
+                xcost  = '0';
+                if((objCost[i].value != '') || (objCost[i].value >= 0)){
+                    axCost = objCost[i].value.split(",");
+                    for(c=0;c < axCost.length;c++){
+                        apCost     = axCost[c].split(".");
+                        for(d=0;d < apCost.length;d++){
+                            xcost      += apCost[d];
+                        }
+                    }    
+                } 
+                objStartDate.push(document.getElementsByName('start_date_product[]')[i].value);
+                objStopDate.push(document.getElementsByName('stop_date_product[]')[i].value);
+
+                start_date      += virg + objStartDate[i];
+                stop_date       += virg + objStopDate[i];
                 product_id      += virg + product;
                 salemodel_id    += virg + saleModel;
+                cost            += virg + xcost;
                 price           += virg + xprice;
                 xquantity       = 1;
                 if((objQuantity[i].value != '') || (objQuantity[i].value > 0))
@@ -424,11 +439,10 @@ function handleSubmitProvider(form){
                 city_id         += virg + city;
                 county_id       += virg + county;
                 colony_id       += virg + colony;
-
             }
-            addProduct('['+start_date+']','['+stop_date+']','['+product_id+']','['+salemodel_id+']','['+price+']',currency,'['+quantity+']','['+provider_id+']',proposal_id,'['+state_id+']','['+city_id+']','['+county_id+']','['+colony_id+']');
+            addProduct('['+start_date+']','['+stop_date+']','['+product_id+']','['+salemodel_id+']','['+cost+']','['+price+']',currency,'['+quantity+']','['+provider_id+']',proposal_id,'['+state_id+']','['+city_id+']','['+county_id+']','['+colony_id+']');
 
-            form.btnSave.innerHTML = "Save";
+            form.btnSave.innerHTML = ucfirst(translateText("save",localStorage.getItem('ulang')));
             window.location.href = '?pr=Li9wYWdlcy9wcm9wb3NhbHMvZm9ybWVkaXQucGhw&ppid='+proposal_id;
         }
     } else
@@ -788,7 +802,7 @@ function handleListEditOnLoad(ppid) {
 
     } else{
         const requestURL = window.location.protocol+'//'+locat+'api/proposals/auth_proposal_get.php?auth_api='+authApi+filters+orderby;
-        console.log('mapaaaa- '+requestURL);
+        //console.log('mapaaaa- '+requestURL);
         const request = new XMLHttpRequest();
         request.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {
@@ -1008,7 +1022,7 @@ function handleListOnLoad(search,page) {
     } else{
         tableList   = document.getElementById('listProposals');
         const requestURL = window.location.protocol+'//'+locat+'api/proposals/auth_proposal_list.php?auth_api='+authApi+filters+pages;
-        console.log(requestURL);
+        //console.log(requestURL);
         const request = new XMLHttpRequest();
         request.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {
@@ -1530,7 +1544,7 @@ function addProduct(start_date,stop_date,product_id,salemodel_id,cost,price,curr
 
     } else{
         const requestURLAdd = window.location.protocol+'//'+locat+'api/products/auth_product_add_new.php';
-        console.log(requestURLAdd + "\n?"+querystring);
+        //console.log(requestURLAdd + "\n?"+querystring);
         const requestAdd = new XMLHttpRequest();
         requestAdd.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {
@@ -1756,7 +1770,7 @@ function getMainExecutive(aid){
     } else{
         selectInput   = document.getElementById('selectexecutive');
         const requestURL = window.location.protocol+'//'+locat+'api/'+submodule+'s/auth_'+submodule+'_get.php?auth_api='+authApi+filters;
-        console.log(requestURL);
+        //console.log(requestURL);
         const request = new XMLHttpRequest();
         request.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {
@@ -1898,7 +1912,7 @@ function refilterSaleModel(typeInt,productCode,indexValue){
         
         if(salemodelList){
             const requestURL = window.location.protocol+'//'+locat+'api/'+submodule+'s/auth_'+submodule+'_view.php?auth_api='+authApi+filters;
-            console.log(requestURL);
+            //console.log(requestURL);
             const request = new XMLHttpRequest();
             request.onreadystatechange = function() {
                 html    = '<label for="salemodel_id[]">' + ucfirst(translateText('sale_model',localStorage.getItem('ulang'))) + '</label>';
@@ -2616,7 +2630,7 @@ function executeDatechange(dateType,newDateValue,oldDateValue,proposalId){
 
     filters += '&'+nameDateField+'='+newDateValue+'&oldDate='+oldDateValue;
     const requestURL = window.location.protocol+'//'+locat+'api/proposals/auth_proposal_changeDate.php?auth_api='+authApi+filters;
-    console.log(requestURL);
+    //console.log(requestURL);
     const request = new XMLHttpRequest();
     request.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {

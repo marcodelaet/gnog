@@ -363,6 +363,383 @@ function handleListLastWeekOnLoad(uid,search,currency) {
     // window.location.href = '?pr=Li9wYWdlcy91c2Vycy9saXN0LnBocA==';
 }
 
+function handleShowExecutiveGoalGraph(uid,status,month,year,search,currency){
+    errors      = 0;
+    authApi     = csrf_token;
+    locat       = window.location.hostname;
+
+    // getting today's date
+    var today       = new Date();
+    var xday        = today.getDate();
+    var xmonth      = today.getMonth()+1; // getMonth starts at 0
+    var xyear       = today.getFullYear();
+    var xcurrency   = 'MXN';
+
+    var arrayJsonDataProposals      = [];
+    var stringJsonDataCost          = '';
+    var stringJsonDataMargin        = '';
+    var stringJsonDataName          = '';
+    var stringJsonDataGoal          = '';
+
+    //month filter
+    if((typeof month != 'undefined') && ((month !== '') && (month != 'undefined'))){
+        xmonth     = month;
+    } else {
+        document.getElementById('month').value=xmonth;
+    }
+    //year filter
+    if((typeof year != 'undefined') && ((year !== '') && (year != 'undefined'))){
+        xyear     = year;
+    } else {
+        document.getElementById('year').value=xyear;
+    }
+    //currency filter
+    if((typeof currency != 'undefined') && ((currency !== '') && (currency != 'undefined'))){
+        xcurrency     = currency;
+    } else {
+        document.getElementById('rate_id').value=xcurrency;
+    }
+
+    // setting length of month string
+    var xlenDate    = ('00'+ xmonth).length;
+   
+    //var mySQLFullDate = xyear+'-'+xmonth+'-'+xday;
+    var xmonthfull  = ('00' + xmonth).substring(xlenDate-2,xlenDate);
+    
+    var xlenDay     = ('00'+ xday).length;
+    var xdayfull    = ('00' + xday).substring(xlenDay-2,xlenDay)
+    var dateFull    = xyear+xmonthfull+xdayfull;
+    var thedate     = new Date(xyear, xmonth - 1);
+    var strmonth    = thedate.toLocaleString('default',{ month: 'long'});
+
+    filters     = '&currency='+xcurrency;
+    //uid
+    if(typeof uid == 'undefined')
+        uid  = '';
+    if((uid !== '0') && (uid != 'undefined')){
+        filters     += '&uid='+uid;
+    }
+    
+    //search
+    if(typeof search == 'undefined')
+        search  = '';
+    if((search !== '') && (search != 'undefined')){
+        filters     += '&'+search;
+    }
+    filters += '&date='+dateFull;
+
+    if(locat.slice(-1) != '/')
+        locat += '/';
+
+    if(errors > 0){
+        
+    } else{
+        tableListLastWeek   = document.getElementById('listDashboardLastWeek');
+        const requestURL = window.location.protocol+'//'+locat+'api/'+module_dash+'/auth_'+module_dash+'_executive_goals_list.php?auth_api='+authApi+filters;
+        console.log(requestURL);
+        //alert(requestURL);
+        const request = new XMLHttpRequest();
+        request.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                // Typical action to be performed when the document is ready:
+                obj         = JSON.parse(request.responseText);
+                if(typeof obj[0].response != 'undefined'){
+                    html = '<tr><td colspan="8"><div style="margin-left:30%; margin-right:30%;text-align:center;" role="status">';
+                    html += '0 proposals';
+                    html += '</td></tr>';
+                    tableListLastWeek.innerHTML = html;    
+                    }else{
+                    html        = '';
+                    amount_total= 0;
+                    for(var i=0;i < obj.length; i++){
+                        var formatter = new Intl.NumberFormat(lang, {
+                            style: 'currency',
+                            currency: obj[i].currency,
+                            //maximumSignificantDigits: 2,
+                    
+                            // These options are needed to round to whole numbers if that's what you want.
+                            //minimumFractionDigits: 2, // (this suffices for whole numbers, but will print 2500.10 as $2,500.1)
+                            //maximumFractionDigits: 0, // (causes 2500.99 to be printed as $2,501)
+                        });
+                        color_status = '#d60b0e';
+                        color_letter = '#CCCCFF';
+                        if(obj[i].status_percent == '100'){
+                            color_status = '#298c3d';
+                            color_letter = '#CCCCFF';
+                        }
+                        if(obj[i].status_percent == '90'){
+                            color_status = '#03fc84';
+                            color_letter = '#000000';
+                        }
+                        if(obj[i].status_percent == '75'){
+                            color_status = '#77fc03';
+                            color_letter = '#000000';
+                        }
+                        if(obj[i].status_percent == '50'){
+                            color_status = '#ebfc03';
+                            color_letter = '#CCCCFF';
+                        }
+                        if(obj[i].status_percent == '25'){
+                            color_status = '#fc3d03';
+                            color_letter = '#CCCCFF';
+                        }
+
+                        agency = '';
+                        if(typeof(obj[i].agency_name) === 'string')
+                            agency = ' / '+obj[i].agency_name;
+
+                        
+                        // decimal must be .
+                        lastCurrency        = obj[i].currency;
+                        /***********************************
+                         * taking goals from database
+                         ************************************/
+                        goal                = document.getElementById('goal-0').innerText.replace(lastCurrency,'').replace('$','');
+                        if(document.getElementById('goal-0').innerText.substr(-3,1) == ","){
+                            goal            = goal.replace(".","").replace(",",".");
+                        } else {
+                            goal            = goal.replace(",","");
+                        }
+                        /****************************
+                         * end GOAL
+                         *****************************/
+                        goal                = obj[i].goal_amount_int / 100;
+                        cost                = parseInt(obj[i].cost_int / 100);
+                        margin              = (obj[i].amount_int - obj[i].cost_int)/100;
+                        margin_month        = (obj[i].amount_per_month_int - obj[i].cost_per_month_int)/100;
+                        amount              = obj[i].amount_int / 100;
+                        amount_month        = obj[i].amount_per_month_int / 100;
+                        amount_total        += parseInt(obj[i].amount_int);
+                        amount_total_show   = amount_total / 100;
+                        percentGoalShow     = (100 * amount_total)/parseInt(document.getElementById('goal-2').innerText);
+                        start_date  = new Date(obj[i].start_date);
+                        stop_date   = new Date(obj[i].stop_date);
+
+                        if(i == 0){
+                            stringJsonDataCost      += '{"y":'+amount_month+',"label":"'+obj[i].username+' - '+ucfirst(translateText('amount',localStorage.getItem('ulang')))+' '+ucfirst(translateText('total',localStorage.getItem('ulang')))+' ('+ucfirst(translateText('month',localStorage.getItem('ulang')))+' - '+ucfirst(strmonth)+')"}';
+                            stringJsonDataMargin    += '{"y":'+margin_month+',"label":"'+obj[i].username+' - '+ucfirst(translateText('margin',localStorage.getItem('ulang')))+'"}';
+                            stringJsonDataGoal      += '{"y":'+goal+',"label":"'+obj[i].username+' - '+ucfirst(translateText('goal',localStorage.getItem('ulang')))+'"}';
+                            stringJsonDataName      += '{"y":0,"label":"'+obj[i].username+'"}';
+                        } else {
+                            stringJsonDataCost      += ', {"y":'+amount_month+',"label":"'+obj[i].username+' - '+ucfirst(translateText('amount',localStorage.getItem('ulang')))+' '+ucfirst(translateText('total',localStorage.getItem('ulang')))+' ('+ucfirst(translateText('month',localStorage.getItem('ulang')))+' - '+ucfirst(strmonth)+')"}';
+                            stringJsonDataMargin    += ', {"y":'+margin_month+',"label":"'+obj[i].username+' - '+ucfirst(translateText('margin',localStorage.getItem('ulang')))+'"}';
+                            stringJsonDataGoal      += ', {"y":'+goal+',"label":"'+obj[i].username+' - '+ucfirst(translateText('goal',localStorage.getItem('ulang')))+'"}';
+                            stringJsonDataName      += ', {"y":0,"label":"'+obj[i].username+'"}';
+                        }
+                    }
+                    graphType = 'column';
+                    arrayJsonDataProposals[0] = '['+stringJsonDataCost+']';
+                    arrayJsonDataProposals[1] = '['+stringJsonDataMargin+']';
+                    arrayJsonDataProposals[2] = '['+stringJsonDataGoal+']';
+                    arrayJsonDataProposals[3] = '['+stringJsonDataName+']';
+                    createGraph(graphType,'graph-executive-goals',ucfirst(translateText('goal',localStorage.getItem('ulang')))+'s - '+translateText('values_in',localStorage.getItem('ulang'))+' '+lastCurrency+' ('+ucfirst(translateText('month',localStorage.getItem('ulang')))+': '+ucfirst(strmonth)+')',ucfirst(translateText('list_of',localStorage.getItem('ulang')))+' '+translateText('proposal',localStorage.getItem('ulang'))+'s '+translateText('of_the_week',localStorage.getItem('ulang')),arrayJsonDataProposals); // campaigns chart 
+                
+                    //createGraph('multi2','graph-goals','Reached Goals','Proposals',data1,'Goals',data2); //goals chart
+                    tableListLastWeek.innerHTML = html;
+                    // document.getElementById('goal-1').innerHTML = formatter.format(amount_total_show);
+                    // document.getElementById('goal-percent').innerHTML = percentGoalShow.toFixed(2) + "%";
+                }
+            }
+            else {
+                html = '<tr><td colspan="8"><div style="margin-left:45%; margin-right:45%;" class="spinner-border" style="text-align:center;" role="status">';
+                html += '<span class="sr-only">Loading...</span>';
+                html += '</div></td></tr>';
+                tableListLastWeek.innerHTML = html;
+                //form.btnSave.innerHTML = "Searching...";
+            }
+        };
+        request.open('GET', requestURL);
+        //request.responseType = 'json';
+        request.send();
+    }
+    // window.location.href = '?pr=Li9wYWdlcy91c2Vycy9saXN0LnBocA==';
+}
+    
+function handleShowExecutiveGoalGraphYearly(uid,status,year,search,currency){
+    errors      = 0;
+    authApi     = csrf_token;
+    locat       = window.location.hostname;
+
+    // getting today's date
+    var today       = new Date();
+    var xday        = today.getDate();
+    var xmonth      = today.getMonth()+1; // getMonth starts at 0
+    var xyear       = today.getFullYear();
+    var xcurrency   = 'MXN';
+
+    var arrayJsonDataProposals      = [];
+    var stringJsonDataCost          = '';
+    var stringJsonDataMargin        = '';
+    var stringJsonDataName          = '';
+    var stringJsonDataGoal          = '';
+
+    //year filter
+    if((typeof year != 'undefined') && ((year !== '') && (year != 'undefined'))){
+        xyear     = year;
+    } else {
+        document.getElementById('year').value=xyear;
+    }
+    //currency filter
+    if((typeof currency != 'undefined') && ((currency !== '') && (currency != 'undefined'))){
+        xcurrency     = currency;
+    } else {
+        document.getElementById('rate_id').value=xcurrency;
+    }
+
+    // setting length of month string
+    var xlenDate    = ('00'+ xmonth).length;
+   
+    //var mySQLFullDate = xyear+'-'+xmonth+'-'+xday;
+    var xmonthfull  = ('00' + xmonth).substring(xlenDate-2,xlenDate);
+    
+    var xlenDay     = ('00'+ xday).length;
+    var xdayfull    = ('00' + xday).substring(xlenDay-2,xlenDay)
+    var dateFull    = xyear+xmonthfull+xdayfull;
+
+    filters     = '&currency='+xcurrency;
+    //uid
+    if(typeof uid == 'undefined')
+        uid  = '';
+    if((uid !== '0') && (uid != 'undefined')){
+        filters     += '&uid='+uid;
+    }
+    
+    //search
+    if(typeof search == 'undefined')
+        search  = '';
+    if((search !== '') && (search != 'undefined')){
+        filters     += '&'+search;
+    }
+    filters += '&date='+dateFull+'&type=yearly';
+
+    if(locat.slice(-1) != '/')
+        locat += '/';
+
+    if(errors > 0){
+        
+    } else{
+        tableListLastWeek   = document.getElementById('listDashboardLastWeek');
+        const requestURL = window.location.protocol+'//'+locat+'api/'+module_dash+'/auth_'+module_dash+'_executive_goals_list.php?auth_api='+authApi+filters;
+        console.log(requestURL);
+        //alert(requestURL);
+        const request = new XMLHttpRequest();
+        request.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                // Typical action to be performed when the document is ready:
+                obj         = JSON.parse(request.responseText);
+                if(typeof obj[0].response != 'undefined'){
+                    html = '<tr><td colspan="8"><div style="margin-left:30%; margin-right:30%;text-align:center;" role="status">';
+                    html += '0 proposals';
+                    html += '</td></tr>';
+                    tableListLastWeek.innerHTML = html;    
+                    }else{
+                    html        = '';
+                    amount_total= 0;
+                    for(var i=0;i < obj.length; i++){
+                        var formatter = new Intl.NumberFormat(lang, {
+                            style: 'currency',
+                            currency: obj[i].currency,
+                            //maximumSignificantDigits: 2,
+                    
+                            // These options are needed to round to whole numbers if that's what you want.
+                            //minimumFractionDigits: 2, // (this suffices for whole numbers, but will print 2500.10 as $2,500.1)
+                            //maximumFractionDigits: 0, // (causes 2500.99 to be printed as $2,501)
+                        });
+                        color_status = '#d60b0e';
+                        color_letter = '#CCCCFF';
+                        if(obj[i].status_percent == '100'){
+                            color_status = '#298c3d';
+                            color_letter = '#CCCCFF';
+                        }
+                        if(obj[i].status_percent == '90'){
+                            color_status = '#03fc84';
+                            color_letter = '#000000';
+                        }
+                        if(obj[i].status_percent == '75'){
+                            color_status = '#77fc03';
+                            color_letter = '#000000';
+                        }
+                        if(obj[i].status_percent == '50'){
+                            color_status = '#ebfc03';
+                            color_letter = '#CCCCFF';
+                        }
+                        if(obj[i].status_percent == '25'){
+                            color_status = '#fc3d03';
+                            color_letter = '#CCCCFF';
+                        }
+
+                        agency = '';
+                        if(typeof(obj[i].agency_name) === 'string')
+                            agency = ' / '+obj[i].agency_name;
+
+                        
+                        // decimal must be .
+                        lastCurrency        = obj[i].currency;
+                        /***********************************
+                         * taking goals from database
+                         ************************************/
+                        goal                = document.getElementById('goal-0').innerText.replace(lastCurrency,'').replace('$','');
+                        if(document.getElementById('goal-0').innerText.substr(-3,1) == ","){
+                            goal            = goal.replace(".","").replace(",",".");
+                        } else {
+                            goal            = goal.replace(",","");
+                        }
+                        /****************************
+                         * end GOAL
+                         *****************************/
+                        goal                = obj[i].goal_amount_int / 100;
+                        cost                = parseInt(obj[i].cost_int / 100);
+                        margin              = (obj[i].amount_int - obj[i].cost_int)/100;
+                        margin_month        = (obj[i].amount_per_month_int - obj[i].cost_per_month_int)/100;
+                        amount              = obj[i].amount_int / 100;
+                        amount_month        = obj[i].amount_per_month_int / 100;
+                        amount_total        += parseInt(obj[i].amount_int);
+                        amount_total_show   = amount_total / 100;
+                        percentGoalShow     = (100 * amount_total)/parseInt(document.getElementById('goal-2').innerText);
+                        start_date  = new Date(obj[i].start_date);
+                        stop_date   = new Date(obj[i].stop_date);
+
+                        if(i == 0){
+                            stringJsonDataCost      += '{"y":'+amount_month+',"label":"'+obj[i].username+' - '+ucfirst(translateText('amount',localStorage.getItem('ulang')))+' '+ucfirst(translateText('total',localStorage.getItem('ulang')))+'"}';
+                            stringJsonDataMargin    += '{"y":'+margin_month+',"label":"'+obj[i].username+' - '+ucfirst(translateText('margin',localStorage.getItem('ulang')))+'"}';
+                            stringJsonDataGoal      += '{"y":'+goal+',"label":"'+obj[i].username+' - '+ucfirst(translateText('goal',localStorage.getItem('ulang')))+'"}';
+                            stringJsonDataName      += '{"y":0,"label":"'+obj[i].username+'"}';
+                        } else {
+                            stringJsonDataCost      += ', {"y":'+amount_month+',"label":"'+obj[i].username+' - '+ucfirst(translateText('amount',localStorage.getItem('ulang')))+' '+ucfirst(translateText('total',localStorage.getItem('ulang')))+'"}';
+                            stringJsonDataMargin    += ', {"y":'+margin_month+',"label":"'+obj[i].username+' - '+ucfirst(translateText('margin',localStorage.getItem('ulang')))+'"}';
+                            stringJsonDataGoal      += ', {"y":'+goal+',"label":"'+obj[i].username+' - '+ucfirst(translateText('goal',localStorage.getItem('ulang')))+'"}';
+                            stringJsonDataName      += ', {"y":0,"label":"'+obj[i].username+'"}';
+                        }
+                    }
+                    graphType = 'column';
+                    arrayJsonDataProposals[0] = '['+stringJsonDataCost+']';
+                    arrayJsonDataProposals[1] = '['+stringJsonDataMargin+']';
+                    arrayJsonDataProposals[2] = '['+stringJsonDataGoal+']';
+                    arrayJsonDataProposals[3] = '['+stringJsonDataName+']';
+                    createGraph(graphType,'graph-executive-goals-yearly',ucfirst(translateText('goal',localStorage.getItem('ulang')))+'s - '+translateText('values_in',localStorage.getItem('ulang'))+' '+lastCurrency+' ('+ucfirst(translateText('year',localStorage.getItem('ulang')))+': '+xyear+')',ucfirst(translateText('list_of',localStorage.getItem('ulang')))+' '+translateText('proposal',localStorage.getItem('ulang'))+'s '+translateText('of_the_week',localStorage.getItem('ulang')),arrayJsonDataProposals); // campaigns chart 
+                
+                    //createGraph('multi2','graph-goals','Reached Goals','Proposals',data1,'Goals',data2); //goals chart
+                    tableListLastWeek.innerHTML = html;
+                    // document.getElementById('goal-1').innerHTML = formatter.format(amount_total_show);
+                    // document.getElementById('goal-percent').innerHTML = percentGoalShow.toFixed(2) + "%";
+                }
+            }
+            else {
+                html = '<tr><td colspan="8"><div style="margin-left:45%; margin-right:45%;" class="spinner-border" style="text-align:center;" role="status">';
+                html += '<span class="sr-only">Loading...</span>';
+                html += '</div></td></tr>';
+                tableListLastWeek.innerHTML = html;
+                //form.btnSave.innerHTML = "Searching...";
+            }
+        };
+        request.open('GET', requestURL);
+        //request.responseType = 'json';
+        request.send();
+    }
+    // window.location.href = '?pr=Li9wYWdlcy91c2Vycy9saXN0LnBocA==';
+}
+
+
 function createGraph(chartType,divName,strText,name1,data1,name2,data2,name3,data3) {
     var chart = '';
     if(chartType == 'multi2'){
@@ -484,6 +861,28 @@ function createGraph(chartType,divName,strText,name1,data1,name2,data2,name3,dat
         });
     }
 
+    if(chartType == 'column'){
+        chart = new CanvasJS.Chart(divName, {
+            animationEnabled: true,
+            title:{
+                text: strText
+            },
+            data: [
+                {
+                    dataPoints: JSON.parse(data1[0])
+                },
+                {
+                    dataPoints: JSON.parse(data1[1])
+                },
+                {
+                    dataPoints: JSON.parse(data1[2])
+                },
+                {
+                    dataPoints: JSON.parse(data1[3])
+                }
+            ]
+        });
+    }
 
     chart.render();
 }
