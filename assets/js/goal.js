@@ -57,7 +57,7 @@ function handleGoalSubmit(form) {
                     if(!confirm("Goal recorded successfully! Create goals to another executive?"))
                         window.location.href = '?pr=Li9wYWdlcy91c2Vycy9pbmRleC5waHA=';
                     else { 
-                        // do nothing
+                        window.location.reload; // do refresh
                     }
                 }
                 else {
@@ -187,6 +187,8 @@ function handleListGoalOnLoad(currency) {
     }
 
     filters     += '&currency='+xcurrency;
+
+    //groupby = '&groupby=uuid';
 
     if(locat.slice(-1) != '/')
         locat += '/';
@@ -483,8 +485,9 @@ function handleListGoalAtFormOnLoad() {
     var month   = today.getMonth()+1; // getMonth starts at 0
     var year    = today.getFullYear(); 
 
-    var groupby = 'UUID,goal_month,goal_year';
-    var filters     = '&year='+year+'&groupby='+groupby;
+    var orderby = 'UUID,goal_month,goal_year';
+    var groupby = 'uuid';
+    var filters     = '&year='+year+'&groupby='+groupby+'&orderby='+orderby;
 
     if(locat.slice(-1) != '/')
         locat += '/';
