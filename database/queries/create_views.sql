@@ -420,13 +420,21 @@ CREATE VIEW view_proposals AS (
 	ELSE 0 END
 	AS amount_per_month_EUR,
 	CASE WHEN ppp.is_active = 'Y' THEN 
-	(ppp.cost_int * ppp.quantity) 
+	(ppp.cost_int) 
 	ELSE 0 END 
 	AS cost_int,
 	CASE WHEN ppp.is_active = 'Y' THEN 
-	(ppp.cost_int * ppp.quantity) / 100 
+	(ppp.cost_int) / 100 
 	ELSE 0 END 
 	AS cost,
+	CASE WHEN ppp.is_active = 'Y' THEN 
+	(ppp.cost_int * ppp.quantity) 
+	ELSE 0 END 
+	AS cost_full_int,
+	CASE WHEN ppp.is_active = 'Y' THEN 
+	(ppp.cost_int * ppp.quantity) / 100 
+	ELSE 0 END 
+	AS cost_full,
 	CASE WHEN ppp.is_active = 'Y' THEN 
 	((ppp.cost_int * ppp.quantity) / (TIMESTAMPDIFF(MONTH, ppp.start_date, ppp.stop_date) + 1)) 
 	ELSE 0 END 

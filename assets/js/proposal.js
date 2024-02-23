@@ -166,10 +166,50 @@ function handleSubmitAddProduct(form,proposalId){
         //console.log('psdt_url: '+product_start_date);
         addProduct('['+product_start_date+']','['+product_stop_date+']','['+product_id+']','['+salemodel_id+']','['+cost+']','['+price+']',currency,'['+quantity+']','['+provider_id+']',proposal_id,'['+state_id+']','['+city_id+']','['+county_id+']','['+colony_id+']','['+billboard_id+']');
 
-        form.btnSave.innerHTML = "Save";
+        form.btnSave.innerHTML = ucfirst(translateText("save",localStorage.getItem('ulang')));
         window.location.href = '?pr=Li9wYWdlcy9wcm9wb3NhbHMvZm9ybWVkaXQucGhw&ppid='+proposalId;
     }
 }
+
+function handleSubmitEditProduct(form){
+    errors      = 0;
+    authApi     = csrf_token;
+    message     = '';
+
+    var formData = new FormData(form);
+    formData.append('auth_api',authApi);
+    ppid = form.ppid.value;
+
+    locat       = window.location.hostname;
+    if(locat.slice(-1) != '/')
+        locat += '/';
+
+    if(errors > 0){
+        alert(message);
+    } else {
+        const requestURL = window.location.protocol+'//'+locat+'api/proposals/auth_proposalproduct_edit.php';
+        console.log(requestURL);
+        const request = new XMLHttpRequest();
+        request.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                // Typical action to be performed when the document is ready:
+                console.log(request.responseText);                    
+                obj = JSON.parse(request.responseText);
+
+
+                form.btnSave.innerHTML = ucfirst(translateText("save",localStorage.getItem('ulang')));
+                window.location.href = '?pr=Li9wYWdlcy9wcm9wb3NhbHMvZm9ybWVkaXQucGhw&ppid='+ppid;
+            }
+            else{
+                form.btnSave.innerHTML = ucfirst(translateText("saving",localStorage.getItem('ulang')));
+            }
+        };
+        request.open('POST', requestURL, false);
+        //request.responseType = 'json';
+        request.send(formData);
+    }
+}
+
 
 function handleSubmit(form) {
     errors      = 0;
@@ -339,7 +379,7 @@ function handleSubmit(form) {
                     addProduct('['+product_start_date+']','['+product_stop_date+']','['+product_id+']','['+salemodel_id+']','['+cost+']','['+price+']',currency,'['+quantity+']','['+provider_id+']',proposal_id,'['+state_id+']','['+city_id+']','['+county_id+']','['+colony_id+']','['+billboard_id+']');
                     // alert('['+product_id+']'+'['+salemodel_id+']'+'['+cost+']'+'['+price+']'+currency+'['+quantity+']'+'['+provider_id+']'+proposal_id+'['+state_id+']'+'['+city_id+']'+'['+county_id+']'+'['+colony_id+']'+'['+billboard_id+']');
 
-                    form.btnSave.innerHTML = "Save";
+                    form.btnSave.innerHTML = ucfirst(translateText("save",localStorage.getItem('ulang')));
                     window.location.href = '?pr=Li9wYWdlcy9wcm9wb3NhbHMvZm9ybWVkaXQucGhw&ppid='+proposal_id;
                 }
                 else{
@@ -787,6 +827,107 @@ function handleListAddProductOnLoad(ppid){
     }
 }
 
+function handleListEditProductOnLoad(ppid,pppid){
+    errors      = 0;
+    authApi     = csrf_token;
+    locat       = window.location.hostname;
+
+    filters     = '&ppid='+ppid+'&pppid='+pppid;
+    if(locat.slice(-1) != '/')
+        locat += '/';
+
+    if(errors > 0){
+
+    } else{
+        const requestURL = window.location.protocol+'//'+locat+'api/proposals/auth_proposal_get.php?auth_api='+authApi+filters+orderby;
+        //console.log('getPPP- '+requestURL);
+        const request = new XMLHttpRequest();
+        request.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                
+                obj = JSON.parse(request.responseText);
+
+                advertiser_name = obj['data'][0].client_name;
+                agency_name     = obj['data'][0].agency_name;
+                
+                if( (agency_name != '') && (agency_name != null)){
+                    advertiser_name += " / " + agency_name;
+                }
+                const startDate = new Date(obj['data'][0].start_date);
+                const stopDate  = new Date(obj['data'][0].stop_date);
+
+                document.getElementById('offer-name').innerText         = obj['data'][0].offer_name;
+                document.getElementById('advertiser-name').innerText    = advertiser_name;
+                document.getElementById('info-currency').innerText      = obj['data'][0].currency_c;
+                document.getElementById('start-date').innerText         = startDate.toLocaleDateString(lang);
+                document.getElementById('stop-date').innerText          = stopDate.toLocaleDateString(lang);
+                document.getElementById('currency').value               = obj['data'][0].currency_c;
+                strStartDateMonth                                       = '00'+(startDate.getMonth()+1);
+                strStopDateMonth                                        = '00'+(stopDate.getMonth()+1);
+                strStartDateDay                                         = '00'+(startDate.getDate());
+                strStopDateDay                                          = '00'+(stopDate.getDate());
+                document.getElementById('start-date-input').value       = startDate.getFullYear()+'-'+strStartDateMonth.substr(-2,2)+'-'+strStartDateDay.substr(-2,2);
+                document.getElementById('stop-date-input').value        = stopDate.getFullYear()+'-'+strStopDateMonth.substr(-2,2)+'-'+strStopDateDay.substr(-2,2);
+                document.getElementById('currency-input').value         = obj['data'][0].currency_c;
+                xcurrency = obj['data'][0].currency_c;
+
+                // Create our number formatter.
+                var formatter = new Intl.NumberFormat(lang, {
+                    //style: 'currency',
+                    //currency: xcurrency, // believing every currency will be MXN
+                    //maximumSignificantDigits: 2,
+
+                    // These options are needed to round to whole numbers if that's what you want.
+                    minimumFractionDigits: 2, // (this suffices for whole numbers, but will print 2500.10 as $2,500.1)
+                    //maximumFractionDigits: 0, // (causes 2500.99 to be printed as $2,501)
+                });
+
+                /*****************************
+                 * FORM FILL- AREA
+                 */
+                is_digital = false;
+                if(obj['data'][0].is_digital == 'Y')
+                    is_digital = true;
+
+                unique = false;
+                if(obj['data'][0].stop_date_for_product == null)
+                    unique = true;
+    
+                provider_id = 0;
+                if(obj['data'][0].provider_id != null)
+                    provider_id = obj['data'][0].provider_id;
+
+                document.getElementById('digital_product').checked      = is_digital;
+                document.getElementById('datetype_option').checked      = unique;
+                if(is_digital === true){
+                    document.getElementById('digital_product').value      = 1;
+                   // refilterProductsType(0);
+                }
+
+                if(unique === true){
+                    document.getElementById('div-stopDate-product').style   ='display:none';
+                }
+                document.getElementById('start_date_product').value     = obj['data'][0].start_date_for_product;
+                document.getElementById('stop_date_product').value      = obj['data'][0].stop_date_for_product;
+                document.getElementById('selectproduct').value          = obj['data'][0].product_id;
+                document.getElementById('selectsalemodel').value        = obj['data'][0].salemodel_id;
+                document.getElementById('cost').value                   = formatter.format(obj['data'][0].cost);
+                document.getElementById('price').value                  = formatter.format(obj['data'][0].price);
+                document.getElementById('quantity').value               = obj['data'][0].quantity;
+                document.getElementById('amount').value                 = formatter.format(obj['data'][0].amount);
+                document.getElementById('selectprovider').value         = provider_id;
+                console.log(obj['data'][0].product_id +' - '+ obj['data'][0].product_name);
+            }
+            else {
+                //form.btnSave.innerHTML = "Searching...";
+            }
+        };
+        request.open('GET', requestURL);
+        //request.responseType = 'json';
+        request.send();
+    }
+}
+
 function handleListEditOnLoad(ppid) {
     errors      = 0;
     authApi     = csrf_token;
@@ -883,18 +1024,40 @@ function handleListEditOnLoad(ppid) {
                                 html += '<div class="col-sm-3">'+obj['data'][i].product_name+' / '+obj['data'][i].salemodel_name+'</div>';
                                 html += '<div class="col-sm-2">'+obj['data'][i].state+'</div>'; 
                                 //'<div class="col-sm-2">Rate % All</div>' +
-                                if(aBillboards.indexOf(obj['data'][i].salemodel_name) != -1){
+                                /********************************************
+                                 * PRODUCT AREA                             * 
+                                 */
+                                if(aBillboards.indexOf(obj['data'][i].salemodel_name) != -1){ // is a billboard (OFFLINE MEDIA LOCATIONS - CHOOSE LOCATION ON MAP OPTION)
                                 //if(obj[i].billboard_salemodel_name != null){
-                                    html += '<div class="col-sm-2" style="text-align:center; white-space: nowrap;"><a title="'+ucfirst(translateText('choose',localStorage.getItem('ulang')))+' '+obj['data'][i].salemodel_name+' '+translateText('on_map',localStorage.getItem('ulang'))+'" href="?pr=Li9wYWdlcy9tYXBzL2luZGV4LnBocA==&smid='+obj['data'][i].salemodel_id+'&ppid='+ppid+'&pppid='+obj['data'][i].proposalproduct_id+'&state='+obj['data'][i].state+'&city='+obj['data'][i].city+'&county='+obj['data'][i].county+'&colony='+obj['data'][i].colony+'"><span class="material-icons" style="font-size:1.2rem;">map</span><br/><span style="font-size:0.8rem">'+ucfirst(translateText('choose',localStorage.getItem('ulang')))+' '+obj['data'][i].salemodel_name+' '+translateText('on_map',localStorage.getItem('ulang'))+'</span></a></div>';
-                                } else {
-                                    html += '<div class="col-sm-2" style="text-align:center; white-space: nowrap;"><a title="'+ucfirst(translateText('add+',localStorage.getItem('ulang')))+' '+translateText('provider',localStorage.getItem('ulang'))+'" href="?pr=Li9wYWdlcy9wcm9wb3NhbHMvYWRkL3Byb2R1Y3QvcHJvdmlkZXIvZm9ybWFkZC5waHA=&smid='+obj['data'][i].salemodel_id+'&ppid='+ppid+'&pppid='+obj['data'][i].proposalproduct_id+'&state='+obj['data'][i].state+'&city='+obj['data'][i].city+'&county='+obj['data'][i].county+'&colony='+obj['data'][i].colony+'"><span class="material-icons" style="font-size:1.2rem;">add_business</span> <br/><span style="font-size:0.8rem">'+ucfirst(translateText('add+',localStorage.getItem('ulang')))+' '+translateText('provider',localStorage.getItem('ulang'))+'</span></a></div>';
+                                    html += '<div class="col-sm-2" style="text-align:center; white-space: nowrap;"><a title="'+ucfirst(translateText('choose',localStorage.getItem('ulang')))+' '+obj['data'][i].product_name+' / '+obj['data'][i].salemodel_name+' '+translateText('on_map',localStorage.getItem('ulang'))+'" href="?pr=Li9wYWdlcy9tYXBzL2luZGV4LnBocA==&smid='+obj['data'][i].salemodel_id+'&ppid='+ppid+'&pppid='+obj['data'][i].proposalproduct_id+'&state='+obj['data'][i].state+'&city='+obj['data'][i].city+'&county='+obj['data'][i].county+'&colony='+obj['data'][i].colony+'"><span class="material-icons" style="font-size:1.2rem;">map</span><br/><span style="font-size:0.8rem">'+ucfirst(translateText('choose',localStorage.getItem('ulang')))+' '+obj['data'][i].salemodel_name+' '+translateText('on_map',localStorage.getItem('ulang'))+'</span></a></div>';
+                                } else { // IS NOT AN OFFLINE MEDIA LOCATION - ADD PROVIDER OPTION
+                                    html += '<div class="col-sm-2" style="text-align:center; white-space: nowrap;"><a title="'+ucfirst(translateText('add+',localStorage.getItem('ulang')))+' '+translateText('provider',localStorage.getItem('ulang'))+'" href="?pr=Li9wYWdlcy9wcm9wb3NhbHMvcHJvdmlkZXIvZm9ybWFkZC5waHA=&smid='+obj['data'][i].salemodel_id+'&ppid='+ppid+'&pppid='+obj['data'][i].proposalproduct_id+'&state='+obj['data'][i].state+'&city='+obj['data'][i].city+'&county='+obj['data'][i].county+'&colony='+obj['data'][i].colony+'"><span class="material-icons" style="font-size:1.2rem;">add_business</span> <br/><span style="font-size:0.8rem">'+ucfirst(translateText('add+',localStorage.getItem('ulang')))+' '+translateText('provider',localStorage.getItem('ulang'))+'</span></a></div>';
                                 }
-                                // remove option (only when without providers)
-                                //alert(obj['data'][i].provider_id);
+
+                                /***************************************************************
+                                 * ### AVAILABLE OPTION ONLY WHEN IS NOT A PROVIDER INCLUDED ###
+                                 *************************** */ 
                                 if(obj['data'][i].provider_id == null){
-                                    html +='<div class="col-sm-1" id="button-delete-'+obj['data'][i].proposalproduct_id+'">'+
-                                    '<a href="javascript:void(0);" onclick="if(confirm(\''+translateText('confirm',localStorage.getItem('ulang'))+' '+translateText('to_remove',localStorage.getItem('ulang'))+' '+obj['data'][i].salemodel_name+' '+translateText('from_the_list',localStorage.getItem('ulang'))+'?\')){handleRemoveProductFromProposal(\''+obj['data'][i].proposalproduct_id+'\');}">'+
-                                    '<span class="material-icons" style="font-size:1.5rem; color:black;" title="'+translateText('remove',localStorage.getItem('ulang'))+' '+obj['data'][i].salemodel_name+' '+translateText('from_the_list',localStorage.getItem('ulang'))+'">delete</span></a></div>';
+
+                                /************************************
+                                 * EDIT PRODUCT OPTION 
+                                 ************************************/ 
+                                
+                                html += '<div class="col-sm-1" style="text-align:center; white-space: nowrap;">';
+                                html += '<a title="'+ucfirst(translateText('add+',localStorage.getItem('ulang')))+' '+translateText('provider',localStorage.getItem('ulang'))+'" href="?pr=Li9wYWdlcy9wcm9wb3NhbHMvcHJvZHVjdC9mb3JtZWRpdC5waHA=&ppid='+ppid+'&pppid='+obj['data'][i].proposalproduct_id+'&state='+obj['data'][i].state+'&city='+obj['data'][i].city+'&county='+obj['data'][i].county+'&colony='+obj['data'][i].colony+'">';
+                                html += '<span class="material-icons" style="font-size:1.5rem; color:black;" title="'+ucfirst(translateText('edit',localStorage.getItem('ulang')))+' '+translateText('product',localStorage.getItem('ulang'))+' '+obj['data'][i].product_name+' / '+obj['data'][i].salemodel_name+'">edit</span>';
+                                html += '</a>';
+                                //html += '</div>';
+
+                                /**************************************** 
+                                 * REMOVE PRODUCT OPTION 
+                                 * *************************************/ 
+                                // alert(obj['data'][i].provider_id);
+
+                                
+                                    //html +='<div class="col-sm-1" id="button-delete-'+obj['data'][i].proposalproduct_id+'">';
+                                    html +='<a href="javascript:void(0);" onclick="if(confirm(\''+translateText('confirm',localStorage.getItem('ulang'))+' '+translateText('to_remove',localStorage.getItem('ulang'))+' '+obj['data'][i].product_name+' / '+obj['data'][i].salemodel_name+' '+translateText('from_the_list',localStorage.getItem('ulang'))+'?\')){handleRemoveProductFromProposal(\''+obj['data'][i].proposalproduct_id+'\');}">';
+                                    html +='<span class="material-icons" style="font-size:1.5rem; color:black;" title="'+translateText('remove',localStorage.getItem('ulang'))+' '+obj['data'][i].product_name+' / '+obj['data'][i].salemodel_name+' '+translateText('from_the_list',localStorage.getItem('ulang'))+'">delete</span></a></div>';
                                 }
                                 html += '</div>';  
                             } else { product = "reset"; numberProducts--; }
@@ -1299,22 +1462,35 @@ function calcAmountTotal(form,index,specialid){
         //maximumFractionDigits: 0, // (causes 2500.99 to be printed as $2,501)
     });
     //xproduction = 0;
+    if(typeof(index)=='undefined'){
+        index=0;
+        IDPrice     = 'price';
+        IDQuantity  = 'quantity';
+        NAMEOoh     = 'oohprice[]';
+        NAMEAmount  = 'amount';
+    }else{
+        IDPrice = 'price_'+index;
+        IDQuantity  = 'quantity_'+index;
+        NAMEOoh     = 'oohprice_'+index+'[]';
+        NAMEAmount  = 'amount';
+    }
+
     xprice      = 0;
     if(typeof(specialid)=='undefined'){
-        price       = document.getElementById('price_'+index);
+        price       = document.getElementById(IDPrice);
 
         xprice=0;
         if(price){
             xprice      = price.value;
         }
         //alert(price+ ' - ' +xprice+ ' - '+'price_'+index);
-        quantity    = document.getElementById('quantity_'+index);
+        quantity    = document.getElementById(IDQuantity);
         xquantity=1;
         if(quantity){
             xquantity   = quantity.value;
         }
     } else { 
-        price      = document.getElementsByName('oohprice_'+index+'[]');
+        price      = document.getElementsByName(NAMEOoh);
         
         if(price){
             for(p=0;p < price.length;p++){
@@ -1358,7 +1534,7 @@ function calcAmountTotal(form,index,specialid){
         }*/
 
 
-        amount = document.getElementsByName('amount[]');
+        amount = document.getElementsByName(NAMEAmount);
         formattedAmount = formatter.format(parseFloat( ((transformToInt(xprice)) * parseInt(xquantity))));
         if((formattedAmount.charAt(formattedAmount.length - 4) == thousands) || (formattedAmount.length <= 3)){
             formattedAmount += cents+'00';
@@ -1813,7 +1989,20 @@ function refilterProductsType(typeInt,indexValue){
     typeInt++;
     if(typeInt > 1)
         typeInt = 0;
-    document.getElementById('digital_product-'+indexValue).value = typeInt;
+    if(typeof(indexValue) != 'undefined'){
+        idCheckName             = 'digital_product-'+indexValue;
+        idDivSelecProductName   = 'div-selectproduct_'+indexValue;
+        idFieldProduct          = 'selectproduct_'+indexValue;
+        fieldProductName        = 'product_id[]';
+        takeINDEX               = 'this.id.split(\'_\')[1]';
+    } else {
+        idCheckName             = 'digital_product';
+        idDivSelecProductName   = 'div-selectproduct';
+        idFieldProduct          = 'selectproduct';
+        fieldProductName        = 'product_id';
+        takeINDEX               = null;
+    }
+    document.getElementById(idCheckName).value = typeInt;
     
     errors      = 0;
     authApi     = csrf_token;
@@ -1830,14 +2019,14 @@ function refilterProductsType(typeInt,indexValue){
     if(errors > 0){
 
     } else{
-        productList   = document.getElementById('div-selectproduct_'+indexValue);
+        productList   = document.getElementById(idDivSelecProductName);
         const requestURL = window.location.protocol+'//'+locat+'api/'+submodule+'s/auth_'+submodule+'_list.php?auth_api='+authApi+filters;
         //console.log(requestURL);
         const request = new XMLHttpRequest();
         request.onreadystatechange = function() {
-            html    = '<label for="product_id[]">'+ucfirst(translateText('product',localStorage.getItem('ulang')))+'</label>';
+            html    = '<label for="'+fieldProductName+'">'+ucfirst(translateText('product',localStorage.getItem('ulang')))+'</label>';
             html   += '<spam id="sproduct">'
-            html   += '<SELECT id="selectproduct_'+indexValue+'" name="product_id[]" onchange="refilterSaleModel(document.getElementById(\'digital_product-'+indexValue+'\').value,this.value,this.id.split(\'_\')[1]); checkOOHSelection(this[this.selectedIndex].innerText,this.id.split(\'_\')[1]);" title="product_id" class="form-control" autocomplete="product_id"  required>';
+            html   += '<SELECT id="'+idFieldProduct+'" name="'+fieldProductName+'" onchange="refilterSaleModel(document.getElementById(\''+idCheckName+'\').value,this.value,'+takeINDEX+'); checkOOHSelection(this[this.selectedIndex].innerText,'+takeINDEX+');" title="product_id" class="form-control" autocomplete="product_id"  required>';
             if (this.readyState == 4 && this.status == 200) {
                 // Typical action to be performed when the document is ready:
                 obj = JSON.parse(request.responseText);
@@ -1877,19 +2066,41 @@ function refilterSaleModel(typeInt,productCode,indexValue){
     authApi     = csrf_token;
     locat       = window.location.hostname;
     submodule   = 'salemodel';
+
+    if((typeof(indexValue) != 'undefined') || (typeof(indexValue) != null)){
+        DIVSelectSalemodel      = "div-selectsalemodel_"+indexValue;
+        DIVOohKeys              = "div-oohkeys_"+indexValue;
+        OohListForm             = "ooh-list-form-"+indexValue;
+        DIVProvider             = "div-provider_"+indexValue;
+        DIVCost                 = "div-cost_"+indexValue;
+        DIVPrice                = "div-price_"+indexValue;
+        DIVQuantity             = "div-quantity_"+indexValue;
+        FieldNameSaleModel      = 'salemodel_id[]';
+        FieldIDSaleModel        = 'selectsalemodel_'+indexValue;
+    } else {
+        DIVSelectSalemodel      = "div-selectsalemodel";
+        DIVOohKeys              = "div-oohkeys";
+        OohListForm             = "ooh-list-form";
+        DIVProvider             = "div-provider";
+        DIVCost                 = "div-cost";
+        DIVPrice                = "div-price";
+        DIVQuantity             = "div-quantity";
+        FieldNameSaleModel      = 'salemodel_id';
+        FieldIDSaleModel        = 'selectsalemodel';
+    }
     
-    salemodelElement = document.getElementById("div-selectsalemodel_"+indexValue);
+    salemodelElement = document.getElementById(DIVSelectSalemodel);
     if(salemodelElement){
-        if(document.getElementById("div-selectsalemodel_"+indexValue).style.display === "none"){
-            document.getElementById("div-oohkeys_"+indexValue).style.display = 'none';
-            oohlist = document.getElementById("ooh-list-form-"+indexValue);
+        if(document.getElementById(DIVSelectSalemodel).style.display === "none"){
+            document.getElementById(DIVOohKeys).style.display = 'none';
+            oohlist = document.getElementById(OohListForm);
             if(oohlist)
                 oohlist.innerHTML = '';
-            document.getElementById("div-provider_"+indexValue).style.display = 'block';
-            document.getElementById("div-selectsalemodel_"+indexValue).style.display = 'block';
-            document.getElementById("div-cost_"+indexValue).style.display = 'block';
-            document.getElementById("div-price_"+indexValue).style.display = 'block';
-            document.getElementById("div-quantity_"+indexValue).style.display = 'block';
+            document.getElementById(DIVProvider).style.display = 'block';
+            document.getElementById(DIVSelectSalemodel).style.display = 'block';
+            document.getElementById(DIVCost).style.display = 'block';
+            document.getElementById(DIVPrice).style.display = 'block';
+            document.getElementById(DIVQuantity).style.display = 'block';
         }    
     }
 
@@ -1908,16 +2119,16 @@ function refilterSaleModel(typeInt,productCode,indexValue){
     if(errors > 0){
 
     } else {
-        salemodelList   = document.getElementById('div-selectsalemodel_'+indexValue);
+        salemodelList   = document.getElementById(DIVSelectSalemodel);
         
         if(salemodelList){
             const requestURL = window.location.protocol+'//'+locat+'api/'+submodule+'s/auth_'+submodule+'_view.php?auth_api='+authApi+filters;
             //console.log(requestURL);
             const request = new XMLHttpRequest();
             request.onreadystatechange = function() {
-                html    = '<label for="salemodel_id[]">' + ucfirst(translateText('sale_model',localStorage.getItem('ulang'))) + '</label>';
+                html    = '<label for="'+FieldNameSaleModel+'">' + ucfirst(translateText('sale_model',localStorage.getItem('ulang'))) + '</label>';
                 html   += '<spam id="ssalemodel">'
-                html   += '<SELECT id="selectsalemodel_'+indexValue+'"  name="salemodel_id[]" title="salemodel_id" class="form-control" autocomplete="salemodel_id" required>';
+                html   += '<SELECT id="'+FieldIDSaleModel+'"  name="'+FieldNameSaleModel+'" title="salemodel_id" class="form-control" autocomplete="salemodel_id" required>';
                 if (this.readyState == 4 && this.status == 200) {
                     // Typical action to be performed when the document is ready:
                     obj = JSON.parse(request.responseText);

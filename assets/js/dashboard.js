@@ -505,7 +505,7 @@ function handleShowExecutiveGoalGraph(uid,status,month,year,search,currency){
                          *****************************/
                         goal                = obj[i].goal_amount_int / 100;
                         cost                = parseInt(obj[i].cost_int / 100);
-                        margin              = (obj[i].amount_int - obj[i].cost_int)/100;
+                        margin              = (obj[i].amount_int - obj[i].cost_full_int)/100;
                         margin_month        = (obj[i].amount_per_month_int - obj[i].cost_per_month_int)/100;
                         amount              = obj[i].amount_int / 100;
                         amount_month        = obj[i].amount_per_month_int / 100;
