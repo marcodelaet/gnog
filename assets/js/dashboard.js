@@ -167,7 +167,7 @@ function handleListOnLoad(uid,status,month,year,search,currency) {
                     arrayJsonDataProposals[2] = '['+stringJsonDataName+']';
                     
                     //console.log(arrayJsonDataProposals[0]);
-                    createGraph(graphType,'graph-proposals',ucfirst(translateText('proposal',localStorage.getItem('ulang')))+'s - '+translateText('values_in',localStorage.getItem('ulang'))+' '+lastCurrency,ucfirst(translateText('list_of',localStorage.getItem('ulang')))+' '+translateText('proposal',localStorage.getItem('ulang'))+'s',arrayJsonDataProposals); // campaigns chart 
+                   // createGraph(graphType,'graph-proposals',ucfirst(translateText('proposal',localStorage.getItem('ulang')))+'s - '+translateText('values_in',localStorage.getItem('ulang'))+' '+lastCurrency,ucfirst(translateText('list_of',localStorage.getItem('ulang')))+' '+translateText('proposal',localStorage.getItem('ulang'))+'s',arrayJsonDataProposals); // campaigns chart 
                     
                     //createGraph('multi2','graph-goals','Reached Goals','Proposals',data1,'Goals',data2); //goals chart
                     tableList.innerHTML = html;
@@ -251,19 +251,19 @@ function handleListLastWeekOnLoad(uid,search,currency) {
     } else{
         tableListLastWeek   = document.getElementById('listDashboardLastWeek');
         const requestURL = window.location.protocol+'//'+locat+'api/'+module_dash+'/auth_'+module_dash+'_lastweek_list.php?auth_api='+authApi+filters;
-        console.log(requestURL);
+        //console.log(requestURL);
         //alert(requestURL);
         const request = new XMLHttpRequest();
         request.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {
                 // Typical action to be performed when the document is ready:
                 obj         = JSON.parse(request.responseText);
-                if(typeof obj[0].response != 'undefined'){
+                if(obj[0].response == 'Error'){
                     html = '<tr><td colspan="8"><div style="margin-left:30%; margin-right:30%;text-align:center;" role="status">';
                     html += '0 proposals';
-                    html += '</td></tr>';
+                    html += '</div></td></tr>';
                     tableListLastWeek.innerHTML = html;    
-                    }else{
+                } else {
                     html        = '';
                     amount_total= 0;
                     for(var i=0;i < obj.length; i++){
@@ -340,7 +340,7 @@ function handleListLastWeekOnLoad(uid,search,currency) {
                     arrayJsonDataProposals[2] = '['+stringJsonDataName+']';
                     
                     //console.log(stringJsonDataProposals);
-                    createGraph(graphType,'graph-last-proposals',ucfirst(translateText('proposal',localStorage.getItem('ulang')))+'s - '+translateText('values_in',localStorage.getItem('ulang'))+' '+lastCurrency,ucfirst(translateText('list_of',localStorage.getItem('ulang')))+' '+translateText('proposal',localStorage.getItem('ulang'))+'s '+translateText('of_the_week',localStorage.getItem('ulang')),arrayJsonDataProposals); // campaigns chart 
+                    //createGraph(graphType,'graph-last-proposals',ucfirst(translateText('proposal',localStorage.getItem('ulang')))+'s - '+translateText('values_in',localStorage.getItem('ulang'))+' '+lastCurrency,ucfirst(translateText('list_of',localStorage.getItem('ulang')))+' '+translateText('proposal',localStorage.getItem('ulang'))+'s '+translateText('of_the_week',localStorage.getItem('ulang')),arrayJsonDataProposals); // campaigns chart 
 
                     //createGraph('multi2','graph-goals','Reached Goals','Proposals',data1,'Goals',data2); //goals chart
                     tableListLastWeek.innerHTML = html;
@@ -380,6 +380,8 @@ function handleShowExecutiveGoalGraph(uid,status,month,year,search,currency){
     var stringJsonDataMargin        = '';
     var stringJsonDataName          = '';
     var stringJsonDataGoal          = '';
+
+    DIVIDGraphExecutiveGoal         = document.getElementById('graph-executive-goals');
 
     //month filter
     if((typeof month != 'undefined') && ((month !== '') && (month != 'undefined'))){
@@ -434,22 +436,15 @@ function handleShowExecutiveGoalGraph(uid,status,month,year,search,currency){
     if(errors > 0){
         
     } else{
-        tableListLastWeek   = document.getElementById('listDashboardLastWeek');
         const requestURL = window.location.protocol+'//'+locat+'api/'+module_dash+'/auth_'+module_dash+'_executive_goals_list.php?auth_api='+authApi+filters;
-        console.log(requestURL);
-        //alert(requestURL);
+        //console.log(requestURL);
         const request = new XMLHttpRequest();
         request.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {
                 // Typical action to be performed when the document is ready:
                 obj         = JSON.parse(request.responseText);
                 if(typeof obj[0].response != 'undefined'){
-                    html = '<tr><td colspan="8"><div style="margin-left:30%; margin-right:30%;text-align:center;" role="status">';
-                    html += '0 proposals';
-                    html += '</td></tr>';
-                    tableListLastWeek.innerHTML = html;    
                     }else{
-                    html        = '';
                     amount_total= 0;
                     for(var i=0;i < obj.length; i++){
                         var formatter = new Intl.NumberFormat(lang, {
@@ -461,29 +456,6 @@ function handleShowExecutiveGoalGraph(uid,status,month,year,search,currency){
                             //minimumFractionDigits: 2, // (this suffices for whole numbers, but will print 2500.10 as $2,500.1)
                             //maximumFractionDigits: 0, // (causes 2500.99 to be printed as $2,501)
                         });
-                        color_status = '#d60b0e';
-                        color_letter = '#CCCCFF';
-                        if(obj[i].status_percent == '100'){
-                            color_status = '#298c3d';
-                            color_letter = '#CCCCFF';
-                        }
-                        if(obj[i].status_percent == '90'){
-                            color_status = '#03fc84';
-                            color_letter = '#000000';
-                        }
-                        if(obj[i].status_percent == '75'){
-                            color_status = '#77fc03';
-                            color_letter = '#000000';
-                        }
-                        if(obj[i].status_percent == '50'){
-                            color_status = '#ebfc03';
-                            color_letter = '#CCCCFF';
-                        }
-                        if(obj[i].status_percent == '25'){
-                            color_status = '#fc3d03';
-                            color_letter = '#CCCCFF';
-                        }
-
                         agency = '';
                         if(typeof(obj[i].agency_name) === 'string')
                             agency = ' / '+obj[i].agency_name;
@@ -503,13 +475,20 @@ function handleShowExecutiveGoalGraph(uid,status,month,year,search,currency){
                         /****************************
                          * end GOAL
                          *****************************/
+                        cost_int            = parseInt(obj[i].cost_int);
+                        margin_int          = parseInt(obj[i].utility_amount_int - obj[i].utility_cost_int);
+                        margin_month_int    = parseInt(obj[i].utility_amount_per_month_int - obj[i].utility_cost_per_month_int);
+                        amount_int          = parseInt(obj[i].pipe_amount_int - obj[i].pipe_cost_int);
+                        amount_month_int    = parseInt(obj[i].pipe_amount_per_month_int - obj[i].pipe_cost_per_month_int);
+
+
                         goal                = obj[i].goal_amount_int / 100;
-                        cost                = parseInt(obj[i].cost_int / 100);
-                        margin              = (obj[i].amount_int - obj[i].cost_full_int)/100;
-                        margin_month        = (obj[i].amount_per_month_int - obj[i].cost_per_month_int)/100;
-                        amount              = obj[i].amount_int / 100;
-                        amount_month        = obj[i].amount_per_month_int / 100;
-                        amount_total        += parseInt(obj[i].amount_int);
+                        cost                = parseInt(cost_int / 100);
+                        margin              = (margin_int)/100;
+                        margin_month        = (margin_month_int)/100;
+                        amount              = amount_int / 100;
+                        amount_month        = amount_month_int / 100;
+                        amount_total        += parseInt(amount_int);
                         amount_total_show   = amount_total / 100;
                         percentGoalShow     = (100 * amount_total)/parseInt(document.getElementById('goal-2').innerText);
                         start_date  = new Date(obj[i].start_date);
@@ -533,19 +512,13 @@ function handleShowExecutiveGoalGraph(uid,status,month,year,search,currency){
                     arrayJsonDataProposals[2] = '['+stringJsonDataGoal+']';
                     arrayJsonDataProposals[3] = '['+stringJsonDataName+']';
                     createGraph(graphType,'graph-executive-goals',ucfirst(translateText('goal',localStorage.getItem('ulang')))+'s - '+translateText('values_in',localStorage.getItem('ulang'))+' '+lastCurrency+' ('+ucfirst(translateText('month',localStorage.getItem('ulang')))+': '+ucfirst(strmonth)+')',ucfirst(translateText('list_of',localStorage.getItem('ulang')))+' '+translateText('proposal',localStorage.getItem('ulang'))+'s '+translateText('of_the_week',localStorage.getItem('ulang')),arrayJsonDataProposals); // campaigns chart 
-                
-                    //createGraph('multi2','graph-goals','Reached Goals','Proposals',data1,'Goals',data2); //goals chart
-                    tableListLastWeek.innerHTML = html;
-                    // document.getElementById('goal-1').innerHTML = formatter.format(amount_total_show);
-                    // document.getElementById('goal-percent').innerHTML = percentGoalShow.toFixed(2) + "%";
                 }
             }
             else {
-                html = '<tr><td colspan="8"><div style="margin-left:45%; margin-right:45%;" class="spinner-border" style="text-align:center;" role="status">';
+                html = '<tr><td colspan="8"><div style="margin-left:45%; margin-right:45%;" class="spinner-border" style="text-align:center; vertical-align:middle;" role="status">';
                 html += '<span class="sr-only">Loading...</span>';
                 html += '</div></td></tr>';
-                tableListLastWeek.innerHTML = html;
-                //form.btnSave.innerHTML = "Searching...";
+                DIVIDGraphExecutiveGoal.innerHTML = html;
             }
         };
         request.open('GET', requestURL);
@@ -573,6 +546,8 @@ function handleShowExecutiveGoalGraphYearly(uid,status,year,search,currency){
     var stringJsonDataName          = '';
     var stringJsonDataGoal          = '';
 
+    DIVIDGraphExecutiveGoalYearly   = document.getElementById('graph-executive-goals-yearly');
+
     //year filter
     if((typeof year != 'undefined') && ((year !== '') && (year != 'undefined'))){
         xyear     = year;
@@ -596,7 +571,10 @@ function handleShowExecutiveGoalGraphYearly(uid,status,year,search,currency){
     var xdayfull    = ('00' + xday).substring(xlenDay-2,xlenDay)
     var dateFull    = xyear+xmonthfull+xdayfull;
 
-    filters     = '&currency='+xcurrency;
+    //var groupby     = '';
+    var groupby     = '&groupby=month';
+
+    var filters     = '&currency='+xcurrency;
     //uid
     if(typeof uid == 'undefined')
         uid  = '';
@@ -618,23 +596,23 @@ function handleShowExecutiveGoalGraphYearly(uid,status,year,search,currency){
     if(errors > 0){
         
     } else{
-        tableListLastWeek   = document.getElementById('listDashboardLastWeek');
-        const requestURL = window.location.protocol+'//'+locat+'api/'+module_dash+'/auth_'+module_dash+'_executive_goals_list.php?auth_api='+authApi+filters;
-        console.log(requestURL);
-        //alert(requestURL);
+        const requestURL = window.location.protocol+'//'+locat+'api/'+module_dash+'/auth_'+module_dash+'_executive_goals_list.php?auth_api='+authApi+filters+groupby;
+        //console.log(requestURL);
         const request = new XMLHttpRequest();
         request.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {
                 // Typical action to be performed when the document is ready:
                 obj         = JSON.parse(request.responseText);
                 if(typeof obj[0].response != 'undefined'){
-                    html = '<tr><td colspan="8"><div style="margin-left:30%; margin-right:30%;text-align:center;" role="status">';
-                    html += '0 proposals';
-                    html += '</td></tr>';
-                    tableListLastWeek.innerHTML = html;    
-                    }else{
-                    html        = '';
-                    amount_total= 0;
+                } else {
+                    amount_total        = 0;
+                    oldMonth            = 0;
+                    var cost_int        = 0;
+                    var goal_int        = 0;
+                    margin_int          = 0;
+                    margin_month_int    = 0;
+                    amount_int          = 0;
+                    amount_month_int    = 0;
                     for(var i=0;i < obj.length; i++){
                         var formatter = new Intl.NumberFormat(lang, {
                             style: 'currency',
@@ -645,29 +623,6 @@ function handleShowExecutiveGoalGraphYearly(uid,status,year,search,currency){
                             //minimumFractionDigits: 2, // (this suffices for whole numbers, but will print 2500.10 as $2,500.1)
                             //maximumFractionDigits: 0, // (causes 2500.99 to be printed as $2,501)
                         });
-                        color_status = '#d60b0e';
-                        color_letter = '#CCCCFF';
-                        if(obj[i].status_percent == '100'){
-                            color_status = '#298c3d';
-                            color_letter = '#CCCCFF';
-                        }
-                        if(obj[i].status_percent == '90'){
-                            color_status = '#03fc84';
-                            color_letter = '#000000';
-                        }
-                        if(obj[i].status_percent == '75'){
-                            color_status = '#77fc03';
-                            color_letter = '#000000';
-                        }
-                        if(obj[i].status_percent == '50'){
-                            color_status = '#ebfc03';
-                            color_letter = '#CCCCFF';
-                        }
-                        if(obj[i].status_percent == '25'){
-                            color_status = '#fc3d03';
-                            color_letter = '#CCCCFF';
-                        }
-
                         agency = '';
                         if(typeof(obj[i].agency_name) === 'string')
                             agency = ' / '+obj[i].agency_name;
@@ -678,37 +633,72 @@ function handleShowExecutiveGoalGraphYearly(uid,status,year,search,currency){
                         /***********************************
                          * taking goals from database
                          ************************************/
-                        goal                = document.getElementById('goal-0').innerText.replace(lastCurrency,'').replace('$','');
+                        /*goal                = document.getElementById('goal-0').innerText.replace(lastCurrency,'').replace('$','');
                         if(document.getElementById('goal-0').innerText.substr(-3,1) == ","){
                             goal            = goal.replace(".","").replace(",",".");
                         } else {
                             goal            = goal.replace(",","");
-                        }
+                        }*/
                         /****************************
                          * end GOAL
                          *****************************/
-                        goal                = obj[i].goal_amount_int / 100;
-                        cost                = parseInt(obj[i].cost_int / 100);
-                        margin              = (obj[i].amount_int - obj[i].cost_int)/100;
-                        margin_month        = (obj[i].amount_per_month_int - obj[i].cost_per_month_int)/100;
-                        amount              = obj[i].amount_int / 100;
-                        amount_month        = obj[i].amount_per_month_int / 100;
-                        amount_total        += parseInt(obj[i].amount_int);
-                        amount_total_show   = amount_total / 100;
-                        percentGoalShow     = (100 * amount_total)/parseInt(document.getElementById('goal-2').innerText);
+                        
                         start_date  = new Date(obj[i].start_date);
                         stop_date   = new Date(obj[i].stop_date);
+                        var strmonth    = '???';
+                        if(obj[i].goal_month != null){
+                            var thedate     = new Date(obj[i].goal_year, obj[i].goal_month - 1);
+                            strmonth    = thedate.toLocaleString('default',{ month: 'long'});
 
-                        if(i == 0){
-                            stringJsonDataCost      += '{"y":'+amount_month+',"label":"'+obj[i].username+' - '+ucfirst(translateText('amount',localStorage.getItem('ulang')))+' '+ucfirst(translateText('total',localStorage.getItem('ulang')))+'"}';
-                            stringJsonDataMargin    += '{"y":'+margin_month+',"label":"'+obj[i].username+' - '+ucfirst(translateText('margin',localStorage.getItem('ulang')))+'"}';
-                            stringJsonDataGoal      += '{"y":'+goal+',"label":"'+obj[i].username+' - '+ucfirst(translateText('goal',localStorage.getItem('ulang')))+'"}';
-                            stringJsonDataName      += '{"y":0,"label":"'+obj[i].username+'"}';
-                        } else {
-                            stringJsonDataCost      += ', {"y":'+amount_month+',"label":"'+obj[i].username+' - '+ucfirst(translateText('amount',localStorage.getItem('ulang')))+' '+ucfirst(translateText('total',localStorage.getItem('ulang')))+'"}';
-                            stringJsonDataMargin    += ', {"y":'+margin_month+',"label":"'+obj[i].username+' - '+ucfirst(translateText('margin',localStorage.getItem('ulang')))+'"}';
-                            stringJsonDataGoal      += ', {"y":'+goal+',"label":"'+obj[i].username+' - '+ucfirst(translateText('goal',localStorage.getItem('ulang')))+'"}';
-                            stringJsonDataName      += ', {"y":0,"label":"'+obj[i].username+'"}';
+                            if(oldMonth != obj[i].goal_month){
+                                if(obj[i].goal_amount_int != null){
+                                    goal_int            = parseInt(obj[i].goal_amount_int);
+                                }
+                                else{
+                                    goal_int            = 0;
+                                }
+                                cost_int            = parseInt(obj[i].cost_int);
+                                margin_int          = parseInt(obj[i].utility_amount_int - obj[i].utility_cost_int);
+                                margin_month_int    = parseInt(obj[i].utility_amount_per_month_int - obj[i].utility_cost_per_month_int);
+                                amount_int          = parseInt(obj[i].pipe_amount_int - obj[i].pipe_cost_int);
+                                amount_month_int    = parseInt(obj[i].pipe_amount_per_month_int - obj[i].pipe_cost_per_month_int);
+                            } else {
+                                if(obj[i].goal_amount_int != null){
+                                    goal_int            += parseInt(obj[i].goal_amount_int);
+                                }
+                                else{
+                                    goal_int            += 0;
+                                }
+                                cost_int            += parseInt(obj[i].cost_int);
+                                margin_int          += parseInt(obj[i].utility_amount_int - obj[i].utility_cost_int);
+                                margin_month_int    += parseInt(obj[i].utility_amount_per_month_int - obj[i].utility_cost_per_month_int);
+                                amount_int          += parseInt(obj[i].pipe_amount_int - obj[i].pipe_cost_int);
+                                amount_month_int    += parseInt(obj[i].pipe_amount_per_month_int - obj[i].pipe_cost_per_month_int);
+                            }
+                            goal                = (goal_int / 100).toFixed(2);
+                            cost                = (cost_int / 100).toFixed(2);
+                            margin              = (margin_int/100).toFixed(2);
+                            margin_month        = (margin_month_int/100).toFixed(2);
+                            amount              = (amount_int / 100).toFixed(2);
+                            amount_month        = (amount_month_int / 100).toFixed(2);
+                            amount_total        += (amount_int).toFixed(2);
+                            amount_total_show   = (amount_total / 100).toFixed(2);
+
+                            percentGoalShow     = (100 * amount_total)/parseInt(document.getElementById('goal-2').innerText);
+                            if(obj[i].goal_month == 1){
+                                stringJsonDataCost      = '{"y":'+amount_month+',"label":"'+ucfirst(strmonth)+' - '+ucfirst(translateText('amount',localStorage.getItem('ulang')))+' '+ucfirst(translateText('total',localStorage.getItem('ulang')))+'"}';
+                                stringJsonDataMargin    = '{"y":'+margin_month+',"label":"'+ucfirst(strmonth)+' - '+ucfirst(translateText('margin',localStorage.getItem('ulang')))+'"}';
+                                stringJsonDataGoal      = '{"y":'+goal+',"label":"'+ucfirst(strmonth)+' - '+ucfirst(translateText('goal',localStorage.getItem('ulang')))+'"}';
+                                stringJsonDataName      = '{"y":0,"label":"'+ucfirst(strmonth)+'"}';
+                            } else {
+                                if((oldMonth != obj[i].goal_month) && (cost_int > 0)){
+                                    stringJsonDataCost      += ', {"y":'+amount_month+',"label":"'+ucfirst(strmonth)+' - '+ucfirst(translateText('amount',localStorage.getItem('ulang')))+' '+ucfirst(translateText('total',localStorage.getItem('ulang')))+'"}';
+                                    stringJsonDataMargin    += ', {"y":'+margin_month+',"label":"'+ucfirst(strmonth)+' - '+ucfirst(translateText('margin',localStorage.getItem('ulang')))+'"}';
+                                    stringJsonDataGoal      += ', {"y":'+goal+',"label":"'+ucfirst(strmonth)+' - '+ucfirst(translateText('goal',localStorage.getItem('ulang')))+'"}';
+                                    stringJsonDataName      += ', {"y":0,"label":"'+ucfirst(strmonth)+'"}';
+                                }
+                            }
+                            oldMonth = obj[i].goal_month;
                         }
                     }
                     graphType = 'column';
@@ -716,20 +706,21 @@ function handleShowExecutiveGoalGraphYearly(uid,status,year,search,currency){
                     arrayJsonDataProposals[1] = '['+stringJsonDataMargin+']';
                     arrayJsonDataProposals[2] = '['+stringJsonDataGoal+']';
                     arrayJsonDataProposals[3] = '['+stringJsonDataName+']';
-                    createGraph(graphType,'graph-executive-goals-yearly',ucfirst(translateText('goal',localStorage.getItem('ulang')))+'s - '+translateText('values_in',localStorage.getItem('ulang'))+' '+lastCurrency+' ('+ucfirst(translateText('year',localStorage.getItem('ulang')))+': '+xyear+')',ucfirst(translateText('list_of',localStorage.getItem('ulang')))+' '+translateText('proposal',localStorage.getItem('ulang'))+'s '+translateText('of_the_week',localStorage.getItem('ulang')),arrayJsonDataProposals); // campaigns chart 
-                
-                    //createGraph('multi2','graph-goals','Reached Goals','Proposals',data1,'Goals',data2); //goals chart
-                    tableListLastWeek.innerHTML = html;
-                    // document.getElementById('goal-1').innerHTML = formatter.format(amount_total_show);
-                    // document.getElementById('goal-percent').innerHTML = percentGoalShow.toFixed(2) + "%";
+                    if(stringJsonDataCost != ''){
+                        createGraph(graphType,'graph-executive-goals-yearly',ucfirst(translateText('goal',localStorage.getItem('ulang')))+'s - '+translateText('values_in',localStorage.getItem('ulang'))+' '+lastCurrency+' ('+ucfirst(translateText('year',localStorage.getItem('ulang')))+': '+xyear+')',ucfirst(translateText('list_of',localStorage.getItem('ulang')))+' '+translateText('proposal',localStorage.getItem('ulang'))+'s '+translateText('of_the_week',localStorage.getItem('ulang')),arrayJsonDataProposals); // campaigns chart 
+                    } else {
+                        html = '<tr><td colspan="8"><div style="margin-left:45%; margin-right:45%;" style="text-align:center; vertical-align:middle;" role="status">';
+                        html += '<span ">No hay metas registradas para los ejecutivos</span>';
+                        html += '</div></td></tr>';
+                        DIVIDGraphExecutiveGoalYearly.innerHTML = html;
+                    }
                 }
             }
             else {
-                html = '<tr><td colspan="8"><div style="margin-left:45%; margin-right:45%;" class="spinner-border" style="text-align:center;" role="status">';
+                html = '<tr><td colspan="8"><div style="margin-left:45%; margin-right:45%;" class="spinner-border" style="text-align:center; vertical-align:middle;" role="status">';
                 html += '<span class="sr-only">Loading...</span>';
                 html += '</div></td></tr>';
-                tableListLastWeek.innerHTML = html;
-                //form.btnSave.innerHTML = "Searching...";
+                DIVIDGraphExecutiveGoalYearly.innerHTML = html;
             }
         };
         request.open('GET', requestURL);
