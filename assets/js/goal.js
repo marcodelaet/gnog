@@ -57,7 +57,7 @@ function handleGoalSubmit(form) {
                     if(!confirm("Goal recorded successfully! Create goals to another executive?"))
                         window.location.href = '?pr=Li9wYWdlcy91c2Vycy9pbmRleC5waHA=';
                     else { 
-                        window.location.reload; // do refresh
+                        window.location.reload(); // do refresh
                     }
                 }
                 else {

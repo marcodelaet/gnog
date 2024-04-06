@@ -130,9 +130,9 @@ if(1==2)
                 </table>
             </div>
         </div>
-        <div class="row">
+<!--        <div class="row">
             <div class="graph" id="graph-last-proposals"></div>
-        </div>   
+        </div>   -->
         <div class="row">
             <div class="col">
                 Dashboard - Booking
@@ -162,10 +162,10 @@ if(1==2)
                 </table>
             </div>
         </div>
-        <div class="row">
+<!--        <div class="row">
             <div class="graph" id="graph-proposals"></div>
         </div>   
-    <div>
+    <div>-->
         <div class="row">
             <div class="col-sm-6">
                 &nbsp;

@@ -44,6 +44,7 @@ if($filters == '')
 $sql = "SELECT id as uuid, level_account, username, email, user_language FROM users WHERE account_locked='N' AND user_type <> 'provider' AND ($filters)";
 
 //echo $sql;
+
 $rs = $DB->getData($sql);
 
 $numRows = $DB->numRows($sql);
@@ -76,4 +77,5 @@ else {
 
 //close connection
 $DB->close();
+
 ?>
