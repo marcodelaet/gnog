@@ -217,178 +217,181 @@ function handleSubmit(form) {
     message     = '';
     if (((form.name.value !== '' && form.client_id.value !== '0') || (form.client_id.value !== '0' && form.agency_id.value !== '0')) && (form.start_date.value !== '' && form.total.value !== '0'+cents+'00' && form.status_id.value !== '0' && form.executive_id.value !== '0') ) {
         //form.submit();
-
-        pixel       = 'N';
-        if(form.pixel.checked)
-            pixel   = 'Y';
-
-        taxable     = 'N';
-        if(form.taxable.checked)
-            taxable = 'Y';
-
-        if(form.contains(form.contact_id) !== true){
-            errors++;
-            message     = 'No hay contactos del cliente / agencia en la propuesta';
-        }
-
-        var formData = new FormData(form);
-        formData.append('auth_api',authApi);
-        formData.append('office_id',form.officeDropdownMenuButton.value);
-        formData.append('pixel_option',pixel);
-        formData.append('taxable_option',taxable);
-
-        total                   = form.total.value;
-        status_id               = form.status_id.value;
-        currency                = form.currency.value;
-
-        objProduct      = document.getElementsByName('product_id[]');
-        objStartDate    = [];
-        objStopDate     = [];
-        objProductValue = [];
-        objSaleModel    = [];
-        objProviderId   = [];
-        objCost         = [];
-        objPrice        = [];
-        objState        = [];
-        objCity         = [];
-        objCounty       = [];
-        objColony       = [];
-        objQuantity     = [];
-        objBillboard    = [];
-        indexed         = 0;
-        for(p=0; p < objProduct.length;p++){
-            if(objProduct[p][objProduct[p].selectedIndex].innerText == 'OOH'){
-                /**************************************
-                 * OOH 
-                 ************************************/
-                qtdBillboard = document.getElementsByName('oohprice_'+p+'[]').length;
-                for(pr=0; pr < qtdBillboard; pr++){
+        if(proposal.start_date.value > proposal.stop_date.value){
+            alert('la Fecha de inicio no puede ser mayor que la fecha final');
+        } else {
+            pixel       = 'N';
+            if(form.pixel.checked)
+                pixel   = 'Y';
+    
+            taxable     = 'N';
+            if(form.taxable.checked)
+                taxable = 'Y';
+    
+            if(form.contains(form.contact_id) !== true){
+                errors++;
+                message     = 'No hay contactos del cliente / agencia en la propuesta';
+            }
+    
+            var formData = new FormData(form);
+            formData.append('auth_api',authApi);
+            formData.append('office_id',form.officeDropdownMenuButton.value);
+            formData.append('pixel_option',pixel);
+            formData.append('taxable_option',taxable);
+    
+            total                   = form.total.value;
+            status_id               = form.status_id.value;
+            currency                = form.currency.value;
+    
+            objProduct      = document.getElementsByName('product_id[]');
+            objStartDate    = [];
+            objStopDate     = [];
+            objProductValue = [];
+            objSaleModel    = [];
+            objProviderId   = [];
+            objCost         = [];
+            objPrice        = [];
+            objState        = [];
+            objCity         = [];
+            objCounty       = [];
+            objColony       = [];
+            objQuantity     = [];
+            objBillboard    = [];
+            indexed         = 0;
+            for(p=0; p < objProduct.length;p++){
+                if(objProduct[p][objProduct[p].selectedIndex].innerText == 'OOH'){
+                    /**************************************
+                     * OOH 
+                     ************************************/
+                    qtdBillboard = document.getElementsByName('oohprice_'+p+'[]').length;
+                    for(pr=0; pr < qtdBillboard; pr++){
+                        objStartDate.push(document.getElementsByName('start_date_product[]')[p].value);
+                        objStopDate.push(document.getElementsByName('stop_date_product[]')[p].value);
+                        objProductValue.push(document.getElementsByName('product_id[]')[p].value);
+                        objSaleModel.push(document.getElementsByName('oohsalemodel_id[]')[pr].value);
+                        objProviderId.push(document.getElementsByName('oohprovider_id[]')[pr].value);
+                        objState.push(document.getElementsByName('oohstate[]')[pr].value);
+                        objCity.push(document.getElementsByName('oohcity[]')[pr].value);
+                        objCounty.push(document.getElementsByName('oohcounty[]')[pr].value); 
+                        objColony.push(document.getElementsByName('oohcolony[]')[pr].value);
+                        objQuantity.push(1);
+                        objCost.push(document.getElementsByName('oohCost[]')[pr].value);
+                        objPrice.push(document.getElementsByName('oohprice_'+p+'[]')[pr].value);
+                        objBillboard.push(document.getElementsByName('oohbillboard_id[]')[pr].value);
+                        indexed++;    
+                    }
+                } else {
+                    /**************************************
+                     * ANOTHER PRODUCT
+                     ************************************/
                     objStartDate.push(document.getElementsByName('start_date_product[]')[p].value);
                     objStopDate.push(document.getElementsByName('stop_date_product[]')[p].value);
                     objProductValue.push(document.getElementsByName('product_id[]')[p].value);
-                    objSaleModel.push(document.getElementsByName('oohsalemodel_id[]')[pr].value);
-                    objProviderId.push(document.getElementsByName('oohprovider_id[]')[pr].value);
-                    objState.push(document.getElementsByName('oohstate[]')[pr].value);
-                    objCity.push(document.getElementsByName('oohcity[]')[pr].value);
-                    objCounty.push(document.getElementsByName('oohcounty[]')[pr].value); 
-                    objColony.push(document.getElementsByName('oohcolony[]')[pr].value);
-                    objQuantity.push(1);
-                    objCost.push(document.getElementsByName('oohCost[]')[pr].value);
-                    objPrice.push(document.getElementsByName('oohprice_'+p+'[]')[pr].value);
-                    objBillboard.push(document.getElementsByName('oohbillboard_id[]')[pr].value);
-                    indexed++;    
+                    objSaleModel.push(document.getElementsByName('salemodel_id[]')[p].value);
+                    objProviderId.push(document.getElementsByName('provider_id[]')[p].value);
+                    objState.push(document.getElementsByName('state_id[]')[p].value);
+                    objCity.push(document.getElementsByName('city_id[]')[p].value);
+                    objCounty.push(document.getElementsByName('county_id[]')[p].value);
+                    objColony.push(document.getElementsByName('colony_id[]')[p].value);
+                    objQuantity.push(document.getElementsByName('quantity[]')[p].value);
+                    objCost.push(document.getElementsByName('cost[]')[p].value);
+                    objPrice.push(document.getElementsByName('price[]')[p].value);
+                    objBillboard.push('0');
+                    indexed++;
                 }
-            } else {
-                /**************************************
-                 * ANOTHER PRODUCT
-                 ************************************/
-                objStartDate.push(document.getElementsByName('start_date_product[]')[p].value);
-                objStopDate.push(document.getElementsByName('stop_date_product[]')[p].value);
-                objProductValue.push(document.getElementsByName('product_id[]')[p].value);
-                objSaleModel.push(document.getElementsByName('salemodel_id[]')[p].value);
-                objProviderId.push(document.getElementsByName('provider_id[]')[p].value);
-                objState.push(document.getElementsByName('state_id[]')[p].value);
-                objCity.push(document.getElementsByName('city_id[]')[p].value);
-                objCounty.push(document.getElementsByName('county_id[]')[p].value);
-                objColony.push(document.getElementsByName('colony_id[]')[p].value);
-                objQuantity.push(document.getElementsByName('quantity[]')[p].value);
-                objCost.push(document.getElementsByName('cost[]')[p].value);
-                objPrice.push(document.getElementsByName('price[]')[p].value);
-                objBillboard.push('0');
-                indexed++;
             }
-        }
-
-        locat       = window.location.hostname;
-        if(locat.slice(-1) != '/')
-            locat += '/';
-
-        if(errors > 0){
-            alert(message);
-        } else {
-            const requestURL = window.location.protocol+'//'+locat+'api/proposals/auth_proposal_add_new.php';
-            //console.log(requestURL);
-            const request = new XMLHttpRequest();
-            request.onreadystatechange = function() {
-                if (this.readyState == 4 && this.status == 200) {
-                    // Typical action to be performed when the document is ready:
-                    //console.log(request.responseText);                    
-                    obj = JSON.parse(request.responseText);
-
-                    proposal_id     = obj[0].id;
-                    virg            = '';
-                    product_start_date  = '';
-                    product_stop_date   = '';
-                    product_id      = '';
-                    salemodel_id    = '';
-                    provider_id     = '';
-                    state_id        = '';
-                    city_id         = '';
-                    county_id       = '';
-                    colony_id       = '';
-                    quantity        = '';
-                    cost            = '';
-                    price           = '';
-                    billboard_id    = '';
-
-                    for(i=0; i < objProductValue.length;i++){
-                        if(i>0)
-                            virg = ',';
-
-                        xcost  = '0';
-                        if((objCost[i] != '') || (objCost[i] >= 0)){
-                            axCost = objCost[i].split(",");
-                            for(j=0;j < axCost.length;j++){
-                                apCost     = axCost[j].split(".");
-                                for(k=0;k < apCost.length;k++){
-                                    xcost      += apCost[k];
-                                }
-                            }    
-                        } 
-
-                        xprice  = '0';
-                        if((objPrice[i] != '') || (objPrice[i] >= 0)){
-                            axPrice = objPrice[i].split(",");
-                            for(j=0;j < axPrice.length;j++){
-                                apPrice     = axPrice[j].split(".");
-                                for(k=0;k < apPrice.length;k++){
-                                    xprice      += apPrice[k];
-                                }
-                            }    
-                        } 
-
-                        product_start_date += virg + objStartDate[i];
-                        product_stop_date += virg + objStopDate[i];
-                        product_id      += virg + objProductValue[i];
-                        salemodel_id    += virg + objSaleModel[i];
-                        cost            += virg + xcost;
-                        price           += virg + xprice;
-                        xquantity       = 1;
-                        if((objQuantity[i] != '') || (objQuantity[i] > 0))
-                            xquantity = objQuantity[i];
-                        quantity        += virg + xquantity;
-                        provider_id     += virg + objProviderId[i];
-                        //if(objState[i])
-                        state_id        += virg + objState[i];
-                        city_id         += virg + objCity[i];
-                        county_id       += virg + objCounty[i];
-                        colony_id       += virg + objColony[i];
-                        billboard_id    += virg + objBillboard[i];
+    
+            locat       = window.location.hostname;
+            if(locat.slice(-1) != '/')
+                locat += '/';
+    
+            if(errors > 0){
+                alert(message);
+            } else {
+                const requestURL = window.location.protocol+'//'+locat+'api/proposals/auth_proposal_add_new.php';
+                //console.log(requestURL);
+                const request = new XMLHttpRequest();
+                request.onreadystatechange = function() {
+                    if (this.readyState == 4 && this.status == 200) {
+                        // Typical action to be performed when the document is ready:
+                        //console.log(request.responseText);                    
+                        obj = JSON.parse(request.responseText);
+    
+                        proposal_id     = obj[0].id;
+                        virg            = '';
+                        product_start_date  = '';
+                        product_stop_date   = '';
+                        product_id      = '';
+                        salemodel_id    = '';
+                        provider_id     = '';
+                        state_id        = '';
+                        city_id         = '';
+                        county_id       = '';
+                        colony_id       = '';
+                        quantity        = '';
+                        cost            = '';
+                        price           = '';
+                        billboard_id    = '';
+    
+                        for(i=0; i < objProductValue.length;i++){
+                            if(i>0)
+                                virg = ',';
+    
+                            xcost  = '0';
+                            if((objCost[i] != '') || (objCost[i] >= 0)){
+                                axCost = objCost[i].split(",");
+                                for(j=0;j < axCost.length;j++){
+                                    apCost     = axCost[j].split(".");
+                                    for(k=0;k < apCost.length;k++){
+                                        xcost      += apCost[k];
+                                    }
+                                }    
+                            } 
+    
+                            xprice  = '0';
+                            if((objPrice[i] != '') || (objPrice[i] >= 0)){
+                                axPrice = objPrice[i].split(",");
+                                for(j=0;j < axPrice.length;j++){
+                                    apPrice     = axPrice[j].split(".");
+                                    for(k=0;k < apPrice.length;k++){
+                                        xprice      += apPrice[k];
+                                    }
+                                }    
+                            } 
+    
+                            product_start_date += virg + objStartDate[i];
+                            product_stop_date += virg + objStopDate[i];
+                            product_id      += virg + objProductValue[i];
+                            salemodel_id    += virg + objSaleModel[i];
+                            cost            += virg + xcost;
+                            price           += virg + xprice;
+                            xquantity       = 1;
+                            if((objQuantity[i] != '') || (objQuantity[i] > 0))
+                                xquantity = objQuantity[i];
+                            quantity        += virg + xquantity;
+                            provider_id     += virg + objProviderId[i];
+                            //if(objState[i])
+                            state_id        += virg + objState[i];
+                            city_id         += virg + objCity[i];
+                            county_id       += virg + objCounty[i];
+                            colony_id       += virg + objColony[i];
+                            billboard_id    += virg + objBillboard[i];
+                        }
+    
+                        addProduct('['+product_start_date+']','['+product_stop_date+']','['+product_id+']','['+salemodel_id+']','['+cost+']','['+price+']',currency,'['+quantity+']','['+provider_id+']',proposal_id,'['+state_id+']','['+city_id+']','['+county_id+']','['+colony_id+']','['+billboard_id+']');
+                        // alert('['+product_id+']'+'['+salemodel_id+']'+'['+cost+']'+'['+price+']'+currency+'['+quantity+']'+'['+provider_id+']'+proposal_id+'['+state_id+']'+'['+city_id+']'+'['+county_id+']'+'['+colony_id+']'+'['+billboard_id+']');
+    
+                        form.btnSave.innerHTML = ucfirst(translateText("save",localStorage.getItem('ulang')));
+                        window.location.href = '?pr=Li9wYWdlcy9wcm9wb3NhbHMvZm9ybWVkaXQucGhw&ppid='+proposal_id;
                     }
-
-                    addProduct('['+product_start_date+']','['+product_stop_date+']','['+product_id+']','['+salemodel_id+']','['+cost+']','['+price+']',currency,'['+quantity+']','['+provider_id+']',proposal_id,'['+state_id+']','['+city_id+']','['+county_id+']','['+colony_id+']','['+billboard_id+']');
-                    // alert('['+product_id+']'+'['+salemodel_id+']'+'['+cost+']'+'['+price+']'+currency+'['+quantity+']'+'['+provider_id+']'+proposal_id+'['+state_id+']'+'['+city_id+']'+'['+county_id+']'+'['+colony_id+']'+'['+billboard_id+']');
-
-                    form.btnSave.innerHTML = ucfirst(translateText("save",localStorage.getItem('ulang')));
-                    window.location.href = '?pr=Li9wYWdlcy9wcm9wb3NhbHMvZm9ybWVkaXQucGhw&ppid='+proposal_id;
-                }
-                else{
-                    form.btnSave.innerHTML = "Saving...";
-                }
-            };
-            request.open('POST', requestURL, false);
-            //request.responseType = 'json';
-            request.send(formData);
+                    else{
+                        form.btnSave.innerHTML = "Saving...";
+                    }
+                };
+                request.open('POST', requestURL, false);
+                //request.responseType = 'json';
+                request.send(formData);
+            }
         }
     } else
         alert('Please, fill all required fields (*)');
@@ -1467,12 +1470,12 @@ function calcAmountTotal(form,index,specialid){
         IDPrice     = 'price';
         IDQuantity  = 'quantity';
         NAMEOoh     = 'oohprice[]';
-        NAMEAmount  = 'amount';
+        NAMEAmount  = 'amount[]';
     }else{
         IDPrice = 'price_'+index;
         IDQuantity  = 'quantity_'+index;
         NAMEOoh     = 'oohprice_'+index+'[]';
-        NAMEAmount  = 'amount';
+        NAMEAmount  = 'amount[]';
     }
 
     xprice      = 0;
@@ -1503,6 +1506,7 @@ function calcAmountTotal(form,index,specialid){
             }
             xprice = formatter.format(xprice);
         }
+
         xquantity=1; 
 /*        production  = document.getElementsByName('oohproduction_price_'+index+'[]');
         if(production){
@@ -1517,6 +1521,7 @@ function calcAmountTotal(form,index,specialid){
         }*/
         //alert(xproduction);
     }
+
     if(xprice > '0' && xquantity > '0'){
         if((xprice.charAt(xprice.length - 4) == thousands) || (xprice.length <= 3)){
             xprice += cents+'00';
@@ -1534,6 +1539,7 @@ function calcAmountTotal(form,index,specialid){
         }*/
 
 
+    
         amount = document.getElementsByName(NAMEAmount);
         formattedAmount = formatter.format(parseFloat( ((transformToInt(xprice)) * parseInt(xquantity))));
         if((formattedAmount.charAt(formattedAmount.length - 4) == thousands) || (formattedAmount.length <= 3)){
@@ -1542,6 +1548,7 @@ function calcAmountTotal(form,index,specialid){
         arrayValue = formattedAmount.split(cents);
         formattedAmount = arrayValue[0] + cents + (arrayValue[1]+'00').substring(0,2);
 
+        //alert("price: "+xprice+"\nquantity: "+xquantity+'\nFormattedAmount: '+formattedAmount+'\nIndex: '+index);
         amount[index].value   = formattedAmount;
         //alert("price: "+xprice+"\nquantity: "+xquantity+'\nFormattedAmount: '+formattedAmount+'\nLocal Amount: '+amount[index].value);
         total = 0;
