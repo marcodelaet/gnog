@@ -21,44 +21,81 @@ if(array_key_exists('auth_api',$_REQUEST)){
     //if($localStorage == $_REQUEST['auth_api']){}
 
     // values to insert
+    $xnotes          = str_replace("[","",str_replace("]","",$_REQUEST['notes'])); 
     $start_date     = str_replace("[","",str_replace("]","",$_REQUEST['start_date'])); 
     $stop_date      = str_replace("[","",str_replace("]","",$_REQUEST['stop_date'])); 
     $product_id     = str_replace("[","",str_replace("]","",$_REQUEST['product_id'])); 
     $proposal_id    = $_REQUEST['proposal_id'];
-    $xsalemodel_id  = str_replace("[","",str_replace("]","",$_REQUEST['salemodel_id'])); 
-    $price          = str_replace("[","",str_replace("]","",$_REQUEST['price'])); 
-    $cost           = str_replace("[","",str_replace("]","",$_REQUEST['cost'])); 
-    $currency       = $_REQUEST['currency'];
     $state_id       = str_replace("[","",str_replace("]","",$_REQUEST['state'])); 
     $city_id        = str_replace("[","",str_replace("]","",$_REQUEST['city'])); 
     $county_id      = str_replace("[","",str_replace("]","",$_REQUEST['county'])); 
     $colony_id      = str_replace("[","",str_replace("]","",$_REQUEST['colony'])); 
-    $quantity       = str_replace("[","",str_replace("]","",$_REQUEST['quantity'])); 
-    $xprovider      = str_replace("[","",str_replace("]","",$_REQUEST['provider_id']));
-    $xbillboard_id  = str_replace("[","",str_replace("]","",$_REQUEST['billboard_id']));
+    $currency       = $_REQUEST['currency'];
+
+    $xsalemodel_id = null;
+    if(array_key_exists('salemodel_id',$_REQUEST))
+        $xsalemodel_id  = str_replace("[","",str_replace("]","",$_REQUEST['salemodel_id'])); 
+
+    $price = null;
+    if(array_key_exists('price',$_REQUEST))
+        $price          = str_replace("[","",str_replace("]","",$_REQUEST['price'])); 
+
+    $cost = null;
+    if(array_key_exists('cost',$_REQUEST))
+        $cost           = str_replace("[","",str_replace("]","",$_REQUEST['cost'])); 
+
+    $quantity = 1;
+    if(array_key_exists('quantity',$_REQUEST))
+        $quantity       = str_replace("[","",str_replace("]","",$_REQUEST['quantity'])); 
+    
+    $xprovider = 0;
+    if(array_key_exists('provider_id',$_REQUEST))
+        $xprovider      = str_replace("[","",str_replace("]","",$_REQUEST['provider_id']));
+    
+    $xbillboard_id = null;
+    if(array_key_exists('billboard_id',$_REQUEST))
+        $xbillboard_id  = str_replace("[","",str_replace("]","",$_REQUEST['billboard_id']));
+    
     $provider_id    = "null"; 
     $salemodel_id   = "null"; 
     $xquantity      = "1";
+    $xcost          = "0";
     $xprice         = "0";
     
+
+    $aNotes     = explode(",",$xnotes);
     $aStartDate = explode(",",$start_date);
     $aStopDate  = explode(",",$stop_date);
     $aProducts  = explode(",",$product_id);
-    $aSalemodel = explode(",",$xsalemodel_id);
-    $aCost      = explode(",",$cost);
-    $aPrice     = explode(",",$price);
-    $aQuantity  = explode(",",$quantity);
-    $aProvider  = explode(",",$xprovider);
     $aState     = explode(",",$state_id);
     $aCity      = explode(",",$city_id);
     $aCounty    = explode(",",$county_id);
     $aColony    = explode(",",$colony_id);
-    $aBillboard = explode(",",$xbillboard_id);
+    $aQuantity  = explode(",",$quantity);
 
+    $qts        = count($aStartDate);
+    if(!is_null($xsalemodel_id))
+        $aSalemodel = explode(",",$xsalemodel_id);
+    if(!is_null($cost))
+        $aCost      = explode(",",$cost);
+    if(!is_null($price))
+        $aPrice     = explode(",",$price);
+    if(!is_null($xprovider))
+        $aProvider  = explode(",",$xprovider);
+    if(!is_null($xbillboard_id))
+        $aBillboard = explode(",",$xbillboard_id);
+        
     $lastIndex  = 0;
     $pppid      = '';
     $response   = "ERROR"; 
+
     for($i = 0; $i < count($aProducts); $i++){
+        if(array_key_exists('notes',$_REQUEST)){
+            if($aNotes[$i] !== '')
+                $notes    = "'".urldecode($aNotes[$i])."'";
+            else 
+                $notes    = "NULL";
+        }
         if(array_key_exists('start_date',$_REQUEST)){
             if($aStartDate[$i] !== '')
                 $start_date_item    = "'".$aStartDate[$i]."'";
@@ -98,7 +135,7 @@ if(array_key_exists('auth_api',$_REQUEST)){
         }
 
         // Query creation
-        $sql = "INSERT INTO proposalsxproducts (id,start_date,stop_date,product_id,proposal_id,salemodel_id,provider_id,state,city,county,colony,cost_int,price_int,currency,quantity,is_active,created_at,updated_at) VALUES ((UUID()),".$start_date_item.",".$stop_date_item.",('".$aProducts[$i]."'),('$proposal_id'),($salemodel_id),$provider_id,'$aState[$i]','$aCity[$i]','$aCounty[$i]','$aColony[$i]',$xcost,$xprice,'$currency',$xquantity,'Y',now(),now())";
+        $sql = "INSERT INTO proposalsxproducts (id,start_date,stop_date,product_id,proposal_id,salemodel_id,provider_id,state,city,county,colony,cost_int,price_int,currency,quantity,is_active,created_at,updated_at,notes) VALUES ((UUID()),".$start_date_item.",".$stop_date_item.",('".$aProducts[$i]."'),('$proposal_id'),($salemodel_id),$provider_id,'$aState[$i]','$aCity[$i]','$aCounty[$i]','$aColony[$i]',$xcost,$xprice,'$currency',$xquantity,'Y',now(),now(),$notes)";
         //echo "<BR/>".$sql;
         // INSERT data
         $rs = $DB->executeInstruction($sql);
@@ -107,14 +144,15 @@ if(array_key_exists('auth_api',$_REQUEST)){
         if($rs){
             $lastIndex  = $i;
             $response   = "OK";
-            $sqlGetPPPID = "SELECT id FROM proposalsxproducts WHERE product_id='".$aProducts[$i]."' AND proposal_id='$proposal_id' AND salemodel_id=$salemodel_id AND provider_id= $provider_id AND state='$aState[$i]' AND city='$aCity[$i]' AND county='$aCounty[$i]' AND colony='$aColony[$i]' AND price_int=$xprice AND currency='$currency' AND quantity=$xquantity";
+            $sqlGetPPPID = "SELECT id FROM proposalsxproducts WHERE product_id='".$aProducts[$i]."' AND proposal_id='$proposal_id' AND state='$aState[$i]' AND city='$aCity[$i]' AND county='$aCounty[$i]' AND colony='$aColony[$i]' AND price_int=$xprice AND currency='$currency' AND quantity=$xquantity AND notes=$notes";
             $pppid = $DB->getDataSingle($sqlGetPPPID)['id'];
+            //echo $sqlGetPPPID;
 
-            $columns        = "id,proposalproduct_id,billboard_id,cost_int,price_int,is_active,created_at,updated_at";
-            $tableOrView    = "productsxbillboards";
-            $values         = "UUID(),'$pppid',$billboard_id,$xcost,$xprice,'Y',now(),now()";
+            if(array_key_exists('billboard_id',$_REQUEST)){
+                $columns        = "id,proposalproduct_id,billboard_id,cost_int,price_int,is_active,created_at,updated_at";
+                $tableOrView    = "productsxbillboards";
+                $values         = "UUID(),'$pppid',$billboard_id,$xcost,$xprice,'Y',now(),now()";
 
-            if($aBillboard[$i] !== '0'){
                 // Query creation
                 $sqlPPP = "INSERT INTO $tableOrView ($columns) VALUES ($values)";
                 //echo $sqlPPP;
@@ -130,6 +168,7 @@ if(array_key_exists('auth_api',$_REQUEST)){
     } 
     header('Content-type: application/json');
     echo json_encode(["lastIndex" => $i,"pppid"=>$pppid,"status" => $response]);
+    
 }
 //close connection
 $DB->close();

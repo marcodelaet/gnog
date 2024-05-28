@@ -253,105 +253,32 @@ if('1' == '2'){
                                         onfocus="if(<?=strtolower($moduleName)?>.stop_date.value!=''){if((this.value=='null') || (this.value=='')){if(d_stop[this.id.split('_')[3]]<=0){if(confirm('<?=translateText('stop_date');?> es la mista <?=translateText('stop_date');?> de la campaña?')){this.value=<?=strtolower($moduleName)?>.stop_date.value;}else{d_stop[this.id.split('_')[3]]++; this.focus();}}}}else{alert('<?=translateText('fill');?> <?=translateText('stop_date');?> <?=translateText('first');?>'); <?=strtolower($moduleName)?>.stop_date.focus();}"
                                         />
                                     </div>
-
-                                </div>                                
-                                <div class="form-row">
+                                    <div class="col-4">
+                                    </div>
                                     <div class="col-2" id="div-selectproduct_0">
                                         <label for="product_id[]"><?=translateText('product');?></label>
                                         <spam id="sproduct">
-                                            <select name="product_id[]" id="selectproduct_0" title="product_id" class="form-control" autocomplete="product_id" onchange="refilterSaleModel(document.getElementById('digital_product-'+this.id.split('_')[1]).value,this.value,this.id.split('_')[1]); checkOOHSelection(this[this.selectedIndex].innerText,this.id.split('_')[1])" required>
+                                            <!--<select name="product_id[]" id="selectproduct_0" title="product_id" class="form-control" autocomplete="product_id" onchange="refilterSaleModel(document.getElementById('digital_product-'+this.id.split('_')[1]).value,this.value,this.id.split('_')[1]); checkOOHSelection(this[this.selectedIndex].innerText,this.id.split('_')[1])" required>-->
+                                            <select name="product_id[]" id="selectproduct_0" title="product_id" class="form-control" autocomplete="product_id" required>
                                                 <?=inputSelect('product',translateText('product'),'is_digital|||N','name','')?>
                                             </select>
                                         </spam>
                                     </div>
-                                    <div class="col" id="div-selectsalemodel_0" >
-                                        <label for="salemodel_id[]"><?=translateText('sale_model');?></label>
-                                        <spam id="ssalemodel">
-                                            <select name="salemodel_id[]" id="selectsalemodel_0" title="salemodel_id" class="form-control" autocomplete="salemodel_id" >
-                                                <?=inputSelect('salemodel',translateText('sale_model'),'is_digital|||N','name','')?>
-                                            </select>
-                                        </spam>
-                                    </div>
-                                    <div class="col" id="div-oohkeys_0" style="display: none">
-                                    </div>
                                 </div>
-                                <div class="form-row" >
-                                    <div class="col" id='div-cost_0'>
-                                        <label for="cost[]"><?=ucfirst(translateText('cost'));?> (<?=ucfirst(translateText('unit'))?>)</label><br/>
-                                        <input
-                                        required
-                                        onkeypress="$(this).mask('#'+thousands+'###'+thousands+'##0'+cents+'00', {reverse: true});"
-                                        onblur="calcAmountTotal(<?=strtolower($moduleName)?>,this.id.substr(this.id.search('_')+1))"
-                                        id='cost_0'
-                                        name ='cost[]' 
-                                        placeholder="999,99"
-                                        title = '<?=translateText('cost');?>'
-                                        value=''
-                                        class="form-control" 
-                                        type="currency" 
-                                        maxlength="20"
-                                        autocomplete="cost"
-                                        />
-                                    </div>
-                                    <div class="col" id='div-price_0'>
-                                        <label for="price[]"><?=translateText('unit_price');?></label><br/>
-                                        <input
-                                        required
-                                        onkeypress="$(this).mask('#'+thousands+'###'+thousands+'##0'+cents+'00', {reverse: true});"
-                                        onblur="calcAmountTotal(<?=strtolower($moduleName)?>,this.id.substr(this.id.search('_')+1))"
-                                        id='price_0'
-                                        name ='price[]' 
-                                        placeholder="999,99"
-                                        title = '<?=translateText('unit_price');?>'
-                                        value=''
-                                        class="form-control" 
-                                        type="currency" 
-                                        maxlength="20"
-                                        autocomplete="price"
-                                        />
-                                        <div class="invalid-feedback">
-                                            Please type a valid phone number.
-                                        </div>
-                                    </div>
-                                    <div class="col" id='div-quantity_0'>
-                                        <label for="quantity[]"><?=translateText('quantity');?></label>
-                                        <input
-                                        required
-                                        onblur="calcAmountTotal(<?=strtolower($moduleName)?>,this.id.substr(this.id.search('_')+1))"
-                                        id='quantity_0'
-                                        name ='quantity[]' 
-                                        placeholder='<?=translateText('quantity');?>'
-                                        title = '<?=translateText('quantity');?>'
-                                        value='1'
-                                        class="form-control" 
-                                        type="number"
-                                        autocomplete="quantity"
-                                        />
-                                        <div class="invalid-feedback">
-                                            Please type the quantity of this product.
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="form-row" >
+                                <div class="form-row">
                                     <div class="col">
-                                        <label for="amount[]"><?=translateText('amount');?></label><br/>
-                                        <input
-                                        id='amount_0'
-                                        name ='amount[]'
-                                        readonly 
-                                        placeholder="0,00"
-                                        title = '<?=translateText('amount');?>'
-                                        value='0,00'
-                                        class="form-control"
-                                        />
-                                    </div>
-                                    <div class="col" id="div-provider_0">
-                                        <label for="provider_id[]"><?=translateText('provider');?></label>
-                                        <spam id="sprovider">
-                                            <select name="provider_id[]" title="provider_id" class="form-control">
-                                                <?=inputSelect('provider',translateText('provider'),'','name','')?>
-                                            </select>
-                                        </spam>
+                                        <!--<label for="notes[]"><?=translateText('notes');?></label>-->
+                                        <label for="notes[]">Observaci&oacute;n</label>
+                                        <div class="input-group mb-3">
+                                            <textarea
+                                            required
+                                            name ='notes[]' 
+                                            placeholder='Notes about the product'
+                                            title = 'notes'
+                                            class="form-control" 
+                                            autocomplete="notes"
+                                            ></textarea>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="form-row">
@@ -376,19 +303,9 @@ if('1' == '2'){
                     </div>
                 </div>
                 <div class="form-row">
-                    <div class="col">
-                        <label for="total"><?=translateText('total');?></label><br/>
-                        <input
-                        id='total'
-                        name ='total'
-                        readonly 
-                        placeholder="0,00"
-                        title = '<?=translateText('total');?>'
-                        value='0,00'
-                        class="form-control"
-                        />
+                    <div class="col-10">
                     </div>
-                    <div class="col">
+                    <div class="col-2">
                         <label for="status_id"><?=translateText('status');?></label>
                         <spam id="sstatus">
                             <select name="status_id" id="selectstatus" title="status_id" class="form-control">

@@ -1,21 +1,14 @@
 <?php
+// ini_set('error_reporting', E_ALL);
+// ini_set('display_errors', true);
+
+
 $moduleName = 'Proposal';
 
 $mexico_id = '57b71c86-b204-11ed-997f-008cfa5abdac';
 if('1' == '2'){
     $mexico_id = '4d2af032-b204-11ed-a96a-246fbf72fd9f';
 }
-
-$ppid = '';
-if(array_key_exists('ppid',$_REQUEST)){
-    $ppid = $_REQUEST['ppid'];
-}
-
-$pppid = '';
-if(array_key_exists('pppid',$_REQUEST)){
-    $pppid = $_REQUEST['pppid'];
-}
-
 ?>
 <link rel="stylesheet" href="<?=$dir?>./assets/css/<?=$moduleName?>.css">
 <link rel="stylesheet" href="<?=$dir?>./assets/css/Inputs.css">
@@ -41,35 +34,139 @@ if(array_key_exists('pppid',$_REQUEST)){
 
 <div class='form-<?=strtolower($moduleName)?>-container'>
     <div class="form-container">
-        <div class="form-header">
-            <?=ucfirst(translateText('edit'));?> <?=translateText('product');?> -> <?=translateText(strtolower($moduleName))?>
-            <div class="row">&nbsp;</div>
-            <spam id="offer-name"> </spam>
-            <spam id="advertiser-name"></spam>
-        </div>
+        <div class="form-header"><?=translateText('new');?> <?=translateText(strtolower($moduleName))?></div>
         <form name='<?=strtolower($moduleName)?>' method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
             <div class="inputs-form-container">
+                <div class="form-row">
+                    <div class="col custom-control custom-switch" style="text-align:right;">
+                        <input type="checkbox" class="custom-control-input" id="pixel" name="pixel">
+                        <label class="custom-control-label" for="pixel"><?=translateText('pixel_required');?></label>
+                    </div>
+                </div>
+                <div class="form-row" >
+                    <div class="col">
+                        <label for="client_id"><?=translateText('client');?></label>
+                        <spam id="sclient">
+                            <select name="client_id" id="selectclient" title="client_id" class="form-control" autocomplete="client_id" onchange="if(agency_id.value == '0') { listAdvertiserContacts(this.value) }" required>
+                                <?=inputSelect('advertiser',translateText('client'),'is_agency-N','name','')?>
+                            </select>
+                        </spam>
+                    </div>
+                    <div class="col">
+                        <label for="agency_id"><?=translateText('agency');?></label>
+                        <spam id="sagency">
+                            <select name="agency_id" id="selectagency" title="agency_id" class="form-control" autocomplete="agency_id" onchange="listAdvertiserContacts(this.value)">
+                                <?=inputSelect('advertiser',translateText('agency'),'is_agency-Y','name','')?>
+                            </select>
+                        </spam>
+                    </div>
+                    <div class="col custom-control custom-switch" style="text-align:right; vertical-align:middle;">
+                    <br/>
+                        <input type="checkbox" class="custom-control-input" id="taxable" name="taxable">
+                        <label class="custom-control-label" for="taxable"><?=translateText('is_taxable');?></label>
+                    </div>
+                    <div class="col-2">
+                        <br/>
+                        <div class="input-group-prepend">
+                            <input
+                                name ='tax_percent' 
+                                placeholder='30'
+                                title = 'tax %'
+                                value=''
+                                class="form-control" 
+                                type="text" 
+                                size="3"
+                                maxlength="3"
+                                autocomplete="tax"
+                            />
+                            <span class="input-group-text">%</span>
+                        </div>
+                    </div>
+                </div>
+                <div id="div-selectContact"></div>
                 <div class="row">&nbsp;</div>
                 <div class="form-row">
                     <div class="col-8">
-                        <spam id="offer-name"></spam>
+                        <label for="name"><?=translateText('offer_name');?></label>
+                        <input
+                        required
+                        name ='name' 
+                        placeholder='<?=translateText('offer_name');?>'
+                        title = 'name'
+                        value=''
+                        class="form-control" 
+                        type="text" 
+                        maxlength="40"
+                        autocomplete="provider_name"
+                        />
+                    </div>
+                    <div class="col-2" >&nbsp;</div>
+                    <div class="col-2" >
+                        <label for="officeDropdownMenuButton"><?=translateText('gnog_office');?></label>
+                            <?=inputDropDownStyle('office','','orderby','Mexico',$mexico_id)?>
+                    </div>
+                </div>
+                <div class="row">&nbsp;</div>
+                <div class="form-row">
+                    <div class="col">
+                        <label for="description"><?=translateText('description');?></label>
+                        <div class="input-group mb-3">
+                            <textarea
+                            required
+                            name ='description' 
+                            placeholder='About the offer'
+                            title = 'description'
+                            class="form-control" 
+                            autocomplete="description"
+                            ></textarea>
+                            <div class="invalid-feedback">
+                                Please type a description about the offer
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="form-row">
-                    <div class="col">
-                        <?=translateText('start_date');?>:
-                        <input type="hidden" id="start-date-input" name="start_date"/>
-                        <spam class="inputs-input" id="start-date"></spam>
+                    <div class="dateInputFixedW">
+                        <label for="start_date"><?=translateText('start_date');?></label>
+                        <input
+                        required
+                        name ='start_date' 
+                        id ='start_date' 
+                        placeholder='12/12/2020'
+                        title = 'start_date'
+                        value=''
+                        class="form-control" 
+                        type="date" 
+                        maxlength="8"
+                        autocomplete="start-date"
+                        />
+                        <div class="invalid-feedback">
+                            Please type the Offer name
+                        </div>
                     </div>
-                    <div class="col">
-                        <?=translateText('stop_date');?>:
-                        <input type="hidden" id="stop-date-input" name="stop_date"/>
-                        <spam class="inputs-input" id="stop-date"></spam>
+                    <div class="dateInputFixedW">
+                        <label for="stop_date"><?=translateText('stop_date');?></label>
+                        <input
+                        required
+                        name ='stop_date' 
+                        id ='stop_date' 
+                        placeholder='12/12/2020'
+                        title = 'stop_date'
+                        value=''
+                        class="form-control" 
+                        type="date" 
+                        maxlength="8"
+                        autocomplete="stop-date"
+                        />
+                        <div class="invalid-feedback">
+                            Please type the Offer name
+                        </div>
                     </div>
-                    <div class="col-2">
-                        <?=translateText('currency');?>:
-                        <input type="hidden" id="currency-input" name="currency"/>
-                        <spam class="inputs-input" id="info-currency"></spam>
+                    <div class="col" id="sclient">
+                        <label for="executive"><?=translateText('executive');?></label>
+                        <select name="executive_id" id="selectexecutive" title="executive_id" class="form-control" autocomplete="executive_id" required>
+                            <?=inputSelect('user',translateText('executive'),'user_type|||executive*|*user_type|||admin','username','')?>
+                        </select>
                     </div>
                 </div>
                 <div class="form-row main-contact-section">
@@ -77,6 +174,19 @@ if(array_key_exists('pppid',$_REQUEST)){
                         <div class="form-row"  style="margin-top:2rem;">
                             <div class="col main-contact-header" style="font-weight: bolder; text-decoration:underline overline; font-size:1.2rem;">
                                 <?=translateText('products');?>
+                            </div>
+                            <div class="col-2">
+                                <label for="currency"><?=translateText('currency');?></label>
+                                <select
+                                required
+                                name ='currency' 
+                                title = '<?=translateText('currency');?>'
+                                class="form-control"
+                                autocomplete="currency">
+                                    <option value="MXN">MXN</option>
+                                    <option value="USD">USD</option>
+                                    <option value="BRL">BRL</option>
+                                </select>
                             </div>
                         </div>
                         <div id="product-section">
@@ -95,15 +205,15 @@ if(array_key_exists('pppid',$_REQUEST)){
                                     <input class="cityId" name="city_id[]" id="cityId_0" type="hidden" value="All">
                                     <input class="countyId" name="county_id[]" id="countyId_0" type="hidden" value="All">
                                     <input class="colonyId" name="colony_id[]" id="colonyId_0" type="hidden" value="All">
-                                    <div class="col-2" id="div-selectState">
+                                    <div class="col-2" id="div-selectState_0">
                                         <?=inputDropDownSearchStyle('state','state','is_active|||Y','state','tete')?>
                                     </div>
                                     <!-- 
                                         onchange="if(agency_id.value == '0') { listAdvertiserContacts(this.value) }"
                                     -->
-                                    <div class="col-2" id="div-selectcity"></div>
-                                    <div class="col-2" id="div-selectcounty"></div>
-                                    <div class="col-2" id="div-selectcolony"></div>
+                                    <div class="col-2" id="div-selectcity_0"></div>
+                                    <div class="col-2" id="div-selectcounty_0"></div>
+                                    <div class="col-2" id="div-selectcolony_0"></div>
                                 </div>
                                 <br/>
                                 <div class="form-row">
@@ -143,18 +253,14 @@ if(array_key_exists('pppid',$_REQUEST)){
                                         onfocus="if(<?=strtolower($moduleName)?>.stop_date.value!=''){if((this.value=='null') || (this.value=='')){if(d_stop[this.id.split('_')[3]]<=0){if(confirm('<?=translateText('stop_date');?> es la mista <?=translateText('stop_date');?> de la campaña?')){this.value=<?=strtolower($moduleName)?>.stop_date.value;}else{d_stop[this.id.split('_')[3]]++; this.focus();}}}}else{alert('<?=translateText('fill');?> <?=translateText('stop_date');?> <?=translateText('first');?>'); <?=strtolower($moduleName)?>.stop_date.focus();}"
                                         />
                                     </div>
-                                    <div class="col-4">
-                                    </div>
-                                </div>
-                                <div class="form-row">
-                                  <div class="col-2" id="div-note"></div>
-                                </div>
+
+                                </div>                                
                                 <div class="form-row">
                                     <div class="col-2" id="div-selectproduct_0">
                                         <label for="product_id[]"><?=translateText('product');?></label>
                                         <spam id="sproduct">
-                                            <select name="product_id[]" id="selectproduct" title="product_id" class="form-control" autocomplete="product_id" onchange="refilterSaleModel(document.getElementById('digital_product-'+this.id.split('_')[1]).value,this.value,this.id.split('_')[1]); checkOOHSelection(this[this.selectedIndex].innerText,this.id.split('_')[1])" required>
-                                                <?=inputSelect('product',translateText('product'),'','name','')?>
+                                            <select name="product_id[]" id="selectproduct_0" title="product_id" class="form-control" autocomplete="product_id" onchange="refilterSaleModel(document.getElementById('digital_product-'+this.id.split('_')[1]).value,this.value,this.id.split('_')[1]); checkOOHSelection(this[this.selectedIndex].innerText,this.id.split('_')[1])" required>
+                                                <?=inputSelect('product',translateText('product'),'is_digital|||N','name','')?>
                                             </select>
                                         </spam>
                                     </div>
@@ -166,18 +272,18 @@ if(array_key_exists('pppid',$_REQUEST)){
                                             </select>
                                         </spam>
                                     </div>
-                                    <div class="col" id="div-oohkeys" style="display: none">
+                                    <div class="col" id="div-oohkeys_0" style="display: none">
                                     </div>
                                 </div>
                                 <div class="form-row" >
-                                    <div class="col" id='div-cost'>
-                                        <label for="cost"><?=ucfirst(translateText('cost'));?> (<?=ucfirst(translateText('unit'))?>)</label><br/>
+                                    <div class="col" id='div-cost_0'>
+                                        <label for="cost[]"><?=ucfirst(translateText('cost'));?> (<?=ucfirst(translateText('unit'))?>)</label><br/>
                                         <input
                                         required
                                         onkeypress="$(this).mask('#'+thousands+'###'+thousands+'##0'+cents+'00', {reverse: true});"
-                                        onblur="calcAmountTotal(<?=strtolower($moduleName)?>)"
-                                        id='cost'
-                                        name ='cost' 
+                                        onblur="calcAmountTotal(<?=strtolower($moduleName)?>,this.id.substr(this.id.search('_')+1))"
+                                        id='cost_0'
+                                        name ='cost[]' 
                                         placeholder="999,99"
                                         title = '<?=translateText('cost');?>'
                                         value=''
@@ -187,14 +293,14 @@ if(array_key_exists('pppid',$_REQUEST)){
                                         autocomplete="cost"
                                         />
                                     </div>
-                                    <div class="col" id='div-price'>
-                                        <label for="price"><?=translateText('unit_price');?></label><br/>
+                                    <div class="col" id='div-price_0'>
+                                        <label for="price[]"><?=translateText('unit_price');?></label><br/>
                                         <input
                                         required
                                         onkeypress="$(this).mask('#'+thousands+'###'+thousands+'##0'+cents+'00', {reverse: true});"
-                                        onblur="calcAmountTotal(<?=strtolower($moduleName)?>)"
-                                        id='price'
-                                        name ='price' 
+                                        onblur="calcAmountTotal(<?=strtolower($moduleName)?>,this.id.substr(this.id.search('_')+1))"
+                                        id='price_0'
+                                        name ='price[]' 
                                         placeholder="999,99"
                                         title = '<?=translateText('unit_price');?>'
                                         value=''
@@ -208,12 +314,12 @@ if(array_key_exists('pppid',$_REQUEST)){
                                         </div>
                                     </div>
                                     <div class="col" id='div-quantity_0'>
-                                        <label for="quantity"><?=translateText('quantity');?></label>
+                                        <label for="quantity[]"><?=translateText('quantity');?></label>
                                         <input
                                         required
-                                        onblur="calcAmountTotal(<?=strtolower($moduleName)?>)"
-                                        id='quantity'
-                                        name ='quantity' 
+                                        onblur="calcAmountTotal(<?=strtolower($moduleName)?>,this.id.substr(this.id.search('_')+1))"
+                                        id='quantity_0'
+                                        name ='quantity[]' 
                                         placeholder='<?=translateText('quantity');?>'
                                         title = '<?=translateText('quantity');?>'
                                         value='1'
@@ -228,10 +334,10 @@ if(array_key_exists('pppid',$_REQUEST)){
                                 </div>
                                 <div class="form-row" >
                                     <div class="col">
-                                        <label for="amount"><?=translateText('amount');?></label><br/>
+                                        <label for="amount[]"><?=translateText('amount');?></label><br/>
                                         <input
-                                        id='amount'
-                                        name ='amount'
+                                        id='amount_0'
+                                        name ='amount[]'
                                         readonly 
                                         placeholder="0,00"
                                         title = '<?=translateText('amount');?>'
@@ -239,10 +345,10 @@ if(array_key_exists('pppid',$_REQUEST)){
                                         class="form-control"
                                         />
                                     </div>
-                                    <div class="col" id="div-provider">
-                                        <label for="provider_id"><?=translateText('provider');?></label>
+                                    <div class="col" id="div-provider_0">
+                                        <label for="provider_id[]"><?=translateText('provider');?></label>
                                         <spam id="sprovider">
-                                            <select name="provider_id" id="selectprovider" title="provider_id" class="form-control">
+                                            <select name="provider_id[]" title="provider_id" class="form-control">
                                                 <?=inputSelect('provider',translateText('provider'),'','name','')?>
                                             </select>
                                         </spam>
@@ -252,6 +358,18 @@ if(array_key_exists('pppid',$_REQUEST)){
                                     <div class="col">
                                         &nbsp;
                                     </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-row" >
+                            <div class="col" style="text-align:right;">
+                                <button class="btn-primary material-icons-outlined" type="button" onclick="newProductForm('product-section','product-new',100);">add_circle_outline</button>
+                            </div>
+                        </div>
+                        <div id="product-new">
+                            <div class="form-row">
+                                <div class="col">
+                                    &nbsp;
                                 </div>
                             </div>
                         </div>
@@ -270,13 +388,18 @@ if(array_key_exists('pppid',$_REQUEST)){
                         class="form-control"
                         />
                     </div>
+                    <div class="col">
+                        <label for="status_id"><?=translateText('status');?></label>
+                        <spam id="sstatus">
+                            <select name="status_id" id="selectstatus" title="status_id" class="form-control">
+                                <?=inputSelect('status',translateText('status'),'','percent','')?>
+                            </select>
+                        </spam>
+                    </div>
                 </div>
             </div>
             <div class="inputs-button-container">
-                <input type="hidden" name="ppid" id="ppid" value="<?=$ppid?>"/>
-                <input type="hidden" name="pppid" id="pppid" value="<?=$pppid?>"/>
-                <input type="hidden" name="currency" id="currency" />
-                <button class="button" name="btnSave" type="button" onClick="handleSubmitEditProduct(<?=strtolower($moduleName)?>)" ><?=ucfirst(translateText('save'));?></button>
+                <button class="button" name="btnSave" type="button" onClick="handleSubmit(<?=strtolower($moduleName)?>)" ><?=ucfirst(translateText('continue'));?></button>
             </div>
         </form>
       <?php
@@ -388,7 +511,7 @@ $(document).ready(function(){
   });
 });
 
+// resetando primeiro produto como OFFLINE
+refilterProductsType(1,0);
 
-    handleListAddProductOnLoad("<?=$ppid?>","<?=strtolower($moduleName)?>");
-    handleListEditProductOnLoad("<?=$ppid?>","<?=$pppid?>");
 </script>

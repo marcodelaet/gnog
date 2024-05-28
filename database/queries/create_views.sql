@@ -628,6 +628,7 @@ CREATE VIEW view_proposals AS (
 	) END AS making_banners,
 	ppp.production_cost_int,
 	(ppp.production_cost_int / 100) as production_cost, 
+	ppp.notes,
 	pps.is_taxable,
 	pps.tax_percent_int,
 	pps.is_pixel,

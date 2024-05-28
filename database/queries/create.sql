@@ -761,6 +761,11 @@ created_at DATETIME NOT NULL,
 updated_at DATETIME NOT NULL
 );
 
+#ADDING FIELD notes
+ALTER TABLE proposalsxproducts
+	ADD column notes TEXT AFTER quantity;
+
+
 #ADDING FIELD county
 ALTER TABLE proposalsxproducts
 	ADD column county VARCHAR(60) AFTER state;

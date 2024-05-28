@@ -81,7 +81,6 @@ function handleSubmitAddProduct(form,proposalId){
                 /**************************************
                  * OOH 
                  ************************************/
-                
                 qtdBillboard = document.getElementsByName('oohprice_'+p+'[]').length;
                 for(pr=0; pr < qtdBillboard; pr++){
                     objStartDate.push(document.getElementsByName('start_date_product[]')[p].value);
@@ -216,7 +215,7 @@ function handleSubmit(form) {
     errors      = 0;
     authApi     = csrf_token;
     message     = '';
-    if (((form.name.value !== '' && form.client_id.value !== '0') || (form.client_id.value !== '0' && form.agency_id.value !== '0')) && (form.start_date.value !== '' && form.status_id.value !== '0' && form.executive_id.value !== '0') ) {
+    if (((form.name.value !== '' && form.client_id.value !== '0') || (form.client_id.value !== '0' && form.agency_id.value !== '0')) && (form.start_date.value !== '' && form.total.value !== '0'+cents+'00' && form.status_id.value !== '0' && form.executive_id.value !== '0') ) {
         //form.submit();
         if(proposal.start_date.value > proposal.stop_date.value){
             alert('la Fecha de inicio no puede ser mayor que la fecha final');
@@ -240,7 +239,7 @@ function handleSubmit(form) {
             formData.append('pixel_option',pixel);
             formData.append('taxable_option',taxable);
     
-            //total                   = form.total.value;
+            total                   = form.total.value;
             status_id               = form.status_id.value;
             currency                = form.currency.value;
     
@@ -248,60 +247,56 @@ function handleSubmit(form) {
             objStartDate    = [];
             objStopDate     = [];
             objProductValue = [];
-            objNotes        = [];
-            //objSaleModel    = [];
-            //objProviderId   = [];
-            //objCost         = [];
-            //objPrice        = [];
+            objSaleModel    = [];
+            objProviderId   = [];
+            objCost         = [];
+            objPrice        = [];
             objState        = [];
             objCity         = [];
             objCounty       = [];
             objColony       = [];
-            //objQuantity     = [];
-            //objBillboard    = [];
+            objQuantity     = [];
+            objBillboard    = [];
             indexed         = 0;
             for(p=0; p < objProduct.length;p++){
-                //if(objProduct[p][objProduct[p].selectedIndex].innerText == 'OOH'){
+                if(objProduct[p][objProduct[p].selectedIndex].innerText == 'OOH'){
                     /**************************************
                      * OOH 
                      ************************************/
-                    /*
                     qtdBillboard = document.getElementsByName('oohprice_'+p+'[]').length;
                     for(pr=0; pr < qtdBillboard; pr++){
                         objStartDate.push(document.getElementsByName('start_date_product[]')[p].value);
                         objStopDate.push(document.getElementsByName('stop_date_product[]')[p].value);
                         objProductValue.push(document.getElementsByName('product_id[]')[p].value);
-                        objNotes.push(document.getElementsByName('notes[]')[pr].value);
-                        //objSaleModel.push(document.getElementsByName('oohsalemodel_id[]')[pr].value);
-                        //objProviderId.push(document.getElementsByName('oohprovider_id[]')[pr].value);
+                        objSaleModel.push(document.getElementsByName('oohsalemodel_id[]')[pr].value);
+                        objProviderId.push(document.getElementsByName('oohprovider_id[]')[pr].value);
                         objState.push(document.getElementsByName('oohstate[]')[pr].value);
                         objCity.push(document.getElementsByName('oohcity[]')[pr].value);
                         objCounty.push(document.getElementsByName('oohcounty[]')[pr].value); 
                         objColony.push(document.getElementsByName('oohcolony[]')[pr].value);
-                        //objQuantity.push(1);
-                        //objCost.push(document.getElementsByName('oohCost[]')[pr].value);
-                        //objPrice.push(document.getElementsByName('oohprice_'+p+'[]')[pr].value);
-                        //objBillboard.push(document.getElementsByName('oohbillboard_id[]')[pr].value);
+                        objQuantity.push(1);
+                        objCost.push(document.getElementsByName('oohCost[]')[pr].value);
+                        objPrice.push(document.getElementsByName('oohprice_'+p+'[]')[pr].value);
+                        objBillboard.push(document.getElementsByName('oohbillboard_id[]')[pr].value);
                         indexed++;    
                     }
-                } else*/ {
+                } else {
                     /**************************************
                      * ANOTHER PRODUCT
                      ************************************/
                     objStartDate.push(document.getElementsByName('start_date_product[]')[p].value);
                     objStopDate.push(document.getElementsByName('stop_date_product[]')[p].value);
                     objProductValue.push(document.getElementsByName('product_id[]')[p].value);
-                    objNotes.push(document.getElementsByName('notes[]')[p].value);
-                    //objSaleModel.push(document.getElementsByName('salemodel_id[]')[p].value);
-                    //objProviderId.push(document.getElementsByName('provider_id[]')[p].value);
+                    objSaleModel.push(document.getElementsByName('salemodel_id[]')[p].value);
+                    objProviderId.push(document.getElementsByName('provider_id[]')[p].value);
                     objState.push(document.getElementsByName('state_id[]')[p].value);
                     objCity.push(document.getElementsByName('city_id[]')[p].value);
                     objCounty.push(document.getElementsByName('county_id[]')[p].value);
                     objColony.push(document.getElementsByName('colony_id[]')[p].value);
-                    //objQuantity.push(document.getElementsByName('quantity[]')[p].value);
-                    //objCost.push(document.getElementsByName('cost[]')[p].value);
-                    //objPrice.push(document.getElementsByName('price[]')[p].value);
-                    //objBillboard.push('0');
+                    objQuantity.push(document.getElementsByName('quantity[]')[p].value);
+                    objCost.push(document.getElementsByName('cost[]')[p].value);
+                    objPrice.push(document.getElementsByName('price[]')[p].value);
+                    objBillboard.push('0');
                     indexed++;
                 }
             }
@@ -314,7 +309,7 @@ function handleSubmit(form) {
                 alert(message);
             } else {
                 const requestURL = window.location.protocol+'//'+locat+'api/proposals/auth_proposal_add_new.php';
-                console.log('ln 315 PROPOSAL ADD: '+ requestURL);
+                //console.log(requestURL);
                 const request = new XMLHttpRequest();
                 request.onreadystatechange = function() {
                     if (this.readyState == 4 && this.status == 200) {
@@ -327,24 +322,21 @@ function handleSubmit(form) {
                         product_start_date  = '';
                         product_stop_date   = '';
                         product_id      = '';
-                        notes           = '';
-                        //salemodel_id    = '';
-                        //provider_id     = '';
+                        salemodel_id    = '';
+                        provider_id     = '';
                         state_id        = '';
                         city_id         = '';
                         county_id       = '';
                         colony_id       = '';
-                        //quantity        = '';
-                        //cost            = '';
-                        //price           = '';
-                        //billboard_id    = '';
+                        quantity        = '';
+                        cost            = '';
+                        price           = '';
+                        billboard_id    = '';
     
                         for(i=0; i < objProductValue.length;i++){
                             if(i>0)
                                 virg = ',';
     
-                            /****** COST  */
-                            /*
                             xcost  = '0';
                             if((objCost[i] != '') || (objCost[i] >= 0)){
                                 axCost = objCost[i].split(",");
@@ -355,10 +347,7 @@ function handleSubmit(form) {
                                     }
                                 }    
                             } 
-                            */
     
-                            /***** PRICE */
-                            /*
                             xprice  = '0';
                             if((objPrice[i] != '') || (objPrice[i] >= 0)){
                                 axPrice = objPrice[i].split(",");
@@ -369,35 +358,27 @@ function handleSubmit(form) {
                                     }
                                 }    
                             } 
-                            */
-
+    
                             product_start_date += virg + objStartDate[i];
                             product_stop_date += virg + objStopDate[i];
                             product_id      += virg + objProductValue[i];
-                            notes           += virg + decodeURIComponent(objNotes[i]);
-
-                            //salemodel_id    += virg + objSaleModel[i];
-                            //cost            += virg + xcost;
-                            //price           += virg + xprice;
-                            /***** QUANTITY */
-                            /*
+                            salemodel_id    += virg + objSaleModel[i];
+                            cost            += virg + xcost;
+                            price           += virg + xprice;
                             xquantity       = 1;
                             if((objQuantity[i] != '') || (objQuantity[i] > 0))
                                 xquantity = objQuantity[i];
                             quantity        += virg + xquantity;
-                            */
-
-                            //provider_id     += virg + objProviderId[i];
+                            provider_id     += virg + objProviderId[i];
                             //if(objState[i])
                             state_id        += virg + objState[i];
                             city_id         += virg + objCity[i];
                             county_id       += virg + objCounty[i];
                             colony_id       += virg + objColony[i];
-                            //billboard_id    += virg + objBillboard[i];
+                            billboard_id    += virg + objBillboard[i];
                         }
     
-                        //addProduct('['+product_start_date+']','['+product_stop_date+']','['+product_id+']','['+salemodel_id+']','['+cost+']','['+price+']',currency,'['+quantity+']','['+provider_id+']',proposal_id,'['+state_id+']','['+city_id+']','['+county_id+']','['+colony_id+']','['+billboard_id+']','['+notes+']');
-                        addProductWhithoutAmounts('['+product_start_date+']','['+product_stop_date+']','['+product_id+']',currency,proposal_id,'['+state_id+']','['+city_id+']','['+county_id+']','['+colony_id+']','['+notes+']');
+                        addProduct('['+product_start_date+']','['+product_stop_date+']','['+product_id+']','['+salemodel_id+']','['+cost+']','['+price+']',currency,'['+quantity+']','['+provider_id+']',proposal_id,'['+state_id+']','['+city_id+']','['+county_id+']','['+colony_id+']','['+billboard_id+']');
                         // alert('['+product_id+']'+'['+salemodel_id+']'+'['+cost+']'+'['+price+']'+currency+'['+quantity+']'+'['+provider_id+']'+proposal_id+'['+state_id+']'+'['+city_id+']'+'['+county_id+']'+'['+colony_id+']'+'['+billboard_id+']');
     
                         form.btnSave.innerHTML = ucfirst(translateText("save",localStorage.getItem('ulang')));
@@ -884,7 +865,6 @@ function handleListEditProductOnLoad(ppid,pppid){
                 document.getElementById('start-date').innerText         = startDate.toLocaleDateString(lang);
                 document.getElementById('stop-date').innerText          = stopDate.toLocaleDateString(lang);
                 document.getElementById('currency').value               = obj['data'][0].currency_c;
-                document.getElementById('div-note').innerText           = obj['data'][0].notes;
                 strStartDateMonth                                       = '00'+(startDate.getMonth()+1);
                 strStopDateMonth                                        = '00'+(stopDate.getMonth()+1);
                 strStartDateDay                                         = '00'+(startDate.getDate());
@@ -920,33 +900,26 @@ function handleListEditProductOnLoad(ppid,pppid){
                 if(obj['data'][0].provider_id != null)
                     provider_id = obj['data'][0].provider_id;
 
-                document.getElementById('digital_product-0').checked      = is_digital;
-                document.getElementById('datetype_option-0').checked      = unique;
-                digital_int = '1';
+                document.getElementById('digital_product').checked      = is_digital;
+                document.getElementById('datetype_option').checked      = unique;
                 if(is_digital === true){
-                    document.getElementById('digital_product-0').value      = 1;
-                    digital_int = '0';
-                    //refilterProductsType(0);
+                    document.getElementById('digital_product').value      = 1;
+                   // refilterProductsType(0);
                 }
-
-                //refilterProductsType(digital_int,0);
-                refilterProductsType(digital_int,0,obj['data'][0].product_id);
-                refilterSaleModel(document.getElementById('digital_product-0').value,obj['data'][0].product_id,0,obj['data'][0].salemodel_id);
 
                 if(unique === true){
                     document.getElementById('div-stopDate-product').style   ='display:none';
                 }
-                document.getElementById('start_date_product_0').value   = obj['data'][0].start_date_for_product;
-                document.getElementById('stop_date_product_0').value    = obj['data'][0].stop_date_for_product;
-                document.getElementById('selectproduct_0').value        = obj['data'][0].product_id;
-                document.getElementById('selectsalemodel_0').value      = obj['data'][0].salemodel_id;
-                
+                document.getElementById('start_date_product').value     = obj['data'][0].start_date_for_product;
+                document.getElementById('stop_date_product').value      = obj['data'][0].stop_date_for_product;
+                document.getElementById('selectproduct').value          = obj['data'][0].product_id;
+                document.getElementById('selectsalemodel').value        = obj['data'][0].salemodel_id;
                 document.getElementById('cost').value                   = formatter.format(obj['data'][0].cost);
                 document.getElementById('price').value                  = formatter.format(obj['data'][0].price);
                 document.getElementById('quantity').value               = obj['data'][0].quantity;
                 document.getElementById('amount').value                 = formatter.format(obj['data'][0].amount);
                 document.getElementById('selectprovider').value         = provider_id;
-                //console.log(obj['data'][0].product_id +' - '+ obj['data'][0].product_name);
+                console.log(obj['data'][0].product_id +' - '+ obj['data'][0].product_name);
             }
             else {
                 //form.btnSave.innerHTML = "Searching...";
@@ -965,7 +938,6 @@ function handleListEditOnLoad(ppid) {
 
     filters     = '&ppid='+ppid;
     orderby     = '&orderby=is_proposalbillboard_active DESC,concat(product_name,salemodel_name),provider_name ASC,state ASC,billboard_name';
-    groupby     = '&groupby=proposalproduct_id';
   
     if(locat.slice(-1) != '/')
         locat += '/';
@@ -973,13 +945,12 @@ function handleListEditOnLoad(ppid) {
     if(errors > 0){
 
     } else{
-        const requestURL = window.location.protocol+'//'+locat+'api/proposals/auth_proposal_get.php?auth_api='+authApi+filters+groupby+orderby;
-        console.log('ln 968 get proposal - '+requestURL);
+        const requestURL = window.location.protocol+'//'+locat+'api/proposals/auth_proposal_get.php?auth_api='+authApi+filters+orderby;
+        //console.log('mapaaaa- '+requestURL);
         const request = new XMLHttpRequest();
         request.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {
                 
-                //console.log(request.responseText);
                 obj = JSON.parse(request.responseText);
 
                 // Create our number formatter.
@@ -1043,25 +1014,17 @@ function handleListEditOnLoad(ppid) {
 
                 for(i=0;i < obj['data'].length; i++){
                     // products list
-                    actualProduct = obj['data'][i].product_name+obj['data'][i].salemodel_name + obj['data'][i].state;
-                    product = obj['data'][i].product_name+obj['data'][i].salemodel_name + obj['data'][i].state;
+                    actualProduct = obj['data'][i].salemodel_name + obj['data'][i].state;
+                    product = obj['data'][i].salemodel_name + obj['data'][i].state;
                     if(product != productOld){
                         providerOld     = 0;
                         numberProducts++;
                        // if(showLine == 1){
                             // showing only actived products
                             if(obj['data'][i].is_proposalproduct_active=="Y"){
-                                salemodel_name         = '';
-                                salemodel_name_bar     = '';
-                                if(typeof(obj['data'][i].salemodel_name) == 'undefined'){
-                                    salemodel_name     = obj['data'][i].salemodel_name;
-                                    salemodel_name_bar = ' / '+obj['data'][i].salemodel_name;
-                                }
-                                //alert(typeof(obj['data'][i].salemodel_name));
-                                    
                                 html += '<div class="row list-products-row" id="product-'+obj['data'][i].proposalproduct_id+'-row">';
                                 html += '<div class="col-sm-1">'+(numberProducts)+'</div>';
-                                html += '<div class="col-sm-3">'+obj['data'][i].product_name+salemodel_name+'</div>';
+                                html += '<div class="col-sm-3">'+obj['data'][i].product_name+' / '+obj['data'][i].salemodel_name+'</div>';
                                 html += '<div class="col-sm-2">'+obj['data'][i].state+'</div>'; 
                                 //'<div class="col-sm-2">Rate % All</div>' +
                                 /********************************************
@@ -1069,7 +1032,7 @@ function handleListEditOnLoad(ppid) {
                                  */
                                 if(aBillboards.indexOf(obj['data'][i].salemodel_name) != -1){ // is a billboard (OFFLINE MEDIA LOCATIONS - CHOOSE LOCATION ON MAP OPTION)
                                 //if(obj[i].billboard_salemodel_name != null){
-                                    html += '<div class="col-sm-2" style="text-align:center; white-space: nowrap;"><a title="'+ucfirst(translateText('choose',localStorage.getItem('ulang')))+' '+obj['data'][i].product_name+salemodel_name_bar+' '+translateText('on_map',localStorage.getItem('ulang'))+'" href="?pr=Li9wYWdlcy9tYXBzL2luZGV4LnBocA==&smid='+obj['data'][i].salemodel_id+'&ppid='+ppid+'&pppid='+obj['data'][i].proposalproduct_id+'&state='+obj['data'][i].state+'&city='+obj['data'][i].city+'&county='+obj['data'][i].county+'&colony='+obj['data'][i].colony+'"><span class="material-icons" style="font-size:1.2rem;">map</span><br/><span style="font-size:0.8rem">'+ucfirst(translateText('choose',localStorage.getItem('ulang')))+' '+salemodel_name+' '+translateText('on_map',localStorage.getItem('ulang'))+'</span></a></div>';
+                                    html += '<div class="col-sm-2" style="text-align:center; white-space: nowrap;"><a title="'+ucfirst(translateText('choose',localStorage.getItem('ulang')))+' '+obj['data'][i].product_name+' / '+obj['data'][i].salemodel_name+' '+translateText('on_map',localStorage.getItem('ulang'))+'" href="?pr=Li9wYWdlcy9tYXBzL2luZGV4LnBocA==&smid='+obj['data'][i].salemodel_id+'&ppid='+ppid+'&pppid='+obj['data'][i].proposalproduct_id+'&state='+obj['data'][i].state+'&city='+obj['data'][i].city+'&county='+obj['data'][i].county+'&colony='+obj['data'][i].colony+'"><span class="material-icons" style="font-size:1.2rem;">map</span><br/><span style="font-size:0.8rem">'+ucfirst(translateText('choose',localStorage.getItem('ulang')))+' '+obj['data'][i].salemodel_name+' '+translateText('on_map',localStorage.getItem('ulang'))+'</span></a></div>';
                                 } else { // IS NOT AN OFFLINE MEDIA LOCATION - ADD PROVIDER OPTION
                                     html += '<div class="col-sm-2" style="text-align:center; white-space: nowrap;"><a title="'+ucfirst(translateText('add+',localStorage.getItem('ulang')))+' '+translateText('provider',localStorage.getItem('ulang'))+'" href="?pr=Li9wYWdlcy9wcm9wb3NhbHMvcHJvdmlkZXIvZm9ybWFkZC5waHA=&smid='+obj['data'][i].salemodel_id+'&ppid='+ppid+'&pppid='+obj['data'][i].proposalproduct_id+'&state='+obj['data'][i].state+'&city='+obj['data'][i].city+'&county='+obj['data'][i].county+'&colony='+obj['data'][i].colony+'"><span class="material-icons" style="font-size:1.2rem;">add_business</span> <br/><span style="font-size:0.8rem">'+ucfirst(translateText('add+',localStorage.getItem('ulang')))+' '+translateText('provider',localStorage.getItem('ulang'))+'</span></a></div>';
                                 }
@@ -1085,7 +1048,7 @@ function handleListEditOnLoad(ppid) {
                                 
                                 html += '<div class="col-sm-1" style="text-align:center; white-space: nowrap;">';
                                 html += '<a title="'+ucfirst(translateText('add+',localStorage.getItem('ulang')))+' '+translateText('provider',localStorage.getItem('ulang'))+'" href="?pr=Li9wYWdlcy9wcm9wb3NhbHMvcHJvZHVjdC9mb3JtZWRpdC5waHA=&ppid='+ppid+'&pppid='+obj['data'][i].proposalproduct_id+'&state='+obj['data'][i].state+'&city='+obj['data'][i].city+'&county='+obj['data'][i].county+'&colony='+obj['data'][i].colony+'">';
-                                html += '<span class="material-icons" style="font-size:1.5rem; color:black;" title="'+ucfirst(translateText('edit',localStorage.getItem('ulang')))+' '+translateText('product',localStorage.getItem('ulang'))+' '+obj['data'][i].product_name+salemodel_name_bar+'">edit</span>';
+                                html += '<span class="material-icons" style="font-size:1.5rem; color:black;" title="'+ucfirst(translateText('edit',localStorage.getItem('ulang')))+' '+translateText('product',localStorage.getItem('ulang'))+' '+obj['data'][i].product_name+' / '+obj['data'][i].salemodel_name+'">edit</span>';
                                 html += '</a>';
                                 //html += '</div>';
 
@@ -1096,8 +1059,8 @@ function handleListEditOnLoad(ppid) {
 
                                 
                                     //html +='<div class="col-sm-1" id="button-delete-'+obj['data'][i].proposalproduct_id+'">';
-                                    html +='<a href="javascript:void(0);" onclick="if(confirm(\''+translateText('confirm',localStorage.getItem('ulang'))+' '+translateText('to_remove',localStorage.getItem('ulang'))+' '+obj['data'][i].product_name+salemodel_name_bar+' '+translateText('from_the_list',localStorage.getItem('ulang'))+'?\')){handleRemoveProductFromProposal(\''+obj['data'][i].proposalproduct_id+'\');}">';
-                                    html +='<span class="material-icons" style="font-size:1.5rem; color:black;" title="'+translateText('remove',localStorage.getItem('ulang'))+' '+obj['data'][i].product_name+salemodel_name_bar+' '+translateText('from_the_list',localStorage.getItem('ulang'))+'">delete</span></a></div>';
+                                    html +='<a href="javascript:void(0);" onclick="if(confirm(\''+translateText('confirm',localStorage.getItem('ulang'))+' '+translateText('to_remove',localStorage.getItem('ulang'))+' '+obj['data'][i].product_name+' / '+obj['data'][i].salemodel_name+' '+translateText('from_the_list',localStorage.getItem('ulang'))+'?\')){handleRemoveProductFromProposal(\''+obj['data'][i].proposalproduct_id+'\');}">';
+                                    html +='<span class="material-icons" style="font-size:1.5rem; color:black;" title="'+translateText('remove',localStorage.getItem('ulang'))+' '+obj['data'][i].product_name+' / '+obj['data'][i].salemodel_name+' '+translateText('from_the_list',localStorage.getItem('ulang'))+'">delete</span></a></div>';
                                 }
                                 html += '</div>';  
                             } else { product = "reset"; numberProducts--; }
@@ -1115,7 +1078,7 @@ function handleListEditOnLoad(ppid) {
                     showLine        = 1;
                     if((obj['data'][i].is_proposalbillboard_active === null) && ((provider == null) || (provider =='111'))){
                         provider_name = "";// "Sin proveedor";
-                        if((aProviders.indexOf(provider) >= 0) && (aBillboards.indexOf(salemodel_name) != -1)){
+                        if((aProviders.indexOf(provider) >= 0) && (aBillboards.indexOf(obj['data'][i].salemodel_name) != -1)){
                             showLine = 0;
                         }
                         provider = '111';
@@ -1291,9 +1254,6 @@ function handleListOnLoad(search,page) {
                         // information card
                         html += '<a href="?pr=Li9wYWdlcy9wcm9wb3NhbHMvaW5mby5waHA=&ppid='+obj['data'][i].UUID+'"><span class="material-icons" style="font-size:1.5rem; color:black;" title="Information Card '+obj['data'][i].offer_name+'">info</span></a>';
 
-                        // upload operation files
-                        html += '<a href="?pr=Li9wYWdlcy9wcm9wb3NhbHMvZm9ybWVkaXQucGhw&ppid='+obj['data'][i].UUID+'"><span class="material-icons-round" style="font-size:1.5rem; color:black;" title="Upload operational files to '+module + ' '+obj['data'][i].offer_name+'">upload_file</span></a>';
-                        
                         // Edit form
                         html += '<a href="?pr=Li9wYWdlcy9wcm9wb3NhbHMvZm9ybWVkaXQucGhw&ppid='+obj['data'][i].UUID+'"><span class="material-icons" style="font-size:1.5rem; color:black;" title="Edit '+module + ' '+obj['data'][i].offer_name+'">edit</span></a>';
 
@@ -1657,10 +1617,10 @@ function transformToInt(value){
 
 function newProductForm(copy,destination,items){
     start_index++;
-    document.getElementById(destination).innerHTML += (document.getElementById(copy).innerHTML.replace('proposal,0','proposal,'+start_index).replace('proposal,0','proposal,'+start_index).replace('product_0','product_'+start_index).replace('state_0','state_'+start_index).replace('price_0','price_'+start_index).replace('amount_0','amount_'+start_index).replace('DropdownMenuButton_0','DropdownMenuButton_'+start_index).replace(",'0');",",'"+start_index+"');").replace('div-selectcolony_0','div-selectcolony_'+start_index).replace('div-selectcounty_0','div-selectcounty_'+start_index).replace('div-selectcity_0','div-selectcity_'+start_index).replace('notes_0','notes_'+start_index).replace('div-selectState_0','div-selectState_'+start_index).replace('div-datetype-option_0','div-datetype-option_'+start_index));
+    document.getElementById(destination).innerHTML += (document.getElementById(copy).innerHTML.replace('proposal,0','proposal,'+start_index).replace('proposal,0','proposal,'+start_index).replace('product_0','product_'+start_index).replace('state_0','state_'+start_index).replace('price_0','price_'+start_index).replace('amount_0','amount_'+start_index).replace('DropdownMenuButton_0','DropdownMenuButton_'+start_index).replace(",'0');",",'"+start_index+"');").replace('div-selectcolony_0','div-selectcolony_'+start_index).replace('div-selectcounty_0','div-selectcounty_'+start_index).replace('div-selectcity_0','div-selectcity_'+start_index).replace('div-selectState_0','div-selectState_'+start_index).replace('div-datetype-option_0','div-datetype-option_'+start_index));
 
     for(iteration=0; iteration <= items; iteration++){
-        document.getElementById(destination).innerHTML = document.getElementById(destination).innerHTML.replace('Value_0','Value_'+start_index).replace('Name_0','Name_'+start_index).replace('Id_0','Id_'+start_index).replace('DropdownMenuButton_0','DropdownMenuButton_'+start_index).replace(",'0');",",'"+start_index+"');").replace('product_0','product_'+start_index).replace('salemodel_0','salemodel_'+start_index).replace('provider_0','provider_'+start_index).replace('oohproviders_0','oohproviders_'+start_index).replace('oohkeys_0','oohkeys_'+start_index).replace('oohsalemodels_0','oohsalemodels_'+start_index).replace('oohcost_0','oohcost_'+start_index).replace('oohprice_0','oohprice_'+start_index).replace('oohstate_0','oohstate_'+start_index).replace('oohcolony_0','oohcolony_'+start_index).replace('oohcity_0','oohcity_'+start_index).replace('oohcounty_0','oohcounty_'+start_index).replace('div-quantity_0','div-quantity_'+start_index).replace('div-price_0','div-price_'+start_index).replace('quantity_0','quantity_'+start_index).replace('price_0','price_'+start_index).replace('cost_0','cost_'+start_index).replace('digital_product-0','digital_product-'+start_index).replace('datetype-option-0','datetype-option-'+start_index).replace('digital_product-0','digital_product-'+start_index).replace('datetype-option-0','datetype-option-'+start_index).replace('start_date_product_0','start_date_product_'+start_index).replace('start_date_product_0','start_date_product_'+start_index).replace('start_date_product_0','start_date_product_'+start_index).replace('stop_date_product_0','stop_date_product_'+start_index).replace('stop_date_product_0','stop_date_product_'+start_index).replace('stop_date_product_0','stop_date_product_'+start_index).replace('ooh-list-form-0','ooh-list-form-'+start_index).replace('div-stopDate-product-0','div-stopDate-product-'+start_index).replace('div-startDate-product-0','div-startDate-product-'+start_index).replace('datetype_option-0','datetype_option-'+start_index).replace('notes_0','notes_'+start_index).replace('datetype_option-0','datetype_option-'+start_index);
+        document.getElementById(destination).innerHTML = document.getElementById(destination).innerHTML.replace('Value_0','Value_'+start_index).replace('Name_0','Name_'+start_index).replace('Id_0','Id_'+start_index).replace('DropdownMenuButton_0','DropdownMenuButton_'+start_index).replace(",'0');",",'"+start_index+"');").replace('product_0','product_'+start_index).replace('salemodel_0','salemodel_'+start_index).replace('provider_0','provider_'+start_index).replace('oohproviders_0','oohproviders_'+start_index).replace('oohkeys_0','oohkeys_'+start_index).replace('oohsalemodels_0','oohsalemodels_'+start_index).replace('oohcost_0','oohcost_'+start_index).replace('oohprice_0','oohprice_'+start_index).replace('oohstate_0','oohstate_'+start_index).replace('oohcolony_0','oohcolony_'+start_index).replace('oohcity_0','oohcity_'+start_index).replace('oohcounty_0','oohcounty_'+start_index).replace('div-quantity_0','div-quantity_'+start_index).replace('div-price_0','div-price_'+start_index).replace('quantity_0','quantity_'+start_index).replace('price_0','price_'+start_index).replace('cost_0','cost_'+start_index).replace('digital_product-0','digital_product-'+start_index).replace('datetype-option-0','datetype-option-'+start_index).replace('digital_product-0','digital_product-'+start_index).replace('datetype-option-0','datetype-option-'+start_index).replace('start_date_product_0','start_date_product_'+start_index).replace('start_date_product_0','start_date_product_'+start_index).replace('start_date_product_0','start_date_product_'+start_index).replace('stop_date_product_0','stop_date_product_'+start_index).replace('stop_date_product_0','stop_date_product_'+start_index).replace('stop_date_product_0','stop_date_product_'+start_index).replace('ooh-list-form-0','ooh-list-form-'+start_index).replace('div-stopDate-product-0','div-stopDate-product-'+start_index).replace('div-startDate-product-0','div-startDate-product-'+start_index).replace('datetype_option-0','datetype_option-'+start_index).replace('datetype_option-0','datetype_option-'+start_index);
     }
     htmlRemoveButton = '<div class="form-row" id="btnRemove_'+start_index+'" >';
     htmlRemoveButton += '<div class="col" style="text-align:right;">';
@@ -1750,40 +1710,6 @@ function getId(table,where){
         requestGet.open('GET', requestURLGet);
         //request.responseType = 'json';
         requestGet.send();
-    }
-}
-
-function addProductWhithoutAmounts(start_date,stop_date,product_id,currency,proposal_id,state,city,county,colony,notes){
-    errors      = 0;
-    authApi     = csrf_token;
-    locat       = window.location.hostname;
-
-    querystring = 'auth_api='+authApi+"&start_date="+start_date+"&stop_date="+stop_date+"&product_id="+product_id+"&currency="+currency+"&proposal_id="+proposal_id+"&state="+state+"&city="+city+"&county="+county+"&colony="+colony+"&notes="+notes;
-
-    if(locat.slice(-1) != '/')
-        locat += '/';
-
-    if(errors > 0){
-
-    } else{
-        const requestURLAdd = window.location.protocol+'//'+locat+'api/products/auth_product_add_new.php';
-        console.log('\naddProduct: ' + requestURLAdd+'?'+querystring);
-        const requestAdd = new XMLHttpRequest();
-        requestAdd.onreadystatechange = function() {
-            if (this.readyState == 4 && this.status == 200) {
-                
-                obj = JSON.parse(requestAdd.responseText);
-                pppid = 0;
-                if(obj.status == 'OK'){
-                }
-            }
-            else{
-            }
-        };
-        requestAdd.open('POST', requestURLAdd, false);
-        requestAdd.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-        //request.responseType = 'json';
-        requestAdd.send(querystring);
     }
 }
 
@@ -2027,15 +1953,15 @@ function getMainExecutive(aid){
     } else{
         selectInput   = document.getElementById('selectexecutive');
         const requestURL = window.location.protocol+'//'+locat+'api/'+submodule+'s/auth_'+submodule+'_get.php?auth_api='+authApi+filters;
-        //console.log('ln 2008 (executive): '+requestURL);
+        //console.log(requestURL);
         const request = new XMLHttpRequest();
         request.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {
                 // Typical action to be performed when the document is ready:
                 obj = JSON.parse(request.responseText);
-                if( (obj.response != 'error') || (obj.response != 'ZERO_RETURN')){
-                    if(obj.data[0].executive_id != null)
-                        selectInput.value = obj.data[0].executive_id;
+                if( (obj.response != 'error') && (obj.response != 'ZERO_RETURN')){
+                    if(obj[0].executive_id != null)
+                        selectInput.value = obj[0].executive_id;
                     else
                         selectInput.value = 0;
                 }
@@ -2066,7 +1992,7 @@ function remakeDateField(typeInt,indexValue){
 
 }
 
-function refilterProductsType(typeInt,indexValue,valueOpt){
+function refilterProductsType(typeInt,indexValue){
     typeInt++;
     if(typeInt > 1)
         typeInt = 0;
@@ -2106,25 +2032,18 @@ function refilterProductsType(typeInt,indexValue,valueOpt){
         const request = new XMLHttpRequest();
         request.onreadystatechange = function() {
             html    = '<label for="'+fieldProductName+'">'+ucfirst(translateText('product',localStorage.getItem('ulang')))+'</label>';
-            html   += '<spam id="sproduct">';
-            if(typeof(valueOpt)!=='undefined'){
-                html   += '<SELECT id="'+idFieldProduct+'" name="'+fieldProductName+'" onchange="refilterSaleModel(document.getElementById(\''+idCheckName+'\').value,this.value,'+takeINDEX+'); checkOOHSelection(this[this.selectedIndex].innerText,'+takeINDEX+');" title="product_id" class="form-control" autocomplete="product_id"  required>';
-            }else{
-                html   += '<SELECT id="'+idFieldProduct+'" name="'+fieldProductName+'" title="product_id" class="form-control" autocomplete="product_id"  required>';
-            }
+            html   += '<spam id="sproduct">'
+            html   += '<SELECT id="'+idFieldProduct+'" name="'+fieldProductName+'" onchange="refilterSaleModel(document.getElementById(\''+idCheckName+'\').value,this.value,'+takeINDEX+'); checkOOHSelection(this[this.selectedIndex].innerText,'+takeINDEX+');" title="product_id" class="form-control" autocomplete="product_id"  required>';
             if (this.readyState == 4 && this.status == 200) {
                 // Typical action to be performed when the document is ready:
                 obj = JSON.parse(request.responseText);
                 if( (obj.response != 'error') && (obj.response != 'ZERO_RETURN')){
                     html += '<OPTION value="0"/>'+translateText('please_select',localStorage.getItem('ulang'))+' '+ucfirst(translateText('product',localStorage.getItem('ulang')));
                     for(var i=0;i < obj.length; i++){
-                        checkedOption= '';
-                        if(valueOpt == obj[i].uuid_full)
-                            checkedOption = 'selected';
-                        /*if(obj[i].name == 'OOH'){
+                        if(obj[i].name == 'OOH'){
                             html += '<option value="'+obj[i].uuid_full+'" >'+obj[i].name+' ('+translateText('no_keys',localStorage.getItem('ulang'))+')</option>';
-                        }*/
-                        html += '<OPTION value="'+obj[i].uuid_full+'" '+checkedOption+'/>'+obj[i].name;
+                        }
+                        html += '<OPTION value="'+obj[i].uuid_full+'"/>'+obj[i].name;
                     }
                     html    += '</SELECT>';
                     html    += '</spam>';
@@ -2149,14 +2068,13 @@ function refilterProductsType(typeInt,indexValue,valueOpt){
 }
 
 
-function refilterSaleModel(typeInt,productCode,indexValue,valueOpt){
+function refilterSaleModel(typeInt,productCode,indexValue){
     errors      = 0;
     authApi     = csrf_token;
     locat       = window.location.hostname;
     submodule   = 'salemodel';
-    alert(productCode);
 
-    //if((typeof(indexValue) != 'undefined') || (typeof(indexValue) != null)){
+    if((typeof(indexValue) != 'undefined') || (typeof(indexValue) != null)){
         DIVSelectSalemodel      = "div-selectsalemodel_"+indexValue;
         DIVOohKeys              = "div-oohkeys_"+indexValue;
         OohListForm             = "ooh-list-form-"+indexValue;
@@ -2166,7 +2084,7 @@ function refilterSaleModel(typeInt,productCode,indexValue,valueOpt){
         DIVQuantity             = "div-quantity_"+indexValue;
         FieldNameSaleModel      = 'salemodel_id[]';
         FieldIDSaleModel        = 'selectsalemodel_'+indexValue;
-    /*} else {
+    } else {
         DIVSelectSalemodel      = "div-selectsalemodel";
         DIVOohKeys              = "div-oohkeys";
         OohListForm             = "ooh-list-form";
@@ -2176,7 +2094,7 @@ function refilterSaleModel(typeInt,productCode,indexValue,valueOpt){
         DIVQuantity             = "div-quantity";
         FieldNameSaleModel      = 'salemodel_id';
         FieldIDSaleModel        = 'selectsalemodel';
-    }*/
+    }
     
     salemodelElement = document.getElementById(DIVSelectSalemodel);
     if(salemodelElement){
@@ -2212,7 +2130,7 @@ function refilterSaleModel(typeInt,productCode,indexValue,valueOpt){
         
         if(salemodelList){
             const requestURL = window.location.protocol+'//'+locat+'api/'+submodule+'s/auth_'+submodule+'_view.php?auth_api='+authApi+filters;
-            console.log(requestURL);
+            //console.log(requestURL);
             const request = new XMLHttpRequest();
             request.onreadystatechange = function() {
                 html    = '<label for="'+FieldNameSaleModel+'">' + ucfirst(translateText('sale_model',localStorage.getItem('ulang'))) + '</label>';
@@ -2224,10 +2142,7 @@ function refilterSaleModel(typeInt,productCode,indexValue,valueOpt){
                     if( (obj.response != 'error') && (obj.response != 'ZERO_RETURN')){
                         html += '<OPTION value="0"/>' + translateText('please_select',localStorage.getItem('ulang')) + ' ' + ucfirst(translateText('sale_model',localStorage.getItem('ulang'))) + '';
                         for(var i=0;i < obj['data'].length; i++){
-                            checkedOption= '';
-                            if(valueOpt == obj['data'][i].uuid_full)
-                                checkedOption = 'selected';
-                                html += '<OPTION value="'+obj['data'][i].uuid_full+'" '+checkedOption+'/>'+obj['data'][i].name;
+                            html += '<OPTION value="'+obj['data'][i].uuid_full+'"/>'+obj['data'][i].name;
                         }
                         html    += '</SELECT>';
                         html    += '</spam>';
