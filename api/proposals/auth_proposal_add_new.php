@@ -52,7 +52,7 @@ if(array_key_exists('auth_api',$_REQUEST)){
     $description    = addslashes(urldecode($_POST['description']));
     $start_date     = $_POST['start_date'];
     $stop_date      = $_POST['stop_date'];
-    $status_id      = $_POST['status_id'];
+    $status_id      = 7;//$_POST['status_id'];
     
     $tax_percent    = '0';
     if(($_POST['tax_percent'] != '') && ($_POST['tax_percent'] > '0') )
