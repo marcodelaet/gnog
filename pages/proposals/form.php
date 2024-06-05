@@ -302,6 +302,12 @@ if('1' == '2'){
                         </div>
                     </div>
                 </div>
+<?php
+
+                /* ********************************** 
+                    STATUS 
+                ****************************************/
+                /**** 
                 <div class="form-row">
                     <div class="col-10">
                     </div>
@@ -314,6 +320,8 @@ if('1' == '2'){
                         </spam>
                     </div>
                 </div>
+                *******/
+?>
             </div>
             <div class="inputs-button-container">
                 <button class="button" name="btnSave" type="button" onClick="handleSubmit(<?=strtolower($moduleName)?>)" ><?=ucfirst(translateText('continue'));?></button>
