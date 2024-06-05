@@ -44,7 +44,7 @@ if(array_key_exists('auth_api',$_REQUEST)){
     $filters                = "is_active = 'Y' ";
     $xfilter                = "";
     if($level < '99999'){
-        $xfilter = "AND status_percent <= 25 AND status_percent <> 0";
+        $xfilter = "AND status_percent < 25 AND status_percent <> 0";
     }
 
     if($level < '50'){
