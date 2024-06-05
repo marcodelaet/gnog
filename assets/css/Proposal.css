@@ -200,6 +200,11 @@ td{
     color: #171b20;
 }
 
+.table-column-Filename{
+    font-size: 1rem;
+    color:darkblue;
+}
+
 #proposal-card {
     max-width: 30rem;
     min-width: 30rem;
