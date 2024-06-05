@@ -714,6 +714,40 @@ CREATE VIEW view_proposals AS (
 	LEFT JOIN goals g ON g.user_id = u.id
 );
 
+
+# VIEW PROPOSAL_FILES
+CREATE VIEW view_proposal_files AS (
+SELECT 
+f.id as file_id,
+f.file_location as file_location,
+f.file_name as file_name,
+f.file_type as file_type,
+f.user_id as user_id,
+u.email as user_email,
+f.description as file_description,
+f.is_active as file_is_active,
+f.created_at as file_created_at,
+f.updated_at as file_updated_at,
+f.module_type as module_type,
+pp.id as proposalproduct_id,
+pp.proposal_id as proposal_id,
+p.offer_name as offer_name,
+pp.product_id as product_id,
+pd.name as product_name,
+pp.salemodel_id as salemodel_id,
+sm.name as salemodel_name,
+CONCAT(p.offer_name,'|',pd.name,'|',file_name) as search
+FROM 
+proposalsxproducts pp 
+INNER JOIN files f ON f.proposalproduct_id = pp.id
+INNER JOIN proposals p ON p.id = pp.proposal_id
+INNER JOIN users u ON f.user_id = u.id
+LEFT JOIN products pd ON pd.id = pp.product_id
+LEFT JOIN salemodels sm ON sm.id = pp.salemodel_id
+);
+
+
+
 # VIEW INVOICES_FILES
 CREATE VIEW view_invoices_files AS (
 SELECT 
@@ -745,6 +779,7 @@ f.description as file_description,
 f.is_active as file_is_active,
 f.created_at as file_created_at,
 f.updated_at as file_updated_at,
+f.module_type as module_type,
 pp.proposal_id as proposal_id,
 p.offer_name as offer_name,
 pp.product_id as product_id,

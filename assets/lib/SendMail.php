@@ -124,7 +124,7 @@ Class SendMail{
         $this->setBoundary('providers');
         $this->setHeaders();
         $this->setFileName($signFilePath);
-        if($attachedFiles !== ""){
+        if(($attachedFiles !== "") && ($attachedFiles !== null)){
             $aFiles = explode(";",$attachedFiles);
             for($i=0;$i<count($aFiles);$i++){
                 $this->addAttachedFile($aFiles[$i]);

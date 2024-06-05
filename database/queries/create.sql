@@ -1354,6 +1354,11 @@ ALTER TABLE files
 	FOREIGN KEY (invoice_id)
     REFERENCES invoices (id);
 
+ALTER TABLE files 
+	ADD module_type varchar(50) NULL AFTER file_type; 
+
+ALTER TABLE files 
+	ADD proposalproduct_id varchar(40) NULL AFTER invoice_id; 
 
 # ADDING FK CURRENCY
 ALTER TABLE invoices
