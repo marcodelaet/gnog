@@ -1234,6 +1234,13 @@ VALUES
 INSERT INTO translates 
 (id, code_str, text_eng, text_esp, text_ptbr, is_active, created_at, updated_at)
 VALUES
+(UUID(), 'sent to operation', 'Sent to Operation', 'Enviada a Operación', 'Enviada para Operações', 'Y', NOW(), NOW()),
+(UUID(), 'waiting for first approval', 'Waiting for first approval', 'Esperando la primera aprobación', 'Esperando a primeira aprovação', 'Y', NOW(), NOW());
+
+
+INSERT INTO translates 
+(id, code_str, text_eng, text_esp, text_ptbr, is_active, created_at, updated_at)
+VALUES
 (UUID(), 'all_places', 'all', 'todo', 'tudo', 'Y', NOW(), NOW());
 
 
