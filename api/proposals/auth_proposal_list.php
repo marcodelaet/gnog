@@ -20,7 +20,7 @@ if(array_key_exists('auth_api',$_REQUEST)){
     
     $token = $_REQUEST['auth_api'];
 
-    $sqlTkUser = "SELECT user_type FROM view_users WHERE UUID = '".$_COOKIE['uuid']."' AND token like '%".str_replace(" ","+",urldecode($token))."%'";
+    $sqlTkUser = "SELECT user_type, level_account FROM view_users WHERE UUID = '".$_COOKIE['uuid']."' AND token like '%".str_replace(" ","+",urldecode($token))."%'";
     
     $rsTkUser = $DB->getData($sqlTkUser);
 
@@ -31,6 +31,7 @@ if(array_key_exists('auth_api',$_REQUEST)){
 
     // User Group
     $group          = $rsTkUser[0]['user_type'];
+    $level          = $rsTkUser[0]['level_account'];
 
     // setting query
     $offSet         = 0;
@@ -41,9 +42,16 @@ if(array_key_exists('auth_api',$_REQUEST)){
     
     // filters
     $filters                = "is_active = 'Y' ";
-    if($group !== 'admin'){
-        $filters .= "AND user_id = '".$_COOKIE['uuid']."' ";
+    $xfilter                = "";
+    if($level < '99999'){
+        $xfilter = "AND status_percent <= 25 AND status_percent <> 0";
     }
+
+    if($level < '50'){
+        $xfilter = "AND user_id = '".$_COOKIE['uuid']."' ";
+    }
+
+    $filters .= $xfilter;
 
     if(array_key_exists('search',$_REQUEST)){
         if($_REQUEST['search']!==''){
