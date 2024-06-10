@@ -166,11 +166,11 @@ if(array_key_exists('pppid',$_REQUEST)){
                                             </select>
                                         </spam>
                                     </div>
-                                    <div class="col" id="div-oohkeys" style="display: none">
+                                    <div class="col" id="div-oohkeys_0" style="display: none">
                                     </div>
                                 </div>
                                 <div class="form-row" >
-                                    <div class="col" id='div-cost'>
+                                    <div class="col" id='div-cost_0'>
                                         <label for="cost"><?=ucfirst(translateText('cost'));?> (<?=ucfirst(translateText('unit'))?>)</label><br/>
                                         <input
                                         required
@@ -187,7 +187,7 @@ if(array_key_exists('pppid',$_REQUEST)){
                                         autocomplete="cost"
                                         />
                                     </div>
-                                    <div class="col" id='div-price'>
+                                    <div class="col" id='div-price_0'>
                                         <label for="price"><?=translateText('unit_price');?></label><br/>
                                         <input
                                         required
@@ -230,8 +230,8 @@ if(array_key_exists('pppid',$_REQUEST)){
                                     <div class="col">
                                         <label for="amount"><?=translateText('amount');?></label><br/>
                                         <input
-                                        id='amount'
-                                        name ='amount'
+                                        id='amount_0'
+                                        name ='amount[]'
                                         readonly 
                                         placeholder="0,00"
                                         title = '<?=translateText('amount');?>'
@@ -239,7 +239,7 @@ if(array_key_exists('pppid',$_REQUEST)){
                                         class="form-control"
                                         />
                                     </div>
-                                    <div class="col" id="div-provider">
+                                    <div class="col" id="div-provider_0">
                                         <label for="provider_id"><?=translateText('provider');?></label>
                                         <spam id="sprovider">
                                             <select name="provider_id" id="selectprovider" title="provider_id" class="form-control">
@@ -279,6 +279,24 @@ if(array_key_exists('pppid',$_REQUEST)){
                 <button class="button" name="btnSave" type="button" onClick="handleSubmitEditProduct(<?=strtolower($moduleName)?>)" ><?=ucfirst(translateText('save'));?></button>
             </div>
         </form>
+        <table class="table table-hover table-sm">
+          <caption>Proposal / Files</caption>
+          <thead>
+            <tr>
+              <th class="column col-9" scope="col">
+                <?=ucfirst(translateText('file'));?>
+              </th>
+              <th class="column col-3" scope="col">
+              <?=ucfirst(translateText('date'));?>
+              </th>
+            </tr>
+          </thead>
+          <tbody id="listInvoices">
+          </tbody>
+        </table>
+        <div id="div-specialbuttons">
+          
+        </div>
       <?php
       if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
         $ip = $_SERVER['HTTP_CLIENT_IP'];
@@ -297,7 +315,74 @@ if(array_key_exists('pppid',$_REQUEST)){
     </div>    
 </div>
 
-<script>
+<div class="modal fade" id="sendmailModal" tabindex="-1" aria-labelledby="sendmailModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="sendmailModalLabel"> <?=translateText('send_user_crt_url_to')?>: 
+            <p>
+                <b>
+                    <spam id="provider_contact_name"></spam> - (
+                    <spam id="provider_contact_email"></spam>)
+                </b>
+            </p> 
+        </h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form name="frmSendMail">
+          <div class="form-group">
+            <div class="form-row">
+                <div class="col">
+                    <label for="language" class="col-form-label"><?=translateText('language')?>:</label>
+                    <SELECT name="option" id="language-option" onchange="changeMessageLanguage(this.value,document.getElementById('pname').value,document.getElementById('plink').value);">
+                        <OPTION value="esp">Español</OPTION>
+                        <OPTION value="ptbr">Português Brasileiro</OPTION>
+                        <OPTION value="eng">English</OPTION>
+                    </SELECT>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="col">
+                    <label for="bodyText" class="col-form-label"><?=translateText('message')?>: <i>(min 10 chars)</i></label>
+                    <div class="editor" id="bodyText" style="padding:2rem; border: 1px solid gray; border-radius:1.2rem;">
+	                    <?=$invite_body_esp?>
+	                </div>
+                </div>
+            </div>
+          </div>
+          <input type="hidden" name="pid" value="<?=$_REQUEST['pid']?>" />
+          <input type="hidden" id="pemail" name="pemail" value="" />
+          <input type="hidden" id="pname" name="pname" value="" />
+          <input type="hidden" id="plink" name="plink" value="" />
+          <input type="hidden" id="bodytext-html" name="bodytext" value="" />
+          
+          <input type="hidden" name="uid" value="<?=$_COOKIE['uuid']?>" />
+          <input type="hidden" name="tku" value="<?=$_COOKIE['tk']?>" />
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal"><?=translateText('close')?></button>
+        <button type="button" id="sendbutton" class="btn btn-primary" onclick="this.disabled = true; document.getElementById(this.id).innerText='<?=translateText('sent')?>'; sendmailToProviderContact(frmSendMail);"><?=translateText('send_message')?></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+    $('.editor').notebook({
+    autoFocus: false,
+    placeholder: 'Your text here...',
+    mode: 'multiline', // // multiline or inline
+    modifiers: ['bold', 'italic', 'underline', 'h1', 'h2', 'ol', 'ul', 'anchor']});
+    });
+
+    //changeMessageLanguage('esp',document.getElementById('pname').value,document.getElementById('plink').value);
+
+  
 $(document).ready(function(){
   $("#stateName_0").on("keyup", function() {
     var value = $(this).val().toLowerCase();
@@ -391,4 +476,5 @@ $(document).ready(function(){
 
     handleListAddProductOnLoad("<?=$ppid?>","<?=strtolower($moduleName)?>");
     handleListEditProductOnLoad("<?=$ppid?>","<?=$pppid?>");
+    handleListProductFilesOnLoad("<?=$ppid?>","<?=$pppid?>");
 </script>

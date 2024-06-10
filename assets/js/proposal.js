@@ -674,7 +674,7 @@ function handleViewOnLoad(ppid) {
 
     } else{
         const requestURL = window.location.protocol+'//'+locat+'api/proposals/auth_proposal_get.php?auth_api='+authApi+filters;
-        // console.log('xsjoe: \n'+requestURL);
+         console.log('xsjoe: \n'+requestURL);
         const request   = new XMLHttpRequest();
         position        = '*****';
         request.onreadystatechange = function() {
@@ -720,11 +720,19 @@ function handleViewOnLoad(ppid) {
                 document.getElementById('statusDropdownMenuButton').value   = obj['data'][0].status_id; 
                 document.getElementById('statusDropdownMenuButton').innerHTML = '<spam class="material-icons icon-data" id="card-status-icon" style="color:'+color_status+'">thermostat</spam>' + translateText(obj['data'][0].status_name,localStorage.getItem('ulang')) + ' ('+ obj['data'][0].status_percent+'%)';
                 // products list for statement
+                oldProduct = 'xxxx';
                 for(var i=0;i<obj['data'].length;i++){
                     deleted_line='';
                     if(obj['data'][i].is_proposalproduct_active == "N")
                         deleted_line='deleted-billboard';
-                    xxhtml += '<spam class="product-line '+deleted_line+'">'+obj['data'][i].quantity + ' x ' + obj['data'][i].product_name + ' / ' + obj['data'][i].salemodel_name+' - '+formatter.format(obj['data'][i].amount)+'</spam><br />';
+                    productName = obj['data'][i].product_name;
+                    if(obj['data'][i].salemodel_id != null)
+                        productName += ' / '+ obj['data'][i].salemodel_name;
+                    if(oldProduct != productName){
+                        xxhtml += '<spam class="product-line '+deleted_line+'">'+obj['data'][i].quantity + ' x ' + productName +' - '+formatter.format(obj['data'][i].amount)+'</spam><br />';
+                        oldProduct = productName;
+                        handleListProductFilesOnLoad(ppid,obj['data'][i].proposalproduct_id);
+                    }
                 }
                 classStatus = document.getElementsByClassName('dropdown-item status'); 
                 for(var cs=0; cs < classStatus.length; cs++){
@@ -909,6 +917,7 @@ function handleListProductFilesOnLoad(ppid,pppid){
     authApi     = csrf_token;
     locat       = window.location.hostname;
 
+    orderby     = '';
     filters     = '&ppid='+ppid+'&pppid='+pppid;
     if(locat.slice(-1) != '/')
         locat += '/';
@@ -917,7 +926,7 @@ function handleListProductFilesOnLoad(ppid,pppid){
 
     } else{
         const requestURL = window.location.protocol+'//'+locat+'api/proposals/auth_proposal_files_list.php?auth_api='+authApi+filters+orderby;
-        console.log('getFiles- '+requestURL);
+        //console.log('getFiles- '+requestURL);
         const request = new XMLHttpRequest();
         request.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {
@@ -927,27 +936,29 @@ function handleListProductFilesOnLoad(ppid,pppid){
                 var cellFileName    = null;
                 var cellFileDate    = null;
                 tableID = document.getElementById('listInvoices');
-                for(var i=0;i < obj['data'].length; i++){
-                    row             = tableID.insertRow();
-                    cellFileName    = row.insertCell(0);
-                    cellFileDate    = row.insertCell(1);
-
-                    cellFileName.classList.add('table-column-Filename');
-                    cellFileDate.classList.add('table-column-Date');
-
-                    link        = document.createElement('A');
-                    link.setAttribute('href',obj['data'][i].file_location+obj['data'][i].file_name);
-                    link.setAttribute('target','_blank');
-
-                    textNode    = document.createTextNode(obj['data'][i].file_name);
-                    link.appendChild(textNode);
-
-                    cellFileName.appendChild(link);
-                    
-
-
-                    cellFileDate.innerText = new Date(obj['data'][i].file_updated_at).toLocaleDateString(lang) + ' ' + new Date(obj['data'][i].file_updated_at).toLocaleTimeString(lang);;
-
+                if(obj.response != 'ZERO_RETURN'){
+                    for(var i=0;i < obj['data'].length; i++){
+                        row             = tableID.insertRow();
+                        cellFileName    = row.insertCell(0);
+                        cellFileDate    = row.insertCell(1);
+    
+                        cellFileName.classList.add('table-column-Filename');
+                        cellFileDate.classList.add('table-column-Date');
+    
+                        link        = document.createElement('A');
+                        link.setAttribute('href',obj['data'][i].file_location+obj['data'][i].file_name);
+                        link.setAttribute('target','_blank');
+    
+                        textNode    = document.createTextNode(obj['data'][i].file_name);
+                        link.appendChild(textNode);
+    
+                        cellFileName.appendChild(link);
+                        
+    
+    
+                        cellFileDate.innerText = new Date(obj['data'][i].file_updated_at).toLocaleDateString(lang) + ' ' + new Date(obj['data'][i].file_updated_at).toLocaleTimeString(lang);;
+    
+                    }
                 }
             }
             else {
@@ -1070,8 +1081,10 @@ function handleListEditProductOnLoad(ppid,pppid){
                     document.getElementById('start_date_product_0').value   = obj['data'][0].start_date_for_product;
                 if(document.getElementById('stop_date_product_0') != null)
                     document.getElementById('stop_date_product_0').value    = obj['data'][0].stop_date_for_product;
-                if(document.getElementById('selectproduct_0') != null)
+                if(document.getElementById('selectproduct_0') != null){
                     document.getElementById('selectproduct_0').value        = obj['data'][0].product_id;
+                    checkOOHSelection(obj['data'][0].product_name,0);
+                }
                 if(document.getElementById('selectsalemodel_0') != null)
                     document.getElementById('selectsalemodel_0').value      = obj['data'][0].salemodel_id;
                 
@@ -1085,6 +1098,21 @@ function handleListEditProductOnLoad(ppid,pppid){
                     document.getElementById('amount').value                 = formatter.format(obj['data'][0].amount);
                 if(document.getElementById('selectprovider') != null)
                     document.getElementById('selectprovider').value         = provider_id;
+
+                /************
+                 * SEND EMAIL BUTTOM
+                 */
+                contact_email   = obj['data'][0].contact_email;
+                full_name = "Teste";
+                //xcopy += '&nbsp;<a style="color: #212529" href="javascript:void(0)" title="'+translateText('send_user_crt_url_to',localStorage.getItem('ulang'))+' '+obj['data'][i].contact_email+'" onclick=""><spam class="material-icons icon-data">send</spam></a>';
+                xeffect = 'insider'; 
+                xuser = 'https://providers.gnogmedia.com?pr=Li9wYWdlcy91c2Vycy9mb3JtLnBocA==&cpid='+obj['data'][0].contact_provider_id;
+                xcopy = '&nbsp;&nbsp;&nbsp;<a style="color: #212529" href="javascript:void(0)" title="'+translateText('copy_user_crt_url',localStorage.getItem('ulang'))+' ('+obj['data'][0].contact_email+')" onclick="copyStringToClipboard(\''+xuser+'\'\)"><spam class="material-icons icon-data">content_copy</spam></a>';
+                textHTML = invite_body['esp'];
+                xcopy += '&nbsp;<a style="color: #212529; cursor: pointer;" title="'+translateText('send_user_crt_url_to',localStorage.getItem('ulang'))+' '+obj['data'][0].contact_email+'"  data-toggle="modal" data-target="#sendmailModal" data-whatever="@mdo" onclick="document.getElementById(\'sendbutton\').disabled = false; document.getElementById(\'sendbutton\').innerText = translateText(\'send_message\',localStorage.getItem(\'ulang\')); document.getElementById(\'provider_contact_email\').innerText=\''+contact_email+'\'; document.getElementById(\'pemail\').value=\''+contact_email+'\'; document.getElementById(\'pname\').value=\''+full_name+'\'; document.getElementById(\'plink\').value=\''+xuser+'\'; document.getElementById(\'bodytext-html\').value =  textHTML.replace(\'%personal_url_to_register%\',\''+xuser+'\').replace(\'%personal_url_to_register_href%\',\''+xuser+'\').replace(\'%user_fullname%\',\''+full_name+'\'); document.getElementById(\'language-option\').value=\'esp\'; document.getElementById(\'bodyText\').innerHTML = textHTML.replace(\'%personal_url_to_register%\',\''+xuser+'\').replace(\'%personal_url_to_register_href%\',\''+xuser+'\').replace(\'%user_fullname%\',\''+full_name+'\');"><spam class="material-icons icon-data">send</spam></a>';
+
+                xhtml += xcopy;
+                document.getElementById('div-specialbuttons').value         = provider_id;
                 //console.log(obj['data'][0].product_id +' - '+ obj['data'][0].product_name);
             }
             else {
@@ -2404,7 +2432,7 @@ function checkOOHSelection(stringValue,indexValue){
     xhtml = "";
     if(stringValue == "OOH"){
         xhtml += '<label for="oohkeys[]">'+ucfirst(translateText('key',localStorage.getItem('ulang')))+ '(s) - '+stringValue+'</label><br/>';
-        xhtml += '<TEXTAREA id="oohkeys_'+indexValue+'" name="oohkeys[]" rows="5" placeholder="'+ucfirst(translateText('key',localStorage.getItem('ulang')))+ '(s) - '+stringValue+'" class="form-control" id="oohkeys_0" onblur="getBillboardIds(this.value,'+indexValue+');"></TEXTAREA>';
+        xhtml += '<TEXTAREA id="oohkeys_'+indexValue+'" name="oohkeys[]" rows="5" placeholder="'+ucfirst(translateText('key',localStorage.getItem('ulang')))+ '(s) - '+stringValue+'" class="form-control" id="oohkeys_0" onblur="getBillboardIds(this.value,'+indexValue+'); "></TEXTAREA>';
         /*
         xhtml += '<INPUT type="HIDDEN" id="ids-oohkeys_'+indexValue+'" name="ids_oohkeys[]"/>';
         xhtml += '<INPUT type="HIDDEN" id="ids-oohproviders_'+indexValue+'" name="ids_oohproviders[]"/>';
@@ -2730,6 +2758,7 @@ function getBillboardIds(oohlist,indexValue){
     document.getElementById('oohcity_'+indexValue).value = city;
     document.getElementById('oohcounty_'+indexValue).value = county;*/
     document.getElementById('amount_'+indexValue).value = totalPrice;
+    //calcAmountTotal(document.getElementsByName(module)[0]);
 }
 
 function getIdFromTable(table,bringColumns,searchValue){

@@ -132,7 +132,7 @@ if(array_key_exists('pppid',$_REQUEST)){
           </thead>
           <tbody id="listInvoices">
           </tbody>
-
+        </table>
       <?php
       if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
         $ip = $_SERVER['HTTP_CLIENT_IP'];
