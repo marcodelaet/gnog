@@ -205,6 +205,19 @@ td{
     color:darkblue;
 }
 
+.table-column-Date{
+    font-size: 1rem;
+}
+
+#files-table .table-column-Filename{
+    font-size: 0.78rem;
+}
+
+#files-table .table-column-Date{
+    font-size: 0.78rem;
+}
+
+
 #proposal-card {
     max-width: 30rem;
     min-width: 30rem;

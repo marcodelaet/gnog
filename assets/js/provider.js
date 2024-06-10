@@ -404,12 +404,14 @@ function handleViewOnLoad(pid) {
                             xeffect     = '';
                             xuser       = obj['data'][i].username;
                         } else {
+                            /************
+                             * SEND EMAIL BUTTOM
+                             */
                             contact_email   = obj['data'][i].contact_email;
-
+                            //xcopy += '&nbsp;<a style="color: #212529" href="javascript:void(0)" title="'+translateText('send_user_crt_url_to',localStorage.getItem('ulang'))+' '+obj['data'][i].contact_email+'" onclick=""><spam class="material-icons icon-data">send</spam></a>';
                             xeffect = 'insider'; 
                             xuser = 'https://providers.gnogmedia.com?pr=Li9wYWdlcy91c2Vycy9mb3JtLnBocA==&cpid='+obj['data'][i].contact_provider_id;
                             xcopy = '&nbsp;&nbsp;&nbsp;<a style="color: #212529" href="javascript:void(0)" title="'+translateText('copy_user_crt_url',localStorage.getItem('ulang'))+' ('+obj['data'][i].contact_email+')" onclick="copyStringToClipboard(\''+xuser+'\'\)"><spam class="material-icons icon-data">content_copy</spam></a>';
-                            //xcopy += '&nbsp;<a style="color: #212529" href="javascript:void(0)" title="'+translateText('send_user_crt_url_to',localStorage.getItem('ulang'))+' '+obj['data'][i].contact_email+'" onclick=""><spam class="material-icons icon-data">send</spam></a>';
                             textHTML = invite_body['esp'];
                             xcopy += '&nbsp;<a style="color: #212529; cursor: pointer;" title="'+translateText('send_user_crt_url_to',localStorage.getItem('ulang'))+' '+obj['data'][i].contact_email+'"  data-toggle="modal" data-target="#sendmailModal" data-whatever="@mdo" onclick="document.getElementById(\'sendbutton\').disabled = false; document.getElementById(\'sendbutton\').innerText = translateText(\'send_message\',localStorage.getItem(\'ulang\')); document.getElementById(\'provider_contact_email\').innerText=\''+contact_email+'\'; document.getElementById(\'pemail\').value=\''+contact_email+'\'; document.getElementById(\'pname\').value=\''+full_name+'\'; document.getElementById(\'plink\').value=\''+xuser+'\'; document.getElementById(\'bodytext-html\').value =  textHTML.replace(\'%personal_url_to_register%\',\''+xuser+'\').replace(\'%personal_url_to_register_href%\',\''+xuser+'\').replace(\'%user_fullname%\',\''+full_name+'\'); document.getElementById(\'language-option\').value=\'esp\'; document.getElementById(\'bodyText\').innerHTML = textHTML.replace(\'%personal_url_to_register%\',\''+xuser+'\').replace(\'%personal_url_to_register_href%\',\''+xuser+'\').replace(\'%user_fullname%\',\''+full_name+'\');"><spam class="material-icons icon-data">send</spam></a>';
                         }
@@ -439,7 +441,6 @@ function handleViewOnLoad(pid) {
                             xhtml += xcopy;
                             xhtml += '</div>';
                         }
-                        
                     }
                 } else {
                     xhtml = '<div class="'+module+'-data"><spam id="card-user-000000" class="card-user ">0_contacts</spam></div>';
@@ -713,9 +714,10 @@ function sendmailToProviderContact(form){
         request.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {
                 // Typical action to be performed when the document is ready:
+                console.log(request.responseText);
                 obj = JSON.parse(request.responseText);
                 document.getElementById('sendbutton').innerText = translateText('sent',localStorage.getItem('ulang'));
-                //alert('Status: '+obj.status);
+                //console.log('Status: '+obj.status);
                 //window.location.href = 'pr=Li9wYWdlcy9wcm92aWRlcnMvaW5mby5waHA=&pid='+provider_id;
             }
             else{
