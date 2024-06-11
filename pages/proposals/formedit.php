@@ -40,9 +40,27 @@ $moduleName = 'Proposal';
 
         <div class="list-products-container" id="list-products">
         </div>
+        <br/>
+        <div id='list-files'>
+            <table class="table table-hover table-sm">
+                <caption>Proposal / Files</caption>
+                <thead>
+                    <tr>
+                    <th class="column col-9" scope="col">
+                        <?=ucfirst(translateText('file'));?>
+                    </th>
+                    <th class="column col-3" scope="col">
+                    <?=ucfirst(translateText('date'));?>
+                    </th>
+                    </tr>
+                </thead>
+                <tbody id="listInvoices">
+                </tbody>
+            </table>
         </div>
-    </div>    
-</div>
+    </div>
+</div>    
+
 
 <?php 
 if(array_key_exists('ppid',$_REQUEST)){ 

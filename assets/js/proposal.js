@@ -1275,7 +1275,9 @@ function handleListEditOnLoad(ppid) {
                                 }
                                 html += '</div>';  
                             } else { product = "reset"; numberProducts--; }
-                        //}    
+                        //}
+                        // listing files
+                        handleListProductFilesOnLoad(ppid,obj['data'][i].proposalproduct_id);
                     }
                     // css to special times
                     deletedbillboard = '';
