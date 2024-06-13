@@ -118,7 +118,7 @@ $filesSent = '';
 
 if ($uploadOk > 0) {
     $status = "waiting_first_approval"; // every time the user upload a new file, the status resets to waiting_first_approval
-    $status_id = "8"; // status id = 8
+    $status_id = "2"; // status id = 2 (25% SENT)
     
     $update = true;
     
