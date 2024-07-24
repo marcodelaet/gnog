@@ -437,19 +437,28 @@ function handleShowExecutiveGoalGraph(uid,status,month,year,search,currency){
         
     } else{
         const requestURL = window.location.protocol+'//'+locat+'api/'+module_dash+'/auth_'+module_dash+'_executive_goals_list.php?auth_api='+authApi+filters;
-        //console.log(requestURL);
-        const request = new XMLHttpRequest();
-        request.onreadystatechange = function() {
+        console.log(requestURL);
+        const requestExecutiveGoals = new XMLHttpRequest();
+        requestExecutiveGoals.onreadystatechange = function() {
+            //alert('rs: '+this.readyState +'\ns: '+ this.status)
             if (this.readyState == 4 && this.status == 200) {
                 // Typical action to be performed when the document is ready:
-                obj         = JSON.parse(request.responseText);
-                if(typeof obj[0].response != 'undefined'){
-                    }else{
+                obj         = JSON.parse(requestExecutiveGoals.responseText);
+                //alert('response: '+obj.response);
+                if(obj.response=='ZERO_RETURN'){
+                    html = '';
+                    /*
+                    html += '<tr><td colspan="8" ><div style="margin-left:45%; margin-right:45%;margin-top:15%;margin-bottom:15%;" style="text-align:center; vertical-align:middle;">';
+                    html += '<span class="ZERO">No results</span>';
+                    html += '</div></td></tr>';
+                    */
+                    DIVIDGraphExecutiveGoal.remove();
+                } else {
                     amount_total= 0;
-                    for(var i=0;i < obj.length; i++){
+                    for(var i=0;i < obj.data.length; i++){
                         var formatter = new Intl.NumberFormat(lang, {
                             style: 'currency',
-                            currency: obj[i].currency,
+                            currency: obj.data[i].currency,
                             //maximumSignificantDigits: 2,
                     
                             // These options are needed to round to whole numbers if that's what you want.
@@ -457,12 +466,12 @@ function handleShowExecutiveGoalGraph(uid,status,month,year,search,currency){
                             //maximumFractionDigits: 0, // (causes 2500.99 to be printed as $2,501)
                         });
                         agency = '';
-                        if(typeof(obj[i].agency_name) === 'string')
-                            agency = ' / '+obj[i].agency_name;
+                        if(typeof(obj.data[i].agency_name) === 'string')
+                            agency = ' / '+obj.data[i].agency_name;
 
                         
                         // decimal must be .
-                        lastCurrency        = obj[i].currency;
+                        lastCurrency        = obj.data[i].currency;
                         /***********************************
                          * taking goals from database
                          ************************************/
@@ -475,14 +484,14 @@ function handleShowExecutiveGoalGraph(uid,status,month,year,search,currency){
                         /****************************
                          * end GOAL
                          *****************************/
-                        cost_int            = parseInt(obj[i].cost_int);
-                        margin_int          = parseInt(obj[i].utility_amount_int - obj[i].utility_cost_int);
-                        margin_month_int    = parseInt(obj[i].utility_amount_per_month_int - obj[i].utility_cost_per_month_int);
-                        amount_int          = parseInt(obj[i].pipe_amount_int - obj[i].pipe_cost_int);
-                        amount_month_int    = parseInt(obj[i].pipe_amount_per_month_int - obj[i].pipe_cost_per_month_int);
+                        cost_int            = parseInt(obj.data[i].cost_int);
+                        margin_int          = parseInt(obj.data[i].utility_amount_int - obj.data[i].utility_cost_int);
+                        margin_month_int    = parseInt(obj.data[i].utility_amount_per_month_int - obj.data[i].utility_cost_per_month_int);
+                        amount_int          = parseInt(obj.data[i].pipe_amount_int - obj.data[i].pipe_cost_int);
+                        amount_month_int    = parseInt(obj.data[i].pipe_amount_per_month_int - obj.data[i].pipe_cost_per_month_int);
 
 
-                        goal                = obj[i].goal_amount_int / 100;
+                        goal                = obj.data[i].goal_amount_int / 100;
                         cost                = parseInt(cost_int / 100);
                         margin              = (margin_int)/100;
                         margin_month        = (margin_month_int)/100;
@@ -491,19 +500,19 @@ function handleShowExecutiveGoalGraph(uid,status,month,year,search,currency){
                         amount_total        += parseInt(amount_int);
                         amount_total_show   = amount_total / 100;
                         percentGoalShow     = (100 * amount_total)/parseInt(document.getElementById('goal-2').innerText);
-                        start_date  = new Date(obj[i].start_date);
-                        stop_date   = new Date(obj[i].stop_date);
+                        start_date  = new Date(obj.data[i].start_date);
+                        stop_date   = new Date(obj.data[i].stop_date);
 
                         if(i == 0){
-                            stringJsonDataCost      += '{"y":'+amount_month+',"label":"'+obj[i].username+' - '+ucfirst(translateText('amount',localStorage.getItem('ulang')))+' '+ucfirst(translateText('total',localStorage.getItem('ulang')))+' ('+ucfirst(translateText('month',localStorage.getItem('ulang')))+' - '+ucfirst(strmonth)+')"}';
-                            stringJsonDataMargin    += '{"y":'+margin_month+',"label":"'+obj[i].username+' - '+ucfirst(translateText('margin',localStorage.getItem('ulang')))+'"}';
-                            stringJsonDataGoal      += '{"y":'+goal+',"label":"'+obj[i].username+' - '+ucfirst(translateText('goal',localStorage.getItem('ulang')))+'"}';
-                            stringJsonDataName      += '{"y":0,"label":"'+obj[i].username+'"}';
+                            stringJsonDataCost      += '{"y":'+amount_month+',"label":"'+obj.data[i].username+' - '+ucfirst(translateText('amount',localStorage.getItem('ulang')))+' '+ucfirst(translateText('total',localStorage.getItem('ulang')))+' ('+ucfirst(translateText('month',localStorage.getItem('ulang')))+' - '+ucfirst(strmonth)+')"}';
+                            stringJsonDataMargin    += '{"y":'+margin_month+',"label":"'+obj.data[i].username+' - '+ucfirst(translateText('margin',localStorage.getItem('ulang')))+'"}';
+                            stringJsonDataGoal      += '{"y":'+goal+',"label":"'+obj.data[i].username+' - '+ucfirst(translateText('goal',localStorage.getItem('ulang')))+'"}';
+                            stringJsonDataName      += '{"y":0,"label":"'+obj.data[i].username+'"}';
                         } else {
-                            stringJsonDataCost      += ', {"y":'+amount_month+',"label":"'+obj[i].username+' - '+ucfirst(translateText('amount',localStorage.getItem('ulang')))+' '+ucfirst(translateText('total',localStorage.getItem('ulang')))+' ('+ucfirst(translateText('month',localStorage.getItem('ulang')))+' - '+ucfirst(strmonth)+')"}';
-                            stringJsonDataMargin    += ', {"y":'+margin_month+',"label":"'+obj[i].username+' - '+ucfirst(translateText('margin',localStorage.getItem('ulang')))+'"}';
-                            stringJsonDataGoal      += ', {"y":'+goal+',"label":"'+obj[i].username+' - '+ucfirst(translateText('goal',localStorage.getItem('ulang')))+'"}';
-                            stringJsonDataName      += ', {"y":0,"label":"'+obj[i].username+'"}';
+                            stringJsonDataCost      += ', {"y":'+amount_month+',"label":"'+obj.data[i].username+' - '+ucfirst(translateText('amount',localStorage.getItem('ulang')))+' '+ucfirst(translateText('total',localStorage.getItem('ulang')))+' ('+ucfirst(translateText('month',localStorage.getItem('ulang')))+' - '+ucfirst(strmonth)+')"}';
+                            stringJsonDataMargin    += ', {"y":'+margin_month+',"label":"'+obj.data[i].username+' - '+ucfirst(translateText('margin',localStorage.getItem('ulang')))+'"}';
+                            stringJsonDataGoal      += ', {"y":'+goal+',"label":"'+obj.data[i].username+' - '+ucfirst(translateText('goal',localStorage.getItem('ulang')))+'"}';
+                            stringJsonDataName      += ', {"y":0,"label":"'+obj.data[i].username+'"}';
                         }
                     }
                     graphType = 'column';
@@ -513,17 +522,16 @@ function handleShowExecutiveGoalGraph(uid,status,month,year,search,currency){
                     arrayJsonDataProposals[3] = '['+stringJsonDataName+']';
                     createGraph(graphType,'graph-executive-goals',ucfirst(translateText('goal',localStorage.getItem('ulang')))+'s - '+translateText('values_in',localStorage.getItem('ulang'))+' '+lastCurrency+' ('+ucfirst(translateText('month',localStorage.getItem('ulang')))+': '+ucfirst(strmonth)+')',ucfirst(translateText('list_of',localStorage.getItem('ulang')))+' '+translateText('proposal',localStorage.getItem('ulang'))+'s '+translateText('of_the_week',localStorage.getItem('ulang')),arrayJsonDataProposals); // campaigns chart 
                 }
-            }
-            else {
+            } else {
                 html = '<tr><td colspan="8"><div style="margin-left:45%; margin-right:45%;" class="spinner-border" style="text-align:center; vertical-align:middle;" role="status">';
                 html += '<span class="sr-only">Loading...</span>';
                 html += '</div></td></tr>';
                 DIVIDGraphExecutiveGoal.innerHTML = html;
             }
         };
-        request.open('GET', requestURL);
+        requestExecutiveGoals.open('GET', requestURL);
         //request.responseType = 'json';
-        request.send();
+        requestExecutiveGoals.send();
     }
     // window.location.href = '?pr=Li9wYWdlcy91c2Vycy9saXN0LnBocA==';
 }
@@ -597,14 +605,23 @@ function handleShowExecutiveGoalGraphYearly(uid,status,year,search,currency){
         
     } else{
         const requestURL = window.location.protocol+'//'+locat+'api/'+module_dash+'/auth_'+module_dash+'_executive_goals_list.php?auth_api='+authApi+filters+groupby;
-        //console.log(requestURL);
+        console.log(requestURL);
         const request = new XMLHttpRequest();
         request.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {
                 // Typical action to be performed when the document is ready:
                 obj         = JSON.parse(request.responseText);
-                if(typeof obj[0].response != 'undefined'){
+                //alert(obj.response);
+                if(obj.response == 'ZERO_RETURN'){
+                    html = '';
+                    /*
+                    html += '<tr><td colspan="8"><div style="margin-left:45%; margin-right:45%;margin-top:15%;margin-bottom:15%;" style="text-align:center; vertical-align:middle;">';
+                    html += '<span class="ZERO">No results</span>';
+                    html += '</div></td></tr>';
+                    */
+                    DIVIDGraphExecutiveGoalYearly.remove();
                 } else {
+
                     amount_total        = 0;
                     oldMonth            = 0;
                     var cost_int        = 0;
@@ -613,10 +630,11 @@ function handleShowExecutiveGoalGraphYearly(uid,status,year,search,currency){
                     margin_month_int    = 0;
                     amount_int          = 0;
                     amount_month_int    = 0;
-                    for(var i=0;i < obj.length; i++){
+                    
+                    for(var i=0;i < obj.data.length; i++){
                         var formatter = new Intl.NumberFormat(lang, {
                             style: 'currency',
-                            currency: obj[i].currency,
+                            currency: obj.data[i].currency,
                             //maximumSignificantDigits: 2,
                     
                             // These options are needed to round to whole numbers if that's what you want.
@@ -624,12 +642,12 @@ function handleShowExecutiveGoalGraphYearly(uid,status,year,search,currency){
                             //maximumFractionDigits: 0, // (causes 2500.99 to be printed as $2,501)
                         });
                         agency = '';
-                        if(typeof(obj[i].agency_name) === 'string')
-                            agency = ' / '+obj[i].agency_name;
+                        if(typeof(obj.data[i].agency_name) === 'string')
+                            agency = ' / '+obj.data[i].agency_name;
 
                         
                         // decimal must be .
-                        lastCurrency        = obj[i].currency;
+                        lastCurrency        = obj.data[i].currency;
                         /***********************************
                          * taking goals from database
                          ************************************/
@@ -643,37 +661,37 @@ function handleShowExecutiveGoalGraphYearly(uid,status,year,search,currency){
                          * end GOAL
                          *****************************/
                         
-                        start_date  = new Date(obj[i].start_date);
-                        stop_date   = new Date(obj[i].stop_date);
+                        start_date  = new Date(obj.data[i].start_date);
+                        stop_date   = new Date(obj.data[i].stop_date);
                         var strmonth    = '???';
-                        if(obj[i].goal_month != null){
-                            var thedate     = new Date(obj[i].goal_year, obj[i].goal_month - 1);
+                        if(obj.data[i].goal_month != null){
+                            var thedate     = new Date(obj.data[i].goal_year, obj.data[i].goal_month - 1);
                             strmonth    = thedate.toLocaleString('default',{ month: 'long'});
 
-                            if(oldMonth != obj[i].goal_month){
-                                if(obj[i].goal_amount_int != null){
-                                    goal_int            = parseInt(obj[i].goal_amount_int);
+                            if(oldMonth != obj.data[i].goal_month){
+                                if(obj.data[i].goal_amount_int != null){
+                                    goal_int            = parseInt(obj.data[i].goal_amount_int);
                                 }
                                 else{
                                     goal_int            = 0;
                                 }
-                                cost_int            = parseInt(obj[i].cost_int);
-                                margin_int          = parseInt(obj[i].utility_amount_int - obj[i].utility_cost_int);
-                                margin_month_int    = parseInt(obj[i].utility_amount_per_month_int - obj[i].utility_cost_per_month_int);
-                                amount_int          = parseInt(obj[i].pipe_amount_int - obj[i].pipe_cost_int);
-                                amount_month_int    = parseInt(obj[i].pipe_amount_per_month_int - obj[i].pipe_cost_per_month_int);
+                                cost_int            = parseInt(obj.data[i].cost_int);
+                                margin_int          = parseInt(obj.data[i].utility_amount_int - obj.data[i].utility_cost_int);
+                                margin_month_int    = parseInt(obj.data[i].utility_amount_per_month_int - obj.data[i].utility_cost_per_month_int);
+                                amount_int          = parseInt(obj.data[i].pipe_amount_int - obj.data[i].pipe_cost_int);
+                                amount_month_int    = parseInt(obj.data[i].pipe_amount_per_month_int - obj.data[i].pipe_cost_per_month_int);
                             } else {
-                                if(obj[i].goal_amount_int != null){
-                                    goal_int            += parseInt(obj[i].goal_amount_int);
+                                if(obj.data[i].goal_amount_int != null){
+                                    goal_int            += parseInt(obj.data[i].goal_amount_int);
                                 }
                                 else{
                                     goal_int            += 0;
                                 }
-                                cost_int            += parseInt(obj[i].cost_int);
-                                margin_int          += parseInt(obj[i].utility_amount_int - obj[i].utility_cost_int);
-                                margin_month_int    += parseInt(obj[i].utility_amount_per_month_int - obj[i].utility_cost_per_month_int);
-                                amount_int          += parseInt(obj[i].pipe_amount_int - obj[i].pipe_cost_int);
-                                amount_month_int    += parseInt(obj[i].pipe_amount_per_month_int - obj[i].pipe_cost_per_month_int);
+                                cost_int            += parseInt(obj.data[i].cost_int);
+                                margin_int          += parseInt(obj.data[i].utility_amount_int - obj.data[i].utility_cost_int);
+                                margin_month_int    += parseInt(obj.data[i].utility_amount_per_month_int - obj.data[i].utility_cost_per_month_int);
+                                amount_int          += parseInt(obj.data[i].pipe_amount_int - obj.data[i].pipe_cost_int);
+                                amount_month_int    += parseInt(obj.data[i].pipe_amount_per_month_int - obj.data[i].pipe_cost_per_month_int);
                             }
                             goal                = (goal_int / 100).toFixed(2);
                             cost                = (cost_int / 100).toFixed(2);
@@ -685,20 +703,20 @@ function handleShowExecutiveGoalGraphYearly(uid,status,year,search,currency){
                             amount_total_show   = (amount_total / 100).toFixed(2);
 
                             percentGoalShow     = (100 * amount_total)/parseInt(document.getElementById('goal-2').innerText);
-                            if(obj[i].goal_month == 1){
+                            if(obj.data[i].goal_month == 1){
                                 stringJsonDataCost      = '{"y":'+amount_month+',"label":"'+ucfirst(strmonth)+' - '+ucfirst(translateText('amount',localStorage.getItem('ulang')))+' '+ucfirst(translateText('total',localStorage.getItem('ulang')))+'"}';
                                 stringJsonDataMargin    = '{"y":'+margin_month+',"label":"'+ucfirst(strmonth)+' - '+ucfirst(translateText('margin',localStorage.getItem('ulang')))+'"}';
                                 stringJsonDataGoal      = '{"y":'+goal+',"label":"'+ucfirst(strmonth)+' - '+ucfirst(translateText('goal',localStorage.getItem('ulang')))+'"}';
                                 stringJsonDataName      = '{"y":0,"label":"'+ucfirst(strmonth)+'"}';
                             } else {
-                                if((oldMonth != obj[i].goal_month) && (cost_int > 0)){
+                                if((oldMonth != obj.data[i].goal_month) && (cost_int > 0)){
                                     stringJsonDataCost      += ', {"y":'+amount_month+',"label":"'+ucfirst(strmonth)+' - '+ucfirst(translateText('amount',localStorage.getItem('ulang')))+' '+ucfirst(translateText('total',localStorage.getItem('ulang')))+'"}';
                                     stringJsonDataMargin    += ', {"y":'+margin_month+',"label":"'+ucfirst(strmonth)+' - '+ucfirst(translateText('margin',localStorage.getItem('ulang')))+'"}';
                                     stringJsonDataGoal      += ', {"y":'+goal+',"label":"'+ucfirst(strmonth)+' - '+ucfirst(translateText('goal',localStorage.getItem('ulang')))+'"}';
                                     stringJsonDataName      += ', {"y":0,"label":"'+ucfirst(strmonth)+'"}';
                                 }
                             }
-                            oldMonth = obj[i].goal_month;
+                            oldMonth = obj.data[i].goal_month;
                         }
                     }
                     graphType = 'column';
@@ -732,6 +750,7 @@ function handleShowExecutiveGoalGraphYearly(uid,status,year,search,currency){
 
 
 function createGraph(chartType,divName,strText,name1,data1,name2,data2,name3,data3) {
+    console.log(chartType+': '+data1);
     var chart = '';
     if(chartType == 'multi2'){
         chart = new CanvasJS.Chart(divName, {
@@ -904,25 +923,27 @@ function updateRates() {
     
     //filters += '&date='+mySQLFullDate;
 
-    if(locat.slice(-1) != '/')
-        locat += '/';
-
-    if(errors > 0){
-
-    } else{
-        const requestURL = window.location.protocol+'//'+locat+'api/rates/auth_rate_update.php?auth_api='+authApi+filters;
-        console.log(requestURL);
-        const request = new XMLHttpRequest();
-        request.onreadystatechange = function() {
-            if (this.readyState == 4 && this.status == 200) {
-                // Maybe important to notify user about rates update
-                var obj = JSON.parse(request.responseText);
-                if( (obj.status === 'OK') || (obj.status = "ALREADY_UPDATED") ){
-                    document.getElementById('last-update-date').innerHTML = obj.updated_at;
+    if(locat.split('.')[2] != 'local'){
+        if(locat.slice(-1) != '/')
+            locat += '/';
+    
+        if(errors > 0){
+    
+        } else{
+            const requestURL = window.location.protocol+'//'+locat+'api/rates/auth_rate_update.php?auth_api='+authApi+filters;
+            console.log(requestURL);
+            const request = new XMLHttpRequest();
+            request.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    // Maybe important to notify user about rates update
+                    var obj = JSON.parse(request.responseText);
+                    if( (obj.status === 'OK') || (obj.status = "ALREADY_UPDATED") ){
+                        document.getElementById('last-update-date').innerHTML = obj.updated_at;
+                    }
                 }
-            }
-        };
-        request.open('GET', requestURL);
-        request.send();
+            };
+            request.open('GET', requestURL);
+            request.send();
+        }
     }
 }

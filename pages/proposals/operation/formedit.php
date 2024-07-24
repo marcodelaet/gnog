@@ -130,7 +130,7 @@ if(array_key_exists('pppid',$_REQUEST)){
               </th>
             </tr>
           </thead>
-          <tbody id="listInvoices">
+          <tbody id="listIProposalFiles">
           </tbody>
         </table>
       <?php

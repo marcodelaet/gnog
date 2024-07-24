@@ -50,15 +50,15 @@ invite_body['ptbr'] = "<p>Olá %user_fullname%, tudo bem?</p>"+
 "<p>Estamos enviando por aqui o acesso para registro em nossa plataforma de envío de faturas, e acceso ao manual de usuario para que possa entender como funciona nossa plataforma e caso tenha alguma dúvida, provavelmente encontrará respuestas neste documento, de qualquer modo estamos à disposición para ajudar no que for necessário em relação a plataforma.</p>"+
 "<p>Copie abaixo e cole em seu navegador o link abaixo para registrar seu nome de usuário, e registrar sua senha de acesso:</p>"+
 "<p>- "+
-"<a id='contact-url-provider' target='_blank' href='%personal_url_to_register_href%'>"+
+//"<a id='contact-url-provider' target='_blank' href='%personal_url_to_register_href%'>"+
 "%personal_url_to_register%"+
-"</a>"+
+//"</a>"+
 "</p>"+
 "<p>Depois de registrar seu nome de usuário e senha de acesso pessoal, pode iniciar sessão utilizando o seguinte link:</p>"+
 "<p>- "+
-"<a href='https://providers.gnogmedia.com' target='_blank'>"+
+//"<a href='https://providers.gnogmedia.com' target='_blank'>"+
 "https://providers.gnogmedia.com"+
-"</a>"+
+//"</a>"+
 "</p>"+
 "<p>Caso tenha alguma pergunta, entre em contacto para que possamos ajudar da melhor maneira possível.</p>"+
 "<p>Se for necessário agendar uma call para fazermos este primeiro acesso e envio juntos, também podemos fazer.</p>"+
@@ -67,18 +67,18 @@ invite_body['ptbr'] = "<p>Olá %user_fullname%, tudo bem?</p>"+
 "(Español) - Plataforma de Facturas:</b></p>"+
 "</div>"+
 "<div class='download-pdf-file'>-"+
-"<a href='http://crm.gnogmedia.com/public/providers_1.2_202306-es.pdf' target='_blank'>"+
+//"<a href='http://crm.gnogmedia.com/public/providers_1.2_202306-es.pdf' target='_blank'>"+
 "http://crm.gnogmedia.com/public/providers_1.2_202306-es.pdf"+
-"</a>"+
+//"</a>"+
 "</div></p>"+ 
 "<p><div class='download-pdf-file'>"+
 "<b>Arquivo PDF - Download "+
 "(Português Brasil) - Plataforma de Faturas:</b></p>"+
 "</div>"+
 "<div class='download-pdf-file'>-"+
-"<a href='http://crm.gnogmedia.com/public/providers_1.2_202306-ptBR.pdf' target='_blank'>"+
+//"<a href='http://crm.gnogmedia.com/public/providers_1.2_202306-ptBR.pdf' target='_blank'>"+
 "http://crm.gnogmedia.com/public/providers_1.2_202306-ptBR.pdf"+
-"</a>"+ 
+//"</a>"+ 
 "</div></p>"+
 "<p>&nbsp;</p>"+
 "<p>Att</p>";
@@ -88,34 +88,34 @@ invite_body['eng'] = "<p>Hello %user_fullname%, how are you?</p>"+
 "<p>We are sending to you the registration link to our platform where you can send your invoices, and sending too an access to the user's manual about this platform, then you can see how to use our platform and send invoices correctly. If you have any questions, probably you can found the answer on this manual.</p>"+
 "<p>Copy the link below and paste on your browser to register your credentials (username and password):</p>"+
 "<p>- "+
-"<a id='contact-url-provider' target='_blank' href='%personal_url_to_register_href%'>"+
+//"<a id='contact-url-provider' target='_blank' href='%personal_url_to_register_href%'>"+
 "%personal_url_to_register%"+
-"</a>"+
+//"</a>"+
 "</p>"+
 "<p>Later you register your credentials you can login on our platform using your personal username and password accessing the link:</p>"+
 "<p>- "+
-"<a href='https://providers.gnogmedia.com' target='_blank'>"+
+//"<a href='https://providers.gnogmedia.com' target='_blank'>"+
 "https://providers.gnogmedia.com"+
-"</a>"+
+//"</a>"+
 "</p>"+
 "<p>If you have any question, contact us please.</p>"+
 "<p><div class='download-pdf-file'>"+
-"<b>Archivo PDF - Download "+
+"<b>PDF file - Download "+
 "(Español) - Plataforma de Facturas:</b></p>"+
 "</div>"+
 "<div class='download-pdf-file'>-"+
-"<a href='http://crm.gnogmedia.com/public/providers_1.2_202306-es.pdf' target='_blank'>"+
+//"<a href='http://crm.gnogmedia.com/public/providers_1.2_202306-es.pdf' target='_blank'>"+
 "http://crm.gnogmedia.com/public/providers_1.2_202306-es.pdf"+
-"</a>"+
+//"</a>"+
 "</div></p>"+ 
 "<p><div class='download-pdf-file'>"+
-"<b>Arquivo PDF - Download "+
+"<b>PDF file - Download "+
 "(Português Brasil) - Plataforma de Faturas:</b></p>"+
 "</div>"+
 "<div class='download-pdf-file'>-"+
-"<a href='http://crm.gnogmedia.com/public/providers_1.2_202306-ptBR.pdf' target='_blank'>"+
+//"<a href='http://crm.gnogmedia.com/public/providers_1.2_202306-ptBR.pdf' target='_blank'>"+
 "http://crm.gnogmedia.com/public/providers_1.2_202306-ptBR.pdf"+
-"</a>"+
+//"</a>"+
 "</div></p>"+ 
 "<p>&nbsp;</p>"+
 "<p>Best regards</p>";

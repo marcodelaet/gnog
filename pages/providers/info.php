@@ -103,36 +103,36 @@ $invite_body_esp = "lalalala";
         </button>
       </div>
       <div class="modal-body">
-        <form name="frmSendMail">
-          <div class="form-group">
-            <div class="form-row">
-                <div class="col">
-                    <label for="language" class="col-form-label"><?=translateText('language')?>:</label>
-                    <SELECT name="option" id="language-option" onchange="changeMessageLanguage(this.value,document.getElementById('pname').value,document.getElementById('plink').value);">
-                        <OPTION value="esp">Español</OPTION>
-                        <OPTION value="ptbr">Português Brasileiro</OPTION>
-                        <OPTION value="eng">English</OPTION>
-                    </SELECT>
+            <form name="frmSendMail">
+                <div class="form-group">
+                    <div class="form-row">
+                        <div class="col">
+                            <label for="language" class="col-form-label"><?=translateText('language')?>:</label>
+                            <SELECT name="option" id="language-option" onchange="changeMessageLanguage(this.value,document.getElementById('pname').value,document.getElementById('plink').value);">
+                                <OPTION value="esp">Español</OPTION>
+                                <OPTION value="ptbr">Português Brasileiro</OPTION>
+                                <OPTION value="eng">English</OPTION>
+                            </SELECT>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col">
+                            <label for="bodyText" class="col-form-label"><?=translateText('message')?>: <i>(min 10 chars)</i></label>
+                            <div class="editor" id="bodyText" style="padding:2rem; border: 1px solid gray; border-radius:1.2rem;">
+                                <?=$invite_body_esp?>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </div>
-            <div class="form-row">
-                <div class="col">
-                    <label for="bodyText" class="col-form-label"><?=translateText('message')?>: <i>(min 10 chars)</i></label>
-                    <div class="editor" id="bodyText" style="padding:2rem; border: 1px solid gray; border-radius:1.2rem;">
-	                    <?=$invite_body_esp?>
-	                </div>
-                </div>
-            </div>
-          </div>
-          <input type="hidden" name="pid" value="<?=$_REQUEST['pid']?>" />
-          <input type="hidden" id="pemail" name="pemail" value="" />
-          <input type="hidden" id="pname" name="pname" value="" />
-          <input type="hidden" id="plink" name="plink" value="" />
-          <input type="hidden" id="bodytext-html" name="bodytext" value="" />
-          
-          <input type="hidden" name="uid" value="<?=$_COOKIE['uuid']?>" />
-          <input type="hidden" name="tku" value="<?=$_COOKIE['tk']?>" />
-        </form>
+                <input type="hidden" name="pid" value="<?=$_REQUEST['pid']?>" />
+                <input type="hidden" id="pemail" name="pemail" value="" />
+                <input type="hidden" id="pname" name="pname" value="" />
+                <input type="hidden" id="plink" name="plink" value="" />
+                <input type="hidden" id="bodytext-html" name="bodytext" value="" />
+                
+                <input type="hidden" name="uid" value="<?=$_COOKIE['uuid']?>" />
+                <input type="hidden" name="tku" value="<?=$_COOKIE['tk']?>" />
+            </form>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal"><?=translateText('close')?></button>

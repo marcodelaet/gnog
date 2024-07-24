@@ -227,6 +227,13 @@ CREATE VIEW view_proposals AS (
 	s.percent AS status_percent,
 	pps.offer_name,
 	pps.description,
+	ac.contact_name as advertiser_contact_name,
+	ac.contact_surname as advertiser_contact_surname,
+	ac.contact_email as advertiser_contact_email,
+	ac.contact_position as advertiser_position,
+	ac.phone_international_code as advertiser_phone_international_code,
+	ac.phone_prefix as advertiser_phone_prefix,
+	ac.phone_number as advertiser_phone_number,
 	pps.start_date,
 	pps.stop_date,
 	ppp.start_date AS start_date_for_product,
@@ -702,6 +709,7 @@ CREATE VIEW view_proposals AS (
 	LEFT JOIN salemodels smb ON smb.id = b.salemodel_id
 	LEFT JOIN providers pvb ON pvb.id = b.provider_id
 	LEFT JOIN offices o ON pps.office_id = o.id
+	INNER JOIN contacts ac ON pps.contact_id = ac.id
 	INNER JOIN currencies c ON c.id = ppp.currency
 	INNER JOIN currencies cusd ON cusd.id = 'USD'
 	INNER JOIN currencies cmxn ON cmxn.id = 'MXN'
@@ -837,4 +845,54 @@ LEFT JOIN providers p ON (p.id = c.contact_client_id AND c.module_name = 'provid
 LEFT JOIN advertisers a ON (a.id = c.contact_client_id AND c.module_name = 'advertiser')
 LEFT JOIN users u ON c.contact_email = u.email
 LEFT JOIN profiles pf ON pf.user_id = u.id
+);
+
+
+# VIEW PROPOSALMESSAGES
+CREATE VIEW view_proposalmessages AS (
+	SELECT
+	m.id as messagemodel_id,
+	m.message_text AS messagetemplate_text,
+	m.message_text_esp AS messagetemplate_text_esp,
+	m.message_text_eng AS messagetemplate_text_eng,
+	m.message_text_ptbr AS messagetemplate_text_ptbr,
+	pm.message_text AS message_text,
+	pm.is_sent,
+	pm.created_at AS proposalmessage_created_at,
+	pm.updated_at AS proposalmessage_updated_at,
+	p.id AS proposal_id,
+	p.offer_name,
+	ac.contact_id,
+	ac.contact_name,
+	ac.contact_surname,
+	CONCAT(ac.contact_name,' ',ac.contact_surname) AS contact_fullname,
+	ac.contact_position,
+	ac.phone_international_code as contact_international_code,
+	CONCAT((CASE WHEN (ac.phone_prefix <> 0) THEN ac.phone_prefix ELSE '' END), ac.phone_number) as contact_phone_number,
+	ac.contact_email
+	FROM
+	messagetemplates m 
+	INNER JOIN proposalxmessage pm ON pm.message_id = m.id
+	INNER JOIN proposals p ON pm.proposal_id = p.id
+	INNER JOIN view_advertisercontacts ac ON ac.contact_id = p.contact_id
+	WHERE module_name = "proposals"
+);
+
+
+# VIEW MESSAGETEMPLATES
+CREATE VIEW view_messagetemplates AS (
+	SELECT
+	id as UUID,
+	name,
+	message_text,
+	message_text_esp,
+	message_text_eng,
+	message_text_ptbr,
+	module_name,
+	is_active,
+	created_at,
+	updated_at,
+	CONCAT(name,message_text,module_name) as search
+	FROM
+	messagetemplates
 );

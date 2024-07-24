@@ -13,6 +13,119 @@ if(thousands== '.'){
     cents           = ',';
 }
 
+var xrowsFiles  = 0;
+
+/*******************************************************
+ * Default Email Text
+ **********************/
+var invite_body = [];
+invite_body['esp'] = "<p>Hola %user_fullname%, ¿Cómo estás?</p>"+
+"<p>Soy del equipo de <b>GNog Media y Tecnologia</b>.</p>"+
+"<p>Envio por aquí la liga de registro de nuestra plataforma de envío de facturas, y el acceso para el manual de usuario para que puedas entender cómo funciona el sistema y si tienes alguna duda, probablemente encuentres la respuesta en el documento, en cualquier caso estamos a tu disposición. para ayudarlos en lo que necesiten con respecto a la plataforma.</p>"+
+"<p>Haga el copy de la liga abajo y péguela en su browser para registrar su nombre de usuario y registrar su contraseña de acceso:</p>"+
+"<p>Después de registrar su nombre de usuario y contraseña de acceso personal, puede iniciar sesión utilizando la siguiente dirección:</p>"+
+"<p>- "+
+//"<a href='https://providers.gnogmedia.com' target='_blank'>"+
+"https://providers.gnogmedia.com"+
+//"</a>"+
+"</p>"+
+"<p>Si tiene alguna pregunta, póngase en contacto para que podamos aclararla lo mejor posible.</p>"+
+"<p>Si es necesario programar una llamada para hacer este primer envío juntos, también podemos hacerlo.</p>"+
+"<p><div class='download-pdf-file'>"+
+"<b>Archivo PDF - Download "+
+"(Español) - Plataforma de Facturas:</b></p>"+
+"</div>"+
+"<div class='download-pdf-file'>-"+
+//"<a href='http://crm.gnogmedia.com/public/providers_1.2_202306-es.pdf' target='_blank'>"+
+"http://crm.gnogmedia.com/public/providers_1.2_202306-es.pdf"+
+//"</a>"+
+"</div></p>"+ 
+"<p><div class='download-pdf-file'>"+
+"<b>Arquivo PDF - Download "+
+"(Português Brasil) - Plataforma de Faturas:</b></p>"+
+"</div>"+
+"<div class='download-pdf-file'>-"+
+//"<a href='http://crm.gnogmedia.com/public/providers_1.2_202306-ptBR.pdf' target='_blank'>"+
+"http://crm.gnogmedia.com/public/providers_1.2_202306-ptBR.pdf"+
+//"</a>"+
+"</div></p>"+ 
+"<p>&nbsp;</p>"+
+"<p>Saludos</p>";
+
+invite_body['ptbr'] = "<p>Olá %user_fullname%, tudo bem?</p>"+
+"<p>Sou da equipe da <b>GNog Media y Tecnologia</b>.</p>"+
+"<p>Estamos enviando por aqui o acesso para registro em nossa plataforma de envío de faturas, e acceso ao manual de usuario para que possa entender como funciona nossa plataforma e caso tenha alguma dúvida, provavelmente encontrará respuestas neste documento, de qualquer modo estamos à disposición para ajudar no que for necessário em relação a plataforma.</p>"+
+"<p>Copie abaixo e cole em seu navegador o link abaixo para registrar seu nome de usuário, e registrar sua senha de acesso:</p>"+
+"<p>- "+
+"<a id='contact-url-provider' target='_blank' href='%personal_url_to_register_href%'>"+
+"%personal_url_to_register%"+
+"</a>"+
+"</p>"+
+"<p>Depois de registrar seu nome de usuário e senha de acesso pessoal, pode iniciar sessão utilizando o seguinte link:</p>"+
+"<p>- "+
+"<a href='https://providers.gnogmedia.com' target='_blank'>"+
+"https://providers.gnogmedia.com"+
+"</a>"+
+"</p>"+
+"<p>Caso tenha alguma pergunta, entre em contacto para que possamos ajudar da melhor maneira possível.</p>"+
+"<p>Se for necessário agendar uma call para fazermos este primeiro acesso e envio juntos, também podemos fazer.</p>"+
+"<p><div class='download-pdf-file'>"+
+"<b>Archivo PDF - Download "+
+"(Español) - Plataforma de Facturas:</b></p>"+
+"</div>"+
+"<div class='download-pdf-file'>-"+
+"<a href='http://crm.gnogmedia.com/public/providers_1.2_202306-es.pdf' target='_blank'>"+
+"http://crm.gnogmedia.com/public/providers_1.2_202306-es.pdf"+
+"</a>"+
+"</div></p>"+ 
+"<p><div class='download-pdf-file'>"+
+"<b>Arquivo PDF - Download "+
+"(Português Brasil) - Plataforma de Faturas:</b></p>"+
+"</div>"+
+"<div class='download-pdf-file'>-"+
+"<a href='http://crm.gnogmedia.com/public/providers_1.2_202306-ptBR.pdf' target='_blank'>"+
+"http://crm.gnogmedia.com/public/providers_1.2_202306-ptBR.pdf"+
+"</a>"+ 
+"</div></p>"+
+"<p>&nbsp;</p>"+
+"<p>Att</p>";
+
+invite_body['eng'] = "<p>Hello %user_fullname%, how are you?</p>"+
+"<p>We are from <b>GNog Media y Tecnologia</b> team.</p>"+
+"<p>We are sending to you the registration link to our platform where you can send your invoices, and sending too an access to the user's manual about this platform, then you can see how to use our platform and send invoices correctly. If you have any questions, probably you can found the answer on this manual.</p>"+
+"<p>Copy the link below and paste on your browser to register your credentials (username and password):</p>"+
+"<p>- "+
+"<a id='contact-url-provider' target='_blank' href='%personal_url_to_register_href%'>"+
+"%personal_url_to_register%"+
+"</a>"+
+"</p>"+
+"<p>Later you register your credentials you can login on our platform using your personal username and password accessing the link:</p>"+
+"<p>- "+
+"<a href='https://providers.gnogmedia.com' target='_blank'>"+
+"https://providers.gnogmedia.com"+
+"</a>"+
+"</p>"+
+"<p>If you have any question, contact us please.</p>"+
+"<p><div class='download-pdf-file'>"+
+"<b>Archivo PDF - Download "+
+"(Español) - Plataforma de Facturas:</b></p>"+
+"</div>"+
+"<div class='download-pdf-file'>-"+
+"<a href='http://crm.gnogmedia.com/public/providers_1.2_202306-es.pdf' target='_blank'>"+
+"http://crm.gnogmedia.com/public/providers_1.2_202306-es.pdf"+
+"</a>"+
+"</div></p>"+ 
+"<p><div class='download-pdf-file'>"+
+"<b>Arquivo PDF - Download "+
+"(Português Brasil) - Plataforma de Faturas:</b></p>"+
+"</div>"+
+"<div class='download-pdf-file'>-"+
+"<a href='http://crm.gnogmedia.com/public/providers_1.2_202306-ptBR.pdf' target='_blank'>"+
+"http://crm.gnogmedia.com/public/providers_1.2_202306-ptBR.pdf"+
+"</a>"+
+"</div></p>"+ 
+"<p>&nbsp;</p>"+
+"<p>Best regards</p>";
 
 module      = 'proposal';
 start_index = 0;
@@ -711,7 +824,7 @@ function handleViewOnLoad(ppid) {
                 startDate           = new Date(obj['data'][0].start_date);
                 formattedStartDate  = startDate.getDate()+"/"+(parseInt(startDate.getMonth())+1)+"/"+startDate.getFullYear();
                 stopDate            = new Date(obj['data'][0].stop_date);
-                formattedStopDate   = stopDate.getDate()+"/"+(parseInt(stopDate.getMonth())+1)+"/"+stopDate.getFullYear(); 
+                formattedStopDate   = stopDate.getDate()+"/"+(parseInt(stopDate.getMonth())+1)+"/"+stopDate.getFullYear();
                 document.getElementById('proposal-name').innerHTML          = obj['data'][0].offer_name;
                 document.getElementById('client').innerHTML                 = client;
                 document.getElementById('description').innerHTML            = obj['data'][0].description;
@@ -719,10 +832,13 @@ function handleViewOnLoad(ppid) {
                 //document.getElementById('statusDropdownMenuButton').innerHTML            = '<spam class="material-icons icon-data" id="card-status-icon" style="color:'+color_status+'">thermostat</spam>' + obj[0].status_name + ' ('+ obj[0].status_percent+'%)';
                 document.getElementById('statusDropdownMenuButton').value   = obj['data'][0].status_id; 
                 document.getElementById('statusDropdownMenuButton').innerHTML = '<spam class="material-icons icon-data" id="card-status-icon" style="color:'+color_status+'">thermostat</spam>' + translateText(obj['data'][0].status_name,localStorage.getItem('ulang')) + ' ('+ obj['data'][0].status_percent+'%)';
+
+                xrows=0;
                 // products list for statement
                 oldProduct = 'xxxx';
                 for(var i=0;i<obj['data'].length;i++){
                     deleted_line='';
+                    xpppid = obj['data'][i].proposalproduct_id;
                     if(obj['data'][i].is_proposalproduct_active == "N")
                         deleted_line='deleted-billboard';
                     productName = obj['data'][i].product_name;
@@ -731,20 +847,67 @@ function handleViewOnLoad(ppid) {
                     if(oldProduct != productName){
                         xxhtml += '<spam class="product-line '+deleted_line+'">'+obj['data'][i].quantity + ' x ' + productName +' - '+formatter.format(obj['data'][i].amount)+'</spam><br />';
                         oldProduct = productName;
-                        handleListProductFilesOnLoad(ppid,obj['data'][i].proposalproduct_id);
+                        handleListProductFilesOnLoad(ppid,xpppid);
+                        checkIfProposalFileExists(ppid,xpppid);
+                        xrows += xrowsFiles;
+                        //alert(xrows);
                     }
                 }
                 classStatus = document.getElementsByClassName('dropdown-item status'); 
                 for(var cs=0; cs < classStatus.length; cs++){
                     classStatus[cs].setAttribute('onclick',classStatus[cs].getAttribute('onclick').replace(",'');",",'"+obj['data'][0].status_id+"');"));
                 }
+
+                xcopy   = '';
+                if(xrows > 0){
+                    contact_fullname    = ucfirst(obj['data'][0].advertiser_contact_name) + ' ' + ucfirst(obj['data'][0].advertiser_contact_surname);
+                    contact_email       = obj['data'][0].advertiser_contact_email;
+                    textHTML = invite_body['esp'];
+                    xcopy += '&nbsp;<spam role="button" title="Send message / files to Advertiser"  data-toggle="modal" data-target="#sendEmailModal" data-whatever="@mdo" onclick="document.getElementById(\'modal-sendbutton\').classList.remove(\'disabled\'); document.getElementById(\'advertiser_contact_email\').innerText=\''+contact_email+'\'; document.getElementById(\'aemail\').value=\''+contact_email+'\'; document.getElementById(\'advertiser_contact_name\').innerText=\''+contact_fullname+'\'; document.getElementById(\'aname\').value=\''+contact_fullname+'\'; document.getElementById(\'bodytext-html\').value =  textHTML.replace(\'%user_fullname%\',\''+contact_fullname+'\'); document.getElementById(\'language-option\').value=\'esp\'; document.getElementById(\'bodyText\').innerHTML = textHTML.replace(\'%user_fullname%\',\''+contact_fullname+'\');"><spam class="material-icons icon-data">send</spam></a>';
+                }
+
                 document.getElementById('products-list').innerHTML          = xxhtml;
+                document.getElementById('div-sendbutton').innerHTML         = xcopy;
             }
             else{
                 //form.btnSave.innerHTML = "Searching...";
             }
         };
         request.open('GET', requestURL);
+        //request.responseType = 'json';
+        request.send();
+    }
+}
+
+function checkIfProposalFileExists(ppid,pppid){
+    errors      = 0;
+    authApi     = csrf_token;
+    locat       = window.location.hostname;
+    xrowsFiles  = 0;
+
+    orderby     = '';
+    filters     = '&ppid='+ppid;
+    if(pppid !==null)
+        filters += '&pppid='+pppid;
+    if(locat.slice(-1) != '/')
+        locat += '/';
+
+    if(errors > 0) {
+
+    } else {
+        const requestURL = window.location.protocol+'//'+locat+'api/proposals/auth_proposal_files_counter.php?auth_api='+authApi+filters+orderby;
+        console.log('getNumFiles- '+requestURL);
+        const request = new XMLHttpRequest();
+        request.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                objFile         = JSON.parse(request.responseText);
+                xrowsFiles      += parseInt(objFile.rows);
+                //alert(xrowsFiles);
+                //tableID = document.getElementById('listIProposalFiles');
+                return parseInt(xrowsFiles);
+            }
+        };
+        request.open('GET', requestURL,false);
         //request.responseType = 'json';
         request.send();
     }
@@ -922,9 +1085,9 @@ function handleListProductFilesOnLoad(ppid,pppid){
     if(locat.slice(-1) != '/')
         locat += '/';
 
-    if(errors > 0){
+    if(errors > 0) {
 
-    } else{
+    } else {
         const requestURL = window.location.protocol+'//'+locat+'api/proposals/auth_proposal_files_list.php?auth_api='+authApi+filters+orderby;
         //console.log('getFiles- '+requestURL);
         const request = new XMLHttpRequest();
@@ -935,7 +1098,7 @@ function handleListProductFilesOnLoad(ppid,pppid){
                 var link            = null;
                 var cellFileName    = null;
                 var cellFileDate    = null;
-                tableID = document.getElementById('listInvoices');
+                tableID = document.getElementById('listIProposalFiles');
                 if(obj.response != 'ZERO_RETURN'){
                     for(var i=0;i < obj['data'].length; i++){
                         row             = tableID.insertRow();
@@ -953,11 +1116,7 @@ function handleListProductFilesOnLoad(ppid,pppid){
                         link.appendChild(textNode);
     
                         cellFileName.appendChild(link);
-                        
-    
-    
-                        cellFileDate.innerText = new Date(obj['data'][i].file_updated_at).toLocaleDateString(lang) + ' ' + new Date(obj['data'][i].file_updated_at).toLocaleTimeString(lang);;
-    
+                        cellFileDate.innerText = new Date(obj['data'][i].file_updated_at).toLocaleDateString(lang) + ' ' + new Date(obj['data'][i].file_updated_at).toLocaleTimeString(lang);
                     }
                 }
             }
@@ -1463,7 +1622,13 @@ function handleListOnLoad(search,page) {
                         amount = obj['data'][i].amount;
                         start_date  = new Date(obj['data'][i].start_date);
                         stop_date   = new Date(obj['data'][i].stop_date);
-                        html += '<tr><td>'+obj['data'][i].offer_name+'</td><td nowrap>'+obj['data'][i].client_name+agency+'</td><td nowrap>'+obj['data'][i].username+'</td><td nowrap>'+formatter.format(amount)+'</td><td>'+start_date.toLocaleString(lang).split(" ")[0].replace(",","")+'</td><td>'+stop_date.toLocaleString(lang).split(" ")[0].replace(",","")+'</td><td style="text-align:center;" ><span id="status_'+obj['data'][i].UUID+'" class="material-icons" title="'+obj['data'][i].status_percent+'% '+translateText(obj['data'][i].status_name,localStorage.getItem('ulang'))+'" style="color:'+color_status+'">thermostat</span><br/><span class="status-description" style="background-color:'+color_status+'; color:'+color_letter+'">&nbsp;&nbsp;'+obj['data'][i].status_percent+'% '+translateText(obj['data'][i].status_name,localStorage.getItem('ulang'))+'&nbsp;&nbsp;</span></td><td nowrap style="text-align:center;">';
+                        execute_CheckFiles = checkIfProposalFileExists(obj['data'][i].UUID,null);
+                        
+                        files_yn = ucfirst(translateText('no',localStorage.getItem('ulang')));
+                        if(xrowsFiles > 0)
+                            files_yn = ucfirst(translateText('yes',localStorage.getItem('ulang')));
+                        
+                        html += '<tr><td>'+obj['data'][i].offer_name+'</td><td nowrap>'+obj['data'][i].client_name+agency+'</td><td nowrap>'+obj['data'][i].username+'</td><td nowrap>'+formatter.format(amount)+'</td><td>'+start_date.toLocaleString(lang).split(" ")[0].replace(",","")+'</td><td>'+stop_date.toLocaleString(lang).split(" ")[0].replace(",","")+'</td><td class="text-center">'+files_yn+'</td><td class="text-center" ><span id="status_'+obj['data'][i].UUID+'" class="material-icons" title="'+obj['data'][i].status_percent+'% '+translateText(obj['data'][i].status_name,localStorage.getItem('ulang'))+'" style="color:'+color_status+'">thermostat</span><br/><span class="status-description" style="background-color:'+color_status+'; color:'+color_letter+'">&nbsp;&nbsp;'+obj['data'][i].status_percent+'% '+translateText(obj['data'][i].status_name,localStorage.getItem('ulang'))+'&nbsp;&nbsp;</span></td><td nowrap class="text-center">';
                         // information card
                         html += '<a href="?pr=Li9wYWdlcy9wcm9wb3NhbHMvaW5mby5waHA=&ppid='+obj['data'][i].UUID+'"><span class="material-icons" style="font-size:1.5rem; color:black;" title="Information Card '+obj['data'][i].offer_name+'">info</span></a>';
 
@@ -1483,7 +1648,7 @@ function handleListOnLoad(search,page) {
                 }
             }
             else{
-                html = '<tr><td colspan="8"><div style="margin-left:45%; margin-right:45%;" class="spinner-border" style="text-align:center;" role="status">';
+                html = '<tr><td colspan="8"><div style="margin-left:45%; margin-right:45%;" class="spinner-border text-center" role="status">';
                 //html += '<span class="sr-only">Loading...</span>';
                 html += '<span class="sr-only">0 results</span>';
                 html += '</div></td></tr>';
@@ -1498,6 +1663,18 @@ function handleListOnLoad(search,page) {
     // window.location.href = '?pr=Li9wYWdlcy91c2Vycy9saXN0LnBocA==';
 }
 
+/*****************************************************************
+ * Changing elements in the message
+ *************************/
+function changeMessageLanguage(language,xname){
+    document.getElementById('bodyText').innerHTML = invite_body[language].replace('%personal_url_to_register_href%',xlink).replace('%user_fullname%',xname);
+    document.getElementById('bodytext-html').value = document.getElementById('bodyText').innerHTML;
+}
+
+
+/***************************************************************
+ * Pages Controller
+ **************************/
 function pagesController(actualpage,totalpages){
     document.getElementById('btn_firstpage').disabled=false;
     document.getElementById('btn_beforepage').disabled=false;
@@ -2571,181 +2748,183 @@ function getBillboardIds(oohlist,indexValue){
 
     for(r=0;r < rows.length;r++){
     // busca na tabela billboards: billboard_id (id), bb_provider_id (provider_id), bb_salemodel_id (salemodel_id), cost_int, price_int, state, city, county
-        getIdFromTable('billboard','uuid as id,name,provider_id,provider_name,salemodel_id,salemodel_name,cost_int,price_int,state,city,county,colony','name|||'+rows[r].trim());
-        if(objGlobal.response=='ERROR'){
-            alert(rows[r].trim() + ' no encontrado. No es posible añadir en la lista de OOHs');
-        } else {
-            if(r > 0){
-                billboard_id    += ',';
-                bb_provider_id  += ',';
-                bb_salemodel_id += ',';
-                cost_int        += ',';
-                price_int       += ',';
-                state           += ',';
-                city            += ',';
-                county          += ',';
-                colony          += ',';
-            }
-            billboard_id    += objGlobal.data[0].id;
-            bb_provider_id  += objGlobal.data[0].provider_id;
-            bb_salemodel_id += objGlobal.data[0].salemodel_id;
-            cost_int        += objGlobal.data[0].cost_int;
-            price_int       += objGlobal.data[0].price_int;
-            state           += objGlobal.data[0].state;
-            city            += objGlobal.data[0].city;
-            county          += objGlobal.data[0].county;
-            colony          += objGlobal.data[0].colony;
-
-            newRow          = document.createElement('tr');
-            newTbody.appendChild(newRow);
-
-            // key
-            newCol          = document.createElement('td');
-            keyText         = document.createTextNode(objGlobal.data[0].name);
-            newRow.appendChild(newCol);
-            newCol.appendChild(keyText);
-
-            // provider
-            newCol          = document.createElement('td');
-            providerText   = document.createTextNode(objGlobal.data[0].provider_name);
-            newRow.appendChild(newCol);
-            newCol.appendChild(providerText);
-
-            // salemodel
-            newCol          = document.createElement('td');
-            salemodelText   = document.createTextNode(objGlobal.data[0].salemodel_name);
-            newRow.appendChild(newCol);
-            newCol.appendChild(salemodelText);
-
-            // cost
-            newCol          = document.createElement('td');
-            newInput        = document.createElement('input');
-            costValue       = formatter.format((parseInt(objGlobal.data[0].cost_int)/100));
-            // including ,00 when don´t having it on the value
-            if((costValue.charAt(costValue.length - 4) == thousands) || (costValue.length <= 3)){
-                costValue += cents+'00';
-            }
-            newInput.classList.add('form-control');
-            newInput.setAttribute('id','cost-'+indexValue+'-'+objGlobal.data[0].id);
-            newInput.setAttribute('name','oohCost[]');
-            newInput.setAttribute('type','currency');
-            newInput.setAttribute('maxlength','20');
-            newInput.setAttribute('autocomplete','cost');
-            newInput.setAttribute('placeholder','999,99');
-            newInput.setAttribute('value',costValue);
-            newInput.setAttribute('title',translateText('cost',localStorage.getItem('ulang')));
-            newInput.setAttribute('onkeypress',"$(this).mask('#"+thousands+"###"+thousands+"##0"+cents+"00', {reverse: true});");
-            newRow.appendChild(newCol);
-            newCol.appendChild(newInput);
-
-            // price
-            newCol          = document.createElement('td');
-            newInput        = document.createElement('input');
-            priceValue      = formatter.format((parseInt(objGlobal.data[0].price_int)/100));
-            // including ,00 when don´t having it on the value
-            if((priceValue.charAt(priceValue.length - 4) == thousands) || (priceValue.length <= 3)){
-                priceValue += cents+'00';
-            }
-            newInput.classList.add('form-control');
-            newInput.setAttribute('id','price-'+indexValue+'-'+objGlobal.data[0].id);
-            newInput.setAttribute('name','oohprice_'+indexValue+'[]');
-            newInput.setAttribute('type','currency');
-            newInput.setAttribute('maxlength','20');
-            newInput.setAttribute('autocomplete','price');
-            newInput.setAttribute('placeholder','999,99');
-            newInput.setAttribute('value',priceValue);
-            newInput.setAttribute('title',translateText('unit_price',localStorage.getItem('ulang')));
-            newInput.setAttribute('onkeypress',"$(this).mask('#"+thousands+"###"+thousands+"##0"+cents+"00', {reverse: true});");
-            newInput.setAttribute('onblur',"calcAmountTotal(proposal,"+indexValue+",'"+objGlobal.data[0].id+"')");
-            newRow.appendChild(newCol);
-            newCol.appendChild(newInput);
-
-            // impression / production
-/*            newCol          = document.createElement('td');
-            newInput        = document.createElement('input');
-            newInput.classList.add('form-control');
-            newInput.setAttribute('id','production-price-'+indexValue+'-'+objGlobal.data[0].id);
-            newInput.setAttribute('name','oohproduction_price_'+indexValue+'[]');
-            newInput.setAttribute('type','currency');
-            newInput.setAttribute('maxlength','20');
-            newInput.setAttribute('autocomplete','production-price');
-            newInput.setAttribute('placeholder','9'+thousands+'999'+cents+'99');
-            newInput.setAttribute('title',translateText('production',localStorage.getItem('ulang')));
-            newInput.setAttribute('onkeypress',"$(this).mask('#"+thousands+"###"+thousands+"##0"+cents+"00', {reverse: true});");
-            newInput.setAttribute('onblur',"calcAmountTotal(proposal,"+indexValue+",'"+objGlobal.data[0].id+"')");
-            newRow.appendChild(newCol);
-            newCol.appendChild(newInput); */
-
-            // locale
-            newCol          = document.createElement('td');
-            stateText       = document.createTextNode(objGlobal.data[0].state + ' - ' + objGlobal.data[0].city + ' - ' + objGlobal.data[0].county);
-            newRow.appendChild(newCol);
-            newCol.appendChild(stateText);
-
-            //total Price
-            totalPrice += parseInt(objGlobal.data[0].price_int)/100;
-
-            /********************************** 
-             * HIDDEN INPUT AREA  
-             ******************************** */ 
-
-            // billboard_id
-            newCol          = document.createElement('td');
-            newInput        = document.createElement('input');
-            newInput.setAttribute('name','oohbillboard_id[]');
-            newInput.setAttribute('type','hidden');
-            newInput.setAttribute('value',objGlobal.data[0].id);
-            newRow.appendChild(newCol);
-            newCol.appendChild(newInput);
-
-            // salemodel_id
-            newInput        = document.createElement('input');
-            newInput.setAttribute('name','oohsalemodel_id[]');
-            newInput.setAttribute('type','hidden');
-            newInput.setAttribute('value',objGlobal.data[0].salemodel_id);
-            newRow.appendChild(newCol);
-            newCol.appendChild(newInput);
-
-            // provider_id
-            newInput        = document.createElement('input');
-            newInput.setAttribute('name','oohprovider_id[]');
-            newInput.setAttribute('type','hidden');
-            newInput.setAttribute('value',objGlobal.data[0].provider_id);
-            newRow.appendChild(newCol);
-            newCol.appendChild(newInput);
-
-            // state
-            newInput        = document.createElement('input');
-            newInput.setAttribute('name','oohstate[]');
-            newInput.setAttribute('type','hidden');
-            newInput.setAttribute('value',objGlobal.data[0].state);
-            newRow.appendChild(newCol);
-            newCol.appendChild(newInput);
-
-            // city
-            newInput        = document.createElement('input');
-            newInput.setAttribute('name','oohcity[]');
-            newInput.setAttribute('type','hidden');
-            newInput.setAttribute('value',objGlobal.data[0].city);
-            newRow.appendChild(newCol);
-            newCol.appendChild(newInput);
-
-            // county
-            newInput        = document.createElement('input');
-            newInput.setAttribute('name','oohcounty[]');
-            newInput.setAttribute('type','hidden');
-            newInput.setAttribute('value',objGlobal.data[0].county);
-            newRow.appendChild(newCol);
-            newCol.appendChild(newInput);
-
-            // colony
-            newInput        = document.createElement('input');
-            newInput.setAttribute('name','oohcolony[]');
-            newInput.setAttribute('type','hidden');
-            newInput.setAttribute('value',objGlobal.data[0].colony);
-            newRow.appendChild(newCol);
-            newCol.appendChild(newInput);
-        }   
+        if(rows[r].trim() != ''){
+            getIdFromTable('billboard','uuid as id,name,provider_id,provider_name,salemodel_id,salemodel_name,cost_int,price_int,state,city,county,colony','name|||'+rows[r].trim());
+            if(objGlobal.response=='ERROR'){
+                alert(rows[r].trim() + ' no encontrado. No es posible añadir en la lista de OOHs');
+            } else {
+                if(r > 0){
+                    billboard_id    += ',';
+                    bb_provider_id  += ',';
+                    bb_salemodel_id += ',';
+                    cost_int        += ',';
+                    price_int       += ',';
+                    state           += ',';
+                    city            += ',';
+                    county          += ',';
+                    colony          += ',';
+                }
+                billboard_id    += objGlobal.data[0].id;
+                bb_provider_id  += objGlobal.data[0].provider_id;
+                bb_salemodel_id += objGlobal.data[0].salemodel_id;
+                cost_int        += objGlobal.data[0].cost_int;
+                price_int       += objGlobal.data[0].price_int;
+                state           += objGlobal.data[0].state;
+                city            += objGlobal.data[0].city;
+                county          += objGlobal.data[0].county;
+                colony          += objGlobal.data[0].colony;
+    
+                newRow          = document.createElement('tr');
+                newTbody.appendChild(newRow);
+    
+                // key
+                newCol          = document.createElement('td');
+                keyText         = document.createTextNode(objGlobal.data[0].name);
+                newRow.appendChild(newCol);
+                newCol.appendChild(keyText);
+    
+                // provider
+                newCol          = document.createElement('td');
+                providerText   = document.createTextNode(objGlobal.data[0].provider_name);
+                newRow.appendChild(newCol);
+                newCol.appendChild(providerText);
+    
+                // salemodel
+                newCol          = document.createElement('td');
+                salemodelText   = document.createTextNode(objGlobal.data[0].salemodel_name);
+                newRow.appendChild(newCol);
+                newCol.appendChild(salemodelText);
+    
+                // cost
+                newCol          = document.createElement('td');
+                newInput        = document.createElement('input');
+                costValue       = formatter.format((parseInt(objGlobal.data[0].cost_int)/100));
+                // including ,00 when don´t having it on the value
+                if((costValue.charAt(costValue.length - 4) == thousands) || (costValue.length <= 3)){
+                    costValue += cents+'00';
+                }
+                newInput.classList.add('form-control');
+                newInput.setAttribute('id','cost-'+indexValue+'-'+objGlobal.data[0].id);
+                newInput.setAttribute('name','oohCost[]');
+                newInput.setAttribute('type','currency');
+                newInput.setAttribute('maxlength','20');
+                newInput.setAttribute('autocomplete','cost');
+                newInput.setAttribute('placeholder','999,99');
+                newInput.setAttribute('value',costValue);
+                newInput.setAttribute('title',translateText('cost',localStorage.getItem('ulang')));
+                newInput.setAttribute('onkeypress',"$(this).mask('#"+thousands+"###"+thousands+"##0"+cents+"00', {reverse: true});");
+                newRow.appendChild(newCol);
+                newCol.appendChild(newInput);
+    
+                // price
+                newCol          = document.createElement('td');
+                newInput        = document.createElement('input');
+                priceValue      = formatter.format((parseInt(objGlobal.data[0].price_int)/100));
+                // including ,00 when don´t having it on the value
+                if((priceValue.charAt(priceValue.length - 4) == thousands) || (priceValue.length <= 3)){
+                    priceValue += cents+'00';
+                }
+                newInput.classList.add('form-control');
+                newInput.setAttribute('id','price-'+indexValue+'-'+objGlobal.data[0].id);
+                newInput.setAttribute('name','oohprice_'+indexValue+'[]');
+                newInput.setAttribute('type','currency');
+                newInput.setAttribute('maxlength','20');
+                newInput.setAttribute('autocomplete','price');
+                newInput.setAttribute('placeholder','999,99');
+                newInput.setAttribute('value',priceValue);
+                newInput.setAttribute('title',translateText('unit_price',localStorage.getItem('ulang')));
+                newInput.setAttribute('onkeypress',"$(this).mask('#"+thousands+"###"+thousands+"##0"+cents+"00', {reverse: true});");
+                newInput.setAttribute('onblur',"calcAmountTotal(proposal,"+indexValue+",'"+objGlobal.data[0].id+"')");
+                newRow.appendChild(newCol);
+                newCol.appendChild(newInput);
+    
+                // impression / production
+    /*            newCol          = document.createElement('td');
+                newInput        = document.createElement('input');
+                newInput.classList.add('form-control');
+                newInput.setAttribute('id','production-price-'+indexValue+'-'+objGlobal.data[0].id);
+                newInput.setAttribute('name','oohproduction_price_'+indexValue+'[]');
+                newInput.setAttribute('type','currency');
+                newInput.setAttribute('maxlength','20');
+                newInput.setAttribute('autocomplete','production-price');
+                newInput.setAttribute('placeholder','9'+thousands+'999'+cents+'99');
+                newInput.setAttribute('title',translateText('production',localStorage.getItem('ulang')));
+                newInput.setAttribute('onkeypress',"$(this).mask('#"+thousands+"###"+thousands+"##0"+cents+"00', {reverse: true});");
+                newInput.setAttribute('onblur',"calcAmountTotal(proposal,"+indexValue+",'"+objGlobal.data[0].id+"')");
+                newRow.appendChild(newCol);
+                newCol.appendChild(newInput); */
+    
+                // locale
+                newCol          = document.createElement('td');
+                stateText       = document.createTextNode(objGlobal.data[0].state + ' - ' + objGlobal.data[0].city + ' - ' + objGlobal.data[0].county);
+                newRow.appendChild(newCol);
+                newCol.appendChild(stateText);
+    
+                //total Price
+                totalPrice += parseInt(objGlobal.data[0].price_int)/100;
+    
+                /********************************** 
+                 * HIDDEN INPUT AREA  
+                 ******************************** */ 
+    
+                // billboard_id
+                newCol          = document.createElement('td');
+                newInput        = document.createElement('input');
+                newInput.setAttribute('name','oohbillboard_id[]');
+                newInput.setAttribute('type','hidden');
+                newInput.setAttribute('value',objGlobal.data[0].id);
+                newRow.appendChild(newCol);
+                newCol.appendChild(newInput);
+    
+                // salemodel_id
+                newInput        = document.createElement('input');
+                newInput.setAttribute('name','oohsalemodel_id[]');
+                newInput.setAttribute('type','hidden');
+                newInput.setAttribute('value',objGlobal.data[0].salemodel_id);
+                newRow.appendChild(newCol);
+                newCol.appendChild(newInput);
+    
+                // provider_id
+                newInput        = document.createElement('input');
+                newInput.setAttribute('name','oohprovider_id[]');
+                newInput.setAttribute('type','hidden');
+                newInput.setAttribute('value',objGlobal.data[0].provider_id);
+                newRow.appendChild(newCol);
+                newCol.appendChild(newInput);
+    
+                // state
+                newInput        = document.createElement('input');
+                newInput.setAttribute('name','oohstate[]');
+                newInput.setAttribute('type','hidden');
+                newInput.setAttribute('value',objGlobal.data[0].state);
+                newRow.appendChild(newCol);
+                newCol.appendChild(newInput);
+    
+                // city
+                newInput        = document.createElement('input');
+                newInput.setAttribute('name','oohcity[]');
+                newInput.setAttribute('type','hidden');
+                newInput.setAttribute('value',objGlobal.data[0].city);
+                newRow.appendChild(newCol);
+                newCol.appendChild(newInput);
+    
+                // county
+                newInput        = document.createElement('input');
+                newInput.setAttribute('name','oohcounty[]');
+                newInput.setAttribute('type','hidden');
+                newInput.setAttribute('value',objGlobal.data[0].county);
+                newRow.appendChild(newCol);
+                newCol.appendChild(newInput);
+    
+                // colony
+                newInput        = document.createElement('input');
+                newInput.setAttribute('name','oohcolony[]');
+                newInput.setAttribute('type','hidden');
+                newInput.setAttribute('value',objGlobal.data[0].colony);
+                newRow.appendChild(newCol);
+                newCol.appendChild(newInput);
+            }            
+        }
     }
     totalPrice = formatter.format(totalPrice);
     if((totalPrice.charAt(totalPrice.length - 4) == thousands) || (totalPrice.length <= 3)){

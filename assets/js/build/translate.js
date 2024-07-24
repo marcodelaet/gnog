@@ -44,28 +44,17 @@ function translateText(code,toLanguage){
     return (xresponse);
 }
 
-
-function copyStringToClipboard (str) {
-    // Create new element
-    var el = document.createElement('textarea');
-    // Set value (string to be copied)
-    el.value = str;
-    // Set non-editable to avoid focus and move outside of view
-    el.setAttribute('readonly', '');
-    el.style = {position: 'absolute', left: '-9999px'};
-    document.body.appendChild(el);
-    // Select text inside element
-    el.select();
-    // Copy text to clipboard
-    document.execCommand('copy');
-    // Remove temporary element
-    document.body.removeChild(el);
-    language = localStorage.getItem('ulang');
-    alert(translateText('copied_to_clipboard',language));
- }
+async function copyStringToClipboard(text) {
+    try {
+        await navigator.clipboard.writeText(text);
+        alert(translateText('copied_to_clipboard',language));
+    } catch (error) {
+        console.error(error.message);
+    }
+}
 
 
- function xmlReader (objFile,fieldName) {
+function xmlReader (objFile,fieldName) {
     errors      = 0;
     authApi     = csrf_token;
     locat       = window.location.hostname;
@@ -79,7 +68,7 @@ function copyStringToClipboard (str) {
         locat += '/';
 
     const requestURL = window.location.protocol+'//'+locat+'assets/lib/xmlreader.php';
-    console.log(requestURL);
+    //console.log(requestURL);
     const request = new XMLHttpRequest();
     request.onreadystatechange = function() {
         //console.log(this.readyState + '/n' + this.status);
@@ -101,6 +90,27 @@ function copyStringToClipboard (str) {
     return (xresponse);
  }
 
- function ucfirst(word){
+/*
+function copyStringToClipboard (str) {
+    // Create new element
+    var el = document.createElement('textarea');
+    // Set value (string to be copied)
+    el.value = str;
+    // Set non-editable to avoid focus and move outside of view
+    el.setAttribute('readonly', '');
+    el.style = {position: 'absolute', left: '-9999px'};
+    document.body.appendChild(el);
+    // Select text inside element
+    el.select();
+    // Copy text to clipboard
+    document.execCommand('copy');
+    // Remove temporary element
+    document.body.removeChild(el);
+    language = localStorage.getItem('ulang');
+    alert(translateText('copied_to_clipboard',language));
+ }
+*/
+
+function ucfirst(word){
     return word.charAt(0).toUpperCase() + word.slice(1);
  }
