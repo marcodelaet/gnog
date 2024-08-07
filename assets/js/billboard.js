@@ -1,3 +1,13 @@
+/**********************
+ * XSLX READER
+ ***************/
+
+//const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+
+/**********************
+ * starting
+ ***************/
+
 ulang = localStorage.getItem('ulang');
 
 xlang        = 'es-MX';
@@ -11,6 +21,11 @@ var csrf_token = $('meta[name="csrf-token"]').attr('content');
 module  = 'billboard';
 
 xcurrency = 'MXN';
+
+
+/***********
+ * FUNCTIONS ////
+ */
 
 function handleSubmit(form) {
     if (form.name.value !== '' && form.address.value !== '' && form.main_contact_email.value !== '' || product_id != '0' || salemodel_id != '0') {
@@ -65,59 +80,124 @@ function handleSubmit(form) {
         alert('Please, fill all required fields (*)');
 }
 
-function handleSubmitXLSX(form){
+async function handleSubmitXLSX(form){
     if (form.billboard_file.value !== '') {
         //form.submit();
-        errors      = 0;
-        authApi     = csrf_token;
+        errors          = 0;
+        authApi         = csrf_token;
+        error_message   = '';
 
-        file        = form.billboard_file;
-        var formData = new FormData(form);
-//        formData.append("billboard_file", file);
+        file            = form.billboard_file;
+
+        inputElement    = document.querySelector("input[type='file']");
+        xfile           = inputElement.files[0];
+
+        //  reading XLSX file
+        const blob      = new Blob([xfile], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8' });
+        const buffer    = await blob.arrayBuffer();
+        const workbook  = new ExcelJS.Workbook();
+        await workbook.xlsx.load(buffer);
+
         
-        locat       = window.location.hostname;
-        if(locat.slice(-1) != '/')
-            locat += '/';
-
-        if(file == '')
-        {
-            errors++;
-            alert('Please, type a corporate name');
+        if(workbook.worksheets.length == 1){
+            worksheet   = workbook.getWorksheet(workbook.worksheets[0].id);
+            header      = worksheet.getRow(1).values;
+            /*********************************************************** 
+             * Solving sheet issues - missing required columns / values
+             ********************* */ 
+            if(header.indexOf("Proveedor") < 0){
+                error_message += '- Columna de Proveedor es obligatoria para estar en la planilla\n';
+            }
+            if(header.indexOf("Clave") < 0){
+                error_message += '- Columna de Clave es obligatoria para estar en la planilla\n';
+            }
+            
+            if(header.indexOf("Iluminación") < 0){
+                error_message += '- Columna de Iluminación es obligatoria para estar en la planilla\n';
+            }
+            
+            if(header.indexOf("Coordenadas") < 0){
+                error_message += '- Columna de Coordenadas es obligatoria para estar en la planilla\n';
+            }
+            
+            if(header.indexOf("Latitud") < 0){
+                error_message += '- Columna de Latitud es obligatoria para estar en la planilla\n';
+            }
+            
+            if(header.indexOf("Longitud") < 0){
+                error_message += '- Columna de Longitud es obligatoria para estar en la planilla\n';
+            }
+            
+/*            if(header.indexOf("Categoria") < 0){
+                error_message += '- Columna de Categoria es obligatoria para estar en la planilla\n';
+            }*/
+            if(header.indexOf("Tipo") < 0){
+                error_message += '- Columna de Tipo es obligatoria para estar en la planilla\n';
+            }
+            
+            if(header.indexOf("Categoría (NSE)") < 0){
+                error_message += '- Columna de Categoría (NSE) es obligatoria para estar en la planilla\n';
+            }
+            
+            if(header.indexOf("Tarifa Publicada") < 0){
+                error_message += '- Columna de Tarifa Publicada es obligatoria para estar en la planilla\n';
+            }
+            
+            if(header.indexOf("Costo") < 0){
+                error_message += '- Columna de Costo es obligatoria para estar en la planilla\n';
+            }
+            
+        } else {
+            error_message += 'El archivo debe tener solo 1 planilla\n';
         }
+        /*********************
+         * END checking sheet
+         ***************************/
+        if(error_message != ''){
+            alert('Errores: \n'+error_message);
+        } else {
+            /***************************************
+             *  Recording file and data to database
+             **********************************/
 
-        if(errors > 0){
+            var formData = new FormData(form);
+    //        formData.append("billboard_file", file);
+            
+            locat       = window.location.hostname;
+            if(locat.slice(-1) != '/')
+                locat += '/';
 
-        } else{
-            const requestURL = window.location.protocol+'//'+locat+'api/billboards/auth_billboard_xlsx_upload.php';
-            console.log(requestURL);
-            const request = new XMLHttpRequest();
-            request.onreadystatechange = function() {
-                if (this.readyState == 4 && this.status == 200) {
-                    // Typical action to be performed when the document is ready:
-                    //document.write(request.responseText);
-                    console.log(request.responseText);
-                    obj = JSON.parse(request.responseText);
+            if(errors > 0){
 
-                    form.btnSave.innerHTML = "Upload list of billboards";
-                    //alert('Status: '+obj.status);
-                    if(obj.status === "OK")
-                        window.location.href = '?pr=Li9wYWdlcy9iaWxsYm9hcmRzL2luZGV4LnBocA==';
-                    else{
-                        console.log(obj.message);
-                        alert(obj.message);
+            } else{
+                const requestURL = window.location.protocol+'//'+locat+'api/billboards/auth_billboard_xlsx_upload.php';
+                const request = new XMLHttpRequest();
+                request.onreadystatechange = function() {
+                    if (this.readyState == 4 && this.status == 200) {
+                        // Typical action to be performed when the document is ready:
+                        console.log(request.responseText);
+                        obj = JSON.parse(request.responseText);
+
+                        form.btnSave.innerHTML = "Upload list of billboards";
+                        if(obj.status === "OK"){
+                            alert(obj.total_lines+" líneas leídas.\n" +obj.new_billboards+" medios agregados.\n" + obj.updated_billboards+" medios actualizados.\n" +obj.new_providers+" proveedores agregados.\n");
+                            window.location.href = '?pr=Li9wYWdlcy9iaWxsYm9hcmRzL2luZGV4LnBocA==';
+                        }else{
+                            alert(obj.message);
+                        }
+                            
                     }
-                        
-                }
-                else{
-                    form.btnSave.innerHTML = "Uploading...";
-                }
-            };
-            request.open('POST', requestURL);
-            //request.responseType = 'json';
-            request.send(formData);
+                    else{
+                        form.btnSave.innerHTML = "Uploading...";
+                    }
+                };
+                request.open('POST', requestURL);
+                //request.responseType = 'json';
+                request.send(formData);
+            }
         }
     } else
-        alert('Please, fill all required fields (*)');
+        alert('Por favor seleccionar archivo para envio');        
 }
 
 function handleEditSubmit(bid,form) {

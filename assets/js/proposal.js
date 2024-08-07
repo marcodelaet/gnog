@@ -136,7 +136,189 @@ var csrf_token = $('meta[name="csrf-token"]').attr('content');
 xcurrency = 'MXN';
 proposal_id = '';
 
-function handleSubmitFileProduct(form){
+function handleUploadXLSX(form){
+    /***************************************
+     *  Recording file and data to database
+     **********************************/
+    var formData = new FormData(form);
+    //formData.append("billboard_file", file);
+    
+    locat       = window.location.hostname;
+    if(locat.slice(-1) != '/')
+        locat += '/';
+
+    if(errors > 0){
+
+    } else{
+        const requestURL = window.location.protocol+'//'+locat+'api/billboards/auth_billboard_xlsx_upload.php';
+        const request = new XMLHttpRequest();
+        request.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                // Typical action to be performed when the document is ready:
+                console.log(request.responseText);
+                obj = JSON.parse(request.responseText);
+
+                form.btnSave.innerHTML = "Upload list of billboards";
+                if(obj.status === "OK"){
+                    alert(obj.total_lines+" líneas leídas.\n"+obj.new_billboards+" medios agregados.\n"+obj.updated_billboards+" medios actualizados.\n"+obj.new_providers+" proveedores agregados.\n");
+                    return true;
+                }else{
+                    alert(obj.message);
+                    return false;
+                }
+            }
+        };
+        request.open('POST', requestURL);
+        //request.responseType = 'json';
+        request.send(formData);
+    }
+}
+
+async function handleSubmitFileProduct(form){
+    file                = document.getElementById('proposal-file');
+    proposal_id         = document.getElementById('ppid').value;
+    proposalproduct_id  = document.getElementById('pppid').value;
+    owner_id            = document.getElementById('ownerid').value;
+
+    inputfile       = document.querySelector("input[type='file']");
+    xfile           = inputfile.files[0];
+    extensionFile   = xfile.name.split('.')[1];
+
+    if(extensionFile == 'xlsx'){
+        if(confirm('Este archivo es de Medias OOH?')){
+            const blob      = new Blob([xfile], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8' });
+            const buffer    = await blob.arrayBuffer();
+            const workbook  = new ExcelJS.Workbook();
+            await workbook.xlsx.load(buffer);
+    
+            if(workbook.worksheets.length == 1){
+                worksheet   = workbook.getWorksheet(workbook.worksheets[0].id);
+                header      = worksheet.getRow(1).values;
+                /*********************************************************** 
+                 * Solving sheet issues - missing required columns / values
+                 ********************* */ 
+                if((providerIndex = header.indexOf("Proveedor")) < 0){
+                    error_message += '- Columna de Proveedor es obligatoria para estar en la planilla\n';
+                }
+    
+                if((keyIndex = header.indexOf("Clave")) < 0){
+                    error_message += '- Columna de Clave es obligatoria para estar en la planilla\n';
+                }
+    
+                if((iluminationIndex = header.indexOf("Iluminación")) < 0){
+                    error_message += '- Columna de Iluminación es obligatoria para estar en la planilla\n';
+                }
+    
+                if((coordenatesIndex = header.indexOf("Coordenadas")) < 0){
+                    error_message += '- Columna de Coordenadas es obligatoria para estar en la planilla\n';
+                }
+    
+                if((latitudeIndex = header.indexOf("Latitud")) < 0){
+                    error_message += '- Columna de Latitud es obligatoria para estar en la planilla\n';
+                }
+    
+                if((longitudeIndex = header.indexOf("Longitud")) < 0){
+                    error_message += '- Columna de Longitud es obligatoria para estar en la planilla\n';
+                }
+    
+                error_type_count  = 0;
+                if((typeIndex = header.indexOf("Tipo")) < 0){
+                    error_type_count++;
+                    if((typeIndex = header.indexOf("Categoria")) < 0){
+                        error_type_count++;
+                    }
+                }
+                if(error_type_count == 2){
+                    error_message += '- Columna de Tipo es obligatoria para estar en la planilla\n';
+                }
+    
+                if((categoryIndex = header.indexOf("Categoría (NSE)")) < 0){
+                    error_message += '- Columna de Categoría (NSE) es obligatoria para estar en la planilla\n';
+                }
+    
+                if((priceIndex = header.indexOf("Tarifa Publicada")) < 0){
+                    error_message += '- Columna de Tarifa Publicada es obligatoria para estar en la planilla\n';
+                }
+    
+                if((costIndex = header.indexOf("Costo")) < 0){
+                    error_message += '- Columna de Costo es obligatoria para estar en la planilla\n';
+                }
+    
+                total_rows = worksheet.rowCount; //19612
+
+                if(total_rows > 10){
+                    confirmation = confirm('Agregar '+ (total_rows - 1) + ' líneas de Medios OOH para la propuesta '+document.getElementById('offer-name').innerText+'?');
+                } else {
+                    rowsText            = '';
+                    for(row_index=1;row_index<=total_rows;row_index++){
+                        typeValue       = worksheet.getRow(row_index).values[typeIndex];
+                        providerValue   = worksheet.getRow(row_index).values[providerIndex];
+                        keyValue        = worksheet.getRow(row_index).values[keyIndex];
+                        costValue       = worksheet.getRow(row_index).values[costIndex];
+                        priceValue      = worksheet.getRow(row_index).values[priceIndex];
+
+                        rowsText += providerValue + '\t' + keyValue + '\t' + typeValue + '\t' + costValue + '\t' + priceValue + '\n';
+                    }
+                    confirmation = confirm('Agregar las seguintes '+ (total_rows - 1)+ ' líneas de Medios OOH para la propuesta '+document.getElementById('offer-name').innerText+'?\n\n'+rowsText);
+                }
+                if(confirmation){
+                    inputFile = file.cloneNode(true);
+                    inputFile.setAttribute('id','billboard-file');
+                    inputFile.setAttribute('name','billboard_file');
+                    inputFile.setAttribute('value',document.getElementById('proposal-file').value);
+
+                    targetElement   = document.getElementsByClassName('custom-file')[0];
+                    targetElement.appendChild(inputFile);
+
+                    
+                     // Uploading OOH Medias from XLSX
+                    handleUploadXLSX(form);
+
+                    // Adding OOH Medias to proposal (starting in line 2 from XLSX, 'cause line 1 is Header)
+                    for(row_index_x=2;row_index_x<=total_rows;row_index_x++){
+                        typeValue       = worksheet.getRow(row_index_x).values[typeIndex];
+                        providerValue   = worksheet.getRow(row_index_x).values[providerIndex];
+                        keyValue        = worksheet.getRow(row_index_x).values[keyIndex];
+                        costValue       = worksheet.getRow(row_index_x).values[costIndex];
+                        costValueInt    = costValue.toString().split('.')[0];
+                        if(typeof(costValue.toString().split('.')[1]) != 'undefined'){
+                            costValueInt += (costValue.toString().split('.')[1]+'00').substr(0,2);
+                        }else{
+                            
+                        }
+                        
+                        priceValue      = worksheet.getRow(row_index_x).values[priceIndex];
+                        priceValueInt   = priceValue.toString().split('.')[0];
+                        +(priceValue.toString().split('.')[1]+'00').substr(0,2);
+
+                        getIdFromTable('billboard','uuid as id','name|||'+keyValue);
+                        billbord_id         = objGlobal.data[0].id;
+                        //proposalproduct_id
+                        addBillboardToProposal(billbord_id,proposalproduct_id,costValue,priceValue);
+
+                    }
+
+                    // Uploading XLSX file
+                    //handleUploadFile(form)
+                }
+            } else {
+                error_message += 'El archivo debe tener solo 1 planilla\n';
+            }
+            /*********************
+            * END checking sheet
+            ***************************/
+            if(error_message != ''){
+                alert('Errores: \n'+error_message);
+            }
+        }
+    } else {
+
+    }
+/*
+
+*/
+}
+function handleUploadFile(form){
     file                = document.getElementById('proposal-file');
     proposal_id         = document.getElementById('ppid').value;
     proposalproduct_id  = document.getElementById('pppid').value;
@@ -169,7 +351,7 @@ function handleSubmitFileProduct(form){
                     if (this.readyState == 4 && this.status == 200) {
                         // Typical action to be performed when the document is ready:
                         obj = JSON.parse(request.responseText);
-
+                        console.log(request.responseText);
                         btnSave.innerText = btnText;
                         if(obj.status === "OK")
                             window.location.href = '?pr=Li9wYWdlcy9wcm9wb3NhbHMvb3BlcmF0aW9uL2Zvcm1lZGl0LnBocA==&ppid='+proposal_id+'&pppid='+proposalproduct_id;
@@ -190,6 +372,7 @@ function handleSubmitFileProduct(form){
         alert('Please, choose files to upload (*)');
     }
 }
+
 
 function handleSubmitAddProduct(form,proposalId){
     //form.submit();
@@ -384,7 +567,7 @@ function handleSubmit(form) {
     errors      = 0;
     authApi     = csrf_token;
     message     = '';
-    if (((form.name.value !== '' && form.client_id.value !== '0') || (form.client_id.value !== '0' && form.agency_id.value !== '0')) && (form.start_date.value !== '' && form.status_id.value !== '0' && form.executive_id.value !== '0') ) {
+    if (((form.name.value !== '' && form.client_id.value !== '0') || (form.client_id.value !== '0' && form.agency_id.value !== '0')) && (form.start_date.value !== '' && form.executive_id.value !== '0') ) {
         //form.submit();
         if(proposal.start_date.value > proposal.stop_date.value){
             alert('la Fecha de inicio no puede ser mayor que la fecha final');
@@ -409,7 +592,7 @@ function handleSubmit(form) {
             formData.append('taxable_option',taxable);
     
             //total                   = form.total.value;
-            status_id               = form.status_id.value;
+            //status_id               = form.status_id.value;
             currency                = form.currency.value;
     
             objProduct      = document.getElementsByName('product_id[]');
@@ -1262,16 +1445,21 @@ function handleListEditProductOnLoad(ppid,pppid){
                  * SEND EMAIL BUTTOM
                  */
                 contact_email   = obj['data'][0].contact_email;
-                full_name = "Teste";
+                xhtml           = '';
+                full_name       = "Teste";
                 //xcopy += '&nbsp;<a style="color: #212529" href="javascript:void(0)" title="'+translateText('send_user_crt_url_to',localStorage.getItem('ulang'))+' '+obj['data'][i].contact_email+'" onclick=""><spam class="material-icons icon-data">send</spam></a>';
-                xeffect = 'insider'; 
-                xuser = 'https://providers.gnogmedia.com?pr=Li9wYWdlcy91c2Vycy9mb3JtLnBocA==&cpid='+obj['data'][0].contact_provider_id;
-                xcopy = '&nbsp;&nbsp;&nbsp;<a style="color: #212529" href="javascript:void(0)" title="'+translateText('copy_user_crt_url',localStorage.getItem('ulang'))+' ('+obj['data'][0].contact_email+')" onclick="copyStringToClipboard(\''+xuser+'\'\)"><spam class="material-icons icon-data">content_copy</spam></a>';
-                textHTML = invite_body['esp'];
-                xcopy += '&nbsp;<a style="color: #212529; cursor: pointer;" title="'+translateText('send_user_crt_url_to',localStorage.getItem('ulang'))+' '+obj['data'][0].contact_email+'"  data-toggle="modal" data-target="#sendmailModal" data-whatever="@mdo" onclick="document.getElementById(\'sendbutton\').disabled = false; document.getElementById(\'sendbutton\').innerText = translateText(\'send_message\',localStorage.getItem(\'ulang\')); document.getElementById(\'provider_contact_email\').innerText=\''+contact_email+'\'; document.getElementById(\'pemail\').value=\''+contact_email+'\'; document.getElementById(\'pname\').value=\''+full_name+'\'; document.getElementById(\'plink\').value=\''+xuser+'\'; document.getElementById(\'bodytext-html\').value =  textHTML.replace(\'%personal_url_to_register%\',\''+xuser+'\').replace(\'%personal_url_to_register_href%\',\''+xuser+'\').replace(\'%user_fullname%\',\''+full_name+'\'); document.getElementById(\'language-option\').value=\'esp\'; document.getElementById(\'bodyText\').innerHTML = textHTML.replace(\'%personal_url_to_register%\',\''+xuser+'\').replace(\'%personal_url_to_register_href%\',\''+xuser+'\').replace(\'%user_fullname%\',\''+full_name+'\');"><spam class="material-icons icon-data">send</spam></a>';
+                xeffect         = 'insider'; 
+                xuser           = 'https://providers.gnogmedia.com?pr=Li9wYWdlcy91c2Vycy9mb3JtLnBocA==&cpid='+obj['data'][0].contact_provider_id;
+                xcopy           = '&nbsp;&nbsp;&nbsp;<a style="color: #212529" href="javascript:void(0)" title="'+translateText('copy_user_crt_url',localStorage.getItem('ulang'))+' ('+obj['data'][0].contact_email+')" onclick="copyStringToClipboard(\''+xuser+'\'\)"><spam class="material-icons icon-data">content_copy</spam></a>';
+                textHTML        = invite_body['esp'];
+                xcopy           += '&nbsp;<a style="color: #212529; cursor: pointer;" title="'+translateText('send_user_crt_url_to',localStorage.getItem('ulang'))+' '+obj['data'][0].contact_email+'"  data-toggle="modal" data-target="#sendmailModal" data-whatever="@mdo" onclick="document.getElementById(\'sendbutton\').disabled = false; document.getElementById(\'sendbutton\').innerText = translateText(\'send_message\',localStorage.getItem(\'ulang\')); document.getElementById(\'provider_contact_email\').innerText=\''+contact_email+'\'; document.getElementById(\'pemail\').value=\''+contact_email+'\'; document.getElementById(\'pname\').value=\''+full_name+'\'; document.getElementById(\'plink\').value=\''+xuser+'\'; document.getElementById(\'bodytext-html\').value =  textHTML.replace(\'%personal_url_to_register%\',\''+xuser+'\').replace(\'%personal_url_to_register_href%\',\''+xuser+'\').replace(\'%user_fullname%\',\''+full_name+'\'); document.getElementById(\'language-option\').value=\'esp\'; document.getElementById(\'bodyText\').innerHTML = textHTML.replace(\'%personal_url_to_register%\',\''+xuser+'\').replace(\'%personal_url_to_register_href%\',\''+xuser+'\').replace(\'%user_fullname%\',\''+full_name+'\');"><spam class="material-icons icon-data">send</spam></a>';
 
-                xhtml += xcopy;
-                document.getElementById('div-specialbuttons').value         = provider_id;
+                xhtml           += xcopy;
+
+                //BUTTON 
+                //document.getElementById('div-specialbuttons').value         = provider_id;
+
+
                 //console.log(obj['data'][0].product_id +' - '+ obj['data'][0].product_name);
             }
             else {

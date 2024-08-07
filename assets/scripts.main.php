@@ -15,3 +15,6 @@
  <!-- <script src="<?=$dir?>./assets/js/build/Google/markerclusterer_compiled.js" type="text/javascript"></script>-->
   <script src="<?=$dir?>./assets/js/maps.js" type="text/javascript"></script>
 	<script type="text/javascript" src="<?=$dir?>./assets/js/ext/jquery.notebook.js"></script>
+  <!-- <script lang="javascript" src="./node_modules/xlsx/dist/xlsx.full.min.js"></script> -->
+  <script lang="javascript" src="./node_modules/exceljs/dist/exceljs.min.js"></script> 
+  <!-- <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script> -->

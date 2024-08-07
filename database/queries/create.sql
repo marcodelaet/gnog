@@ -686,6 +686,10 @@ ADD COLUMN colony VARCHAR(60) AFTER state;
 ALTER TABLE billboards
 ADD COLUMN city VARCHAR(60) AFTER state;
 
+ALTER TABLE billboards
+ADD COLUMN country VARCHAR(60) AFTER county;
+
+
 ALTER TABLE billboards 
 CHANGE state state VARCHAR(60), 
 CHANGE colony colony VARCHAR(60), 
@@ -777,6 +781,9 @@ ALTER TABLE proposalsxproducts
 #ADDING FIELD colony
 ALTER TABLE proposalsxproducts
 	ADD column colony VARCHAR(60) AFTER state;
+
+ALTER TABLE proposalsxproducts 
+ADD COLUMN country VARCHAR(60) AFTER county;
 
 #ADDING FIELD production_cost_int
 ALTER TABLE proposalsxproducts
