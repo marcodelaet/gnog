@@ -686,6 +686,10 @@ ADD COLUMN colony VARCHAR(60) AFTER state;
 ALTER TABLE billboards
 ADD COLUMN city VARCHAR(60) AFTER state;
 
+ALTER TABLE billboards
+ADD COLUMN country VARCHAR(60) AFTER county;
+
+
 ALTER TABLE billboards 
 CHANGE state state VARCHAR(60), 
 CHANGE colony colony VARCHAR(60), 
@@ -777,6 +781,9 @@ ALTER TABLE proposalsxproducts
 #ADDING FIELD colony
 ALTER TABLE proposalsxproducts
 	ADD column colony VARCHAR(60) AFTER state;
+
+ALTER TABLE proposalsxproducts 
+ADD COLUMN country VARCHAR(60) AFTER county;
 
 #ADDING FIELD production_cost_int
 ALTER TABLE proposalsxproducts
@@ -1082,6 +1089,11 @@ INSERT INTO translates
 VALUES
 (UUID(), 'production', 'Production', 'Producción', 'Produção', 'Y', NOW(), NOW());
 
+INSERT INTO translates 
+(id, code_str, text_eng, text_esp, text_ptbr, is_active, created_at, updated_at)
+VALUES
+(UUID(), 'messagetemplate_name', 'template nickname', 'apodo de plantilla', 'Nome do modelo', 'Y', NOW(), NOW());
+
 
 INSERT INTO translates 
 (id, code_str, text_eng, text_esp, text_ptbr, is_active, created_at, updated_at)
@@ -1203,11 +1215,6 @@ VALUES
 INSERT INTO translates 
 (id, code_str, text_eng, text_esp, text_ptbr, is_active, created_at, updated_at)
 VALUES
-(UUID(), 'message', 'message', 'mensaje', 'mensagem', 'Y', NOW(), NOW());
-
-INSERT INTO translates 
-(id, code_str, text_eng, text_esp, text_ptbr, is_active, created_at, updated_at)
-VALUES
 (UUID(), '0_proposals', 'Providers is not working in anyone proposal', 'Proveedor no estás trabajando en ninguna propuesta', 'Provedor não está trabalhando em nenhuma proposta', 'Y', NOW(), NOW());
 
 INSERT INTO translates 
@@ -1315,6 +1322,32 @@ INSERT INTO translates
 VALUES
 (UUID(), 'event_date', 'event date', 'fecha del evento', 'data do evento', 'Y', NOW(), NOW());
 
+INSERT INTO translates 
+(id, code_str, text_eng, text_esp, text_ptbr, is_active, created_at, updated_at)
+VALUES
+(UUID(), 'message_templates', 'message templates', 'plantillas de mensajes', 'modelos de mensagem', 'Y', NOW(), NOW());
+
+INSERT INTO translates 
+(id, code_str, text_eng, text_esp, text_ptbr, is_active, created_at, updated_at)
+VALUES
+(UUID(), 'message', 'message', 'mensaje', 'mensagem', 'Y', NOW(), NOW());
+
+INSERT INTO translates 
+(id, code_str, text_eng, text_esp, text_ptbr, is_active, created_at, updated_at)
+VALUES
+(UUID(), 'module_name', 'module', 'módulo', 'módulo', 'Y', NOW(), NOW());
+
+INSERT INTO translates 
+(id, code_str, text_eng, text_esp, text_ptbr, is_active, created_at, updated_at)
+VALUES
+(UUID(), 'template_text', 'template text', 'texto de plantilla', 'texto', 'Y', NOW(), NOW());
+
+INSERT INTO translates 
+(id, code_str, text_eng, text_esp, text_ptbr, is_active, created_at, updated_at)
+VALUES
+(UUID(), 'yes', 'yes', 'si', 'sim', 'Y', NOW(), NOW()),
+(UUID(), 'no', 'no', 'no', 'não', 'Y', NOW(), NOW());
+
 
 # FILES
 CREATE TABLE IF NOT EXISTS files (
@@ -1385,3 +1418,41 @@ ALTER TABLE invoices
 	FOREIGN KEY (provider_id)
     REFERENCES providers (id);
 
+# MESSAGEMODELS
+CREATE TABLE IF NOT EXISTS messagetemplates (
+id VARCHAR(40) PRIMARY KEY NOT NULL,
+name VARCHAR(50) NOT NULL,
+message_text TEXT NOT NULL,
+module_name VARCHAR(20) NOT NULL,
+is_active ENUM('N','Y') NOT NULL,
+created_at DATETIME NOT NULL,
+updated_at DATETIME NOT NULL
+);
+
+# PROPOSALXMESSAGE
+CREATE TABLE IF NOT EXISTS proposalxmessage (
+id VARCHAR(40) PRIMARY KEY NOT NULL,
+proposal_id VARCHAR(40) NOT NULL,
+message_id VARCHAR(40) NOT NULL,
+message_text TEXT NOT NULL,
+is_sent ENUM('N','Y') NOT NULL,
+created_at DATETIME NOT NULL,
+updated_at DATETIME NOT NULL
+);
+
+# ADDING FK PROPOSAL_PROPOSALMESSAGE
+ALTER TABLE proposalxmessage
+    ADD CONSTRAINT fk_proposal
+	FOREIGN KEY (proposal_id)
+    REFERENCES proposals (id);
+
+# ADDING FK MESSAGE_PROPOSALMESSAGE
+ALTER TABLE proposalxmessage
+    ADD CONSTRAINT fk_proposalMessage
+	FOREIGN KEY (message_id)
+    REFERENCES messagetemplates (id);
+
+ALTER TABLE messagetemplates
+ADD COLUMN message_text_esp TEXT AFTER message_text,
+ADD COLUMN message_text_eng TEXT AFTER message_text_esp,
+ADD COLUMN message_text_ptbr TEXT AFTER message_text_eng;

@@ -27,6 +27,7 @@ if(!isset($DB)){
 }
 
 // REQUIRE utils functions
+require_once('../../assets/lib/utils.php');
 require_once('../../assets/lib/translation.php');
 
 if(array_key_exists('uid',$_POST)){
@@ -149,7 +150,7 @@ if ($uploadOk > 0) {
                 $filesSent .= ', ';
             $filesSent .= $uploading;
 
-            $return = json_encode(["file" => $file, "filetype" => $imageFileType, "size" => $fileSize]);
+            $message .= "file: " . $file . "\nfiletype: " . $imageFileType . "\nsize: " . $fileSize."\n";
             $description = 'Proposal file';
 
             if($fileNumRows < 1){
@@ -161,7 +162,6 @@ if ($uploadOk > 0) {
 
                 if($rsfile){
                     $message .= "\n- $uploading file sent succesfully";
-                    $return = json_encode(["status" => "OK","message" => $message]);
                 }
             } else {
                 // getting file ID
@@ -173,13 +173,21 @@ if ($uploadOk > 0) {
                 
                 // updating file information on database
                 $rs_file_update = $DB->executeInstruction($sql_update_file);
+                $message .= "\n- $uploading file updated succesfully";
+                // Everything OK?
             }
+            // Everything OK?
+            $return = json_encode(["status"=>"OK","message" => $message]);
         }
         else {
             $errors++;
             $message .= "\n- $uploading file not sent";
             $return = json_encode(["status"=>"ERROR","message" => $message]);
         }
+    } else {
+        $errors++;
+        $message .= "\n- $uploading filesize ". $fileSize;
+        $return = json_encode(["status"=>"ERROR","message" => $message]);
     }
 
     // SENDING MAIL - MAKING LOG
@@ -219,14 +227,15 @@ if ($uploadOk > 0) {
                                
     $SendGNogMail->sendGNogMail($from_name,$from_email,$to_name,$to_email,$subject,$messageHtml,$signFilePath,null);
 
+    // Everything OK?
+    $return = json_encode(["status"=>"OK","message" => $message]);
+
+
 } else {
     $errors++;
     $message .= 'Error PANIC';
     $return = json_encode(["status" => "error", "message" => "$message"]);
 }
-
-// Everything OK?
-$return = json_encode(["status"=>"OK","message" => $message]);
 
 //$errors = 1;
 if($errors > 0){

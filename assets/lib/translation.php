@@ -70,65 +70,6 @@ function translateTextInLanguage($xcode,$language){
     return $response;
 }
 
-function setHistory($user_id,$module_name,$module_id,$description_en,$description_es,$description_ptbr,$user_token,$form_token,$resultType){
-    global $DATABASE_HOST, $DATABASE_USER, $DATABASE_PASSWORD, $DATABASE_NAME;
-
-    $DBHistory = new MySQLDB($DATABASE_HOST,$DATABASE_USER,$DATABASE_PASSWORD,$DATABASE_NAME);
-
-    // call conexion instance
-    $con = $DBHistory->connect();
-
-    $nowDateTime = "now()";
-    if($module_name == 'invoices_payed_from_waiting'){ // if is approval time before paied status
-        $nowDateTime = "subtime(now(), '0:0:10.000000')";
-        $module_name = 'invoices';
-    }
-
-    // Query
-    $sql = "INSERT INTO loghistory (id, user_id, module_name, module_id, description_en, description_es, description_ptbr, user_token, form_token, created_at, updated_at) VALUES (UUID(),'$user_id', '$module_name', '$module_id', '$description_en','$description_es','$description_ptbr', '$user_token', '$form_token', $nowDateTime, $nowDateTime)"; 
-
-    $rs = $DBHistory->executeInstruction($sql);
-    if($rs){
-        if($resultType == 'json')
-            $response = json_encode(["response"=>"OK"]);
-        if($resultType == 'text')
-            $response = "OK";
-    } else {
-        if($resultType == 'json')
-            $response = json_encode(["response"=>"Error"]);
-        if($resultType == 'text')
-            $response = "Error: ".$sql;
-    }
-    //close connection
-    $DBHistory->close();
-    return $response;
-}
-
-function sendmailto($to,$subject,$message,$headers){
-    $to = "user1@example.com, user2@example.com";
-    $subject = "This is a test HTML email";
-    
-    $message = "
-    <html>
-    <head>
-    <title>This is a test HTML email</title>
-    </head>
-    <body>
-    <p>Test email. Please ignore.</p>
-    </body>
-    </html>
-    ";
-    
-    // It is mandatory to set the content-type when sending HTML email
-    $headers = "MIME-Version: 1.0" . "\r\n";
-    $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
-    
-    // More headers. From is required, rest other headers are optional
-    $headers .= 'From: <info@example.com>' . "\r\n";
-    $headers .= 'Cc: sales@example.com' . "\r\n";
-    
-    mail($to,$subject,$message,$headers);
-}
 
 if(array_key_exists('fcn',$_REQUEST)){
     $function = $_REQUEST['fcn'];

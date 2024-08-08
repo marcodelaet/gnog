@@ -25,6 +25,7 @@ if(!isset($DB)){
 }
 
 // REQUIRE utils functions
+require_once('../../assets/lib/utils.php');
 require_once('../../assets/lib/translation.php');
 
 // call conexion instance

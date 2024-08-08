@@ -1,14 +1,5 @@
-/**********************
- * XSLX READER
- ***************/
-
-//const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-
-/**********************
- * starting
- ***************/
-
-ulang = localStorage.getItem('ulang');
+ulang       = localStorage.getItem('ulang');
+uid         = localStorage.getItem('uuid');
 
 xlang        = 'es-MX';
 if(ulang == 'ptbr')
@@ -18,37 +9,31 @@ if(ulang == 'eng')
 
 document.getElementById('nav-item-users').setAttribute('class',document.getElementById('nav-item-users').getAttribute('class').replace(' active','') + ' active');
 var csrf_token = $('meta[name="csrf-token"]').attr('content');
-module  = 'billboard';
+module  = 'message';
 
 xcurrency = 'MXN';
 
-
-/***********
- * FUNCTIONS ////
- */
-
 function handleSubmit(form) {
-    if (form.name.value !== '' && form.address.value !== '' && form.main_contact_email.value !== '' || product_id != '0' || salemodel_id != '0') {
-        //form.submit();
+    if (form.name.value !== '') {
         errors      = 0;
         authApi     = csrf_token;
         message     = '';
 
-        xname                   = form.name.value;
-        address                 = form.address.value;
-        webpage_url             = form.webpage_url.value;
-        product_id              = form.product_id.value;
-        if(product_id == '0'){
-            message += 'Please, select a product!\n';
-            errors++;
-        }
-        salemodel_id            = form.salemodel_id.value;
-        if(salemodel_id == '0'){
-            message += 'Please, select a sale model!\n';
-            errors++;
-        }
-        product_price           = form.product_price.value;
-        currency                = form.currency.value;
+        document.getElementById('template_text_esp').value = encodeURIComponent(document.getElementById('editor_template_text_esp').innerHTML);
+        document.getElementById('template_text_eng').value = encodeURIComponent(document.getElementById('editor_template_text_eng').innerHTML);
+        document.getElementById('template_text_ptbr').value = encodeURIComponent(document.getElementById('editor_template_text_ptbr').innerHTML);
+
+/*        var str_default_text        = 'N';
+        const numberOfOptions       = 3;
+        for(dt=0;dt <= numberOfOptions;dt++){
+            if(form.default_text[dt].checked)
+                str_default_text    = 'Y';
+        }*/
+
+        var formData = new FormData(form);
+        formData.append('auth_api',authApi);
+        formData.append('uid',uid);
+        //formData.append('default_text_option',str_default_text);
 
         locat       = window.location.hostname;
         if(locat.slice(-1) != '/')
@@ -57,150 +42,29 @@ function handleSubmit(form) {
         if(errors > 0){
             alert(message);
         } else{
-            const requestURL = window.location.protocol+'//'+locat+'api/billboards/auth_billboard_add_new.php?auth_api='+authApi+'&name='+xname+'&webpage_url='+webpage_url+'&address='+address+'&product_id='+product_id+'&salemodel_id='+salemodel_id+'&product_price='+product_price+'&currency='+currency;
-            console.log(requestURL);
+            const requestURL = window.location.protocol+'//'+locat+'api/messages/auth_message_add_new.php';
             const request = new XMLHttpRequest();
             request.onreadystatechange = function() {
                 if (this.readyState == 4 && this.status == 200) {
-                   // Typical action to be performed when the document is ready:
-                   obj = JSON.parse(request.responseText);
-                   form.btnSave.innerHTML = "Save";
-                   //alert('Status: '+obj.status);
-                   window.location.href = '?pr=Li9wYWdlcy9wcm92aWRlcnMvdGtwL2luZGV4LnBocA==';
+                    // Typical action to be performed when the document is ready:
+                    obj = JSON.parse(request.responseText);
+                    if(obj.status == 'OK'){
+                        form.btnSave.innerHTML = "Save";                        
+                        window.location.href = '?pr=Li9wYWdlcy9tZXNzYWdlcy9pbmRleC5waHA=';
+                    }
                 }
                 else{
                     form.btnSave.innerHTML = "Saving...";
                 }
             };
-            request.open('GET', requestURL);
-            //request.responseType = 'json';
-            request.send();
+            request.open('POST', requestURL,false);
+            request.send(formData);
         }
     } else
         alert('Please, fill all required fields (*)');
 }
 
-async function handleSubmitXLSX(form){
-    if (form.billboard_file.value !== '') {
-        //form.submit();
-        errors          = 0;
-        authApi         = csrf_token;
-        error_message   = '';
-
-        file            = form.billboard_file;
-
-        inputElement    = document.querySelector("input[type='file']");
-        xfile           = inputElement.files[0];
-
-        //  reading XLSX file
-        const blob      = new Blob([xfile], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8' });
-        const buffer    = await blob.arrayBuffer();
-        const workbook  = new ExcelJS.Workbook();
-        await workbook.xlsx.load(buffer);
-
-        
-        if(workbook.worksheets.length == 1){
-            worksheet   = workbook.getWorksheet(workbook.worksheets[0].id);
-            header      = worksheet.getRow(1).values;
-            /*********************************************************** 
-             * Solving sheet issues - missing required columns / values
-             ********************* */ 
-            if(header.indexOf("Proveedor") < 0){
-                error_message += '- Columna de Proveedor es obligatoria para estar en la planilla\n';
-            }
-            if(header.indexOf("Clave") < 0){
-                error_message += '- Columna de Clave es obligatoria para estar en la planilla\n';
-            }
-            
-            if(header.indexOf("Iluminación") < 0){
-                error_message += '- Columna de Iluminación es obligatoria para estar en la planilla\n';
-            }
-            
-            if(header.indexOf("Coordenadas") < 0){
-                error_message += '- Columna de Coordenadas es obligatoria para estar en la planilla\n';
-            }
-            
-            if(header.indexOf("Latitud") < 0){
-                error_message += '- Columna de Latitud es obligatoria para estar en la planilla\n';
-            }
-            
-            if(header.indexOf("Longitud") < 0){
-                error_message += '- Columna de Longitud es obligatoria para estar en la planilla\n';
-            }
-            
-/*            if(header.indexOf("Categoria") < 0){
-                error_message += '- Columna de Categoria es obligatoria para estar en la planilla\n';
-            }*/
-            if(header.indexOf("Tipo") < 0){
-                error_message += '- Columna de Tipo es obligatoria para estar en la planilla\n';
-            }
-            
-            if(header.indexOf("Categoría (NSE)") < 0){
-                error_message += '- Columna de Categoría (NSE) es obligatoria para estar en la planilla\n';
-            }
-            
-            if(header.indexOf("Tarifa Publicada") < 0){
-                error_message += '- Columna de Tarifa Publicada es obligatoria para estar en la planilla\n';
-            }
-            
-            if(header.indexOf("Costo") < 0){
-                error_message += '- Columna de Costo es obligatoria para estar en la planilla\n';
-            }
-            
-        } else {
-            error_message += 'El archivo debe tener solo 1 planilla\n';
-        }
-        /*********************
-         * END checking sheet
-         ***************************/
-        if(error_message != ''){
-            alert('Errores: \n'+error_message);
-        } else {
-            /***************************************
-             *  Recording file and data to database
-             **********************************/
-
-            var formData = new FormData(form);
-    //        formData.append("billboard_file", file);
-            
-            locat       = window.location.hostname;
-            if(locat.slice(-1) != '/')
-                locat += '/';
-
-            if(errors > 0){
-
-            } else{
-                const requestURL = window.location.protocol+'//'+locat+'api/billboards/auth_billboard_xlsx_upload.php';
-                const request = new XMLHttpRequest();
-                request.onreadystatechange = function() {
-                    if (this.readyState == 4 && this.status == 200) {
-                        // Typical action to be performed when the document is ready:
-                        console.log(request.responseText);
-                        obj = JSON.parse(request.responseText);
-
-                        form.btnSave.innerHTML = "Upload list of billboards";
-                        if(obj.status === "OK"){
-                            alert(obj.total_lines+" líneas leídas.\n" +obj.new_billboards+" medios agregados.\n" + obj.updated_billboards+" medios actualizados.\n" +obj.new_providers+" proveedores agregados.\n");
-                            window.location.href = '?pr=Li9wYWdlcy9iaWxsYm9hcmRzL2luZGV4LnBocA==';
-                        }else{
-                            alert(obj.message);
-                        }
-                            
-                    }
-                    else{
-                        form.btnSave.innerHTML = "Uploading...";
-                    }
-                };
-                request.open('POST', requestURL);
-                //request.responseType = 'json';
-                request.send(formData);
-            }
-        }
-    } else
-        alert('Por favor seleccionar archivo para envio');        
-}
-
-function handleEditSubmit(bid,form) {
+function handleEditSubmit(smid,form) {
     price   = form.price.value;
     cost    = form.cost.value;
     if (price != '0' && cost != '0') {
@@ -209,7 +73,7 @@ function handleEditSubmit(bid,form) {
         errors      = 0;
         authApi     = csrf_token;
         
-        sett     = '&bid='+bid;
+        sett     = '&smid='+smid;
 
         price_int       = price.replace('MX','').replace('$','').replace(' ','').replace('US','').replace('BRL','').replace('R$','').replace('USD','').replace('MXN','');
         cost_int        = cost.replace('MX','').replace('$','').replace(' ','').replace('US','').replace('BRL','').replace('R$','').replace('USD','').replace('MXN','');
@@ -270,7 +134,7 @@ function handleEditSubmit(bid,form) {
             if(errors > 0){
             
             } else{
-                const requestURL = window.location.protocol+'//'+locat+'api/billboards/auth_billboard_edit.php?auth_api='+authApi+sett.replace(' ','').replace(' ','');
+                const requestURL = window.location.protocol+'//'+locat+'api/messages/auth_message_edit.php?auth_api='+authApi+sett.replace(' ','').replace(' ','');
                 console.log(requestURL);
                 const request = new XMLHttpRequest();
                 request.onreadystatechange = function() {
@@ -295,12 +159,12 @@ function handleEditSubmit(bid,form) {
         alert('Please, fill all required fields (*)');
 }
 
-function handleViewOnLoad(bid) {
+function handleViewOnLoad(smid) {
     errors      = 0;
     authApi     = csrf_token;
     locat       = window.location.hostname;
 
-    filters     = '&bid='+bid;
+    filters     = '&smid='+smid;
 
     if(locat.slice(-1) != '/')
         locat += '/';
@@ -308,7 +172,7 @@ function handleViewOnLoad(bid) {
     if(errors > 0){
 
     } else{
-        const requestURL = window.location.protocol+'//'+locat+'api/billboards/auth_billboard_get.php?auth_api='+authApi+filters;
+        const requestURL = window.location.protocol+'//'+locat+'api/messages/auth_message_get.php?auth_api='+authApi+filters;
         //alert(requestURL);
         const request   = new XMLHttpRequest();
         request.onreadystatechange = function() {
@@ -327,7 +191,7 @@ function handleViewOnLoad(bid) {
                     });
                     document.getElementById('field-key').innerHTML          = obj['data'][0].name;
                     document.getElementById('field-address').innerHTML      = obj['data'][0].address;
-                    document.getElementById('field-salemodel').innerHTML    = obj['data'][0].salemodel_name;
+                    document.getElementById('field-message').innerHTML    = obj['data'][0].message_name;
                     document.getElementById('field-viewpoint').innerHTML    = obj['data'][0].viewpoint_name;
                     document.getElementById('field-coordenates').innerHTML  = obj['data'][0].coordenates;
                     document.getElementById('field-dimension').innerHTML    = (parseInt(obj['data'][0].height)/100).toFixed(1) + 'x' + (parseInt(obj['data'][0].width)/100).toFixed(1);
@@ -346,12 +210,12 @@ function handleViewOnLoad(bid) {
     }
 }
 
-function handleOnLoad(bid,form) {
+function handleOnLoad(smid,form) {
     errors      = 0;
     authApi     = csrf_token;
     locat       = window.location.hostname;
 
-    filters     = '&bid='+bid;
+    filters     = '&smid='+smid;
   
     if(locat.slice(-1) != '/')
         locat += '/';
@@ -359,7 +223,7 @@ function handleOnLoad(bid,form) {
     if(errors > 0){
 
     } else{
-        const requestURL = window.location.protocol+'//'+locat+'api/billboards/auth_billboard_get.php?auth_api='+authApi+filters;
+        const requestURL = window.location.protocol+'//'+locat+'api/messages/auth_message_get.php?auth_api='+authApi+filters;
         //console.log('trekkk - '+requestURL);
         const request = new XMLHttpRequest();
         request.onreadystatechange = function() {
@@ -384,7 +248,7 @@ function handleOnLoad(bid,form) {
                 form.address.value                  = obj.data[0].address;
                 form.category.value                 = obj.data[0].category;
                 form.coordenates.value              = obj.data[0].coordenates;
-                form.salemodel.value                = obj.data[0].salemodel_name;
+                form.message.value                = obj.data[0].message_name;
                 form.viewpoint.value                = obj.data[0].viewpoint_name;
                 xiluminated                         = translateText('is_iluminated',ulang);
                 if(obj.data[0].is_iluminated == 'N')
@@ -407,10 +271,11 @@ function handleOnLoad(bid,form) {
 
 function handleListOnLoad(search,page) {
     errors      = 0;
-    authApi     = encodeURIComponent(csrf_token);
+    authApi     = csrf_token;
     locat       = window.location.hostname;
 
     groupby     = '';
+    orderby     = '&orderby=module_name,name';
     addColumn   = '';
 
     filters     = '';
@@ -427,55 +292,69 @@ function handleListOnLoad(search,page) {
         pages     += '&p='+(parseInt(page)-1);
     }
 
+    lines       = 25; // quantity of lines to return on JSON result query
+    
+    strlines    = '&returninglines='+lines;
     if(locat.slice(-1) != '/')
         locat += '/';
 
     if(errors > 0){
 
     } else{
-        tableList   = document.getElementById('listBillboards');
-        const requestURL = window.location.protocol+'//'+locat+'api/billboards/auth_billboard_view.php?auth_api='+authApi+filters+groupby+addColumn+pages;
-        //console.log(requestURL);
+        tableList   = document.getElementById('listMessages');
+        const requestURL = window.location.protocol+'//'+locat+'api/messages/auth_message_list.php?auth_api='+authApi+filters+groupby+orderby+addColumn+pages+strlines;
+        console.log(requestURL);
         const request = new XMLHttpRequest();
         request.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {
                 // Typical action to be performed when the document is ready:
                 obj         = JSON.parse(request.responseText);
-                html        = '';
-                country     = '';
-                
-                for(var i=0;i < obj['data'].length; i++){
-                    color_status = '#d60b0e';
-                    if(obj['data'][i].is_active == 'Y') {
-                        color_status = '#298c3d';
-                    }
-                    color_iluminated = '#d60b0e';
-                    if(obj['data'][i].is_iluminated == 'Y') {
-                        color_status = '#298c3d';
-                    }
-                    color_digital = '#d60b0e';
-                    if(obj['data'][i].is_digital == 'Y') {
-                        color_status = '#298c3d';
-                    }
-                    
-                    html += '<tr><td>'+obj['data'][i].provider_name+'</td><td>'+obj['data'][i].name+'</td><td nowrap>'+obj['data'][i].address+'</td><td nowrap>'+obj['data'][i].viewpoint_name+'</td><td nowrap>'+parseFloat(obj['data'][i].height).toFixed(2)+' x '+parseFloat(obj['data'][i].width).toFixed(2)+'</td><td nowrap>'+obj['data'][i].salemodel_name+'</td><td style="text-align:center;"><span id="locked_status_'+obj['data'][i].uuid_full+'" class="material-icons" style="color:'+color_status+'">circle</span></td><td nowrap style="text-align:center;">';
-                  //  html += '<tr><td>'+obj['data'][i].provider_name+'</td><td>'+obj['data'][i].name+'</td><td >'+obj['data'][i].address+'</td><td nowrap>'+obj['data'][i].salemodel_name+'</td><td style="text-align:center;"><span id="locked_status_'+obj['data'][i].uuid_full+'" class="material-icons" style="color:'+color_status+'">circle</span></td><td nowrap style="text-align:center;">';
-                    // information card
-                    html += '<a onclick=\'window.open("./pages/billboards/info.php?bid='+obj['data'][i].uuid_full+'","billboard-'+obj['data'][i].uuid_full+'","height=510.2,width=652,resizable=0,scrollbars=0,status=0,titlebar=0,toolbar=0,location=0,menubar=0")\'><span class="material-icons" style="font-size:1.5rem; color:black;" title="Information Card - '+obj['data'][i].salemodel_name+' '+obj['data'][i].name+'">info</span></a>';
+                console.log(obj);
 
-                    // Edit form
-                    html += '<a href="?pr=Li9wYWdlcy9iaWxsYm9hcmRzL2Zvcm1lZGl0LnBocA==&bid='+obj['data'][i].uuid_full+'"><span class="material-icons" style="font-size:1.5rem; color:black;" title="Edit - '+obj['data'][i].salemodel_name+' '+obj['data'][i].name+'">edit</span></a>';
-
-                    // Remove 
-                    html += '<a href="javascript:void(0)" onclick="handleRemove(\''+obj['data'][i].uuid_full+'\',\''+obj['data'][i].is_active+'\')"><span class="material-icons" style="font-size:1.5rem; color:black;" title="Remove - '+obj['data'][i].salemodel_name+' '+obj['data'][i].name+'">delete</span></a>';
-
-                    html += '</td></tr>';
+                if((obj.response == 'ZERO_RETURN') || (obj.response == 'error')){
+                    html = '<tr><td colspan="6" style="text-align:center;">'+translateText('0_results',ulang)+'</td></tr>';
+                    tableList.innerHTML = html;
+                    pagesController(page,1);
+                    if(parseInt(page) > parseInt(1)){
+                        page        = 1;
+                        filter.goto.value = 1;
+                    }
+                    return false;
                 }
-                tableList.innerHTML = html;
-                pagesController(page,obj['pages']);
-                if(parseInt(page) > parseInt(obj['pages'])){
-                    page        = 1;
-                    filter.goto.value = 1;
+                if(obj.response == 'OK'){
+                    html        = '';
+                    
+                    for(var i=0;i < obj['data'].length; i++){
+                        color_status_active = '#d60b0e';
+                        if(obj['data'][i].is_active == 'Y') {
+                            color_status_active = '#298c3d';
+                        }
+                        
+                        module_name = ucfirst(translateText('all',ulang));
+                        if(obj['data'][i].module_name != null){
+                            module_name = obj['data'][i].module_name;
+                        }
+
+                        html += '<tr><td>'+obj['data'][i].name+'</td><td>'+module_name+'</td><td><a tabindex="0" role="button" class="btn btn-sm btn-success btn-popover" data-toggle="popover" title="'+obj['data'][i].name+'" data-content="'+obj['data'][i].message_text.replace(/'/g, "'").replace(/"/g, "'")+'">Show the text</a></td>';
+                        html += '<td style="text-align:center;"><span id="locked_status_'+obj['data'][i].uuid+'" class="material-icons" style="color:'+color_status_active+'">circle</span></td>';
+                    //  html += '<tr><td>'+obj['data'][i].provider_name+'</td><td>'+obj['data'][i].name+'</td><td >'+obj['data'][i].address+'</td><td nowrap>'+obj['data'][i].message_name+'</td>';
+                        // information card
+                        html += '<td nowrap style="text-align:center;"><a href="?pr=Li9wYWdlcy9tZXNzYWdlcy9pbmZvLnBocA==&mtid='+obj['data'][i].uuid+'"><span class="material-icons" style="font-size:1.5rem; color:black;" title="Information Card '+obj['data'][i].name+'">info</span></a>';
+
+                        // Edit form
+                       // html += '<a href="?pr=Li9wYWdlcy9iaWxsYm9hcmRzL2Zvcm1lZGl0LnBocA==&smid='+obj['data'][i].uuid_full+'"><span class="material-icons" style="font-size:1.5rem; color:black;" title="Edit -> '+product_name+' - '+obj['data'][i].name+'">edit</span></a>';
+
+                        // Remove 
+                      //  html += '<a href="javascript:void(0)" onclick="handleRemove(\''+obj['data'][i].uuid_full+'\',\''+obj['data'][i].is_active+'\')"><span class="material-icons" style="font-size:1.5rem; color:black;" title="Remove -> '+product_name+' - '+obj['data'][i].name+'">delete</span></a>';
+
+                        html += '</td></tr>';
+                    }
+                    tableList.innerHTML = html;
+                    pagesController(page,obj['pages']);
+                    if(parseInt(page) > parseInt(obj['pages'])){
+                        page        = 1;
+                        filter.goto.value = 1;
+                    }
                 }
             }
             else {
@@ -534,7 +413,7 @@ function handleRemove(tid,locked_status){
     color_status = '#298c3d';
     if(locked_status == 'Y')
         color_status = '#d60b0e';
-    const requestURL = window.location.protocol+'//'+locat+'api/billboards/auth_billboard_remove.php?auth_api='+authApi+filters;
+    const requestURL = window.location.protocol+'//'+locat+'api/messages/auth_message_remove.php?auth_api='+authApi+filters;
     //alert(requestURL);
     const request = new XMLHttpRequest();
     request.onreadystatechange = function() {

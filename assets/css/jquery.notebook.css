@@ -1,3 +1,5 @@
+/*@import "compass/css3";*/
+
 .jquery-notebook.editor {
     position: relative;
     outline: none;
@@ -22,7 +24,7 @@
 }
 
 .jquery-notebook.bubble {
-    position: absolute;
+    position: fixed;
     z-index: 3;
     opacity: 1;
     height: 43px;
@@ -82,7 +84,6 @@
 }
 
 .jquery-notebook.bubble button {
-    margin: 0;
     outline: none;
     border: none;
     background: transparent;
@@ -92,7 +93,6 @@
     color: white;
     font-size: 14pt;
     cursor: pointer;
-    -webkit-font-smoothing: antialiased;
 }
 
 .jquery-notebook.bubble button.active {

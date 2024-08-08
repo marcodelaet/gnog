@@ -1,5 +1,5 @@
 <?php
-$moduleName = 'Proposal';
+$moduleName = 'Message';
 ?>
 <link rel="stylesheet" href="<?=$dir?>./assets/css/<?=$moduleName?>.css">
 <link rel="stylesheet" href="<?=$dir?>./assets/css/Inputs.css">

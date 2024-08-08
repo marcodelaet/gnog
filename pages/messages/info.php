@@ -1,5 +1,5 @@
 <?php 
-$moduleName = 'Proposal'; 
+$moduleName = 'Message'; 
 $invite_body_esp = "lalalala";
 ?>
 <link rel="stylesheet" href="<?=$dir?>./assets/css/<?=$moduleName?>.css">
@@ -74,7 +74,12 @@ $invite_body_esp = "lalalala";
         <div class="modal-content">
         <div class="modal-header">
             <h5 class="modal-title" id="sendEmailModalLabel">Send Message:
-                <p class="fs-4"><b><spam id="advertiser_contact_name"></spam> <br/>- (<spam id="advertiser_contact_email"></spam>)</b></p> 
+                <p class="fs-4">
+                    <b>
+                        <spam id="advertiser_contact_name"></spam> <br/>- (<spam id="advertiser_contact_email"></spam>)
+                    </b>
+                </p> 
+
             </h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
@@ -85,22 +90,12 @@ $invite_body_esp = "lalalala";
                 <div class="form-group">
                     <div class="form-row">
                         <div class="col">
-                            <label for="language" class="col-form-label"><?=ucfirst(translateText('language'))?>:</label>
-                            <spam id="slanguage">
-                                <SELECT name="option" id="language-option" onchange=onchange="if(this.value != '0'){document.getElementById('bodyText').innerHTML = decodeURIComponent(document.getElementById('selectmessagename')[document.getElementById('selectmessagename').selectedIndex].getAttribute('data-fulltext-'+this[this.selectedIndex].value)).replace('%user_fullname%',document.getElementById('advertiser_contact_name').innerText);}" class="form-control">
-                                    <OPTION value="esp">Español</OPTION>
-                                    <OPTION value="ptbr">Português Brasileiro</OPTION>
-                                    <OPTION value="eng">English</OPTION>
-                                </SELECT>
-                            </spam>
-                        </div>
-                        <div class="col" id="div-messagename">
-                            <label for="messagename_id" class="col-form-label"><?=ucfirst(translateText('messagetemplate_name'));?>:</label>
-                            <spam id="smessagename">
-                                <select name="messagename_id" id="selectmessagename" title="messagename_id" onchange="if(this.value != '0'){document.getElementById('bodyText').innerHTML = decodeURIComponent(this[this.selectedIndex].getAttribute('data-fulltext')).replace('%user_fullname%',document.getElementById('advertiser_contact_name').innerText);}" class="form-control">
-                                    <?=inputSelect('message',ucfirst(translateText('messagetemplate_name')),'','name','')?>
-                                </select>
-                            </spam>
+                            <label for="language" class="col-form-label"><?=translateText('language')?>:</label>
+                            <SELECT name="option" id="language-option" onchange="changeMessageLanguage(this.value,document.getElementById('aname').value);">
+                                <OPTION value="esp">Español</OPTION>
+                                <OPTION value="ptbr">Português Brasileiro</OPTION>
+                                <OPTION value="eng">English</OPTION>
+                            </SELECT>
                         </div>
                     </div>
                     <div class="form-row">

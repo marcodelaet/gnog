@@ -16,6 +16,7 @@ use Shuchkin\SimpleXLSX;
 require_once('./assets/conf.main.php'); 
 require_once('./assets/lib/security_area.php');
 require_once('./components/items/input.php');
+require_once('./assets/lib/utils.php');
 require_once('./assets/lib/translation.php');
 ?>
 <!DOCTYPE html>

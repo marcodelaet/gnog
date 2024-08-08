@@ -6,6 +6,7 @@ function inputSelect($table,$title,$where,$order,$selected){
     $authApi    = $_COOKIE['tk'];
     $protocol = strtolower(substr($_SERVER["SERVER_PROTOCOL"],0,strpos( $_SERVER["SERVER_PROTOCOL"],'/'))).'://';
     $url = $_SERVER['HTTP_HOST'];
+    $eventChange    = '';
     //Only showing actives
     $onlyActives    = 'Y';
     if(substr($url,-1,1) != '/')
@@ -53,6 +54,11 @@ function inputSelect($table,$title,$where,$order,$selected){
                 $id = $obj->data[$i]->uuid_full;
                 $name = $obj->data[$i]->name;
                 break;
+            case 'message':
+                $id             = $obj->data[$i]->UUID;
+                $name           = $obj->data[$i]->name;
+                $eventChange    = "data-fulltext=\"".rawurlencode($obj->data[$i]->message_text)."\" data-fulltext-ptbr=\"".rawurlencode($obj->data[$i]->message_text_ptbr)."\" data-fulltext-eng=\"".rawurlencode($obj->data[$i]->message_text_eng)."\" data-fulltext-esp=\"".rawurlencode($obj->data[$i]->message_text_esp)."\"";
+                break;
             case 'rate':
                 if(!is_null($obj[$i]->orderby))
                     $className = " class='bold' ";
@@ -69,7 +75,7 @@ function inputSelect($table,$title,$where,$order,$selected){
         // adding a new option to products when OOH
         if(($name == 'OOH') && ($table == 'product'))
             $html .= '<option '.$className.' value="'.$id.'" '.$markingSelect.' >'.$name.' ('.translateText('no_keys').')</option>';
-        $html .= '<option '.$className.' value="'.$id.'" '.$markingSelect.' >'.$name.'</option>';
+        $html .= '<option '.$className.' value="'.$id.'" '.$markingSelect.' '.$eventChange.' >'.$name.'</option>';
     }
     return $html;
 }
